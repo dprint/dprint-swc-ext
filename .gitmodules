@@ -1,0 +1,3 @@
+[submodule "swc"]
+	path = swc
+	url = https://github.com/swc-project/swc
