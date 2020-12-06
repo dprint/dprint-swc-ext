@@ -15,21 +15,24 @@ use swc_ecma_parser::{
 fn test_creating_reference() {
   let file_text = "class MyClass { prop: string; myMethod() {}}";
   let module = get_swc_ast(&PathBuf::from("file.ts"), file_text);
-  let ast_view = dprint_swc_ecma_ast_view::get_ast_view(&module);
-  let class = &ast_view.body[0].to::<ClassDecl>().class;
-  println!("{:?}", class.text(file_text));
+  dprint_swc_ecma_ast_view::with_ast_view(module, |ast_view| {
+    let class = &ast_view.body[0].to::<ClassDecl>().class;
+    println!("{:?}", class.text(file_text));
 
-  for child in class.children() {
-    println!("---------");
-    println!("Child: {:?}", child.text(file_text));
-    println!("Parent: {:?}", child.parent().unwrap().text(file_text));
-    if let Some(prev_sibling) = child.prev_sibling() {
-      println!("Previous sibling: {:?}", prev_sibling.text(file_text));
+    for child in class.children() {
+      println!("---------");
+      println!("Child: {:?}", child.text(file_text));
+      println!("Parent: {:?}", child.parent().unwrap().text(file_text));
+      if let Some(prev_sibling) = child.prev_sibling() {
+        println!("Previous sibling: {:?}", prev_sibling.text(file_text));
+      }
+      if let Some(next_sibling) = child.next_sibling() {
+        println!("Next sibling: {:?}", next_sibling.text(file_text));
+      }
     }
-    if let Some(next_sibling) = child.next_sibling() {
-      println!("Next sibling: {:?}", next_sibling.text(file_text));
-    }
-  }
+
+    ast_view
+  });
   println!("SUCCESS");
 }
 

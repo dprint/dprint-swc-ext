@@ -4,8 +4,6 @@ Proof of concept.
 
 The library at `./rs-lib` is code generated from [swc_ecma_ast](https://crates.io/crates/swc_ecma_ast) via the code in `./generation` to produce a more easily navigable immutable AST.
 
-**Currently very unsafe and some craziness going on.**
-
 ## What does this do?
 
 Creates a wrapper AST around [swc](https://github.com/swc-project/swc)'s AST that keeps track of the node parents and adds a `Node` enum type to allow referencing any kind of node.
@@ -14,11 +12,11 @@ Creates a wrapper AST around [swc](https://github.com/swc-project/swc)'s AST tha
 
 All:
 
-- `.parent() -> Option<Node>`
-- `.children() -> Vec<Node>`
+- `.parent() -> Option<Node<'a>>`
+- `.children() -> Vec<Node<'a>>`
 - `.child_index() -> usize`
-- `.prev_sibling() -> Option<Node>`
-- `.next_sibling() -> Option<Node>`
+- `.prev_sibling() -> Option<Node<'a>>`
+- `.next_sibling() -> Option<Node<'a>>`
 - `.text(file_text: &str) -> &str` -- Might consider removing the need for an argument here.
 
 Node/enum node specific helpers:
@@ -28,9 +26,8 @@ Node/enum node specific helpers:
 
 ## TODO
 
-- `.children_with_tokens() -> Vec<NodeOrToken>` - Gets the children with the tokens found between the children
-- `.tokens() -> Vec<Token>` - All the descendant tokens within the span of the node.
-- I think maybe change the code to use an "arena" (ex. https://crates.io/crates/bumpalo)
+- `.children_with_tokens() -> Vec<NodeOrToken<'a>>` - Gets the children with the tokens found between the children
+- `.tokens() -> Vec<Token<'a>>` - All the descendant tokens within the span of the node.
 
 ## Example
 
@@ -43,15 +40,12 @@ class MyClass { prop: string; myMethod() {}}
 
 Code can be written like so:
 
-```rs
+```rust
 let file_text: String = ...;
 let module: swc_ecma_ast::Module = ...;
-let ast_view = dprint_swc_ecma_ast_view::get_ast_view(&module);
 
-// VERY IMPORTANT: The `module` and `ast_view` objects must not be dropped
-// for the duration of the scope below and the objects in the scope below
-// must not be used outside the scope... otherwise bad things will happen :D
-{
+// need to provide the module so the function owns it, then you can get it back after
+let module = dprint_swc_ecma_ast_view::with_ast_view(module, |ast_view| {
   let class = &ast_view.body[0].to::<ClassDecl>().class;
   println!("{:?}", class.text(file_text));
 
@@ -66,7 +60,9 @@ let ast_view = dprint_swc_ecma_ast_view::get_ast_view(&module);
       println!("Next sibling: {:?}", next_sibling.text(file_text));
     }
   }
-}
+
+  ast_view // need to return this as it's not safe to use outside this scope
+});
 ```
 
 Outputs:

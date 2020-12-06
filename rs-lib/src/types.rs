@@ -1,9 +1,9 @@
 use crate::generated::*;
 use swc_common::Spanned;
 
-pub trait NodeTrait: Spanned {
-  fn parent(&self) -> Option<Node>;
-  fn children(&self) -> Vec<Node>;
+pub trait NodeTrait<'a>: Spanned {
+  fn parent(&self) -> Option<Node<'a>>;
+  fn children(&self) -> Vec<Node<'a>>;
 
   fn child_index(&self) -> usize {
     if let Some(parent) = self.parent() {
@@ -19,7 +19,7 @@ pub trait NodeTrait: Spanned {
     }
   }
 
-  fn prev_sibling(&self) -> Option<Node> {
+  fn prev_sibling(&self) -> Option<Node<'a>> {
     if let Some(parent) = self.parent() {
       let child_index = self.child_index();
       if child_index > 0 {
@@ -32,7 +32,7 @@ pub trait NodeTrait: Spanned {
     }
   }
 
-  fn next_sibling(&self) -> Option<Node> {
+  fn next_sibling(&self) -> Option<Node<'a>> {
     if let Some(parent) = self.parent() {
       let next_index = self.child_index() + 1;
       let mut children = parent.children();
@@ -46,12 +46,12 @@ pub trait NodeTrait: Spanned {
     }
   }
 
-  fn text<'a>(&self, source_file_text: &'a str) -> &'a str {
+  fn text<'b>(&self, source_file_text: &'b str) -> &'b str {
     let span = self.span();
     &source_file_text[(span.lo.0 as usize)..(span.hi.0 as usize)]
   }
 }
 
-pub trait CastableNode {
-  fn try_cast(node: &Node) -> Option<&'static Self>;
+pub trait CastableNode<'a> {
+  fn try_cast(node: &Node<'a>) -> Option<&'a Self>;
 }

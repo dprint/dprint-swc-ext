@@ -47,18 +47,20 @@ export function generate(analysisResult: AnalysisResult) {
     }
 
     function writePublicFunction() {
-        writer.writeLine("pub fn get_ast_view(module: &swc_ecma_ast::Module) -> Module {");
+        writer.writeLine("pub fn with_ast_view<'a>(swc_module: swc_ecma_ast::Module, with_view: impl Fn(Module<'a>) -> Module<'a>) -> swc_ecma_ast::Module {");
         writer.indent(() => {
-            writer.writeLine("let module = unsafe { mem::transmute::<&swc_ecma_ast::Module, &'static swc_ecma_ast::Module>(&module) };");
-            writer.writeLine(`${getViewForFunctionName("Module")}(module)`);
+            writer.writeLine("let swc_module_ref = unsafe { mem::transmute::<&swc_ecma_ast::Module, &'a swc_ecma_ast::Module>(&swc_module) };");
+            writer.writeLine(`let module = ${getViewForFunctionName("Module")}(swc_module_ref);`);
+            writer.writeLine(`let _ = with_view(module);`);
+            writer.writeLine(`swc_module`);
         }).write("}").newLine().newLine();
     }
 
     function writeTraits() {
         for (const name of getNamesUsedInBox(analysisResult)) {
             if (analysisResult.structs.some(s => s.name === name) || analysisResult.enums.some(s => s.name === name)) {
-                writeTrait(`From<&Box<${name}>>`, "Node", () => {
-                    writer.writeLine(`fn from(boxed_node: &Box<${name}>) -> Node {`);
+                writeTrait(`From<&Box<${name}<'a>>>`, "Node<'a>", () => {
+                    writer.writeLine(`fn from(boxed_node: &Box<${name}<'a>>) -> Node<'a> {`);
                     writer.indent(() => {
                         writer.writeLine("(&**boxed_node).into()");
                     }).write("}").newLine();
@@ -70,35 +72,35 @@ export function generate(analysisResult: AnalysisResult) {
 
     function writeNode() {
         writer.writeLine("#[derive(Clone)]");
-        writer.writeLine("pub enum Node {");
+        writer.writeLine("pub enum Node<'a> {");
         writer.indent(() => {
             for (const struct of analysisResult.structs) {
-                writer.writeLine(`${struct.name}(&'static ${struct.name}),`);
+                writer.writeLine(`${struct.name}(&'a ${struct.name}<'a>),`);
             }
         });
         writer.writeLine("}").newLine();
 
-        writer.writeLine("impl Node {");
+        writer.writeLine("impl<'a> Node<'a> {");
         writer.indent(() => {
-            writer.writeLine("pub fn try_to<T: CastableNode>(&self) -> Option<&'static T> {");
+            writer.writeLine("pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {");
             writer.indent(() => {
                 writer.writeLine("T::try_cast(self)");
             }).write("}").newLine().newLine();
 
-            writer.writeLine("pub fn to<T: CastableNode>(&self) -> &'static T {");
+            writer.writeLine("pub fn to<T: CastableNode<'a>>(&self) -> &'a T {");
             writer.indent(() => {
                 writer.writeLine(`T::try_cast(self).expect("Tried to cast node to incorrect type.")`);
             }).write("}").newLine();
         }).write("}").newLine().newLine();
 
-        writeTrait("Spanned", "Node", () => {
+        writeTrait("Spanned", "Node<'a>", () => {
             implementTraitMethod("span", "Span");
         });
 
-        writeTrait("NodeTrait", "Node", () => {
-            implementTraitMethod("parent", "Option<Node>");
+        writeTrait("NodeTrait<'a>", "Node<'a>", () => {
+            implementTraitMethod("parent", "Option<Node<'a>>");
             writer.newLine();
-            implementTraitMethod("children", "Vec<Node>");
+            implementTraitMethod("children", "Vec<Node<'a>>");
         });
 
         function implementTraitMethod(methodName: string, returnType: string) {
@@ -123,7 +125,7 @@ export function generate(analysisResult: AnalysisResult) {
 
         function writeEnum() {
             writeDocs(enumDef.docs);
-            writer.write(`pub enum ${enumDef.name} {`);
+            writer.write(`pub enum ${enumDef.name}<'a> {`);
             writer.indent(() => {
                 for (const variant of enumDef.variants) {
                     writer.newLine();
@@ -144,30 +146,30 @@ export function generate(analysisResult: AnalysisResult) {
             }).newLine();
             writer.write("}").newLine().newLine();
 
-            writer.writeLine(`impl ${enumDef.name} {`).indent(() => {
-                writer.writeLine("pub fn try_to<T: CastableNode>(&self) -> Option<&'static T> {");
+            writer.writeLine(`impl<'a> ${enumDef.name}<'a> {`).indent(() => {
+                writer.writeLine("pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {");
                 writer.indent(() => {
                     writer.writeLine("T::try_cast(&self.into())");
                 }).write("}").newLine().newLine();
 
-                writer.writeLine("pub fn to<T: CastableNode>(&self) -> &'static T {");
+                writer.writeLine("pub fn to<T: CastableNode<'a>>(&self) -> &'a T {");
                 writer.indent(() => {
                     writer.writeLine(`T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")`);
                 }).write("}").newLine();
             }).write("}").newLine().newLine();
 
-            writeTrait("Spanned", enumDef.name, () => {
+            writeTrait("Spanned", `${enumDef.name}<'a>`, () => {
                 implementTraitMethod("span", "Span");
             });
             writer.newLine();
-            writeTrait("NodeTrait", enumDef.name, () => {
-                implementTraitMethod("parent", "Option<Node>");
+            writeTrait("NodeTrait<'a>", `${enumDef.name}<'a>`, () => {
+                implementTraitMethod("parent", "Option<Node<'a>>");
                 writer.newLine();
-                implementTraitMethod("children", "Vec<Node>");
+                implementTraitMethod("children", "Vec<Node<'a>>");
             });
 
-            writeTrait(`From<&${enumDef.name}>`, "Node", () => {
-                writer.writeLine(`fn from(node: &${enumDef.name}) -> Node {`);
+            writeTrait(`From<&${enumDef.name}<'a>>`, "Node<'a>", () => {
+                writer.writeLine(`fn from(node: &${enumDef.name}<'a>) -> Node<'a> {`);
                 writer.indent(() => {
                     writer.writeLine("match node {");
                     writer.indent(() => {
@@ -195,7 +197,7 @@ export function generate(analysisResult: AnalysisResult) {
         }
 
         function writeEnumFunctions() {
-            writer.write(`fn ${getViewForFunctionName(enumDef.name)}(ref_node: &'static swc_ecma_ast::${enumDef.name}) -> ${enumDef.name} {`)
+            writer.write(`fn ${getViewForFunctionName(enumDef.name)}<'a>(ref_node: &'a swc_ecma_ast::${enumDef.name}) -> ${enumDef.name}<'a> {`)
                 .newLine();
             writer.indent(() => {
                 // writer.writeLine(`println!("Entered ${enumDef.name}");`);
@@ -214,7 +216,7 @@ export function generate(analysisResult: AnalysisResult) {
                 }).write("}").newLine();
             }).write("}").newLine().newLine();
 
-            writer.writeLine(`fn ${getSetParentForFunctionName(enumDef.name)}(node: &mut ${enumDef.name}, parent: Node) {`);
+            writer.writeLine(`fn ${getSetParentForFunctionName(enumDef.name)}<'a>(node: &mut ${enumDef.name}<'a>, parent: Node<'a>) {`);
             writer.indent(() => {
                 writer.write("match node {");
                 writer.indent(() => {
@@ -245,16 +247,16 @@ export function generate(analysisResult: AnalysisResult) {
 
         function writeStruct() {
             writeDocs(struct.docs);
-            writer.writeLine(`pub struct ${struct.name} {`);
+            writer.writeLine(`pub struct ${struct.name}<'a> {`);
             writer.indent(() => {
                 if (struct.parents.length > 0) {
                     if (struct.parents.length === 1) {
-                        writer.writeLine(`pub parent: &'static ${struct.parents[0].name},`);
+                        writer.writeLine(`pub parent: &'a ${struct.parents[0].name}<'a>,`);
                     } else {
-                        writer.writeLine(`pub parent: Node,`);
+                        writer.writeLine(`pub parent: Node<'a>,`);
                     }
                 }
-                writer.writeLine(`pub inner: &'static swc_ecma_ast::${struct.name},`);
+                writer.writeLine(`pub inner: &'a swc_ecma_ast::${struct.name},`);
 
                 for (const field of structFields) {
                     writeDocs(field.docs);
@@ -267,7 +269,7 @@ export function generate(analysisResult: AnalysisResult) {
 
             if (implFields.length > 0) {
                 writer.newLine();
-                writer.write(`impl ${struct.name} {`);
+                writer.write(`impl<'a> ${struct.name}<'a> {`);
                 writer.indent(() => {
                     for (const field of implFields) {
                         const isReferenceType = getIsReferenceType(field.type);
@@ -291,7 +293,7 @@ export function generate(analysisResult: AnalysisResult) {
             }
 
             writer.newLine();
-            writeTrait("Spanned", struct.name, () => {
+            writeTrait("Spanned", `${struct.name}<'a>`, () => {
                 writer.writeLine("fn span(&self) -> Span {");
                 writer.indent(() => {
                     writer.writeLine("self.inner.span()");
@@ -299,17 +301,17 @@ export function generate(analysisResult: AnalysisResult) {
             });
 
             writer.newLine();
-            writeTrait(`From<&${struct.name}>`, "Node", () => {
-                writer.writeLine(`fn from(node: &${struct.name}) -> Node {`);
+            writeTrait(`From<&${struct.name}<'a>>`, "Node<'a>", () => {
+                writer.writeLine(`fn from(node: &${struct.name}) -> Node<'a> {`);
                 writer.indent(() => {
-                    writer.writeLine(`let static_ref = unsafe { mem::transmute::<&${struct.name}, &'static ${struct.name}>(&node) };`);
+                    writer.writeLine(`let static_ref = unsafe { mem::transmute::<&${struct.name}, &'a ${struct.name}>(&node) };`);
                     writer.writeLine(`Node::${struct.name}(static_ref)`);
                 }).write("}").newLine();
             });
 
             writer.newLine();
-            writeTrait("NodeTrait", struct.name, () => {
-                writer.writeLine("fn parent(&self) -> Option<Node> {");
+            writeTrait("NodeTrait<'a>", `${struct.name}<'a>`, () => {
+                writer.writeLine("fn parent(&self) -> Option<Node<'a>> {");
                 writer.indent(() => {
                     if (struct.parents.length === 0) {
                         writer.write("None");
@@ -324,7 +326,7 @@ export function generate(analysisResult: AnalysisResult) {
                 }).write("}").newLine();
                 writer.newLine();
 
-                writer.writeLine("fn children(&self) -> Vec<Node> {");
+                writer.writeLine("fn children(&self) -> Vec<Node<'a>> {");
                 writer.indent(() => {
                     if (structFields.length === 0) {
                         writer.write("Vec::with_capacity(0)");
@@ -341,8 +343,8 @@ export function generate(analysisResult: AnalysisResult) {
             });
 
             writer.newLine();
-            writeTrait("CastableNode", struct.name, () => {
-                writer.writeLine("fn try_cast(node: &Node) -> Option<&'static Self> {");
+            writeTrait("CastableNode<'a>", `${struct.name}<'a>`, () => {
+                writer.writeLine("fn try_cast(node: &Node<'a>) -> Option<&'a Self> {");
                 writer.indent(() => {
                     writer.writeLine(`if let Node::${struct.name}(node) = node {`);
                     writer.indent(() => {
@@ -431,8 +433,8 @@ export function generate(analysisResult: AnalysisResult) {
         }
 
         function writeStructFunction() {
-            writer.write(`fn ${getViewForFunctionName(struct.name)}(ref_node: &'static swc_ecma_ast::${struct.name}`);
-            writer.write(`) -> ${struct.name} {`).newLine();
+            writer.write(`fn ${getViewForFunctionName(struct.name)}<'a>(ref_node: &'a swc_ecma_ast::${struct.name}`);
+            writer.write(`) -> ${struct.name}<'a> {`).newLine();
             writer.indent(() => {
                 // writer.writeLine(`println!("Entered ${struct.name}");`);
                 for (const field of structFields) {
@@ -457,7 +459,7 @@ export function generate(analysisResult: AnalysisResult) {
                     }
                 }).write("};").newLine();
                 if (structFields.length > 0) {
-                    writer.writeLine(`let child_parent_ref = unsafe { mem::transmute::<&${struct.name}, &'static ${struct.name}>(&node) };`);
+                    writer.writeLine(`let child_parent_ref = unsafe { mem::transmute::<&${struct.name}, &'a ${struct.name}>(&node) };`);
                     writer.writeLine(`let parent = Node::${struct.name}(child_parent_ref);`);
 
                     for (const [i, field] of structFields.entries()) {
@@ -473,7 +475,11 @@ export function generate(analysisResult: AnalysisResult) {
     }
 
     function writeTrait(traitName: string, name: string, body: () => void) {
-        writer.writeLine(`impl ${traitName} for ${name} {`);
+        writer.write("impl");
+        if (traitName.endsWith("<'a>") || name.endsWith("<'a>")) {
+            writer.write("<'a>");
+        }
+        writer.write(` ${traitName} for ${name} {`).newLine();
         writer.indent(() => {
             body();
         }).write("}").newLine();
@@ -568,7 +574,12 @@ export function generate(analysisResult: AnalysisResult) {
         function writeReference(type: TypeReferenceDefinition) {
             const path = type.path.join("::").replace(/^swc_ecma_ast::/, "");
             writer.write(path);
-            if (type.generic_args.length > 0) {
+            if (analysisResult.enums.some(e => !e.isPlain && e.name === type.name) || analysisResult.structs.some(s => s.name === type.name)) {
+                if (type.generic_args.length > 0) {
+                    throw new Error("Unhandled.");
+                }
+                writer.write("<'a>");
+            } else if (type.generic_args.length > 0) {
                 writer.write("<");
                 writer.write(type.generic_args.map(writeType).join(", "));
                 writer.write(">");
