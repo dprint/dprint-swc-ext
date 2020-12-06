@@ -30,8 +30,6 @@ fn test_creating_reference() {
         println!("Next sibling: {:?}", next_sibling.text(file_text));
       }
     }
-
-    ast_view
   });
   println!("SUCCESS");
 }

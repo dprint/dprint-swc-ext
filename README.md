@@ -60,8 +60,6 @@ let module = dprint_swc_ecma_ast_view::with_ast_view(module, |ast_view| {
       println!("Next sibling: {:?}", next_sibling.text(file_text));
     }
   }
-
-  ast_view // need to return this as it's not safe to use outside this scope
 });
 ```
 

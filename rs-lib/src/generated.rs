@@ -5,10 +5,9 @@ use swc_common::{Span, Spanned};
 use swc_ecma_ast::{VarDeclKind, TsTypeOperatorOp, TsKeywordTypeKind, BinaryOp, AssignOp, UpdateOp, Accessibility, MethodKind, UnaryOp, TruePlusMinus};
 use crate::types::*;
 
-pub fn with_ast_view<'a>(swc_module: swc_ecma_ast::Module, with_view: impl Fn(Module<'a>) -> Module<'a>) -> swc_ecma_ast::Module {
-  let swc_module_ref = unsafe { mem::transmute::<&swc_ecma_ast::Module, &'a swc_ecma_ast::Module>(&swc_module) };
-  let module = get_view_for_module(swc_module_ref);
-  let _ = with_view(module);
+pub fn with_ast_view(swc_module: swc_ecma_ast::Module, with_view: impl Fn(&Module)) -> swc_ecma_ast::Module {
+  let ast_view = get_view_for_module(&swc_module);
+  with_view(&ast_view);
   swc_module
 }
 
