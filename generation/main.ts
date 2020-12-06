@@ -4,4 +4,4 @@ import { generate } from "./generate/generate.ts";
 const analysisResult = analyze();
 const generatedCode = generate(analysisResult);
 
-Deno.writeTextFileSync("./rs-lib/src/lib.rs", generatedCode);
+Deno.writeTextFileSync("./rs-lib/src/generated.rs", generatedCode);

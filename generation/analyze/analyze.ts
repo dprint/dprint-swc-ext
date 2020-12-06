@@ -3,10 +3,14 @@ import type { Crate, EnumInner, EnumVariantInner, Item, ItemSummary, ResolvedPat
 
 export function analyze(): AnalysisResult {
     const file: Crate = JSON.parse(Deno.readTextFileSync("swc_ecma_ast.json"));
+    const structs = Array.from(getStructs());
+    const enums = Array.from(getEnums());
+
+    fillStructParents({ structs, enums });
 
     return {
-        structs: Array.from(getStructs()),
-        enums: Array.from(getEnums()),
+        structs,
+        enums,
     };
 
     function* getStructs() {
@@ -33,6 +37,7 @@ export function analyze(): AnalysisResult {
             name: item.name,
             docs: item.docs,
             fields: Array.from(getFields()),
+            parents: [],
         };
 
         function* getFields(): Iterable<StructFieldDefinition> {
@@ -200,6 +205,42 @@ export function getNamesUsedInBox(analysisResult: AnalysisResult) {
             return types;
         } else {
             return [];
+        }
+    }
+}
+
+function fillStructParents({ structs, enums }: AnalysisResult) {
+    structs.forEach(analyzeStruct);
+
+    function analyzeStruct(struct: StructDefinition) {
+        struct.fields.forEach(f => analyzeType(f.type));
+
+        function analyzeType(type: TypeDefinition) {
+            if (type.kind === "primitive") {
+                return;
+            }
+
+            if (type.name === "Option" || type.name === "Vec" || type.name === "Box") {
+                analyzeType(type.generic_args[0]);
+            } else {
+                const childStruct = structs.find(s => s.name === type.name);
+                if (childStruct != null) {
+                    if (!childStruct.parents.includes(struct)) {
+                        childStruct.parents.push(struct);
+                    }
+                } else {
+                    const childEnum = enums.find(s => s.name === type.name);
+                    if (childEnum != null) {
+                        for (const variant of childEnum.variants) {
+                            if (variant.tuple_args != null) {
+                                for (const typeDef of variant.tuple_args) {
+                                    analyzeType(typeDef);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

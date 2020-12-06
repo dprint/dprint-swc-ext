@@ -7,6 +7,7 @@ export interface StructDefinition {
     name: string;
     docs: string;
     fields: StructFieldDefinition[];
+    parents: StructDefinition[];
 }
 
 export interface EnumDefinition {

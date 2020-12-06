@@ -4,6 +4,10 @@ export class Writer {
     private isAtStartOfLine = false;
     private indentLevel = 0;
 
+    writeLine(text: string) {
+        return this.write(text).newLine();
+    }
+
     write(text: string) {
         if (this.isAtStartOfLine) {
             this.writeIndent();

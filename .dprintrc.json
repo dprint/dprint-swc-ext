@@ -5,16 +5,21 @@
   "typescript": {
     "lineWidth": 160
   },
-  "includes": ["**/*.{ts,tsx,js,jsx,json,md}"],
+  "rustfmt": {
+    "indentWidth": 2
+  },
+  "includes": ["**/*.{ts,tsx,js,jsx,json,md,rs}"],
   "excludes": [
     "**/node_modules",
     "**/*-lock.json",
     "./swc",
-    "./swc_ecma_ast.json"
+    "./swc_ecma_ast.json",
+    "./rs-lib/src/generated.rs"
   ],
   "plugins": [
     "https://plugins.dprint.dev/typescript-0.35.0.wasm",
     "https://plugins.dprint.dev/json-0.7.2.wasm",
-    "https://plugins.dprint.dev/markdown-0.4.3.wasm"
+    "https://plugins.dprint.dev/markdown-0.4.3.wasm",
+    "https://plugins.dprint.dev/rustfmt-0.3.0.wasm"
   ]
 }

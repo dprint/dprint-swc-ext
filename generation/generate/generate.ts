@@ -32,40 +32,35 @@ export function generate(analysisResult: AnalysisResult) {
     return writer.toString();
 
     function writeHeader() {
-        writer.write("// This code is code generated.").newLine();
-        writer.write("// Run `deno run -A generation/main.ts` from the root directory to regenerate it.").newLine();
+        writer.writeLine("// This code is code generated.");
+        writer.writeLine("// Run `deno run -A generation/main.ts` from the root directory to regenerate it.");
     }
 
     function writeUseDeclarations() {
-        writer.write("use std::mem::{self, MaybeUninit};").newLine();
-        writer.write("use swc_common::{Span, Spanned};").newLine();
+        writer.writeLine("use std::mem::{self, MaybeUninit};");
+        writer.writeLine("use swc_common::{Span, Spanned};");
         writer.write("use swc_ecma_ast::{");
         writer.write(analysisResult.enums.filter(e => e.isPlain).map(e => e.name).join(", "));
-        writer.write("};");
-        writer.newLine().newLine();
+        writer.write("};").newLine();
+        writer.writeLine("use crate::types::*;");
+        writer.newLine();
     }
 
     function writePublicFunction() {
-        writer.write("pub fn get_reference_view(module: &swc_ecma_ast::Module) -> Module {").newLine();
+        writer.writeLine("pub fn get_ast_view(module: &swc_ecma_ast::Module) -> Module {");
         writer.indent(() => {
-            writer.write("let module = unsafe { mem::transmute::<&swc_ecma_ast::Module, &'static swc_ecma_ast::Module>(&module) };").newLine();
-            writer.write(`${getViewForFunctionName("Module")}(module)`).newLine();
+            writer.writeLine("let module = unsafe { mem::transmute::<&swc_ecma_ast::Module, &'static swc_ecma_ast::Module>(&module) };");
+            writer.writeLine(`${getViewForFunctionName("Module")}(module)`);
         }).write("}").newLine().newLine();
     }
 
     function writeTraits() {
-        writer.write("pub trait NodeTrait {").newLine();
-        writer.indent(() => {
-            writer.write("fn parent(&self) -> Option<&Node>;").newLine();
-            writer.write("fn children(&self) -> Vec<Node>;").newLine();
-        }).write("}").newLine().newLine();
-
         for (const name of getNamesUsedInBox(analysisResult)) {
             if (analysisResult.structs.some(s => s.name === name) || analysisResult.enums.some(s => s.name === name)) {
-                writeTrait(`From<& Box<${name}>>`, "Node", () => {
-                    writer.write(`fn from(boxed_node: &Box<${name}>) -> Node {`).newLine();
+                writeTrait(`From<&Box<${name}>>`, "Node", () => {
+                    writer.writeLine(`fn from(boxed_node: &Box<${name}>) -> Node {`);
                     writer.indent(() => {
-                        writer.write("(&**boxed_node).into()");
+                        writer.writeLine("(&**boxed_node).into()");
                     }).write("}").newLine();
                 });
                 writer.newLine();
@@ -74,29 +69,42 @@ export function generate(analysisResult: AnalysisResult) {
     }
 
     function writeNode() {
-        writer.write("#[derive(Clone)]").newLine();
-        writer.write("pub enum Node {").newLine();
+        writer.writeLine("#[derive(Clone)]");
+        writer.writeLine("pub enum Node {");
         writer.indent(() => {
             for (const struct of analysisResult.structs) {
-                writer.write(`${struct.name}(&'static ${struct.name}),`).newLine();
+                writer.writeLine(`${struct.name}(&'static ${struct.name}),`);
             }
         });
-        writer.write("}").newLine().newLine();
+        writer.writeLine("}").newLine();
+
+        writer.writeLine("impl Node {");
+        writer.indent(() => {
+            writer.writeLine("pub fn try_to<T: CastableNode>(&self) -> Option<&'static T> {");
+            writer.indent(() => {
+                writer.writeLine("T::try_cast(self)");
+            }).write("}").newLine().newLine();
+
+            writer.writeLine("pub fn to<T: CastableNode>(&self) -> &'static T {");
+            writer.indent(() => {
+                writer.writeLine(`T::try_cast(self).expect("Tried to cast node to incorrect type.")`);
+            }).write("}").newLine();
+        }).write("}").newLine().newLine();
 
         writeTrait("Spanned", "Node", () => {
             implementTraitMethod("span", "Span");
         });
 
         writeTrait("NodeTrait", "Node", () => {
-            implementTraitMethod("parent", "Option<&Node>");
+            implementTraitMethod("parent", "Option<Node>");
             writer.newLine();
             implementTraitMethod("children", "Vec<Node>");
         });
 
         function implementTraitMethod(methodName: string, returnType: string) {
-            writer.write(`fn ${methodName}(&self) -> ${returnType} {`).newLine();
+            writer.writeLine(`fn ${methodName}(&self) -> ${returnType} {`);
             writer.indent(() => {
-                writer.write("match self {").newLine();
+                writer.writeLine("match self {");
                 writer.indent(() => {
                     for (const struct of analysisResult.structs) {
                         const fullName = `Node::${struct.name}`;
@@ -136,34 +144,45 @@ export function generate(analysisResult: AnalysisResult) {
             }).newLine();
             writer.write("}").newLine().newLine();
 
+            writer.writeLine(`impl ${enumDef.name} {`).indent(() => {
+                writer.writeLine("pub fn try_to<T: CastableNode>(&self) -> Option<&'static T> {");
+                writer.indent(() => {
+                    writer.writeLine("T::try_cast(&self.into())");
+                }).write("}").newLine().newLine();
+
+                writer.writeLine("pub fn to<T: CastableNode>(&self) -> &'static T {");
+                writer.indent(() => {
+                    writer.writeLine(`T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")`);
+                }).write("}").newLine();
+            }).write("}").newLine().newLine();
+
             writeTrait("Spanned", enumDef.name, () => {
                 implementTraitMethod("span", "Span");
             });
             writer.newLine();
             writeTrait("NodeTrait", enumDef.name, () => {
-                implementTraitMethod("parent", "Option<&Node>");
+                implementTraitMethod("parent", "Option<Node>");
                 writer.newLine();
                 implementTraitMethod("children", "Vec<Node>");
             });
 
             writeTrait(`From<&${enumDef.name}>`, "Node", () => {
-                writer.write(`fn from(node: &${enumDef.name}) -> Node {`).newLine();
+                writer.writeLine(`fn from(node: &${enumDef.name}) -> Node {`);
                 writer.indent(() => {
-                    writer.write("match node {").newLine();
+                    writer.writeLine("match node {");
                     writer.indent(() => {
                         for (const variant of enumDef.variants) {
                             const fullName = `${enumDef.name}::${variant.name}`;
-                            writer.write(`${fullName}(node) => node.into(),`);
-                            writer.newLine();
+                            writer.writeLine(`${fullName}(node) => node.into(),`);
                         }
                     }).write("}").newLine();
                 }).write("}").newLine();
             });
 
             function implementTraitMethod(methodName: string, returnType: string) {
-                writer.write(`fn ${methodName}(&self) -> ${returnType} {`).newLine();
+                writer.writeLine(`fn ${methodName}(&self) -> ${returnType} {`);
                 writer.indent(() => {
-                    writer.write("match self {").newLine();
+                    writer.writeLine("match self {");
                     writer.indent(() => {
                         for (const variant of enumDef.variants) {
                             const fullName = `${enumDef.name}::${variant.name}`;
@@ -179,8 +198,8 @@ export function generate(analysisResult: AnalysisResult) {
             writer.write(`fn ${getViewForFunctionName(enumDef.name)}(ref_node: &'static swc_ecma_ast::${enumDef.name}) -> ${enumDef.name} {`)
                 .newLine();
             writer.indent(() => {
-                // writer.write(`println!("Entered ${enumDef.name}");`).newLine();
-                writer.write("match ref_node {").newLine();
+                // writer.writeLine(`println!("Entered ${enumDef.name}");`);
+                writer.writeLine("match ref_node {");
                 writer.indent(() => {
                     for (const variant of enumDef.variants) {
                         const fullName = `${enumDef.name}::${variant.name}`;
@@ -195,14 +214,14 @@ export function generate(analysisResult: AnalysisResult) {
                 }).write("}").newLine();
             }).write("}").newLine().newLine();
 
-            writer.write(`fn ${getSetParentForFunctionName(enumDef.name)}(node: &mut ${enumDef.name}, parent: Node) {`).newLine();
+            writer.writeLine(`fn ${getSetParentForFunctionName(enumDef.name)}(node: &mut ${enumDef.name}, parent: Node) {`);
             writer.indent(() => {
                 writer.write("match node {");
                 writer.indent(() => {
                     for (const variant of enumDef.variants) {
                         const fullName = `${enumDef.name}::${variant.name}`;
                         writer.newLine();
-                        writer.write(`${fullName}(node) => {`).newLine();
+                        writer.writeLine(`${fullName}(node) => {`);
                         writer.indent(() => {
                             if (variant.tuple_args?.length !== 1) {
                                 throw new Error("Unhandled scenario where the variant's tuple args were not equal to 1.");
@@ -226,12 +245,16 @@ export function generate(analysisResult: AnalysisResult) {
 
         function writeStruct() {
             writeDocs(struct.docs);
-            writer.write(`pub struct ${struct.name} {`).newLine();
+            writer.writeLine(`pub struct ${struct.name} {`);
             writer.indent(() => {
-                if (struct.name !== "Module") {
-                    writer.write(`pub parent: Node,`).newLine();
+                if (struct.parents.length > 0) {
+                    if (struct.parents.length === 1) {
+                        writer.writeLine(`pub parent: &'static ${struct.parents[0].name},`);
+                    } else {
+                        writer.writeLine(`pub parent: Node,`);
+                    }
                 }
-                writer.write(`pub inner: &'static swc_ecma_ast::${struct.name},`).newLine();
+                writer.writeLine(`pub inner: &'static swc_ecma_ast::${struct.name},`);
 
                 for (const field of structFields) {
                     writeDocs(field.docs);
@@ -269,41 +292,44 @@ export function generate(analysisResult: AnalysisResult) {
 
             writer.newLine();
             writeTrait("Spanned", struct.name, () => {
-                writer.write("fn span(&self) -> Span {").newLine();
+                writer.writeLine("fn span(&self) -> Span {");
                 writer.indent(() => {
-                    writer.write("self.inner.span()").newLine();
+                    writer.writeLine("self.inner.span()");
                 }).write("}").newLine();
             });
 
             writer.newLine();
             writeTrait(`From<&${struct.name}>`, "Node", () => {
-                writer.write(`fn from(node: &${struct.name}) -> Node {`).newLine();
+                writer.writeLine(`fn from(node: &${struct.name}) -> Node {`);
                 writer.indent(() => {
-                    writer.write(`let static_ref = unsafe { mem::transmute::<&${struct.name}, &'static ${struct.name}>(&node) };`)
-                        .newLine();
-                    writer.write(`Node::${struct.name}(static_ref)`).newLine();
+                    writer.writeLine(`let static_ref = unsafe { mem::transmute::<&${struct.name}, &'static ${struct.name}>(&node) };`);
+                    writer.writeLine(`Node::${struct.name}(static_ref)`);
                 }).write("}").newLine();
             });
 
             writer.newLine();
             writeTrait("NodeTrait", struct.name, () => {
-                writer.write("fn parent(&self) -> Option<&Node> {").newLine();
+                writer.writeLine("fn parent(&self) -> Option<Node> {");
                 writer.indent(() => {
-                    if (struct.name === "Module") {
+                    if (struct.parents.length === 0) {
                         writer.write("None");
                     } else {
-                        writer.write("Some(&self.parent)");
+                        if (struct.parents.length === 1) {
+                            writer.write("Some(self.parent.into())");
+                        } else {
+                            writer.write("Some(self.parent.clone())");
+                        }
                     }
                     writer.newLine();
                 }).write("}").newLine();
                 writer.newLine();
 
-                writer.write("fn children(&self) -> Vec<Node> {").newLine();
+                writer.writeLine("fn children(&self) -> Vec<Node> {");
                 writer.indent(() => {
                     if (structFields.length === 0) {
                         writer.write("Vec::with_capacity(0)");
                     } else {
-                        writer.write(`let mut children = Vec::with_capacity(${getStructChildrenCapacityExpr()});`).newLine();
+                        writer.writeLine(`let mut children = Vec::with_capacity(${getStructChildrenCapacityExpr()});`);
                         for (const field of structFields) {
                             writeAppendChild(field.type, `self.${field.name}`);
                         }
@@ -311,6 +337,22 @@ export function generate(analysisResult: AnalysisResult) {
                     }
                     writer.newLine();
                 }).write("}").newLine();
+                writer.newLine();
+            });
+
+            writer.newLine();
+            writeTrait("CastableNode", struct.name, () => {
+                writer.writeLine("fn try_cast(node: &Node) -> Option<&'static Self> {");
+                writer.indent(() => {
+                    writer.writeLine(`if let Node::${struct.name}(node) = node {`);
+                    writer.indent(() => {
+                        writer.writeLine("Some(node)");
+                    }).write("} else {").newLine();
+                    writer.indent(() => {
+                        writer.writeLine("None");
+                    }).write("}").newLine();
+                }).write("}").newLine();
+                writer.newLine();
             });
 
             function writeAppendChild(type: TypeDefinition, name: string) {
@@ -318,12 +360,12 @@ export function generate(analysisResult: AnalysisResult) {
                     throw new Error("Should not have analyzed a primitive type here.");
                 }
                 if (type.name === "Option") {
-                    writer.write(`if let Some(child) = &${name} {`).newLine();
+                    writer.writeLine(`if let Some(child) = &${name} {`);
                     writer.indent(() => {
                         writeAppendChild(type.generic_args[0], "child");
                     }).write("}").newLine();
                 } else if (type.name === "Vec") {
-                    writer.write(`for child in ${name}.iter() {`).newLine();
+                    writer.writeLine(`for child in ${name}.iter() {`);
                     writer.indent(() => {
                         writeAppendChild(type.generic_args[0], "child");
                     }).write("}").newLine();
@@ -392,9 +434,9 @@ export function generate(analysisResult: AnalysisResult) {
             writer.write(`fn ${getViewForFunctionName(struct.name)}(ref_node: &'static swc_ecma_ast::${struct.name}`);
             writer.write(`) -> ${struct.name} {`).newLine();
             writer.indent(() => {
-                // writer.write(`println!("Entered ${struct.name}");`).newLine();
+                // writer.writeLine(`println!("Entered ${struct.name}");`);
                 for (const field of structFields) {
-                    writer.write(`let value = &ref_node.${field.name};`).newLine();
+                    writer.writeLine(`let value = &ref_node.${field.name};`);
                     writer.write(`let field_${field.name} = `);
                     writeGetViewTypeExpression(field.type);
                     writer.write(";").newLine();
@@ -407,17 +449,16 @@ export function generate(analysisResult: AnalysisResult) {
                 writer.write(`node = ${struct.name} {`).newLine();
                 writer.indent(() => {
                     writer.write("inner: ref_node,").newLine();
-                    if (struct.name !== "Module") {
+                    if (struct.parents.length > 0) {
                         writer.write("parent: unsafe { MaybeUninit::uninit().assume_init() },").newLine();
                     }
                     for (const field of structFields) {
-                        writer.write(`${field.name}: field_${field.name},`).newLine();
+                        writer.writeLine(`${field.name}: field_${field.name},`);
                     }
                 }).write("};").newLine();
                 if (structFields.length > 0) {
-                    writer.write(`let child_parent_ref = unsafe { mem::transmute::<&${struct.name}, &'static ${struct.name}>(&node) };`)
-                        .newLine();
-                    writer.write(`let parent = Node::${struct.name}(child_parent_ref);`).newLine();
+                    writer.writeLine(`let child_parent_ref = unsafe { mem::transmute::<&${struct.name}, &'static ${struct.name}>(&node) };`);
+                    writer.writeLine(`let parent = Node::${struct.name}(child_parent_ref);`);
 
                     for (const [i, field] of structFields.entries()) {
                         const shouldClone = i < structFields.length - 1;
@@ -425,14 +466,14 @@ export function generate(analysisResult: AnalysisResult) {
                     }
                 }
 
-                // writer.write(`println!("Exited ${struct.name}");`).newLine();
-                writer.write("node").newLine();
+                // writer.writeLine(`println!("Exited ${struct.name}");`);
+                writer.writeLine("node");
             }).write("}").newLine();
         }
     }
 
     function writeTrait(traitName: string, name: string, body: () => void) {
-        writer.write(`impl ${traitName} for ${name} {`).newLine();
+        writer.writeLine(`impl ${traitName} for ${name} {`);
         writer.indent(() => {
             body();
         }).write("}").newLine();
@@ -444,12 +485,12 @@ export function generate(analysisResult: AnalysisResult) {
         }
 
         if (type.name === "Option") {
-            writer.write(`match value {`).newLine();
+            writer.writeLine(`match value {`);
             writer.indent(() => {
                 writer.write("Some(value) => Some(");
                 writeGetViewTypeExpression(type.generic_args[0]);
                 writer.write("),").newLine();
-                writer.write("None => None,").newLine();
+                writer.writeLine("None => None,");
             }).write("}");
         } else if (type.name === "Vec") {
             writer.write("value.iter().map(|value| ");
@@ -470,16 +511,16 @@ export function generate(analysisResult: AnalysisResult) {
         }
 
         if (type.name === "Option") {
-            writer.write(`if let Some(node) = ${name}.as_mut() {`).newLine();
+            writer.writeLine(`if let Some(node) = ${name}.as_mut() {`);
             writer.indent(() => {
                 writeSetParentStatement(type.generic_args[0], "node", shouldClone);
             }).write("}").newLine();
         } else if (type.name === "Vec") {
-            writer.write(`for node in ${name}.iter_mut() {`).newLine();
+            writer.writeLine(`for node in ${name}.iter_mut() {`);
             writer.indent(() => {
                 writeSetParentStatement(type.generic_args[0], "node", true);
             });
-            writer.write("}").newLine();
+            writer.writeLine("}");
         } else if (type.name === "Box") {
             writeSetParentStatement(type.generic_args[0], name, shouldClone);
         } else if (type.path[0] === "swc_ecma_ast" && analysisResult.enums.some(e => !e.isPlain && e.name === type.path[1])) {
@@ -493,9 +534,15 @@ export function generate(analysisResult: AnalysisResult) {
             }
             writer.write(");").newLine();
         } else {
-            writer.write(`${name}.parent = parent`);
-            if (shouldClone) {
-                writer.write(".clone()");
+            writer.write(`${name}.parent = `);
+            const structOfType = analysisResult.structs.find(s => s.name === type.name);
+            if (structOfType != null && structOfType.parents.length === 1) {
+                writer.write(`parent.to::<${structOfType.parents[0].name}>()`);
+            } else {
+                writer.write(`parent`);
+                if (shouldClone) {
+                    writer.write(".clone()");
+                }
             }
             writer.write(";").newLine();
         }
@@ -561,7 +608,7 @@ export function generate(analysisResult: AnalysisResult) {
         }
         const lines = docs.split(/\r?\n/);
         for (const line of lines) {
-            writer.write(`/// ${line}`).newLine();
+            writer.writeLine(`/// ${line}`);
         }
     }
 
