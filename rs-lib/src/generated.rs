@@ -5,10 +5,9 @@ use swc_common::{Span, Spanned};
 use swc_ecma_ast::{VarDeclKind, TsTypeOperatorOp, TsKeywordTypeKind, BinaryOp, AssignOp, UpdateOp, Accessibility, MethodKind, UnaryOp, TruePlusMinus};
 use crate::types::*;
 
-pub fn with_ast_view(swc_module: swc_ecma_ast::Module, with_view: impl Fn(&Module)) -> swc_ecma_ast::Module {
-  let ast_view = get_view_for_module(&swc_module);
-  with_view(&ast_view);
-  swc_module
+pub fn with_ast_view<T>(swc_module: &swc_ecma_ast::Module, with_view: impl Fn(&Module) -> T) -> T {
+  let ast_view = get_view_for_module(swc_module);
+  with_view(&ast_view)
 }
 
 impl<'a> From<&Box<Expr<'a>>> for Node<'a> {

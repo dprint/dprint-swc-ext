@@ -47,11 +47,10 @@ export function generate(analysisResult: AnalysisResult) {
     }
 
     function writePublicFunction() {
-        writer.writeLine("pub fn with_ast_view(swc_module: swc_ecma_ast::Module, with_view: impl Fn(&Module)) -> swc_ecma_ast::Module {");
+        writer.writeLine("pub fn with_ast_view<T>(swc_module: &swc_ecma_ast::Module, with_view: impl Fn(&Module) -> T) -> T {");
         writer.indent(() => {
-            writer.writeLine(`let ast_view = ${getViewForFunctionName("Module")}(&swc_module);`);
-            writer.writeLine(`with_view(&ast_view);`);
-            writer.writeLine(`swc_module`);
+            writer.writeLine(`let ast_view = ${getViewForFunctionName("Module")}(swc_module);`);
+            writer.writeLine(`with_view(&ast_view)`);
         }).write("}").newLine().newLine();
     }
 

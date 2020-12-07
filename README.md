@@ -28,6 +28,7 @@ Node/enum node specific helpers:
 
 - `.children_with_tokens() -> Vec<NodeOrToken<'a>>` - Gets the children with the tokens found between the children
 - `.tokens() -> Vec<Token<'a>>` - All the descendant tokens within the span of the node.
+- Methods for getting comments
 
 ## Example
 
@@ -44,8 +45,7 @@ Code can be written like so:
 let file_text: String = ...;
 let module: swc_ecma_ast::Module = ...;
 
-// need to provide the module so the function owns it, then you can get it back after
-let module = dprint_swc_ecma_ast_view::with_ast_view(module, |ast_view| {
+dprint_swc_ecma_ast_view::with_ast_view(&module, |ast_view| {
   let class = &ast_view.body[0].to::<ClassDecl>().class;
   println!("{:?}", class.text(file_text));
 

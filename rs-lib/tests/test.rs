@@ -15,7 +15,7 @@ use swc_ecma_parser::{
 fn test_creating_reference() {
   let file_text = "class MyClass { prop: string; myMethod() {}}";
   let module = get_swc_ast(&PathBuf::from("file.ts"), file_text);
-  dprint_swc_ecma_ast_view::with_ast_view(module, |ast_view| {
+  dprint_swc_ecma_ast_view::with_ast_view(&module, |ast_view| {
     let class = &ast_view.body[0].to::<ClassDecl>().class;
     println!("{:?}", class.text(file_text));
 

@@ -1,3 +1,4 @@
+#[allow(invalid_value)]
 mod generated;
 mod types;
 
