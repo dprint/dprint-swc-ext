@@ -3,6 +3,11 @@ use crate::tokens::*;
 use swc_common::Spanned;
 use swc_ecmascript::parser::token::TokenAndSpan;
 
+pub enum NodeOrToken<'a> {
+  Node(Node<'a>),
+  Token(&'a TokenAndSpan),
+}
+
 pub trait NodeTrait<'a>: Spanned {
   fn parent(&self) -> Option<Node<'a>>;
   fn children(&self) -> Vec<Node<'a>>;
@@ -69,9 +74,56 @@ pub trait NodeTrait<'a>: Spanned {
     token_container.get_tokens_in_range(span.lo, span.hi)
   }
 
-  fn tokens_fast(&self, token_container: &'a TokenContainer<'a>) -> &'a [TokenAndSpan] {
+  fn tokens_fast(&self, token_container: &TokenContainer<'a>) -> &'a [TokenAndSpan] {
     let span = self.span();
     token_container.get_tokens_in_range(span.lo, span.hi)
+  }
+
+  fn children_with_tokens(&self) -> Vec<NodeOrToken<'a>> {
+    self.children_with_tokens_fast(self.token_container())
+  }
+
+  fn children_with_tokens_fast(
+    &self,
+    token_container: &TokenContainer<'a>,
+  ) -> Vec<NodeOrToken<'a>> {
+    let children = self.children();
+    let tokens = self.tokens_fast(token_container);
+    let mut result = Vec::new();
+    let mut tokens_index = 0;
+
+    for child in children {
+      let child_span = child.span();
+
+      // get the tokens before the current child
+      for token in &tokens[tokens_index..] {
+        if token.span.lo() < child_span.lo {
+          result.push(NodeOrToken::Token(token));
+          tokens_index += 1;
+        } else {
+          break;
+        }
+      }
+
+      // push current child
+      result.push(NodeOrToken::Node(child));
+
+      // skip past all the tokens within the token
+      for token in &tokens[tokens_index..] {
+        if token.span.hi() <= child_span.hi {
+          tokens_index += 1;
+        } else {
+          break;
+        }
+      }
+    }
+
+    // get the tokens after the children
+    for token in &tokens[tokens_index..] {
+      result.push(NodeOrToken::Token(token));
+    }
+
+    result
   }
 
   fn token_container(&self) -> &'a TokenContainer<'a> {

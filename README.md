@@ -21,6 +21,10 @@ All:
 - `.text_fast(file_text: &str) -> &str` -- Doesn't require going up the tree to the root node
 - `.tokens() -> &[TokenAndSpan]` - All the descendant tokens within the span of the node.
 - `.tokens_fast(&token_container) -> &[TokenAndSpan]`
+- `.children_with_tokens() -> Vec<NodeOrToken<'a>>` - Gets the children with the tokens found between the children
+- `.children_with_tokens_fast(&token_container) -> Vec<NodeOrToken<'a>>`
+- `.module() -> &'a Module` - Gets the root node.
+- `.token_container() -> &'a TokenContainer` - Gets the token container that was passed into the view.
 
 Node/enum node specific helpers:
 
@@ -29,7 +33,6 @@ Node/enum node specific helpers:
 
 ## TODO
 
-- `.children_with_tokens() -> Vec<NodeOrToken<'a>>` - Gets the children with the tokens found between the children
 - Right now this only works if analyzing one file at a time. It would be good to improve the API to accept a large
   collection of source files (should be easy).
 

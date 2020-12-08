@@ -1,6 +1,7 @@
 extern crate dprint_swc_ecma_ast_view;
 use dprint_swc_ecma_ast_view::{
-  CastableNode, ClassDecl, Decl, ModuleItem, Node, NodeTrait, SourceFileInfo, TokenContainer,
+  CastableNode, ClassDecl, Decl, ModuleItem, Node, NodeOrToken, NodeTrait, SourceFileInfo,
+  TokenContainer,
 };
 use std::path::{Path, PathBuf};
 use swc_common::{
@@ -42,6 +43,12 @@ fn test_creating_reference() {
       }
       for token in child.tokens() {
         println!("Token: {:?}", token);
+      }
+      for token_or_child in child.children_with_tokens() {
+        match token_or_child {
+          NodeOrToken::Token(token) => println!("TokenOrChild: {:?}", token),
+          NodeOrToken::Node(node) => println!("TokenOrChild: {:?}", node.text()),
+        }
       }
     }
   });
