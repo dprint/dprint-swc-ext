@@ -1,40 +1,50 @@
 extern crate dprint_swc_ecma_ast_view;
-use dprint_swc_ecma_ast_view::{CastableNode, ClassDecl, Decl, ModuleItem, NodeTrait, Stmt};
+use dprint_swc_ecma_ast_view::{
+  CastableNode, ClassDecl, Decl, ModuleItem, NodeTrait, SourceFileInfo,
+};
 use std::path::{Path, PathBuf};
 use swc_common::{
   comments::{Comment, SingleThreadedComments, SingleThreadedCommentsMap},
   errors::{DiagnosticBuilder, Emitter, Handler},
   BytePos, FileName, SourceFile, Spanned,
 };
-use swc_ecma_ast::Module;
-use swc_ecma_parser::{
+use swc_ecmascript::ast::Module;
+use swc_ecmascript::parser::{
   lexer::Lexer, token::TokenAndSpan, Capturing, JscTarget, Parser, StringInput, Syntax,
 };
 
 #[test]
 fn test_creating_reference() {
   let file_text = "class MyClass { prop: string; myMethod() {}}";
-  let module = get_swc_ast(&PathBuf::from("file.ts"), file_text);
-  dprint_swc_ecma_ast_view::with_ast_view(&module, |ast_view| {
+  let (module, tokens) = get_swc_ast(&PathBuf::from("file.ts"), file_text);
+  let info = SourceFileInfo {
+    module: &module,
+    file_text: Some(file_text),
+    tokens: Some(&tokens),
+  };
+  dprint_swc_ecma_ast_view::with_ast_view(info, |ast_view| {
+    println!("Test {:?}", ast_view.text());
+    println!("Test 2 {:?}", ast_view.body[0].text());
+    println!("Test 3 {:?}", ast_view.body[0].children()[0].text());
     let class = &ast_view.body[0].to::<ClassDecl>().class;
-    println!("{:?}", class.text(file_text));
+    println!("{:?}", class.text());
 
     for child in class.children() {
       println!("---------");
-      println!("Child: {:?}", child.text(file_text));
-      println!("Parent: {:?}", child.parent().unwrap().text(file_text));
+      println!("Child: {:?}", child.text());
+      println!("Parent: {:?}", child.parent().unwrap().text());
       if let Some(prev_sibling) = child.prev_sibling() {
-        println!("Previous sibling: {:?}", prev_sibling.text(file_text));
+        println!("Previous sibling: {:?}", prev_sibling.text());
       }
       if let Some(next_sibling) = child.next_sibling() {
-        println!("Next sibling: {:?}", next_sibling.text(file_text));
+        println!("Next sibling: {:?}", next_sibling.text());
       }
     }
   });
   println!("SUCCESS");
 }
 
-fn get_swc_ast(file_path: &Path, file_text: &str) -> Module {
+fn get_swc_ast(file_path: &Path, file_text: &str) -> (Module, Vec<TokenAndSpan>) {
   // lifted from dprint-plugin-typescript
   let handler = Handler::with_emitter(false, false, Box::new(EmptyEmitter {}));
   let file_bytes = file_text.as_bytes();
@@ -47,7 +57,7 @@ fn get_swc_ast(file_path: &Path, file_text: &str) -> Module {
   );
 
   let comments: SingleThreadedComments = Default::default();
-  let (module, tokens) = {
+  return {
     let mut ts_config: swc_ecma_parser::TsConfig = Default::default();
     ts_config.tsx = should_parse_as_jsx(file_path);
     ts_config.dynamic_import = true;
@@ -75,8 +85,6 @@ fn get_swc_ast(file_path: &Path, file_text: &str) -> Module {
     }
   }
   .unwrap();
-
-  return module;
 
   fn should_parse_as_jsx(file_path: &Path) -> bool {
     if let Some(extension) = get_lowercase_extension(file_path) {

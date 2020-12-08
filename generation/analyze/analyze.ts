@@ -111,10 +111,17 @@ export function analyze(): AnalysisResult {
         switch (type.kind) {
             case "resolved_path":
                 const itemSummary = file.paths[type.inner.id];
+                const path = getPath(itemSummary);
+
+                // we don't care about Boxed types because the result will use an arena
+                if (path[0] === "Box") {
+                    return getTypeDefinition(type.inner.args.angle_bracketed.args[0].type);
+                }
+
                 return {
                     kind: "reference",
                     name: type.inner.name,
-                    path: getPath(itemSummary),
+                    path,
                     generic_args: getGenericArgs(type),
                 };
             case "primitive":
@@ -161,50 +168,6 @@ export function analyze(): AnalysisResult {
                 }
                 return true;
             }
-        }
-    }
-}
-
-export function getNamesUsedInBox(analysisResult: AnalysisResult) {
-    const names = new Set<string>();
-    for (const type of getTypes()) {
-        for (const name of analyzeType(type)) {
-            names.add(name);
-        }
-    }
-    return Array.from(names).sort(); // determinism in output
-
-    function* getTypes() {
-        for (const struct of analysisResult.structs) {
-            for (const field of struct.fields) {
-                yield field.type;
-            }
-        }
-        for (const enumDef of analysisResult.enums) {
-            for (const variant of enumDef.variants) {
-                if (variant.tuple_args != null) {
-                    yield* variant.tuple_args;
-                }
-            }
-        }
-    }
-
-    function analyzeType(type: TypeDefinition): string[] {
-        if (type.kind === "primitive") {
-            return [];
-        }
-
-        if (type.name === "Option" || type.name === "Vec") {
-            return analyzeType(type.generic_args[0]);
-        } else if (type.name === "Box") {
-            const genericType = type.generic_args[0];
-            const types = analyzeType(genericType);
-            if (genericType.kind !== "primitive") {
-                types.push(genericType.name);
-            }
-            return types;
-        } else {
-            return [];
         }
     }
 }

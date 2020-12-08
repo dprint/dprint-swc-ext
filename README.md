@@ -17,7 +17,8 @@ All:
 - `.child_index() -> usize`
 - `.prev_sibling() -> Option<Node<'a>>`
 - `.next_sibling() -> Option<Node<'a>>`
-- `.text(file_text: &str) -> &str` -- Might consider removing the need for an argument here.
+- `.text() -> &str`
+- `.text_fast(file_text: &str) -> &str` -- Doesn't require traversing the ancestors
 
 Node/enum node specific helpers:
 
@@ -44,8 +45,15 @@ Code can be written like so:
 ```rust
 let file_text: String = ...;
 let module: swc_ecma_ast::Module = ...;
+let source_file_info = SourceFileInfo {
+  module: &module,
+  // optionally provide the file text for using the `.text()` method
+  file_text: Some(&file_text),
+  // optionally provide the tokens for certain methods... not yet implemented
+  tokens: None,
+}
 
-dprint_swc_ecma_ast_view::with_ast_view(&module, |ast_view| {
+dprint_swc_ecma_ast_view::with_ast_view(source_file_info, |ast_view| {
   let class = &ast_view.body[0].to::<ClassDecl>().class;
   println!("{:?}", class.text(file_text));
 

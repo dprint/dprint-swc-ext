@@ -1,67 +1,17 @@
 // This code is code generated.
 // Run `deno run -A generation/main.ts` from the root directory to regenerate it.
-use std::mem::{self, MaybeUninit};
+use std::cell::UnsafeCell;
+use bumpalo::Bump;
 use swc_common::{Span, Spanned};
-use swc_ecma_ast::{VarDeclKind, TsTypeOperatorOp, TsKeywordTypeKind, BinaryOp, AssignOp, UpdateOp, Accessibility, MethodKind, UnaryOp, TruePlusMinus};
+use swc_ecmascript::ast::{self as swc_ast, VarDeclKind, TsTypeOperatorOp, TsKeywordTypeKind, BinaryOp, AssignOp, UpdateOp, Accessibility, MethodKind, UnaryOp, TruePlusMinus};
 use crate::types::*;
 
-pub fn with_ast_view<T>(swc_module: &swc_ecma_ast::Module, with_view: impl Fn(&Module) -> T) -> T {
-  let ast_view = get_view_for_module(swc_module);
-  with_view(&ast_view)
-}
-
-impl<'a> From<&Box<Expr<'a>>> for Node<'a> {
-  fn from(boxed_node: &Box<Expr<'a>>) -> Node<'a> {
-    (&**boxed_node).into()
-  }
-}
-
-impl<'a> From<&Box<JSXElement<'a>>> for Node<'a> {
-  fn from(boxed_node: &Box<JSXElement<'a>>) -> Node<'a> {
-    (&**boxed_node).into()
-  }
-}
-
-impl<'a> From<&Box<JSXMemberExpr<'a>>> for Node<'a> {
-  fn from(boxed_node: &Box<JSXMemberExpr<'a>>) -> Node<'a> {
-    (&**boxed_node).into()
-  }
-}
-
-impl<'a> From<&Box<Pat<'a>>> for Node<'a> {
-  fn from(boxed_node: &Box<Pat<'a>>) -> Node<'a> {
-    (&**boxed_node).into()
-  }
-}
-
-impl<'a> From<&Box<Prop<'a>>> for Node<'a> {
-  fn from(boxed_node: &Box<Prop<'a>>) -> Node<'a> {
-    (&**boxed_node).into()
-  }
-}
-
-impl<'a> From<&Box<Stmt<'a>>> for Node<'a> {
-  fn from(boxed_node: &Box<Stmt<'a>>) -> Node<'a> {
-    (&**boxed_node).into()
-  }
-}
-
-impl<'a> From<&Box<TsNamespaceBody<'a>>> for Node<'a> {
-  fn from(boxed_node: &Box<TsNamespaceBody<'a>>) -> Node<'a> {
-    (&**boxed_node).into()
-  }
-}
-
-impl<'a> From<&Box<TsQualifiedName<'a>>> for Node<'a> {
-  fn from(boxed_node: &Box<TsQualifiedName<'a>>) -> Node<'a> {
-    (&**boxed_node).into()
-  }
-}
-
-impl<'a> From<&Box<TsType<'a>>> for Node<'a> {
-  fn from(boxed_node: &Box<TsType<'a>>) -> Node<'a> {
-    (&**boxed_node).into()
-  }
+pub fn with_ast_view<'a, T>(source_file_info: SourceFileInfo, with_view: impl FnOnce(&'a Module<'a>) -> T) -> T {
+  let bump = Bump::new();
+  let bump_ref = unsafe { std::mem::transmute::<&Bump, &'a Bump>(&bump) };
+  let info_ref = unsafe { std::mem::transmute::<&SourceFileInfo, &'a SourceFileInfo<'a>>(&source_file_info) };
+  let ast_view = get_view_for_module(info_ref, bump_ref);
+  with_view(ast_view)
 }
 
 #[derive(Clone)]
@@ -402,6 +352,7 @@ impl<'a> Spanned for Node<'a> {
     }
   }
 }
+
 impl<'a> NodeTrait<'a> for Node<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     match self {
@@ -730,13 +681,177 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::MethodProp(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      Node::SwitchCase(node) => node.into_node(),
+      Node::ThrowStmt(node) => node.into_node(),
+      Node::JSXClosingFragment(node) => node.into_node(),
+      Node::BigInt(node) => node.into_node(),
+      Node::ExportDefaultSpecifier(node) => node.into_node(),
+      Node::TsTypeParam(node) => node.into_node(),
+      Node::WithStmt(node) => node.into_node(),
+      Node::Regex(node) => node.into_node(),
+      Node::TsMethodSignature(node) => node.into_node(),
+      Node::UpdateExpr(node) => node.into_node(),
+      Node::SetterProp(node) => node.into_node(),
+      Node::TaggedTpl(node) => node.into_node(),
+      Node::ExportAll(node) => node.into_node(),
+      Node::TsModuleBlock(node) => node.into_node(),
+      Node::SwitchStmt(node) => node.into_node(),
+      Node::TsEnumMember(node) => node.into_node(),
+      Node::TsIndexedAccessType(node) => node.into_node(),
+      Node::TsRestType(node) => node.into_node(),
+      Node::ExprStmt(node) => node.into_node(),
+      Node::TsOptionalType(node) => node.into_node(),
+      Node::Tpl(node) => node.into_node(),
+      Node::Invalid(node) => node.into_node(),
+      Node::ComputedPropName(node) => node.into_node(),
+      Node::TsFnType(node) => node.into_node(),
+      Node::BlockStmt(node) => node.into_node(),
+      Node::TsTypeAliasDecl(node) => node.into_node(),
+      Node::MemberExpr(node) => node.into_node(),
+      Node::Function(node) => node.into_node(),
+      Node::ImportDecl(node) => node.into_node(),
+      Node::TsTypePredicate(node) => node.into_node(),
+      Node::YieldExpr(node) => node.into_node(),
+      Node::KeyValueProp(node) => node.into_node(),
+      Node::Param(node) => node.into_node(),
+      Node::JSXFragment(node) => node.into_node(),
+      Node::ImportDefaultSpecifier(node) => node.into_node(),
+      Node::Number(node) => node.into_node(),
+      Node::JSXAttr(node) => node.into_node(),
+      Node::ParenExpr(node) => node.into_node(),
+      Node::Super(node) => node.into_node(),
+      Node::TsConstructorType(node) => node.into_node(),
+      Node::Class(node) => node.into_node(),
+      Node::RestPat(node) => node.into_node(),
+      Node::TsNamespaceExportDecl(node) => node.into_node(),
+      Node::JSXOpeningFragment(node) => node.into_node(),
+      Node::NewExpr(node) => node.into_node(),
+      Node::FnExpr(node) => node.into_node(),
+      Node::IfStmt(node) => node.into_node(),
+      Node::TsParenthesizedType(node) => node.into_node(),
+      Node::AssignPatProp(node) => node.into_node(),
+      Node::TsImportType(node) => node.into_node(),
+      Node::Bool(node) => node.into_node(),
+      Node::TsImportEqualsDecl(node) => node.into_node(),
+      Node::AssignProp(node) => node.into_node(),
+      Node::TsInterfaceDecl(node) => node.into_node(),
+      Node::JSXEmptyExpr(node) => node.into_node(),
+      Node::TsQualifiedName(node) => node.into_node(),
+      Node::ExportDecl(node) => node.into_node(),
+      Node::CatchClause(node) => node.into_node(),
+      Node::LabeledStmt(node) => node.into_node(),
+      Node::ContinueStmt(node) => node.into_node(),
+      Node::TsConstructSignatureDecl(node) => node.into_node(),
+      Node::TsEnumDecl(node) => node.into_node(),
+      Node::OptChainExpr(node) => node.into_node(),
+      Node::TsNamespaceDecl(node) => node.into_node(),
+      Node::SeqExpr(node) => node.into_node(),
+      Node::TsExternalModuleRef(node) => node.into_node(),
+      Node::TsTypeParamInstantiation(node) => node.into_node(),
+      Node::ReturnStmt(node) => node.into_node(),
+      Node::TsTplLitType(node) => node.into_node(),
+      Node::ExportDefaultExpr(node) => node.into_node(),
+      Node::TsCallSignatureDecl(node) => node.into_node(),
+      Node::AwaitExpr(node) => node.into_node(),
+      Node::ClassMethod(node) => node.into_node(),
+      Node::TsParamProp(node) => node.into_node(),
+      Node::ClassProp(node) => node.into_node(),
+      Node::TsTypeAnn(node) => node.into_node(),
+      Node::ForStmt(node) => node.into_node(),
+      Node::ObjectPat(node) => node.into_node(),
+      Node::TsTypeQuery(node) => node.into_node(),
+      Node::ThisExpr(node) => node.into_node(),
+      Node::DebuggerStmt(node) => node.into_node(),
+      Node::TsTypeParamDecl(node) => node.into_node(),
+      Node::TsTypeAssertion(node) => node.into_node(),
+      Node::TplElement(node) => node.into_node(),
+      Node::TsKeywordType(node) => node.into_node(),
+      Node::JSXSpreadChild(node) => node.into_node(),
+      Node::TsIntersectionType(node) => node.into_node(),
+      Node::MetaPropExpr(node) => node.into_node(),
+      Node::ExprOrSpread(node) => node.into_node(),
+      Node::TsArrayType(node) => node.into_node(),
+      Node::TsTypeRef(node) => node.into_node(),
+      Node::TsThisType(node) => node.into_node(),
+      Node::TryStmt(node) => node.into_node(),
+      Node::CallExpr(node) => node.into_node(),
+      Node::TsMappedType(node) => node.into_node(),
+      Node::JSXExprContainer(node) => node.into_node(),
+      Node::PrivateProp(node) => node.into_node(),
+      Node::TsExportAssignment(node) => node.into_node(),
+      Node::TsInterfaceBody(node) => node.into_node(),
+      Node::TsTupleElement(node) => node.into_node(),
+      Node::VarDeclarator(node) => node.into_node(),
+      Node::JSXMemberExpr(node) => node.into_node(),
+      Node::TsConstAssertion(node) => node.into_node(),
+      Node::ExportNamespaceSpecifier(node) => node.into_node(),
+      Node::ObjectLit(node) => node.into_node(),
+      Node::Module(node) => node.into_node(),
+      Node::TsIndexSignature(node) => node.into_node(),
+      Node::TsTypeCastExpr(node) => node.into_node(),
+      Node::TsTupleType(node) => node.into_node(),
+      Node::Null(node) => node.into_node(),
+      Node::TsTypeOperator(node) => node.into_node(),
+      Node::JSXClosingElement(node) => node.into_node(),
+      Node::BinExpr(node) => node.into_node(),
+      Node::UnaryExpr(node) => node.into_node(),
+      Node::TsPropertySignature(node) => node.into_node(),
+      Node::Constructor(node) => node.into_node(),
+      Node::FnDecl(node) => node.into_node(),
+      Node::TsNonNullExpr(node) => node.into_node(),
+      Node::ClassExpr(node) => node.into_node(),
+      Node::ForInStmt(node) => node.into_node(),
+      Node::EmptyStmt(node) => node.into_node(),
+      Node::WhileStmt(node) => node.into_node(),
+      Node::Str(node) => node.into_node(),
+      Node::TsExprWithTypeArgs(node) => node.into_node(),
+      Node::AssignPat(node) => node.into_node(),
+      Node::ExportNamedSpecifier(node) => node.into_node(),
+      Node::TsConditionalType(node) => node.into_node(),
+      Node::TsTypeLit(node) => node.into_node(),
+      Node::BreakStmt(node) => node.into_node(),
+      Node::ImportStarAsSpecifier(node) => node.into_node(),
+      Node::TsInferType(node) => node.into_node(),
+      Node::PrivateMethod(node) => node.into_node(),
+      Node::ForOfStmt(node) => node.into_node(),
+      Node::TsUnionType(node) => node.into_node(),
+      Node::TsModuleDecl(node) => node.into_node(),
+      Node::GetterProp(node) => node.into_node(),
+      Node::CondExpr(node) => node.into_node(),
+      Node::ImportNamedSpecifier(node) => node.into_node(),
+      Node::NamedExport(node) => node.into_node(),
+      Node::JSXElement(node) => node.into_node(),
+      Node::ClassDecl(node) => node.into_node(),
+      Node::ArrayPat(node) => node.into_node(),
+      Node::DoWhileStmt(node) => node.into_node(),
+      Node::JSXText(node) => node.into_node(),
+      Node::VarDecl(node) => node.into_node(),
+      Node::PrivateName(node) => node.into_node(),
+      Node::JSXNamespacedName(node) => node.into_node(),
+      Node::JSXOpeningElement(node) => node.into_node(),
+      Node::SpreadElement(node) => node.into_node(),
+      Node::ExportDefaultDecl(node) => node.into_node(),
+      Node::ArrowExpr(node) => node.into_node(),
+      Node::TsAsExpr(node) => node.into_node(),
+      Node::KeyValuePatProp(node) => node.into_node(),
+      Node::TsLitType(node) => node.into_node(),
+      Node::AssignExpr(node) => node.into_node(),
+      Node::ArrayLit(node) => node.into_node(),
+      Node::Decorator(node) => node.into_node(),
+      Node::Ident(node) => node.into_node(),
+      Node::MethodProp(node) => node.into_node(),
+    }
+  }
 }
 
 pub enum JSXAttrValue<'a> {
   Lit(Lit<'a>),
-  JSXExprContainer(JSXExprContainer<'a>),
-  JSXElement(Box<JSXElement<'a>>),
-  JSXFragment(JSXFragment<'a>),
+  JSXExprContainer(&'a JSXExprContainer<'a>),
+  JSXElement(&'a JSXElement<'a>),
+  JSXFragment(&'a JSXFragment<'a>),
 }
 
 impl<'a> JSXAttrValue<'a> {
@@ -778,48 +893,57 @@ impl<'a> NodeTrait<'a> for JSXAttrValue<'a> {
       JSXAttrValue::JSXFragment(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      JSXAttrValue::Lit(node) => node.into_node(),
+      JSXAttrValue::JSXExprContainer(node) => node.into_node(),
+      JSXAttrValue::JSXElement(node) => node.into_node(),
+      JSXAttrValue::JSXFragment(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&JSXAttrValue<'a>> for Node<'a> {
   fn from(node: &JSXAttrValue<'a>) -> Node<'a> {
     match node {
       JSXAttrValue::Lit(node) => node.into(),
-      JSXAttrValue::JSXExprContainer(node) => node.into(),
-      JSXAttrValue::JSXElement(node) => node.into(),
-      JSXAttrValue::JSXFragment(node) => node.into(),
+      JSXAttrValue::JSXExprContainer(node) => (*node).into(),
+      JSXAttrValue::JSXElement(node) => (*node).into(),
+      JSXAttrValue::JSXFragment(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_jsxattr_value<'a>(ref_node: &'a swc_ecma_ast::JSXAttrValue) -> JSXAttrValue<'a> {
+fn get_view_for_jsxattr_value<'a>(ref_node: &'a swc_ast::JSXAttrValue, bump: &'a Bump) -> JSXAttrValue<'a> {
   match ref_node {
-    swc_ecma_ast::JSXAttrValue::Lit(value) => JSXAttrValue::Lit(get_view_for_lit(value)),
-    swc_ecma_ast::JSXAttrValue::JSXExprContainer(value) => JSXAttrValue::JSXExprContainer(get_view_for_jsxexpr_container(value)),
-    swc_ecma_ast::JSXAttrValue::JSXElement(value) => JSXAttrValue::JSXElement(Box::new(get_view_for_jsxelement(value))),
-    swc_ecma_ast::JSXAttrValue::JSXFragment(value) => JSXAttrValue::JSXFragment(get_view_for_jsxfragment(value)),
+    swc_ast::JSXAttrValue::Lit(value) => JSXAttrValue::Lit(get_view_for_lit(value, bump)),
+    swc_ast::JSXAttrValue::JSXExprContainer(value) => JSXAttrValue::JSXExprContainer(get_view_for_jsxexpr_container(value, bump)),
+    swc_ast::JSXAttrValue::JSXElement(value) => JSXAttrValue::JSXElement(get_view_for_jsxelement(value, bump)),
+    swc_ast::JSXAttrValue::JSXFragment(value) => JSXAttrValue::JSXFragment(get_view_for_jsxfragment(value, bump)),
   }
 }
 
-fn set_parent_for_jsxattr_value<'a>(node: &mut JSXAttrValue<'a>, parent: Node<'a>) {
+fn set_parent_for_jsxattr_value<'a>(node: &JSXAttrValue<'a>, parent: Node<'a>) {
   match node {
     JSXAttrValue::Lit(node) => {
       set_parent_for_lit(node, parent);
     },
     JSXAttrValue::JSXExprContainer(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     JSXAttrValue::JSXElement(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     JSXAttrValue::JSXFragment(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
 
 pub enum PropOrSpread<'a> {
   /// Spread properties, e.g., `{a: 1, ...obj, b: 2}`.
-  Spread(SpreadElement<'a>),
-  Prop(Box<Prop<'a>>),
+  Spread(&'a SpreadElement<'a>),
+  Prop(Prop<'a>),
 }
 
 impl<'a> PropOrSpread<'a> {
@@ -855,27 +979,34 @@ impl<'a> NodeTrait<'a> for PropOrSpread<'a> {
       PropOrSpread::Prop(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      PropOrSpread::Spread(node) => node.into_node(),
+      PropOrSpread::Prop(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&PropOrSpread<'a>> for Node<'a> {
   fn from(node: &PropOrSpread<'a>) -> Node<'a> {
     match node {
-      PropOrSpread::Spread(node) => node.into(),
+      PropOrSpread::Spread(node) => (*node).into(),
       PropOrSpread::Prop(node) => node.into(),
     }
   }
 }
 
-fn get_view_for_prop_or_spread<'a>(ref_node: &'a swc_ecma_ast::PropOrSpread) -> PropOrSpread<'a> {
+fn get_view_for_prop_or_spread<'a>(ref_node: &'a swc_ast::PropOrSpread, bump: &'a Bump) -> PropOrSpread<'a> {
   match ref_node {
-    swc_ecma_ast::PropOrSpread::Spread(value) => PropOrSpread::Spread(get_view_for_spread_element(value)),
-    swc_ecma_ast::PropOrSpread::Prop(value) => PropOrSpread::Prop(Box::new(get_view_for_prop(value))),
+    swc_ast::PropOrSpread::Spread(value) => PropOrSpread::Spread(get_view_for_spread_element(value, bump)),
+    swc_ast::PropOrSpread::Prop(value) => PropOrSpread::Prop(get_view_for_prop(value, bump)),
   }
 }
 
-fn set_parent_for_prop_or_spread<'a>(node: &mut PropOrSpread<'a>, parent: Node<'a>) {
+fn set_parent_for_prop_or_spread<'a>(node: &PropOrSpread<'a>, parent: Node<'a>) {
   match node {
     PropOrSpread::Spread(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     PropOrSpread::Prop(node) => {
       set_parent_for_prop(node, parent);
@@ -884,8 +1015,8 @@ fn set_parent_for_prop_or_spread<'a>(node: &mut PropOrSpread<'a>, parent: Node<'
 }
 
 pub enum VarDeclOrExpr<'a> {
-  VarDecl(VarDecl<'a>),
-  Expr(Box<Expr<'a>>),
+  VarDecl(&'a VarDecl<'a>),
+  Expr(Expr<'a>),
 }
 
 impl<'a> VarDeclOrExpr<'a> {
@@ -921,27 +1052,34 @@ impl<'a> NodeTrait<'a> for VarDeclOrExpr<'a> {
       VarDeclOrExpr::Expr(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      VarDeclOrExpr::VarDecl(node) => node.into_node(),
+      VarDeclOrExpr::Expr(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&VarDeclOrExpr<'a>> for Node<'a> {
   fn from(node: &VarDeclOrExpr<'a>) -> Node<'a> {
     match node {
-      VarDeclOrExpr::VarDecl(node) => node.into(),
+      VarDeclOrExpr::VarDecl(node) => (*node).into(),
       VarDeclOrExpr::Expr(node) => node.into(),
     }
   }
 }
 
-fn get_view_for_var_decl_or_expr<'a>(ref_node: &'a swc_ecma_ast::VarDeclOrExpr) -> VarDeclOrExpr<'a> {
+fn get_view_for_var_decl_or_expr<'a>(ref_node: &'a swc_ast::VarDeclOrExpr, bump: &'a Bump) -> VarDeclOrExpr<'a> {
   match ref_node {
-    swc_ecma_ast::VarDeclOrExpr::VarDecl(value) => VarDeclOrExpr::VarDecl(get_view_for_var_decl(value)),
-    swc_ecma_ast::VarDeclOrExpr::Expr(value) => VarDeclOrExpr::Expr(Box::new(get_view_for_expr(value))),
+    swc_ast::VarDeclOrExpr::VarDecl(value) => VarDeclOrExpr::VarDecl(get_view_for_var_decl(value, bump)),
+    swc_ast::VarDeclOrExpr::Expr(value) => VarDeclOrExpr::Expr(get_view_for_expr(value, bump)),
   }
 }
 
-fn set_parent_for_var_decl_or_expr<'a>(node: &mut VarDeclOrExpr<'a>, parent: Node<'a>) {
+fn set_parent_for_var_decl_or_expr<'a>(node: &VarDeclOrExpr<'a>, parent: Node<'a>) {
   match node {
     VarDeclOrExpr::VarDecl(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     VarDeclOrExpr::Expr(node) => {
       set_parent_for_expr(node, parent);
@@ -950,8 +1088,8 @@ fn set_parent_for_var_decl_or_expr<'a>(node: &mut VarDeclOrExpr<'a>, parent: Nod
 }
 
 pub enum TsThisTypeOrIdent<'a> {
-  TsThisType(TsThisType<'a>),
-  Ident(Ident<'a>),
+  TsThisType(&'a TsThisType<'a>),
+  Ident(&'a Ident<'a>),
 }
 
 impl<'a> TsThisTypeOrIdent<'a> {
@@ -987,44 +1125,51 @@ impl<'a> NodeTrait<'a> for TsThisTypeOrIdent<'a> {
       TsThisTypeOrIdent::Ident(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      TsThisTypeOrIdent::TsThisType(node) => node.into_node(),
+      TsThisTypeOrIdent::Ident(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&TsThisTypeOrIdent<'a>> for Node<'a> {
   fn from(node: &TsThisTypeOrIdent<'a>) -> Node<'a> {
     match node {
-      TsThisTypeOrIdent::TsThisType(node) => node.into(),
-      TsThisTypeOrIdent::Ident(node) => node.into(),
+      TsThisTypeOrIdent::TsThisType(node) => (*node).into(),
+      TsThisTypeOrIdent::Ident(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_ts_this_type_or_ident<'a>(ref_node: &'a swc_ecma_ast::TsThisTypeOrIdent) -> TsThisTypeOrIdent<'a> {
+fn get_view_for_ts_this_type_or_ident<'a>(ref_node: &'a swc_ast::TsThisTypeOrIdent, bump: &'a Bump) -> TsThisTypeOrIdent<'a> {
   match ref_node {
-    swc_ecma_ast::TsThisTypeOrIdent::TsThisType(value) => TsThisTypeOrIdent::TsThisType(get_view_for_ts_this_type(value)),
-    swc_ecma_ast::TsThisTypeOrIdent::Ident(value) => TsThisTypeOrIdent::Ident(get_view_for_ident(value)),
+    swc_ast::TsThisTypeOrIdent::TsThisType(value) => TsThisTypeOrIdent::TsThisType(get_view_for_ts_this_type(value, bump)),
+    swc_ast::TsThisTypeOrIdent::Ident(value) => TsThisTypeOrIdent::Ident(get_view_for_ident(value, bump)),
   }
 }
 
-fn set_parent_for_ts_this_type_or_ident<'a>(node: &mut TsThisTypeOrIdent<'a>, parent: Node<'a>) {
+fn set_parent_for_ts_this_type_or_ident<'a>(node: &TsThisTypeOrIdent<'a>, parent: Node<'a>) {
   match node {
     TsThisTypeOrIdent::TsThisType(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsThisTypeOrIdent::Ident(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
 
 pub enum Prop<'a> {
   /// `a` in `{ a, }`
-  Shorthand(Ident<'a>),
+  Shorthand(&'a Ident<'a>),
   /// `key: value` in `{ key: value, }`
-  KeyValue(KeyValueProp<'a>),
+  KeyValue(&'a KeyValueProp<'a>),
   /// This is **invalid** for object literal.
-  Assign(AssignProp<'a>),
-  Getter(GetterProp<'a>),
-  Setter(SetterProp<'a>),
-  Method(MethodProp<'a>),
+  Assign(&'a AssignProp<'a>),
+  Getter(&'a GetterProp<'a>),
+  Setter(&'a SetterProp<'a>),
+  Method(&'a MethodProp<'a>),
 }
 
 impl<'a> Prop<'a> {
@@ -1072,57 +1217,68 @@ impl<'a> NodeTrait<'a> for Prop<'a> {
       Prop::Method(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      Prop::Shorthand(node) => node.into_node(),
+      Prop::KeyValue(node) => node.into_node(),
+      Prop::Assign(node) => node.into_node(),
+      Prop::Getter(node) => node.into_node(),
+      Prop::Setter(node) => node.into_node(),
+      Prop::Method(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&Prop<'a>> for Node<'a> {
   fn from(node: &Prop<'a>) -> Node<'a> {
     match node {
-      Prop::Shorthand(node) => node.into(),
-      Prop::KeyValue(node) => node.into(),
-      Prop::Assign(node) => node.into(),
-      Prop::Getter(node) => node.into(),
-      Prop::Setter(node) => node.into(),
-      Prop::Method(node) => node.into(),
+      Prop::Shorthand(node) => (*node).into(),
+      Prop::KeyValue(node) => (*node).into(),
+      Prop::Assign(node) => (*node).into(),
+      Prop::Getter(node) => (*node).into(),
+      Prop::Setter(node) => (*node).into(),
+      Prop::Method(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_prop<'a>(ref_node: &'a swc_ecma_ast::Prop) -> Prop<'a> {
+fn get_view_for_prop<'a>(ref_node: &'a swc_ast::Prop, bump: &'a Bump) -> Prop<'a> {
   match ref_node {
-    swc_ecma_ast::Prop::Shorthand(value) => Prop::Shorthand(get_view_for_ident(value)),
-    swc_ecma_ast::Prop::KeyValue(value) => Prop::KeyValue(get_view_for_key_value_prop(value)),
-    swc_ecma_ast::Prop::Assign(value) => Prop::Assign(get_view_for_assign_prop(value)),
-    swc_ecma_ast::Prop::Getter(value) => Prop::Getter(get_view_for_getter_prop(value)),
-    swc_ecma_ast::Prop::Setter(value) => Prop::Setter(get_view_for_setter_prop(value)),
-    swc_ecma_ast::Prop::Method(value) => Prop::Method(get_view_for_method_prop(value)),
+    swc_ast::Prop::Shorthand(value) => Prop::Shorthand(get_view_for_ident(value, bump)),
+    swc_ast::Prop::KeyValue(value) => Prop::KeyValue(get_view_for_key_value_prop(value, bump)),
+    swc_ast::Prop::Assign(value) => Prop::Assign(get_view_for_assign_prop(value, bump)),
+    swc_ast::Prop::Getter(value) => Prop::Getter(get_view_for_getter_prop(value, bump)),
+    swc_ast::Prop::Setter(value) => Prop::Setter(get_view_for_setter_prop(value, bump)),
+    swc_ast::Prop::Method(value) => Prop::Method(get_view_for_method_prop(value, bump)),
   }
 }
 
-fn set_parent_for_prop<'a>(node: &mut Prop<'a>, parent: Node<'a>) {
+fn set_parent_for_prop<'a>(node: &Prop<'a>, parent: Node<'a>) {
   match node {
     Prop::Shorthand(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Prop::KeyValue(node) => {
-      node.parent = parent.to::<ObjectLit>();
+      unsafe { *node.inner_parent.get() = Some(parent.to::<ObjectLit>()); }
     },
     Prop::Assign(node) => {
-      node.parent = parent.to::<ObjectLit>();
+      unsafe { *node.inner_parent.get() = Some(parent.to::<ObjectLit>()); }
     },
     Prop::Getter(node) => {
-      node.parent = parent.to::<ObjectLit>();
+      unsafe { *node.inner_parent.get() = Some(parent.to::<ObjectLit>()); }
     },
     Prop::Setter(node) => {
-      node.parent = parent.to::<ObjectLit>();
+      unsafe { *node.inner_parent.get() = Some(parent.to::<ObjectLit>()); }
     },
     Prop::Method(node) => {
-      node.parent = parent.to::<ObjectLit>();
+      unsafe { *node.inner_parent.get() = Some(parent.to::<ObjectLit>()); }
     },
   }
 }
 
 pub enum TsTypeQueryExpr<'a> {
   TsEntityName(TsEntityName<'a>),
-  Import(TsImportType<'a>),
+  Import(&'a TsImportType<'a>),
 }
 
 impl<'a> TsTypeQueryExpr<'a> {
@@ -1158,30 +1314,37 @@ impl<'a> NodeTrait<'a> for TsTypeQueryExpr<'a> {
       TsTypeQueryExpr::Import(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      TsTypeQueryExpr::TsEntityName(node) => node.into_node(),
+      TsTypeQueryExpr::Import(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&TsTypeQueryExpr<'a>> for Node<'a> {
   fn from(node: &TsTypeQueryExpr<'a>) -> Node<'a> {
     match node {
       TsTypeQueryExpr::TsEntityName(node) => node.into(),
-      TsTypeQueryExpr::Import(node) => node.into(),
+      TsTypeQueryExpr::Import(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_ts_type_query_expr<'a>(ref_node: &'a swc_ecma_ast::TsTypeQueryExpr) -> TsTypeQueryExpr<'a> {
+fn get_view_for_ts_type_query_expr<'a>(ref_node: &'a swc_ast::TsTypeQueryExpr, bump: &'a Bump) -> TsTypeQueryExpr<'a> {
   match ref_node {
-    swc_ecma_ast::TsTypeQueryExpr::TsEntityName(value) => TsTypeQueryExpr::TsEntityName(get_view_for_ts_entity_name(value)),
-    swc_ecma_ast::TsTypeQueryExpr::Import(value) => TsTypeQueryExpr::Import(get_view_for_ts_import_type(value)),
+    swc_ast::TsTypeQueryExpr::TsEntityName(value) => TsTypeQueryExpr::TsEntityName(get_view_for_ts_entity_name(value, bump)),
+    swc_ast::TsTypeQueryExpr::Import(value) => TsTypeQueryExpr::Import(get_view_for_ts_import_type(value, bump)),
   }
 }
 
-fn set_parent_for_ts_type_query_expr<'a>(node: &mut TsTypeQueryExpr<'a>, parent: Node<'a>) {
+fn set_parent_for_ts_type_query_expr<'a>(node: &TsTypeQueryExpr<'a>, parent: Node<'a>) {
   match node {
     TsTypeQueryExpr::TsEntityName(node) => {
       set_parent_for_ts_entity_name(node, parent);
     },
     TsTypeQueryExpr::Import(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
@@ -1189,8 +1352,8 @@ fn set_parent_for_ts_type_query_expr<'a>(node: &mut TsTypeQueryExpr<'a>, parent:
 /// `namespace A.B { }` is a namespace named `A` with another TsNamespaceDecl as
 /// its body.
 pub enum TsNamespaceBody<'a> {
-  TsModuleBlock(TsModuleBlock<'a>),
-  TsNamespaceDecl(TsNamespaceDecl<'a>),
+  TsModuleBlock(&'a TsModuleBlock<'a>),
+  TsNamespaceDecl(&'a TsNamespaceDecl<'a>),
 }
 
 impl<'a> TsNamespaceBody<'a> {
@@ -1226,42 +1389,49 @@ impl<'a> NodeTrait<'a> for TsNamespaceBody<'a> {
       TsNamespaceBody::TsNamespaceDecl(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      TsNamespaceBody::TsModuleBlock(node) => node.into_node(),
+      TsNamespaceBody::TsNamespaceDecl(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&TsNamespaceBody<'a>> for Node<'a> {
   fn from(node: &TsNamespaceBody<'a>) -> Node<'a> {
     match node {
-      TsNamespaceBody::TsModuleBlock(node) => node.into(),
-      TsNamespaceBody::TsNamespaceDecl(node) => node.into(),
+      TsNamespaceBody::TsModuleBlock(node) => (*node).into(),
+      TsNamespaceBody::TsNamespaceDecl(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_ts_namespace_body<'a>(ref_node: &'a swc_ecma_ast::TsNamespaceBody) -> TsNamespaceBody<'a> {
+fn get_view_for_ts_namespace_body<'a>(ref_node: &'a swc_ast::TsNamespaceBody, bump: &'a Bump) -> TsNamespaceBody<'a> {
   match ref_node {
-    swc_ecma_ast::TsNamespaceBody::TsModuleBlock(value) => TsNamespaceBody::TsModuleBlock(get_view_for_ts_module_block(value)),
-    swc_ecma_ast::TsNamespaceBody::TsNamespaceDecl(value) => TsNamespaceBody::TsNamespaceDecl(get_view_for_ts_namespace_decl(value)),
+    swc_ast::TsNamespaceBody::TsModuleBlock(value) => TsNamespaceBody::TsModuleBlock(get_view_for_ts_module_block(value, bump)),
+    swc_ast::TsNamespaceBody::TsNamespaceDecl(value) => TsNamespaceBody::TsNamespaceDecl(get_view_for_ts_namespace_decl(value, bump)),
   }
 }
 
-fn set_parent_for_ts_namespace_body<'a>(node: &mut TsNamespaceBody<'a>, parent: Node<'a>) {
+fn set_parent_for_ts_namespace_body<'a>(node: &TsNamespaceBody<'a>, parent: Node<'a>) {
   match node {
     TsNamespaceBody::TsModuleBlock(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsNamespaceBody::TsNamespaceDecl(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
 
 pub enum Lit<'a> {
-  Str(Str<'a>),
-  Bool(Bool<'a>),
-  Null(Null<'a>),
-  Num(Number<'a>),
-  BigInt(BigInt<'a>),
-  Regex(Regex<'a>),
-  JSXText(JSXText<'a>),
+  Str(&'a Str<'a>),
+  Bool(&'a Bool<'a>),
+  Null(&'a Null<'a>),
+  Num(&'a Number<'a>),
+  BigInt(&'a BigInt<'a>),
+  Regex(&'a Regex<'a>),
+  JSXText(&'a JSXText<'a>),
 }
 
 impl<'a> Lit<'a> {
@@ -1312,63 +1482,75 @@ impl<'a> NodeTrait<'a> for Lit<'a> {
       Lit::JSXText(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      Lit::Str(node) => node.into_node(),
+      Lit::Bool(node) => node.into_node(),
+      Lit::Null(node) => node.into_node(),
+      Lit::Num(node) => node.into_node(),
+      Lit::BigInt(node) => node.into_node(),
+      Lit::Regex(node) => node.into_node(),
+      Lit::JSXText(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&Lit<'a>> for Node<'a> {
   fn from(node: &Lit<'a>) -> Node<'a> {
     match node {
-      Lit::Str(node) => node.into(),
-      Lit::Bool(node) => node.into(),
-      Lit::Null(node) => node.into(),
-      Lit::Num(node) => node.into(),
-      Lit::BigInt(node) => node.into(),
-      Lit::Regex(node) => node.into(),
-      Lit::JSXText(node) => node.into(),
+      Lit::Str(node) => (*node).into(),
+      Lit::Bool(node) => (*node).into(),
+      Lit::Null(node) => (*node).into(),
+      Lit::Num(node) => (*node).into(),
+      Lit::BigInt(node) => (*node).into(),
+      Lit::Regex(node) => (*node).into(),
+      Lit::JSXText(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_lit<'a>(ref_node: &'a swc_ecma_ast::Lit) -> Lit<'a> {
+fn get_view_for_lit<'a>(ref_node: &'a swc_ast::Lit, bump: &'a Bump) -> Lit<'a> {
   match ref_node {
-    swc_ecma_ast::Lit::Str(value) => Lit::Str(get_view_for_str(value)),
-    swc_ecma_ast::Lit::Bool(value) => Lit::Bool(get_view_for_bool(value)),
-    swc_ecma_ast::Lit::Null(value) => Lit::Null(get_view_for_null(value)),
-    swc_ecma_ast::Lit::Num(value) => Lit::Num(get_view_for_number(value)),
-    swc_ecma_ast::Lit::BigInt(value) => Lit::BigInt(get_view_for_big_int(value)),
-    swc_ecma_ast::Lit::Regex(value) => Lit::Regex(get_view_for_regex(value)),
-    swc_ecma_ast::Lit::JSXText(value) => Lit::JSXText(get_view_for_jsxtext(value)),
+    swc_ast::Lit::Str(value) => Lit::Str(get_view_for_str(value, bump)),
+    swc_ast::Lit::Bool(value) => Lit::Bool(get_view_for_bool(value, bump)),
+    swc_ast::Lit::Null(value) => Lit::Null(get_view_for_null(value, bump)),
+    swc_ast::Lit::Num(value) => Lit::Num(get_view_for_number(value, bump)),
+    swc_ast::Lit::BigInt(value) => Lit::BigInt(get_view_for_big_int(value, bump)),
+    swc_ast::Lit::Regex(value) => Lit::Regex(get_view_for_regex(value, bump)),
+    swc_ast::Lit::JSXText(value) => Lit::JSXText(get_view_for_jsxtext(value, bump)),
   }
 }
 
-fn set_parent_for_lit<'a>(node: &mut Lit<'a>, parent: Node<'a>) {
+fn set_parent_for_lit<'a>(node: &Lit<'a>, parent: Node<'a>) {
   match node {
     Lit::Str(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Lit::Bool(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Lit::Null(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Lit::Num(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Lit::BigInt(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Lit::Regex(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Lit::JSXText(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
 
 pub enum ImportSpecifier<'a> {
-  Named(ImportNamedSpecifier<'a>),
-  Default(ImportDefaultSpecifier<'a>),
-  Namespace(ImportStarAsSpecifier<'a>),
+  Named(&'a ImportNamedSpecifier<'a>),
+  Default(&'a ImportDefaultSpecifier<'a>),
+  Namespace(&'a ImportStarAsSpecifier<'a>),
 }
 
 impl<'a> ImportSpecifier<'a> {
@@ -1407,43 +1589,51 @@ impl<'a> NodeTrait<'a> for ImportSpecifier<'a> {
       ImportSpecifier::Namespace(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      ImportSpecifier::Named(node) => node.into_node(),
+      ImportSpecifier::Default(node) => node.into_node(),
+      ImportSpecifier::Namespace(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&ImportSpecifier<'a>> for Node<'a> {
   fn from(node: &ImportSpecifier<'a>) -> Node<'a> {
     match node {
-      ImportSpecifier::Named(node) => node.into(),
-      ImportSpecifier::Default(node) => node.into(),
-      ImportSpecifier::Namespace(node) => node.into(),
+      ImportSpecifier::Named(node) => (*node).into(),
+      ImportSpecifier::Default(node) => (*node).into(),
+      ImportSpecifier::Namespace(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_import_specifier<'a>(ref_node: &'a swc_ecma_ast::ImportSpecifier) -> ImportSpecifier<'a> {
+fn get_view_for_import_specifier<'a>(ref_node: &'a swc_ast::ImportSpecifier, bump: &'a Bump) -> ImportSpecifier<'a> {
   match ref_node {
-    swc_ecma_ast::ImportSpecifier::Named(value) => ImportSpecifier::Named(get_view_for_import_named_specifier(value)),
-    swc_ecma_ast::ImportSpecifier::Default(value) => ImportSpecifier::Default(get_view_for_import_default_specifier(value)),
-    swc_ecma_ast::ImportSpecifier::Namespace(value) => ImportSpecifier::Namespace(get_view_for_import_star_as_specifier(value)),
+    swc_ast::ImportSpecifier::Named(value) => ImportSpecifier::Named(get_view_for_import_named_specifier(value, bump)),
+    swc_ast::ImportSpecifier::Default(value) => ImportSpecifier::Default(get_view_for_import_default_specifier(value, bump)),
+    swc_ast::ImportSpecifier::Namespace(value) => ImportSpecifier::Namespace(get_view_for_import_star_as_specifier(value, bump)),
   }
 }
 
-fn set_parent_for_import_specifier<'a>(node: &mut ImportSpecifier<'a>, parent: Node<'a>) {
+fn set_parent_for_import_specifier<'a>(node: &ImportSpecifier<'a>, parent: Node<'a>) {
   match node {
     ImportSpecifier::Named(node) => {
-      node.parent = parent.to::<ImportDecl>();
+      unsafe { *node.inner_parent.get() = Some(parent.to::<ImportDecl>()); }
     },
     ImportSpecifier::Default(node) => {
-      node.parent = parent.to::<ImportDecl>();
+      unsafe { *node.inner_parent.get() = Some(parent.to::<ImportDecl>()); }
     },
     ImportSpecifier::Namespace(node) => {
-      node.parent = parent.to::<ImportDecl>();
+      unsafe { *node.inner_parent.get() = Some(parent.to::<ImportDecl>()); }
     },
   }
 }
 
 pub enum ExportSpecifier<'a> {
-  Namespace(ExportNamespaceSpecifier<'a>),
-  Default(ExportDefaultSpecifier<'a>),
-  Named(ExportNamedSpecifier<'a>),
+  Namespace(&'a ExportNamespaceSpecifier<'a>),
+  Default(&'a ExportDefaultSpecifier<'a>),
+  Named(&'a ExportNamedSpecifier<'a>),
 }
 
 impl<'a> ExportSpecifier<'a> {
@@ -1482,60 +1672,68 @@ impl<'a> NodeTrait<'a> for ExportSpecifier<'a> {
       ExportSpecifier::Named(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      ExportSpecifier::Namespace(node) => node.into_node(),
+      ExportSpecifier::Default(node) => node.into_node(),
+      ExportSpecifier::Named(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&ExportSpecifier<'a>> for Node<'a> {
   fn from(node: &ExportSpecifier<'a>) -> Node<'a> {
     match node {
-      ExportSpecifier::Namespace(node) => node.into(),
-      ExportSpecifier::Default(node) => node.into(),
-      ExportSpecifier::Named(node) => node.into(),
+      ExportSpecifier::Namespace(node) => (*node).into(),
+      ExportSpecifier::Default(node) => (*node).into(),
+      ExportSpecifier::Named(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_export_specifier<'a>(ref_node: &'a swc_ecma_ast::ExportSpecifier) -> ExportSpecifier<'a> {
+fn get_view_for_export_specifier<'a>(ref_node: &'a swc_ast::ExportSpecifier, bump: &'a Bump) -> ExportSpecifier<'a> {
   match ref_node {
-    swc_ecma_ast::ExportSpecifier::Namespace(value) => ExportSpecifier::Namespace(get_view_for_export_namespace_specifier(value)),
-    swc_ecma_ast::ExportSpecifier::Default(value) => ExportSpecifier::Default(get_view_for_export_default_specifier(value)),
-    swc_ecma_ast::ExportSpecifier::Named(value) => ExportSpecifier::Named(get_view_for_export_named_specifier(value)),
+    swc_ast::ExportSpecifier::Namespace(value) => ExportSpecifier::Namespace(get_view_for_export_namespace_specifier(value, bump)),
+    swc_ast::ExportSpecifier::Default(value) => ExportSpecifier::Default(get_view_for_export_default_specifier(value, bump)),
+    swc_ast::ExportSpecifier::Named(value) => ExportSpecifier::Named(get_view_for_export_named_specifier(value, bump)),
   }
 }
 
-fn set_parent_for_export_specifier<'a>(node: &mut ExportSpecifier<'a>, parent: Node<'a>) {
+fn set_parent_for_export_specifier<'a>(node: &ExportSpecifier<'a>, parent: Node<'a>) {
   match node {
     ExportSpecifier::Namespace(node) => {
-      node.parent = parent.to::<NamedExport>();
+      unsafe { *node.inner_parent.get() = Some(parent.to::<NamedExport>()); }
     },
     ExportSpecifier::Default(node) => {
-      node.parent = parent.to::<NamedExport>();
+      unsafe { *node.inner_parent.get() = Some(parent.to::<NamedExport>()); }
     },
     ExportSpecifier::Named(node) => {
-      node.parent = parent.to::<NamedExport>();
+      unsafe { *node.inner_parent.get() = Some(parent.to::<NamedExport>()); }
     },
   }
 }
 
 pub enum Stmt<'a> {
-  Block(BlockStmt<'a>),
-  Empty(EmptyStmt<'a>),
-  Debugger(DebuggerStmt<'a>),
-  With(WithStmt<'a>),
-  Return(ReturnStmt<'a>),
-  Labeled(LabeledStmt<'a>),
-  Break(BreakStmt<'a>),
-  Continue(ContinueStmt<'a>),
-  If(IfStmt<'a>),
-  Switch(SwitchStmt<'a>),
-  Throw(ThrowStmt<'a>),
+  Block(&'a BlockStmt<'a>),
+  Empty(&'a EmptyStmt<'a>),
+  Debugger(&'a DebuggerStmt<'a>),
+  With(&'a WithStmt<'a>),
+  Return(&'a ReturnStmt<'a>),
+  Labeled(&'a LabeledStmt<'a>),
+  Break(&'a BreakStmt<'a>),
+  Continue(&'a ContinueStmt<'a>),
+  If(&'a IfStmt<'a>),
+  Switch(&'a SwitchStmt<'a>),
+  Throw(&'a ThrowStmt<'a>),
   /// A try statement. If handler is null then finalizer must be a BlockStmt.
-  Try(TryStmt<'a>),
-  While(WhileStmt<'a>),
-  DoWhile(DoWhileStmt<'a>),
-  For(ForStmt<'a>),
-  ForIn(ForInStmt<'a>),
-  ForOf(ForOfStmt<'a>),
+  Try(&'a TryStmt<'a>),
+  While(&'a WhileStmt<'a>),
+  DoWhile(&'a DoWhileStmt<'a>),
+  For(&'a ForStmt<'a>),
+  ForIn(&'a ForInStmt<'a>),
+  ForOf(&'a ForOfStmt<'a>),
   Decl(Decl<'a>),
-  Expr(ExprStmt<'a>),
+  Expr(&'a ExprStmt<'a>),
 }
 
 impl<'a> Stmt<'a> {
@@ -1622,128 +1820,152 @@ impl<'a> NodeTrait<'a> for Stmt<'a> {
       Stmt::Expr(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      Stmt::Block(node) => node.into_node(),
+      Stmt::Empty(node) => node.into_node(),
+      Stmt::Debugger(node) => node.into_node(),
+      Stmt::With(node) => node.into_node(),
+      Stmt::Return(node) => node.into_node(),
+      Stmt::Labeled(node) => node.into_node(),
+      Stmt::Break(node) => node.into_node(),
+      Stmt::Continue(node) => node.into_node(),
+      Stmt::If(node) => node.into_node(),
+      Stmt::Switch(node) => node.into_node(),
+      Stmt::Throw(node) => node.into_node(),
+      Stmt::Try(node) => node.into_node(),
+      Stmt::While(node) => node.into_node(),
+      Stmt::DoWhile(node) => node.into_node(),
+      Stmt::For(node) => node.into_node(),
+      Stmt::ForIn(node) => node.into_node(),
+      Stmt::ForOf(node) => node.into_node(),
+      Stmt::Decl(node) => node.into_node(),
+      Stmt::Expr(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&Stmt<'a>> for Node<'a> {
   fn from(node: &Stmt<'a>) -> Node<'a> {
     match node {
-      Stmt::Block(node) => node.into(),
-      Stmt::Empty(node) => node.into(),
-      Stmt::Debugger(node) => node.into(),
-      Stmt::With(node) => node.into(),
-      Stmt::Return(node) => node.into(),
-      Stmt::Labeled(node) => node.into(),
-      Stmt::Break(node) => node.into(),
-      Stmt::Continue(node) => node.into(),
-      Stmt::If(node) => node.into(),
-      Stmt::Switch(node) => node.into(),
-      Stmt::Throw(node) => node.into(),
-      Stmt::Try(node) => node.into(),
-      Stmt::While(node) => node.into(),
-      Stmt::DoWhile(node) => node.into(),
-      Stmt::For(node) => node.into(),
-      Stmt::ForIn(node) => node.into(),
-      Stmt::ForOf(node) => node.into(),
+      Stmt::Block(node) => (*node).into(),
+      Stmt::Empty(node) => (*node).into(),
+      Stmt::Debugger(node) => (*node).into(),
+      Stmt::With(node) => (*node).into(),
+      Stmt::Return(node) => (*node).into(),
+      Stmt::Labeled(node) => (*node).into(),
+      Stmt::Break(node) => (*node).into(),
+      Stmt::Continue(node) => (*node).into(),
+      Stmt::If(node) => (*node).into(),
+      Stmt::Switch(node) => (*node).into(),
+      Stmt::Throw(node) => (*node).into(),
+      Stmt::Try(node) => (*node).into(),
+      Stmt::While(node) => (*node).into(),
+      Stmt::DoWhile(node) => (*node).into(),
+      Stmt::For(node) => (*node).into(),
+      Stmt::ForIn(node) => (*node).into(),
+      Stmt::ForOf(node) => (*node).into(),
       Stmt::Decl(node) => node.into(),
-      Stmt::Expr(node) => node.into(),
+      Stmt::Expr(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_stmt<'a>(ref_node: &'a swc_ecma_ast::Stmt) -> Stmt<'a> {
+fn get_view_for_stmt<'a>(ref_node: &'a swc_ast::Stmt, bump: &'a Bump) -> Stmt<'a> {
   match ref_node {
-    swc_ecma_ast::Stmt::Block(value) => Stmt::Block(get_view_for_block_stmt(value)),
-    swc_ecma_ast::Stmt::Empty(value) => Stmt::Empty(get_view_for_empty_stmt(value)),
-    swc_ecma_ast::Stmt::Debugger(value) => Stmt::Debugger(get_view_for_debugger_stmt(value)),
-    swc_ecma_ast::Stmt::With(value) => Stmt::With(get_view_for_with_stmt(value)),
-    swc_ecma_ast::Stmt::Return(value) => Stmt::Return(get_view_for_return_stmt(value)),
-    swc_ecma_ast::Stmt::Labeled(value) => Stmt::Labeled(get_view_for_labeled_stmt(value)),
-    swc_ecma_ast::Stmt::Break(value) => Stmt::Break(get_view_for_break_stmt(value)),
-    swc_ecma_ast::Stmt::Continue(value) => Stmt::Continue(get_view_for_continue_stmt(value)),
-    swc_ecma_ast::Stmt::If(value) => Stmt::If(get_view_for_if_stmt(value)),
-    swc_ecma_ast::Stmt::Switch(value) => Stmt::Switch(get_view_for_switch_stmt(value)),
-    swc_ecma_ast::Stmt::Throw(value) => Stmt::Throw(get_view_for_throw_stmt(value)),
-    swc_ecma_ast::Stmt::Try(value) => Stmt::Try(get_view_for_try_stmt(value)),
-    swc_ecma_ast::Stmt::While(value) => Stmt::While(get_view_for_while_stmt(value)),
-    swc_ecma_ast::Stmt::DoWhile(value) => Stmt::DoWhile(get_view_for_do_while_stmt(value)),
-    swc_ecma_ast::Stmt::For(value) => Stmt::For(get_view_for_for_stmt(value)),
-    swc_ecma_ast::Stmt::ForIn(value) => Stmt::ForIn(get_view_for_for_in_stmt(value)),
-    swc_ecma_ast::Stmt::ForOf(value) => Stmt::ForOf(get_view_for_for_of_stmt(value)),
-    swc_ecma_ast::Stmt::Decl(value) => Stmt::Decl(get_view_for_decl(value)),
-    swc_ecma_ast::Stmt::Expr(value) => Stmt::Expr(get_view_for_expr_stmt(value)),
+    swc_ast::Stmt::Block(value) => Stmt::Block(get_view_for_block_stmt(value, bump)),
+    swc_ast::Stmt::Empty(value) => Stmt::Empty(get_view_for_empty_stmt(value, bump)),
+    swc_ast::Stmt::Debugger(value) => Stmt::Debugger(get_view_for_debugger_stmt(value, bump)),
+    swc_ast::Stmt::With(value) => Stmt::With(get_view_for_with_stmt(value, bump)),
+    swc_ast::Stmt::Return(value) => Stmt::Return(get_view_for_return_stmt(value, bump)),
+    swc_ast::Stmt::Labeled(value) => Stmt::Labeled(get_view_for_labeled_stmt(value, bump)),
+    swc_ast::Stmt::Break(value) => Stmt::Break(get_view_for_break_stmt(value, bump)),
+    swc_ast::Stmt::Continue(value) => Stmt::Continue(get_view_for_continue_stmt(value, bump)),
+    swc_ast::Stmt::If(value) => Stmt::If(get_view_for_if_stmt(value, bump)),
+    swc_ast::Stmt::Switch(value) => Stmt::Switch(get_view_for_switch_stmt(value, bump)),
+    swc_ast::Stmt::Throw(value) => Stmt::Throw(get_view_for_throw_stmt(value, bump)),
+    swc_ast::Stmt::Try(value) => Stmt::Try(get_view_for_try_stmt(value, bump)),
+    swc_ast::Stmt::While(value) => Stmt::While(get_view_for_while_stmt(value, bump)),
+    swc_ast::Stmt::DoWhile(value) => Stmt::DoWhile(get_view_for_do_while_stmt(value, bump)),
+    swc_ast::Stmt::For(value) => Stmt::For(get_view_for_for_stmt(value, bump)),
+    swc_ast::Stmt::ForIn(value) => Stmt::ForIn(get_view_for_for_in_stmt(value, bump)),
+    swc_ast::Stmt::ForOf(value) => Stmt::ForOf(get_view_for_for_of_stmt(value, bump)),
+    swc_ast::Stmt::Decl(value) => Stmt::Decl(get_view_for_decl(value, bump)),
+    swc_ast::Stmt::Expr(value) => Stmt::Expr(get_view_for_expr_stmt(value, bump)),
   }
 }
 
-fn set_parent_for_stmt<'a>(node: &mut Stmt<'a>, parent: Node<'a>) {
+fn set_parent_for_stmt<'a>(node: &Stmt<'a>, parent: Node<'a>) {
   match node {
     Stmt::Block(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Stmt::Empty(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Stmt::Debugger(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Stmt::With(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Stmt::Return(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Stmt::Labeled(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Stmt::Break(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Stmt::Continue(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Stmt::If(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Stmt::Switch(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Stmt::Throw(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Stmt::Try(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Stmt::While(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Stmt::DoWhile(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Stmt::For(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Stmt::ForIn(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Stmt::ForOf(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Stmt::Decl(node) => {
       set_parent_for_decl(node, parent);
     },
     Stmt::Expr(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
 
 pub enum Pat<'a> {
-  Ident(Ident<'a>),
-  Array(ArrayPat<'a>),
-  Rest(RestPat<'a>),
-  Object(ObjectPat<'a>),
-  Assign(AssignPat<'a>),
-  Invalid(Invalid<'a>),
+  Ident(&'a Ident<'a>),
+  Array(&'a ArrayPat<'a>),
+  Rest(&'a RestPat<'a>),
+  Object(&'a ObjectPat<'a>),
+  Assign(&'a AssignPat<'a>),
+  Invalid(&'a Invalid<'a>),
   /// Only for for-in / for-of loops. This is *syntatically* valid.
-  Expr(Box<Expr<'a>>),
+  Expr(Expr<'a>),
 }
 
 impl<'a> Pat<'a> {
@@ -1794,52 +2016,64 @@ impl<'a> NodeTrait<'a> for Pat<'a> {
       Pat::Expr(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      Pat::Ident(node) => node.into_node(),
+      Pat::Array(node) => node.into_node(),
+      Pat::Rest(node) => node.into_node(),
+      Pat::Object(node) => node.into_node(),
+      Pat::Assign(node) => node.into_node(),
+      Pat::Invalid(node) => node.into_node(),
+      Pat::Expr(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&Pat<'a>> for Node<'a> {
   fn from(node: &Pat<'a>) -> Node<'a> {
     match node {
-      Pat::Ident(node) => node.into(),
-      Pat::Array(node) => node.into(),
-      Pat::Rest(node) => node.into(),
-      Pat::Object(node) => node.into(),
-      Pat::Assign(node) => node.into(),
-      Pat::Invalid(node) => node.into(),
+      Pat::Ident(node) => (*node).into(),
+      Pat::Array(node) => (*node).into(),
+      Pat::Rest(node) => (*node).into(),
+      Pat::Object(node) => (*node).into(),
+      Pat::Assign(node) => (*node).into(),
+      Pat::Invalid(node) => (*node).into(),
       Pat::Expr(node) => node.into(),
     }
   }
 }
 
-fn get_view_for_pat<'a>(ref_node: &'a swc_ecma_ast::Pat) -> Pat<'a> {
+fn get_view_for_pat<'a>(ref_node: &'a swc_ast::Pat, bump: &'a Bump) -> Pat<'a> {
   match ref_node {
-    swc_ecma_ast::Pat::Ident(value) => Pat::Ident(get_view_for_ident(value)),
-    swc_ecma_ast::Pat::Array(value) => Pat::Array(get_view_for_array_pat(value)),
-    swc_ecma_ast::Pat::Rest(value) => Pat::Rest(get_view_for_rest_pat(value)),
-    swc_ecma_ast::Pat::Object(value) => Pat::Object(get_view_for_object_pat(value)),
-    swc_ecma_ast::Pat::Assign(value) => Pat::Assign(get_view_for_assign_pat(value)),
-    swc_ecma_ast::Pat::Invalid(value) => Pat::Invalid(get_view_for_invalid(value)),
-    swc_ecma_ast::Pat::Expr(value) => Pat::Expr(Box::new(get_view_for_expr(value))),
+    swc_ast::Pat::Ident(value) => Pat::Ident(get_view_for_ident(value, bump)),
+    swc_ast::Pat::Array(value) => Pat::Array(get_view_for_array_pat(value, bump)),
+    swc_ast::Pat::Rest(value) => Pat::Rest(get_view_for_rest_pat(value, bump)),
+    swc_ast::Pat::Object(value) => Pat::Object(get_view_for_object_pat(value, bump)),
+    swc_ast::Pat::Assign(value) => Pat::Assign(get_view_for_assign_pat(value, bump)),
+    swc_ast::Pat::Invalid(value) => Pat::Invalid(get_view_for_invalid(value, bump)),
+    swc_ast::Pat::Expr(value) => Pat::Expr(get_view_for_expr(value, bump)),
   }
 }
 
-fn set_parent_for_pat<'a>(node: &mut Pat<'a>, parent: Node<'a>) {
+fn set_parent_for_pat<'a>(node: &Pat<'a>, parent: Node<'a>) {
   match node {
     Pat::Ident(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Pat::Array(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Pat::Rest(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Pat::Object(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Pat::Assign(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Pat::Invalid(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Pat::Expr(node) => {
       set_parent_for_expr(node, parent);
@@ -1848,8 +2082,8 @@ fn set_parent_for_pat<'a>(node: &mut Pat<'a>, parent: Node<'a>) {
 }
 
 pub enum TsModuleName<'a> {
-  Ident(Ident<'a>),
-  Str(Str<'a>),
+  Ident(&'a Ident<'a>),
+  Str(&'a Str<'a>),
 }
 
 impl<'a> TsModuleName<'a> {
@@ -1885,39 +2119,46 @@ impl<'a> NodeTrait<'a> for TsModuleName<'a> {
       TsModuleName::Str(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      TsModuleName::Ident(node) => node.into_node(),
+      TsModuleName::Str(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&TsModuleName<'a>> for Node<'a> {
   fn from(node: &TsModuleName<'a>) -> Node<'a> {
     match node {
-      TsModuleName::Ident(node) => node.into(),
-      TsModuleName::Str(node) => node.into(),
+      TsModuleName::Ident(node) => (*node).into(),
+      TsModuleName::Str(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_ts_module_name<'a>(ref_node: &'a swc_ecma_ast::TsModuleName) -> TsModuleName<'a> {
+fn get_view_for_ts_module_name<'a>(ref_node: &'a swc_ast::TsModuleName, bump: &'a Bump) -> TsModuleName<'a> {
   match ref_node {
-    swc_ecma_ast::TsModuleName::Ident(value) => TsModuleName::Ident(get_view_for_ident(value)),
-    swc_ecma_ast::TsModuleName::Str(value) => TsModuleName::Str(get_view_for_str(value)),
+    swc_ast::TsModuleName::Ident(value) => TsModuleName::Ident(get_view_for_ident(value, bump)),
+    swc_ast::TsModuleName::Str(value) => TsModuleName::Str(get_view_for_str(value, bump)),
   }
 }
 
-fn set_parent_for_ts_module_name<'a>(node: &mut TsModuleName<'a>, parent: Node<'a>) {
+fn set_parent_for_ts_module_name<'a>(node: &TsModuleName<'a>, parent: Node<'a>) {
   match node {
     TsModuleName::Ident(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsModuleName::Str(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
 
 pub enum TsFnParam<'a> {
-  Ident(Ident<'a>),
-  Array(ArrayPat<'a>),
-  Rest(RestPat<'a>),
-  Object(ObjectPat<'a>),
+  Ident(&'a Ident<'a>),
+  Array(&'a ArrayPat<'a>),
+  Rest(&'a RestPat<'a>),
+  Object(&'a ObjectPat<'a>),
 }
 
 impl<'a> TsFnParam<'a> {
@@ -1959,54 +2200,63 @@ impl<'a> NodeTrait<'a> for TsFnParam<'a> {
       TsFnParam::Object(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      TsFnParam::Ident(node) => node.into_node(),
+      TsFnParam::Array(node) => node.into_node(),
+      TsFnParam::Rest(node) => node.into_node(),
+      TsFnParam::Object(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&TsFnParam<'a>> for Node<'a> {
   fn from(node: &TsFnParam<'a>) -> Node<'a> {
     match node {
-      TsFnParam::Ident(node) => node.into(),
-      TsFnParam::Array(node) => node.into(),
-      TsFnParam::Rest(node) => node.into(),
-      TsFnParam::Object(node) => node.into(),
+      TsFnParam::Ident(node) => (*node).into(),
+      TsFnParam::Array(node) => (*node).into(),
+      TsFnParam::Rest(node) => (*node).into(),
+      TsFnParam::Object(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_ts_fn_param<'a>(ref_node: &'a swc_ecma_ast::TsFnParam) -> TsFnParam<'a> {
+fn get_view_for_ts_fn_param<'a>(ref_node: &'a swc_ast::TsFnParam, bump: &'a Bump) -> TsFnParam<'a> {
   match ref_node {
-    swc_ecma_ast::TsFnParam::Ident(value) => TsFnParam::Ident(get_view_for_ident(value)),
-    swc_ecma_ast::TsFnParam::Array(value) => TsFnParam::Array(get_view_for_array_pat(value)),
-    swc_ecma_ast::TsFnParam::Rest(value) => TsFnParam::Rest(get_view_for_rest_pat(value)),
-    swc_ecma_ast::TsFnParam::Object(value) => TsFnParam::Object(get_view_for_object_pat(value)),
+    swc_ast::TsFnParam::Ident(value) => TsFnParam::Ident(get_view_for_ident(value, bump)),
+    swc_ast::TsFnParam::Array(value) => TsFnParam::Array(get_view_for_array_pat(value, bump)),
+    swc_ast::TsFnParam::Rest(value) => TsFnParam::Rest(get_view_for_rest_pat(value, bump)),
+    swc_ast::TsFnParam::Object(value) => TsFnParam::Object(get_view_for_object_pat(value, bump)),
   }
 }
 
-fn set_parent_for_ts_fn_param<'a>(node: &mut TsFnParam<'a>, parent: Node<'a>) {
+fn set_parent_for_ts_fn_param<'a>(node: &TsFnParam<'a>, parent: Node<'a>) {
   match node {
     TsFnParam::Ident(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsFnParam::Array(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsFnParam::Rest(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsFnParam::Object(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
 
 pub enum ClassMember<'a> {
-  Constructor(Constructor<'a>),
+  Constructor(&'a Constructor<'a>),
   /// `es2015`
-  Method(ClassMethod<'a>),
-  PrivateMethod(PrivateMethod<'a>),
+  Method(&'a ClassMethod<'a>),
+  PrivateMethod(&'a PrivateMethod<'a>),
   /// stage 0 / Typescript
-  ClassProp(ClassProp<'a>),
-  PrivateProp(PrivateProp<'a>),
-  TsIndexSignature(TsIndexSignature<'a>),
-  Empty(EmptyStmt<'a>),
+  ClassProp(&'a ClassProp<'a>),
+  PrivateProp(&'a PrivateProp<'a>),
+  TsIndexSignature(&'a TsIndexSignature<'a>),
+  Empty(&'a EmptyStmt<'a>),
 }
 
 impl<'a> ClassMember<'a> {
@@ -2057,61 +2307,73 @@ impl<'a> NodeTrait<'a> for ClassMember<'a> {
       ClassMember::Empty(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      ClassMember::Constructor(node) => node.into_node(),
+      ClassMember::Method(node) => node.into_node(),
+      ClassMember::PrivateMethod(node) => node.into_node(),
+      ClassMember::ClassProp(node) => node.into_node(),
+      ClassMember::PrivateProp(node) => node.into_node(),
+      ClassMember::TsIndexSignature(node) => node.into_node(),
+      ClassMember::Empty(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&ClassMember<'a>> for Node<'a> {
   fn from(node: &ClassMember<'a>) -> Node<'a> {
     match node {
-      ClassMember::Constructor(node) => node.into(),
-      ClassMember::Method(node) => node.into(),
-      ClassMember::PrivateMethod(node) => node.into(),
-      ClassMember::ClassProp(node) => node.into(),
-      ClassMember::PrivateProp(node) => node.into(),
-      ClassMember::TsIndexSignature(node) => node.into(),
-      ClassMember::Empty(node) => node.into(),
+      ClassMember::Constructor(node) => (*node).into(),
+      ClassMember::Method(node) => (*node).into(),
+      ClassMember::PrivateMethod(node) => (*node).into(),
+      ClassMember::ClassProp(node) => (*node).into(),
+      ClassMember::PrivateProp(node) => (*node).into(),
+      ClassMember::TsIndexSignature(node) => (*node).into(),
+      ClassMember::Empty(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_class_member<'a>(ref_node: &'a swc_ecma_ast::ClassMember) -> ClassMember<'a> {
+fn get_view_for_class_member<'a>(ref_node: &'a swc_ast::ClassMember, bump: &'a Bump) -> ClassMember<'a> {
   match ref_node {
-    swc_ecma_ast::ClassMember::Constructor(value) => ClassMember::Constructor(get_view_for_constructor(value)),
-    swc_ecma_ast::ClassMember::Method(value) => ClassMember::Method(get_view_for_class_method(value)),
-    swc_ecma_ast::ClassMember::PrivateMethod(value) => ClassMember::PrivateMethod(get_view_for_private_method(value)),
-    swc_ecma_ast::ClassMember::ClassProp(value) => ClassMember::ClassProp(get_view_for_class_prop(value)),
-    swc_ecma_ast::ClassMember::PrivateProp(value) => ClassMember::PrivateProp(get_view_for_private_prop(value)),
-    swc_ecma_ast::ClassMember::TsIndexSignature(value) => ClassMember::TsIndexSignature(get_view_for_ts_index_signature(value)),
-    swc_ecma_ast::ClassMember::Empty(value) => ClassMember::Empty(get_view_for_empty_stmt(value)),
+    swc_ast::ClassMember::Constructor(value) => ClassMember::Constructor(get_view_for_constructor(value, bump)),
+    swc_ast::ClassMember::Method(value) => ClassMember::Method(get_view_for_class_method(value, bump)),
+    swc_ast::ClassMember::PrivateMethod(value) => ClassMember::PrivateMethod(get_view_for_private_method(value, bump)),
+    swc_ast::ClassMember::ClassProp(value) => ClassMember::ClassProp(get_view_for_class_prop(value, bump)),
+    swc_ast::ClassMember::PrivateProp(value) => ClassMember::PrivateProp(get_view_for_private_prop(value, bump)),
+    swc_ast::ClassMember::TsIndexSignature(value) => ClassMember::TsIndexSignature(get_view_for_ts_index_signature(value, bump)),
+    swc_ast::ClassMember::Empty(value) => ClassMember::Empty(get_view_for_empty_stmt(value, bump)),
   }
 }
 
-fn set_parent_for_class_member<'a>(node: &mut ClassMember<'a>, parent: Node<'a>) {
+fn set_parent_for_class_member<'a>(node: &ClassMember<'a>, parent: Node<'a>) {
   match node {
     ClassMember::Constructor(node) => {
-      node.parent = parent.to::<Class>();
+      unsafe { *node.inner_parent.get() = Some(parent.to::<Class>()); }
     },
     ClassMember::Method(node) => {
-      node.parent = parent.to::<Class>();
+      unsafe { *node.inner_parent.get() = Some(parent.to::<Class>()); }
     },
     ClassMember::PrivateMethod(node) => {
-      node.parent = parent.to::<Class>();
+      unsafe { *node.inner_parent.get() = Some(parent.to::<Class>()); }
     },
     ClassMember::ClassProp(node) => {
-      node.parent = parent.to::<Class>();
+      unsafe { *node.inner_parent.get() = Some(parent.to::<Class>()); }
     },
     ClassMember::PrivateProp(node) => {
-      node.parent = parent.to::<Class>();
+      unsafe { *node.inner_parent.get() = Some(parent.to::<Class>()); }
     },
     ClassMember::TsIndexSignature(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     ClassMember::Empty(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
 
 pub enum VarDeclOrPat<'a> {
-  VarDecl(VarDecl<'a>),
+  VarDecl(&'a VarDecl<'a>),
   Pat(Pat<'a>),
 }
 
@@ -2148,27 +2410,34 @@ impl<'a> NodeTrait<'a> for VarDeclOrPat<'a> {
       VarDeclOrPat::Pat(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      VarDeclOrPat::VarDecl(node) => node.into_node(),
+      VarDeclOrPat::Pat(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&VarDeclOrPat<'a>> for Node<'a> {
   fn from(node: &VarDeclOrPat<'a>) -> Node<'a> {
     match node {
-      VarDeclOrPat::VarDecl(node) => node.into(),
+      VarDeclOrPat::VarDecl(node) => (*node).into(),
       VarDeclOrPat::Pat(node) => node.into(),
     }
   }
 }
 
-fn get_view_for_var_decl_or_pat<'a>(ref_node: &'a swc_ecma_ast::VarDeclOrPat) -> VarDeclOrPat<'a> {
+fn get_view_for_var_decl_or_pat<'a>(ref_node: &'a swc_ast::VarDeclOrPat, bump: &'a Bump) -> VarDeclOrPat<'a> {
   match ref_node {
-    swc_ecma_ast::VarDeclOrPat::VarDecl(value) => VarDeclOrPat::VarDecl(get_view_for_var_decl(value)),
-    swc_ecma_ast::VarDeclOrPat::Pat(value) => VarDeclOrPat::Pat(get_view_for_pat(value)),
+    swc_ast::VarDeclOrPat::VarDecl(value) => VarDeclOrPat::VarDecl(get_view_for_var_decl(value, bump)),
+    swc_ast::VarDeclOrPat::Pat(value) => VarDeclOrPat::Pat(get_view_for_pat(value, bump)),
   }
 }
 
-fn set_parent_for_var_decl_or_pat<'a>(node: &mut VarDeclOrPat<'a>, parent: Node<'a>) {
+fn set_parent_for_var_decl_or_pat<'a>(node: &VarDeclOrPat<'a>, parent: Node<'a>) {
   match node {
     VarDeclOrPat::VarDecl(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     VarDeclOrPat::Pat(node) => {
       set_parent_for_pat(node, parent);
@@ -2178,7 +2447,7 @@ fn set_parent_for_var_decl_or_pat<'a>(node: &mut VarDeclOrPat<'a>, parent: Node<
 
 pub enum TsModuleRef<'a> {
   TsEntityName(TsEntityName<'a>),
-  TsExternalModuleRef(TsExternalModuleRef<'a>),
+  TsExternalModuleRef(&'a TsExternalModuleRef<'a>),
 }
 
 impl<'a> TsModuleRef<'a> {
@@ -2214,37 +2483,44 @@ impl<'a> NodeTrait<'a> for TsModuleRef<'a> {
       TsModuleRef::TsExternalModuleRef(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      TsModuleRef::TsEntityName(node) => node.into_node(),
+      TsModuleRef::TsExternalModuleRef(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&TsModuleRef<'a>> for Node<'a> {
   fn from(node: &TsModuleRef<'a>) -> Node<'a> {
     match node {
       TsModuleRef::TsEntityName(node) => node.into(),
-      TsModuleRef::TsExternalModuleRef(node) => node.into(),
+      TsModuleRef::TsExternalModuleRef(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_ts_module_ref<'a>(ref_node: &'a swc_ecma_ast::TsModuleRef) -> TsModuleRef<'a> {
+fn get_view_for_ts_module_ref<'a>(ref_node: &'a swc_ast::TsModuleRef, bump: &'a Bump) -> TsModuleRef<'a> {
   match ref_node {
-    swc_ecma_ast::TsModuleRef::TsEntityName(value) => TsModuleRef::TsEntityName(get_view_for_ts_entity_name(value)),
-    swc_ecma_ast::TsModuleRef::TsExternalModuleRef(value) => TsModuleRef::TsExternalModuleRef(get_view_for_ts_external_module_ref(value)),
+    swc_ast::TsModuleRef::TsEntityName(value) => TsModuleRef::TsEntityName(get_view_for_ts_entity_name(value, bump)),
+    swc_ast::TsModuleRef::TsExternalModuleRef(value) => TsModuleRef::TsExternalModuleRef(get_view_for_ts_external_module_ref(value, bump)),
   }
 }
 
-fn set_parent_for_ts_module_ref<'a>(node: &mut TsModuleRef<'a>, parent: Node<'a>) {
+fn set_parent_for_ts_module_ref<'a>(node: &TsModuleRef<'a>, parent: Node<'a>) {
   match node {
     TsModuleRef::TsEntityName(node) => {
       set_parent_for_ts_entity_name(node, parent);
     },
     TsModuleRef::TsExternalModuleRef(node) => {
-      node.parent = parent.to::<TsImportEqualsDecl>();
+      unsafe { *node.inner_parent.get() = Some(parent.to::<TsImportEqualsDecl>()); }
     },
   }
 }
 
 pub enum JSXAttrOrSpread<'a> {
-  JSXAttr(JSXAttr<'a>),
-  SpreadElement(SpreadElement<'a>),
+  JSXAttr(&'a JSXAttr<'a>),
+  SpreadElement(&'a SpreadElement<'a>),
 }
 
 impl<'a> JSXAttrOrSpread<'a> {
@@ -2280,37 +2556,44 @@ impl<'a> NodeTrait<'a> for JSXAttrOrSpread<'a> {
       JSXAttrOrSpread::SpreadElement(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      JSXAttrOrSpread::JSXAttr(node) => node.into_node(),
+      JSXAttrOrSpread::SpreadElement(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&JSXAttrOrSpread<'a>> for Node<'a> {
   fn from(node: &JSXAttrOrSpread<'a>) -> Node<'a> {
     match node {
-      JSXAttrOrSpread::JSXAttr(node) => node.into(),
-      JSXAttrOrSpread::SpreadElement(node) => node.into(),
+      JSXAttrOrSpread::JSXAttr(node) => (*node).into(),
+      JSXAttrOrSpread::SpreadElement(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_jsxattr_or_spread<'a>(ref_node: &'a swc_ecma_ast::JSXAttrOrSpread) -> JSXAttrOrSpread<'a> {
+fn get_view_for_jsxattr_or_spread<'a>(ref_node: &'a swc_ast::JSXAttrOrSpread, bump: &'a Bump) -> JSXAttrOrSpread<'a> {
   match ref_node {
-    swc_ecma_ast::JSXAttrOrSpread::JSXAttr(value) => JSXAttrOrSpread::JSXAttr(get_view_for_jsxattr(value)),
-    swc_ecma_ast::JSXAttrOrSpread::SpreadElement(value) => JSXAttrOrSpread::SpreadElement(get_view_for_spread_element(value)),
+    swc_ast::JSXAttrOrSpread::JSXAttr(value) => JSXAttrOrSpread::JSXAttr(get_view_for_jsxattr(value, bump)),
+    swc_ast::JSXAttrOrSpread::SpreadElement(value) => JSXAttrOrSpread::SpreadElement(get_view_for_spread_element(value, bump)),
   }
 }
 
-fn set_parent_for_jsxattr_or_spread<'a>(node: &mut JSXAttrOrSpread<'a>, parent: Node<'a>) {
+fn set_parent_for_jsxattr_or_spread<'a>(node: &JSXAttrOrSpread<'a>, parent: Node<'a>) {
   match node {
     JSXAttrOrSpread::JSXAttr(node) => {
-      node.parent = parent.to::<JSXOpeningElement>();
+      unsafe { *node.inner_parent.get() = Some(parent.to::<JSXOpeningElement>()); }
     },
     JSXAttrOrSpread::SpreadElement(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
 
 pub enum ParamOrTsParamProp<'a> {
-  TsParamProp(TsParamProp<'a>),
-  Param(Param<'a>),
+  TsParamProp(&'a TsParamProp<'a>),
+  Param(&'a Param<'a>),
 }
 
 impl<'a> ParamOrTsParamProp<'a> {
@@ -2346,37 +2629,44 @@ impl<'a> NodeTrait<'a> for ParamOrTsParamProp<'a> {
       ParamOrTsParamProp::Param(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      ParamOrTsParamProp::TsParamProp(node) => node.into_node(),
+      ParamOrTsParamProp::Param(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&ParamOrTsParamProp<'a>> for Node<'a> {
   fn from(node: &ParamOrTsParamProp<'a>) -> Node<'a> {
     match node {
-      ParamOrTsParamProp::TsParamProp(node) => node.into(),
-      ParamOrTsParamProp::Param(node) => node.into(),
+      ParamOrTsParamProp::TsParamProp(node) => (*node).into(),
+      ParamOrTsParamProp::Param(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_param_or_ts_param_prop<'a>(ref_node: &'a swc_ecma_ast::ParamOrTsParamProp) -> ParamOrTsParamProp<'a> {
+fn get_view_for_param_or_ts_param_prop<'a>(ref_node: &'a swc_ast::ParamOrTsParamProp, bump: &'a Bump) -> ParamOrTsParamProp<'a> {
   match ref_node {
-    swc_ecma_ast::ParamOrTsParamProp::TsParamProp(value) => ParamOrTsParamProp::TsParamProp(get_view_for_ts_param_prop(value)),
-    swc_ecma_ast::ParamOrTsParamProp::Param(value) => ParamOrTsParamProp::Param(get_view_for_param(value)),
+    swc_ast::ParamOrTsParamProp::TsParamProp(value) => ParamOrTsParamProp::TsParamProp(get_view_for_ts_param_prop(value, bump)),
+    swc_ast::ParamOrTsParamProp::Param(value) => ParamOrTsParamProp::Param(get_view_for_param(value, bump)),
   }
 }
 
-fn set_parent_for_param_or_ts_param_prop<'a>(node: &mut ParamOrTsParamProp<'a>, parent: Node<'a>) {
+fn set_parent_for_param_or_ts_param_prop<'a>(node: &ParamOrTsParamProp<'a>, parent: Node<'a>) {
   match node {
     ParamOrTsParamProp::TsParamProp(node) => {
-      node.parent = parent.to::<Constructor>();
+      unsafe { *node.inner_parent.get() = Some(parent.to::<Constructor>()); }
     },
     ParamOrTsParamProp::Param(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
 
 pub enum ExprOrSuper<'a> {
-  Super(Super<'a>),
-  Expr(Box<Expr<'a>>),
+  Super(&'a Super<'a>),
+  Expr(Expr<'a>),
 }
 
 impl<'a> ExprOrSuper<'a> {
@@ -2412,27 +2702,34 @@ impl<'a> NodeTrait<'a> for ExprOrSuper<'a> {
       ExprOrSuper::Expr(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      ExprOrSuper::Super(node) => node.into_node(),
+      ExprOrSuper::Expr(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&ExprOrSuper<'a>> for Node<'a> {
   fn from(node: &ExprOrSuper<'a>) -> Node<'a> {
     match node {
-      ExprOrSuper::Super(node) => node.into(),
+      ExprOrSuper::Super(node) => (*node).into(),
       ExprOrSuper::Expr(node) => node.into(),
     }
   }
 }
 
-fn get_view_for_expr_or_super<'a>(ref_node: &'a swc_ecma_ast::ExprOrSuper) -> ExprOrSuper<'a> {
+fn get_view_for_expr_or_super<'a>(ref_node: &'a swc_ast::ExprOrSuper, bump: &'a Bump) -> ExprOrSuper<'a> {
   match ref_node {
-    swc_ecma_ast::ExprOrSuper::Super(value) => ExprOrSuper::Super(get_view_for_super(value)),
-    swc_ecma_ast::ExprOrSuper::Expr(value) => ExprOrSuper::Expr(Box::new(get_view_for_expr(value))),
+    swc_ast::ExprOrSuper::Super(value) => ExprOrSuper::Super(get_view_for_super(value, bump)),
+    swc_ast::ExprOrSuper::Expr(value) => ExprOrSuper::Expr(get_view_for_expr(value, bump)),
   }
 }
 
-fn set_parent_for_expr_or_super<'a>(node: &mut ExprOrSuper<'a>, parent: Node<'a>) {
+fn set_parent_for_expr_or_super<'a>(node: &ExprOrSuper<'a>, parent: Node<'a>) {
   match node {
     ExprOrSuper::Super(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     ExprOrSuper::Expr(node) => {
       set_parent_for_expr(node, parent);
@@ -2441,11 +2738,11 @@ fn set_parent_for_expr_or_super<'a>(node: &mut ExprOrSuper<'a>, parent: Node<'a>
 }
 
 pub enum TsTypeElement<'a> {
-  TsCallSignatureDecl(TsCallSignatureDecl<'a>),
-  TsConstructSignatureDecl(TsConstructSignatureDecl<'a>),
-  TsPropertySignature(TsPropertySignature<'a>),
-  TsMethodSignature(TsMethodSignature<'a>),
-  TsIndexSignature(TsIndexSignature<'a>),
+  TsCallSignatureDecl(&'a TsCallSignatureDecl<'a>),
+  TsConstructSignatureDecl(&'a TsConstructSignatureDecl<'a>),
+  TsPropertySignature(&'a TsPropertySignature<'a>),
+  TsMethodSignature(&'a TsMethodSignature<'a>),
+  TsIndexSignature(&'a TsIndexSignature<'a>),
 }
 
 impl<'a> TsTypeElement<'a> {
@@ -2490,52 +2787,62 @@ impl<'a> NodeTrait<'a> for TsTypeElement<'a> {
       TsTypeElement::TsIndexSignature(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      TsTypeElement::TsCallSignatureDecl(node) => node.into_node(),
+      TsTypeElement::TsConstructSignatureDecl(node) => node.into_node(),
+      TsTypeElement::TsPropertySignature(node) => node.into_node(),
+      TsTypeElement::TsMethodSignature(node) => node.into_node(),
+      TsTypeElement::TsIndexSignature(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&TsTypeElement<'a>> for Node<'a> {
   fn from(node: &TsTypeElement<'a>) -> Node<'a> {
     match node {
-      TsTypeElement::TsCallSignatureDecl(node) => node.into(),
-      TsTypeElement::TsConstructSignatureDecl(node) => node.into(),
-      TsTypeElement::TsPropertySignature(node) => node.into(),
-      TsTypeElement::TsMethodSignature(node) => node.into(),
-      TsTypeElement::TsIndexSignature(node) => node.into(),
+      TsTypeElement::TsCallSignatureDecl(node) => (*node).into(),
+      TsTypeElement::TsConstructSignatureDecl(node) => (*node).into(),
+      TsTypeElement::TsPropertySignature(node) => (*node).into(),
+      TsTypeElement::TsMethodSignature(node) => (*node).into(),
+      TsTypeElement::TsIndexSignature(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_ts_type_element<'a>(ref_node: &'a swc_ecma_ast::TsTypeElement) -> TsTypeElement<'a> {
+fn get_view_for_ts_type_element<'a>(ref_node: &'a swc_ast::TsTypeElement, bump: &'a Bump) -> TsTypeElement<'a> {
   match ref_node {
-    swc_ecma_ast::TsTypeElement::TsCallSignatureDecl(value) => TsTypeElement::TsCallSignatureDecl(get_view_for_ts_call_signature_decl(value)),
-    swc_ecma_ast::TsTypeElement::TsConstructSignatureDecl(value) => TsTypeElement::TsConstructSignatureDecl(get_view_for_ts_construct_signature_decl(value)),
-    swc_ecma_ast::TsTypeElement::TsPropertySignature(value) => TsTypeElement::TsPropertySignature(get_view_for_ts_property_signature(value)),
-    swc_ecma_ast::TsTypeElement::TsMethodSignature(value) => TsTypeElement::TsMethodSignature(get_view_for_ts_method_signature(value)),
-    swc_ecma_ast::TsTypeElement::TsIndexSignature(value) => TsTypeElement::TsIndexSignature(get_view_for_ts_index_signature(value)),
+    swc_ast::TsTypeElement::TsCallSignatureDecl(value) => TsTypeElement::TsCallSignatureDecl(get_view_for_ts_call_signature_decl(value, bump)),
+    swc_ast::TsTypeElement::TsConstructSignatureDecl(value) => TsTypeElement::TsConstructSignatureDecl(get_view_for_ts_construct_signature_decl(value, bump)),
+    swc_ast::TsTypeElement::TsPropertySignature(value) => TsTypeElement::TsPropertySignature(get_view_for_ts_property_signature(value, bump)),
+    swc_ast::TsTypeElement::TsMethodSignature(value) => TsTypeElement::TsMethodSignature(get_view_for_ts_method_signature(value, bump)),
+    swc_ast::TsTypeElement::TsIndexSignature(value) => TsTypeElement::TsIndexSignature(get_view_for_ts_index_signature(value, bump)),
   }
 }
 
-fn set_parent_for_ts_type_element<'a>(node: &mut TsTypeElement<'a>, parent: Node<'a>) {
+fn set_parent_for_ts_type_element<'a>(node: &TsTypeElement<'a>, parent: Node<'a>) {
   match node {
     TsTypeElement::TsCallSignatureDecl(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsTypeElement::TsConstructSignatureDecl(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsTypeElement::TsPropertySignature(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsTypeElement::TsMethodSignature(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsTypeElement::TsIndexSignature(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
 
 pub enum BlockStmtOrExpr<'a> {
-  BlockStmt(BlockStmt<'a>),
-  Expr(Box<Expr<'a>>),
+  BlockStmt(&'a BlockStmt<'a>),
+  Expr(Expr<'a>),
 }
 
 impl<'a> BlockStmtOrExpr<'a> {
@@ -2571,27 +2878,34 @@ impl<'a> NodeTrait<'a> for BlockStmtOrExpr<'a> {
       BlockStmtOrExpr::Expr(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      BlockStmtOrExpr::BlockStmt(node) => node.into_node(),
+      BlockStmtOrExpr::Expr(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&BlockStmtOrExpr<'a>> for Node<'a> {
   fn from(node: &BlockStmtOrExpr<'a>) -> Node<'a> {
     match node {
-      BlockStmtOrExpr::BlockStmt(node) => node.into(),
+      BlockStmtOrExpr::BlockStmt(node) => (*node).into(),
       BlockStmtOrExpr::Expr(node) => node.into(),
     }
   }
 }
 
-fn get_view_for_block_stmt_or_expr<'a>(ref_node: &'a swc_ecma_ast::BlockStmtOrExpr) -> BlockStmtOrExpr<'a> {
+fn get_view_for_block_stmt_or_expr<'a>(ref_node: &'a swc_ast::BlockStmtOrExpr, bump: &'a Bump) -> BlockStmtOrExpr<'a> {
   match ref_node {
-    swc_ecma_ast::BlockStmtOrExpr::BlockStmt(value) => BlockStmtOrExpr::BlockStmt(get_view_for_block_stmt(value)),
-    swc_ecma_ast::BlockStmtOrExpr::Expr(value) => BlockStmtOrExpr::Expr(Box::new(get_view_for_expr(value))),
+    swc_ast::BlockStmtOrExpr::BlockStmt(value) => BlockStmtOrExpr::BlockStmt(get_view_for_block_stmt(value, bump)),
+    swc_ast::BlockStmtOrExpr::Expr(value) => BlockStmtOrExpr::Expr(get_view_for_expr(value, bump)),
   }
 }
 
-fn set_parent_for_block_stmt_or_expr<'a>(node: &mut BlockStmtOrExpr<'a>, parent: Node<'a>) {
+fn set_parent_for_block_stmt_or_expr<'a>(node: &BlockStmtOrExpr<'a>, parent: Node<'a>) {
   match node {
     BlockStmtOrExpr::BlockStmt(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     BlockStmtOrExpr::Expr(node) => {
       set_parent_for_expr(node, parent);
@@ -2600,8 +2914,8 @@ fn set_parent_for_block_stmt_or_expr<'a>(node: &mut BlockStmtOrExpr<'a>, parent:
 }
 
 pub enum TsUnionOrIntersectionType<'a> {
-  TsUnionType(TsUnionType<'a>),
-  TsIntersectionType(TsIntersectionType<'a>),
+  TsUnionType(&'a TsUnionType<'a>),
+  TsIntersectionType(&'a TsIntersectionType<'a>),
 }
 
 impl<'a> TsUnionOrIntersectionType<'a> {
@@ -2637,38 +2951,45 @@ impl<'a> NodeTrait<'a> for TsUnionOrIntersectionType<'a> {
       TsUnionOrIntersectionType::TsIntersectionType(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      TsUnionOrIntersectionType::TsUnionType(node) => node.into_node(),
+      TsUnionOrIntersectionType::TsIntersectionType(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&TsUnionOrIntersectionType<'a>> for Node<'a> {
   fn from(node: &TsUnionOrIntersectionType<'a>) -> Node<'a> {
     match node {
-      TsUnionOrIntersectionType::TsUnionType(node) => node.into(),
-      TsUnionOrIntersectionType::TsIntersectionType(node) => node.into(),
+      TsUnionOrIntersectionType::TsUnionType(node) => (*node).into(),
+      TsUnionOrIntersectionType::TsIntersectionType(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_ts_union_or_intersection_type<'a>(ref_node: &'a swc_ecma_ast::TsUnionOrIntersectionType) -> TsUnionOrIntersectionType<'a> {
+fn get_view_for_ts_union_or_intersection_type<'a>(ref_node: &'a swc_ast::TsUnionOrIntersectionType, bump: &'a Bump) -> TsUnionOrIntersectionType<'a> {
   match ref_node {
-    swc_ecma_ast::TsUnionOrIntersectionType::TsUnionType(value) => TsUnionOrIntersectionType::TsUnionType(get_view_for_ts_union_type(value)),
-    swc_ecma_ast::TsUnionOrIntersectionType::TsIntersectionType(value) => TsUnionOrIntersectionType::TsIntersectionType(get_view_for_ts_intersection_type(value)),
+    swc_ast::TsUnionOrIntersectionType::TsUnionType(value) => TsUnionOrIntersectionType::TsUnionType(get_view_for_ts_union_type(value, bump)),
+    swc_ast::TsUnionOrIntersectionType::TsIntersectionType(value) => TsUnionOrIntersectionType::TsIntersectionType(get_view_for_ts_intersection_type(value, bump)),
   }
 }
 
-fn set_parent_for_ts_union_or_intersection_type<'a>(node: &mut TsUnionOrIntersectionType<'a>, parent: Node<'a>) {
+fn set_parent_for_ts_union_or_intersection_type<'a>(node: &TsUnionOrIntersectionType<'a>, parent: Node<'a>) {
   match node {
     TsUnionOrIntersectionType::TsUnionType(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsUnionOrIntersectionType::TsIntersectionType(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
 
 pub enum DefaultDecl<'a> {
-  Class(ClassExpr<'a>),
-  Fn(FnExpr<'a>),
-  TsInterfaceDecl(TsInterfaceDecl<'a>),
+  Class(&'a ClassExpr<'a>),
+  Fn(&'a FnExpr<'a>),
+  TsInterfaceDecl(&'a TsInterfaceDecl<'a>),
 }
 
 impl<'a> DefaultDecl<'a> {
@@ -2707,35 +3028,43 @@ impl<'a> NodeTrait<'a> for DefaultDecl<'a> {
       DefaultDecl::TsInterfaceDecl(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      DefaultDecl::Class(node) => node.into_node(),
+      DefaultDecl::Fn(node) => node.into_node(),
+      DefaultDecl::TsInterfaceDecl(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&DefaultDecl<'a>> for Node<'a> {
   fn from(node: &DefaultDecl<'a>) -> Node<'a> {
     match node {
-      DefaultDecl::Class(node) => node.into(),
-      DefaultDecl::Fn(node) => node.into(),
-      DefaultDecl::TsInterfaceDecl(node) => node.into(),
+      DefaultDecl::Class(node) => (*node).into(),
+      DefaultDecl::Fn(node) => (*node).into(),
+      DefaultDecl::TsInterfaceDecl(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_default_decl<'a>(ref_node: &'a swc_ecma_ast::DefaultDecl) -> DefaultDecl<'a> {
+fn get_view_for_default_decl<'a>(ref_node: &'a swc_ast::DefaultDecl, bump: &'a Bump) -> DefaultDecl<'a> {
   match ref_node {
-    swc_ecma_ast::DefaultDecl::Class(value) => DefaultDecl::Class(get_view_for_class_expr(value)),
-    swc_ecma_ast::DefaultDecl::Fn(value) => DefaultDecl::Fn(get_view_for_fn_expr(value)),
-    swc_ecma_ast::DefaultDecl::TsInterfaceDecl(value) => DefaultDecl::TsInterfaceDecl(get_view_for_ts_interface_decl(value)),
+    swc_ast::DefaultDecl::Class(value) => DefaultDecl::Class(get_view_for_class_expr(value, bump)),
+    swc_ast::DefaultDecl::Fn(value) => DefaultDecl::Fn(get_view_for_fn_expr(value, bump)),
+    swc_ast::DefaultDecl::TsInterfaceDecl(value) => DefaultDecl::TsInterfaceDecl(get_view_for_ts_interface_decl(value, bump)),
   }
 }
 
-fn set_parent_for_default_decl<'a>(node: &mut DefaultDecl<'a>, parent: Node<'a>) {
+fn set_parent_for_default_decl<'a>(node: &DefaultDecl<'a>, parent: Node<'a>) {
   match node {
     DefaultDecl::Class(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     DefaultDecl::Fn(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     DefaultDecl::TsInterfaceDecl(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
@@ -2743,8 +3072,8 @@ fn set_parent_for_default_decl<'a>(node: &mut DefaultDecl<'a>, parent: Node<'a>)
 /// 
 /// - Invalid: [Ident] with empty symbol.
 pub enum TsEnumMemberId<'a> {
-  Ident(Ident<'a>),
-  Str(Str<'a>),
+  Ident(&'a Ident<'a>),
+  Str(&'a Str<'a>),
 }
 
 impl<'a> TsEnumMemberId<'a> {
@@ -2780,37 +3109,44 @@ impl<'a> NodeTrait<'a> for TsEnumMemberId<'a> {
       TsEnumMemberId::Str(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      TsEnumMemberId::Ident(node) => node.into_node(),
+      TsEnumMemberId::Str(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&TsEnumMemberId<'a>> for Node<'a> {
   fn from(node: &TsEnumMemberId<'a>) -> Node<'a> {
     match node {
-      TsEnumMemberId::Ident(node) => node.into(),
-      TsEnumMemberId::Str(node) => node.into(),
+      TsEnumMemberId::Ident(node) => (*node).into(),
+      TsEnumMemberId::Str(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_ts_enum_member_id<'a>(ref_node: &'a swc_ecma_ast::TsEnumMemberId) -> TsEnumMemberId<'a> {
+fn get_view_for_ts_enum_member_id<'a>(ref_node: &'a swc_ast::TsEnumMemberId, bump: &'a Bump) -> TsEnumMemberId<'a> {
   match ref_node {
-    swc_ecma_ast::TsEnumMemberId::Ident(value) => TsEnumMemberId::Ident(get_view_for_ident(value)),
-    swc_ecma_ast::TsEnumMemberId::Str(value) => TsEnumMemberId::Str(get_view_for_str(value)),
+    swc_ast::TsEnumMemberId::Ident(value) => TsEnumMemberId::Ident(get_view_for_ident(value, bump)),
+    swc_ast::TsEnumMemberId::Str(value) => TsEnumMemberId::Str(get_view_for_str(value, bump)),
   }
 }
 
-fn set_parent_for_ts_enum_member_id<'a>(node: &mut TsEnumMemberId<'a>, parent: Node<'a>) {
+fn set_parent_for_ts_enum_member_id<'a>(node: &TsEnumMemberId<'a>, parent: Node<'a>) {
   match node {
     TsEnumMemberId::Ident(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsEnumMemberId::Str(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
 
 pub enum TsParamPropParam<'a> {
-  Ident(Ident<'a>),
-  Assign(AssignPat<'a>),
+  Ident(&'a Ident<'a>),
+  Assign(&'a AssignPat<'a>),
 }
 
 impl<'a> TsParamPropParam<'a> {
@@ -2846,40 +3182,47 @@ impl<'a> NodeTrait<'a> for TsParamPropParam<'a> {
       TsParamPropParam::Assign(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      TsParamPropParam::Ident(node) => node.into_node(),
+      TsParamPropParam::Assign(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&TsParamPropParam<'a>> for Node<'a> {
   fn from(node: &TsParamPropParam<'a>) -> Node<'a> {
     match node {
-      TsParamPropParam::Ident(node) => node.into(),
-      TsParamPropParam::Assign(node) => node.into(),
+      TsParamPropParam::Ident(node) => (*node).into(),
+      TsParamPropParam::Assign(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_ts_param_prop_param<'a>(ref_node: &'a swc_ecma_ast::TsParamPropParam) -> TsParamPropParam<'a> {
+fn get_view_for_ts_param_prop_param<'a>(ref_node: &'a swc_ast::TsParamPropParam, bump: &'a Bump) -> TsParamPropParam<'a> {
   match ref_node {
-    swc_ecma_ast::TsParamPropParam::Ident(value) => TsParamPropParam::Ident(get_view_for_ident(value)),
-    swc_ecma_ast::TsParamPropParam::Assign(value) => TsParamPropParam::Assign(get_view_for_assign_pat(value)),
+    swc_ast::TsParamPropParam::Ident(value) => TsParamPropParam::Ident(get_view_for_ident(value, bump)),
+    swc_ast::TsParamPropParam::Assign(value) => TsParamPropParam::Assign(get_view_for_assign_pat(value, bump)),
   }
 }
 
-fn set_parent_for_ts_param_prop_param<'a>(node: &mut TsParamPropParam<'a>, parent: Node<'a>) {
+fn set_parent_for_ts_param_prop_param<'a>(node: &TsParamPropParam<'a>, parent: Node<'a>) {
   match node {
     TsParamPropParam::Ident(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsParamPropParam::Assign(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
 
 pub enum JSXElementChild<'a> {
-  JSXText(JSXText<'a>),
-  JSXExprContainer(JSXExprContainer<'a>),
-  JSXSpreadChild(JSXSpreadChild<'a>),
-  JSXElement(Box<JSXElement<'a>>),
-  JSXFragment(JSXFragment<'a>),
+  JSXText(&'a JSXText<'a>),
+  JSXExprContainer(&'a JSXExprContainer<'a>),
+  JSXSpreadChild(&'a JSXSpreadChild<'a>),
+  JSXElement(&'a JSXElement<'a>),
+  JSXFragment(&'a JSXFragment<'a>),
 }
 
 impl<'a> JSXElementChild<'a> {
@@ -2924,45 +3267,55 @@ impl<'a> NodeTrait<'a> for JSXElementChild<'a> {
       JSXElementChild::JSXFragment(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      JSXElementChild::JSXText(node) => node.into_node(),
+      JSXElementChild::JSXExprContainer(node) => node.into_node(),
+      JSXElementChild::JSXSpreadChild(node) => node.into_node(),
+      JSXElementChild::JSXElement(node) => node.into_node(),
+      JSXElementChild::JSXFragment(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&JSXElementChild<'a>> for Node<'a> {
   fn from(node: &JSXElementChild<'a>) -> Node<'a> {
     match node {
-      JSXElementChild::JSXText(node) => node.into(),
-      JSXElementChild::JSXExprContainer(node) => node.into(),
-      JSXElementChild::JSXSpreadChild(node) => node.into(),
-      JSXElementChild::JSXElement(node) => node.into(),
-      JSXElementChild::JSXFragment(node) => node.into(),
+      JSXElementChild::JSXText(node) => (*node).into(),
+      JSXElementChild::JSXExprContainer(node) => (*node).into(),
+      JSXElementChild::JSXSpreadChild(node) => (*node).into(),
+      JSXElementChild::JSXElement(node) => (*node).into(),
+      JSXElementChild::JSXFragment(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_jsxelement_child<'a>(ref_node: &'a swc_ecma_ast::JSXElementChild) -> JSXElementChild<'a> {
+fn get_view_for_jsxelement_child<'a>(ref_node: &'a swc_ast::JSXElementChild, bump: &'a Bump) -> JSXElementChild<'a> {
   match ref_node {
-    swc_ecma_ast::JSXElementChild::JSXText(value) => JSXElementChild::JSXText(get_view_for_jsxtext(value)),
-    swc_ecma_ast::JSXElementChild::JSXExprContainer(value) => JSXElementChild::JSXExprContainer(get_view_for_jsxexpr_container(value)),
-    swc_ecma_ast::JSXElementChild::JSXSpreadChild(value) => JSXElementChild::JSXSpreadChild(get_view_for_jsxspread_child(value)),
-    swc_ecma_ast::JSXElementChild::JSXElement(value) => JSXElementChild::JSXElement(Box::new(get_view_for_jsxelement(value))),
-    swc_ecma_ast::JSXElementChild::JSXFragment(value) => JSXElementChild::JSXFragment(get_view_for_jsxfragment(value)),
+    swc_ast::JSXElementChild::JSXText(value) => JSXElementChild::JSXText(get_view_for_jsxtext(value, bump)),
+    swc_ast::JSXElementChild::JSXExprContainer(value) => JSXElementChild::JSXExprContainer(get_view_for_jsxexpr_container(value, bump)),
+    swc_ast::JSXElementChild::JSXSpreadChild(value) => JSXElementChild::JSXSpreadChild(get_view_for_jsxspread_child(value, bump)),
+    swc_ast::JSXElementChild::JSXElement(value) => JSXElementChild::JSXElement(get_view_for_jsxelement(value, bump)),
+    swc_ast::JSXElementChild::JSXFragment(value) => JSXElementChild::JSXFragment(get_view_for_jsxfragment(value, bump)),
   }
 }
 
-fn set_parent_for_jsxelement_child<'a>(node: &mut JSXElementChild<'a>, parent: Node<'a>) {
+fn set_parent_for_jsxelement_child<'a>(node: &JSXElementChild<'a>, parent: Node<'a>) {
   match node {
     JSXElementChild::JSXText(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     JSXElementChild::JSXExprContainer(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     JSXElementChild::JSXSpreadChild(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     JSXElementChild::JSXElement(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     JSXElementChild::JSXFragment(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
@@ -3005,6 +3358,13 @@ impl<'a> NodeTrait<'a> for ModuleItem<'a> {
       ModuleItem::Stmt(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      ModuleItem::ModuleDecl(node) => node.into_node(),
+      ModuleItem::Stmt(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&ModuleItem<'a>> for Node<'a> {
   fn from(node: &ModuleItem<'a>) -> Node<'a> {
@@ -3015,14 +3375,14 @@ impl<'a> From<&ModuleItem<'a>> for Node<'a> {
   }
 }
 
-fn get_view_for_module_item<'a>(ref_node: &'a swc_ecma_ast::ModuleItem) -> ModuleItem<'a> {
+fn get_view_for_module_item<'a>(ref_node: &'a swc_ast::ModuleItem, bump: &'a Bump) -> ModuleItem<'a> {
   match ref_node {
-    swc_ecma_ast::ModuleItem::ModuleDecl(value) => ModuleItem::ModuleDecl(get_view_for_module_decl(value)),
-    swc_ecma_ast::ModuleItem::Stmt(value) => ModuleItem::Stmt(get_view_for_stmt(value)),
+    swc_ast::ModuleItem::ModuleDecl(value) => ModuleItem::ModuleDecl(get_view_for_module_decl(value, bump)),
+    swc_ast::ModuleItem::Stmt(value) => ModuleItem::Stmt(get_view_for_stmt(value, bump)),
   }
 }
 
-fn set_parent_for_module_item<'a>(node: &mut ModuleItem<'a>, parent: Node<'a>) {
+fn set_parent_for_module_item<'a>(node: &ModuleItem<'a>, parent: Node<'a>) {
   match node {
     ModuleItem::ModuleDecl(node) => {
       set_parent_for_module_decl(node, parent);
@@ -3034,13 +3394,13 @@ fn set_parent_for_module_item<'a>(node: &mut ModuleItem<'a>, parent: Node<'a>) {
 }
 
 pub enum PropName<'a> {
-  Ident(Ident<'a>),
+  Ident(&'a Ident<'a>),
   /// String literal.
-  Str(Str<'a>),
+  Str(&'a Str<'a>),
   /// Numeric literal.
-  Num(Number<'a>),
-  Computed(ComputedPropName<'a>),
-  BigInt(BigInt<'a>),
+  Num(&'a Number<'a>),
+  Computed(&'a ComputedPropName<'a>),
+  BigInt(&'a BigInt<'a>),
 }
 
 impl<'a> PropName<'a> {
@@ -3085,52 +3445,62 @@ impl<'a> NodeTrait<'a> for PropName<'a> {
       PropName::BigInt(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      PropName::Ident(node) => node.into_node(),
+      PropName::Str(node) => node.into_node(),
+      PropName::Num(node) => node.into_node(),
+      PropName::Computed(node) => node.into_node(),
+      PropName::BigInt(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&PropName<'a>> for Node<'a> {
   fn from(node: &PropName<'a>) -> Node<'a> {
     match node {
-      PropName::Ident(node) => node.into(),
-      PropName::Str(node) => node.into(),
-      PropName::Num(node) => node.into(),
-      PropName::Computed(node) => node.into(),
-      PropName::BigInt(node) => node.into(),
+      PropName::Ident(node) => (*node).into(),
+      PropName::Str(node) => (*node).into(),
+      PropName::Num(node) => (*node).into(),
+      PropName::Computed(node) => (*node).into(),
+      PropName::BigInt(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_prop_name<'a>(ref_node: &'a swc_ecma_ast::PropName) -> PropName<'a> {
+fn get_view_for_prop_name<'a>(ref_node: &'a swc_ast::PropName, bump: &'a Bump) -> PropName<'a> {
   match ref_node {
-    swc_ecma_ast::PropName::Ident(value) => PropName::Ident(get_view_for_ident(value)),
-    swc_ecma_ast::PropName::Str(value) => PropName::Str(get_view_for_str(value)),
-    swc_ecma_ast::PropName::Num(value) => PropName::Num(get_view_for_number(value)),
-    swc_ecma_ast::PropName::Computed(value) => PropName::Computed(get_view_for_computed_prop_name(value)),
-    swc_ecma_ast::PropName::BigInt(value) => PropName::BigInt(get_view_for_big_int(value)),
+    swc_ast::PropName::Ident(value) => PropName::Ident(get_view_for_ident(value, bump)),
+    swc_ast::PropName::Str(value) => PropName::Str(get_view_for_str(value, bump)),
+    swc_ast::PropName::Num(value) => PropName::Num(get_view_for_number(value, bump)),
+    swc_ast::PropName::Computed(value) => PropName::Computed(get_view_for_computed_prop_name(value, bump)),
+    swc_ast::PropName::BigInt(value) => PropName::BigInt(get_view_for_big_int(value, bump)),
   }
 }
 
-fn set_parent_for_prop_name<'a>(node: &mut PropName<'a>, parent: Node<'a>) {
+fn set_parent_for_prop_name<'a>(node: &PropName<'a>, parent: Node<'a>) {
   match node {
     PropName::Ident(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     PropName::Str(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     PropName::Num(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     PropName::Computed(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     PropName::BigInt(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
 
 pub enum JSXAttrName<'a> {
-  Ident(Ident<'a>),
-  JSXNamespacedName(JSXNamespacedName<'a>),
+  Ident(&'a Ident<'a>),
+  JSXNamespacedName(&'a JSXNamespacedName<'a>),
 }
 
 impl<'a> JSXAttrName<'a> {
@@ -3166,42 +3536,49 @@ impl<'a> NodeTrait<'a> for JSXAttrName<'a> {
       JSXAttrName::JSXNamespacedName(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      JSXAttrName::Ident(node) => node.into_node(),
+      JSXAttrName::JSXNamespacedName(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&JSXAttrName<'a>> for Node<'a> {
   fn from(node: &JSXAttrName<'a>) -> Node<'a> {
     match node {
-      JSXAttrName::Ident(node) => node.into(),
-      JSXAttrName::JSXNamespacedName(node) => node.into(),
+      JSXAttrName::Ident(node) => (*node).into(),
+      JSXAttrName::JSXNamespacedName(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_jsxattr_name<'a>(ref_node: &'a swc_ecma_ast::JSXAttrName) -> JSXAttrName<'a> {
+fn get_view_for_jsxattr_name<'a>(ref_node: &'a swc_ast::JSXAttrName, bump: &'a Bump) -> JSXAttrName<'a> {
   match ref_node {
-    swc_ecma_ast::JSXAttrName::Ident(value) => JSXAttrName::Ident(get_view_for_ident(value)),
-    swc_ecma_ast::JSXAttrName::JSXNamespacedName(value) => JSXAttrName::JSXNamespacedName(get_view_for_jsxnamespaced_name(value)),
+    swc_ast::JSXAttrName::Ident(value) => JSXAttrName::Ident(get_view_for_ident(value, bump)),
+    swc_ast::JSXAttrName::JSXNamespacedName(value) => JSXAttrName::JSXNamespacedName(get_view_for_jsxnamespaced_name(value, bump)),
   }
 }
 
-fn set_parent_for_jsxattr_name<'a>(node: &mut JSXAttrName<'a>, parent: Node<'a>) {
+fn set_parent_for_jsxattr_name<'a>(node: &JSXAttrName<'a>, parent: Node<'a>) {
   match node {
     JSXAttrName::Ident(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     JSXAttrName::JSXNamespacedName(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
 
 pub enum Decl<'a> {
-  Class(ClassDecl<'a>),
-  Fn(FnDecl<'a>),
-  Var(VarDecl<'a>),
-  TsInterface(TsInterfaceDecl<'a>),
-  TsTypeAlias(TsTypeAliasDecl<'a>),
-  TsEnum(TsEnumDecl<'a>),
-  TsModule(TsModuleDecl<'a>),
+  Class(&'a ClassDecl<'a>),
+  Fn(&'a FnDecl<'a>),
+  Var(&'a VarDecl<'a>),
+  TsInterface(&'a TsInterfaceDecl<'a>),
+  TsTypeAlias(&'a TsTypeAliasDecl<'a>),
+  TsEnum(&'a TsEnumDecl<'a>),
+  TsModule(&'a TsModuleDecl<'a>),
 }
 
 impl<'a> Decl<'a> {
@@ -3252,65 +3629,77 @@ impl<'a> NodeTrait<'a> for Decl<'a> {
       Decl::TsModule(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      Decl::Class(node) => node.into_node(),
+      Decl::Fn(node) => node.into_node(),
+      Decl::Var(node) => node.into_node(),
+      Decl::TsInterface(node) => node.into_node(),
+      Decl::TsTypeAlias(node) => node.into_node(),
+      Decl::TsEnum(node) => node.into_node(),
+      Decl::TsModule(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&Decl<'a>> for Node<'a> {
   fn from(node: &Decl<'a>) -> Node<'a> {
     match node {
-      Decl::Class(node) => node.into(),
-      Decl::Fn(node) => node.into(),
-      Decl::Var(node) => node.into(),
-      Decl::TsInterface(node) => node.into(),
-      Decl::TsTypeAlias(node) => node.into(),
-      Decl::TsEnum(node) => node.into(),
-      Decl::TsModule(node) => node.into(),
+      Decl::Class(node) => (*node).into(),
+      Decl::Fn(node) => (*node).into(),
+      Decl::Var(node) => (*node).into(),
+      Decl::TsInterface(node) => (*node).into(),
+      Decl::TsTypeAlias(node) => (*node).into(),
+      Decl::TsEnum(node) => (*node).into(),
+      Decl::TsModule(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_decl<'a>(ref_node: &'a swc_ecma_ast::Decl) -> Decl<'a> {
+fn get_view_for_decl<'a>(ref_node: &'a swc_ast::Decl, bump: &'a Bump) -> Decl<'a> {
   match ref_node {
-    swc_ecma_ast::Decl::Class(value) => Decl::Class(get_view_for_class_decl(value)),
-    swc_ecma_ast::Decl::Fn(value) => Decl::Fn(get_view_for_fn_decl(value)),
-    swc_ecma_ast::Decl::Var(value) => Decl::Var(get_view_for_var_decl(value)),
-    swc_ecma_ast::Decl::TsInterface(value) => Decl::TsInterface(get_view_for_ts_interface_decl(value)),
-    swc_ecma_ast::Decl::TsTypeAlias(value) => Decl::TsTypeAlias(get_view_for_ts_type_alias_decl(value)),
-    swc_ecma_ast::Decl::TsEnum(value) => Decl::TsEnum(get_view_for_ts_enum_decl(value)),
-    swc_ecma_ast::Decl::TsModule(value) => Decl::TsModule(get_view_for_ts_module_decl(value)),
+    swc_ast::Decl::Class(value) => Decl::Class(get_view_for_class_decl(value, bump)),
+    swc_ast::Decl::Fn(value) => Decl::Fn(get_view_for_fn_decl(value, bump)),
+    swc_ast::Decl::Var(value) => Decl::Var(get_view_for_var_decl(value, bump)),
+    swc_ast::Decl::TsInterface(value) => Decl::TsInterface(get_view_for_ts_interface_decl(value, bump)),
+    swc_ast::Decl::TsTypeAlias(value) => Decl::TsTypeAlias(get_view_for_ts_type_alias_decl(value, bump)),
+    swc_ast::Decl::TsEnum(value) => Decl::TsEnum(get_view_for_ts_enum_decl(value, bump)),
+    swc_ast::Decl::TsModule(value) => Decl::TsModule(get_view_for_ts_module_decl(value, bump)),
   }
 }
 
-fn set_parent_for_decl<'a>(node: &mut Decl<'a>, parent: Node<'a>) {
+fn set_parent_for_decl<'a>(node: &Decl<'a>, parent: Node<'a>) {
   match node {
     Decl::Class(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Decl::Fn(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Decl::Var(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Decl::TsInterface(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Decl::TsTypeAlias(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Decl::TsEnum(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Decl::TsModule(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
 
 pub enum TsLit<'a> {
-  Number(Number<'a>),
-  Str(Str<'a>),
-  Bool(Bool<'a>),
-  BigInt(BigInt<'a>),
-  Tpl(TsTplLitType<'a>),
+  Number(&'a Number<'a>),
+  Str(&'a Str<'a>),
+  Bool(&'a Bool<'a>),
+  BigInt(&'a BigInt<'a>),
+  Tpl(&'a TsTplLitType<'a>),
 }
 
 impl<'a> TsLit<'a> {
@@ -3355,52 +3744,62 @@ impl<'a> NodeTrait<'a> for TsLit<'a> {
       TsLit::Tpl(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      TsLit::Number(node) => node.into_node(),
+      TsLit::Str(node) => node.into_node(),
+      TsLit::Bool(node) => node.into_node(),
+      TsLit::BigInt(node) => node.into_node(),
+      TsLit::Tpl(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&TsLit<'a>> for Node<'a> {
   fn from(node: &TsLit<'a>) -> Node<'a> {
     match node {
-      TsLit::Number(node) => node.into(),
-      TsLit::Str(node) => node.into(),
-      TsLit::Bool(node) => node.into(),
-      TsLit::BigInt(node) => node.into(),
-      TsLit::Tpl(node) => node.into(),
+      TsLit::Number(node) => (*node).into(),
+      TsLit::Str(node) => (*node).into(),
+      TsLit::Bool(node) => (*node).into(),
+      TsLit::BigInt(node) => (*node).into(),
+      TsLit::Tpl(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_ts_lit<'a>(ref_node: &'a swc_ecma_ast::TsLit) -> TsLit<'a> {
+fn get_view_for_ts_lit<'a>(ref_node: &'a swc_ast::TsLit, bump: &'a Bump) -> TsLit<'a> {
   match ref_node {
-    swc_ecma_ast::TsLit::Number(value) => TsLit::Number(get_view_for_number(value)),
-    swc_ecma_ast::TsLit::Str(value) => TsLit::Str(get_view_for_str(value)),
-    swc_ecma_ast::TsLit::Bool(value) => TsLit::Bool(get_view_for_bool(value)),
-    swc_ecma_ast::TsLit::BigInt(value) => TsLit::BigInt(get_view_for_big_int(value)),
-    swc_ecma_ast::TsLit::Tpl(value) => TsLit::Tpl(get_view_for_ts_tpl_lit_type(value)),
+    swc_ast::TsLit::Number(value) => TsLit::Number(get_view_for_number(value, bump)),
+    swc_ast::TsLit::Str(value) => TsLit::Str(get_view_for_str(value, bump)),
+    swc_ast::TsLit::Bool(value) => TsLit::Bool(get_view_for_bool(value, bump)),
+    swc_ast::TsLit::BigInt(value) => TsLit::BigInt(get_view_for_big_int(value, bump)),
+    swc_ast::TsLit::Tpl(value) => TsLit::Tpl(get_view_for_ts_tpl_lit_type(value, bump)),
   }
 }
 
-fn set_parent_for_ts_lit<'a>(node: &mut TsLit<'a>, parent: Node<'a>) {
+fn set_parent_for_ts_lit<'a>(node: &TsLit<'a>, parent: Node<'a>) {
   match node {
     TsLit::Number(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsLit::Str(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsLit::Bool(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsLit::BigInt(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsLit::Tpl(node) => {
-      node.parent = parent.to::<TsLitType>();
+      unsafe { *node.inner_parent.get() = Some(parent.to::<TsLitType>()); }
     },
   }
 }
 
 pub enum TsEntityName<'a> {
-  TsQualifiedName(Box<TsQualifiedName<'a>>),
-  Ident(Ident<'a>),
+  TsQualifiedName(&'a TsQualifiedName<'a>),
+  Ident(&'a Ident<'a>),
 }
 
 impl<'a> TsEntityName<'a> {
@@ -3436,78 +3835,85 @@ impl<'a> NodeTrait<'a> for TsEntityName<'a> {
       TsEntityName::Ident(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      TsEntityName::TsQualifiedName(node) => node.into_node(),
+      TsEntityName::Ident(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&TsEntityName<'a>> for Node<'a> {
   fn from(node: &TsEntityName<'a>) -> Node<'a> {
     match node {
-      TsEntityName::TsQualifiedName(node) => node.into(),
-      TsEntityName::Ident(node) => node.into(),
+      TsEntityName::TsQualifiedName(node) => (*node).into(),
+      TsEntityName::Ident(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_ts_entity_name<'a>(ref_node: &'a swc_ecma_ast::TsEntityName) -> TsEntityName<'a> {
+fn get_view_for_ts_entity_name<'a>(ref_node: &'a swc_ast::TsEntityName, bump: &'a Bump) -> TsEntityName<'a> {
   match ref_node {
-    swc_ecma_ast::TsEntityName::TsQualifiedName(value) => TsEntityName::TsQualifiedName(Box::new(get_view_for_ts_qualified_name(value))),
-    swc_ecma_ast::TsEntityName::Ident(value) => TsEntityName::Ident(get_view_for_ident(value)),
+    swc_ast::TsEntityName::TsQualifiedName(value) => TsEntityName::TsQualifiedName(get_view_for_ts_qualified_name(value, bump)),
+    swc_ast::TsEntityName::Ident(value) => TsEntityName::Ident(get_view_for_ident(value, bump)),
   }
 }
 
-fn set_parent_for_ts_entity_name<'a>(node: &mut TsEntityName<'a>, parent: Node<'a>) {
+fn set_parent_for_ts_entity_name<'a>(node: &TsEntityName<'a>, parent: Node<'a>) {
   match node {
     TsEntityName::TsQualifiedName(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsEntityName::Ident(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
 
 pub enum Expr<'a> {
-  This(ThisExpr<'a>),
-  Array(ArrayLit<'a>),
-  Object(ObjectLit<'a>),
-  Fn(FnExpr<'a>),
-  Unary(UnaryExpr<'a>),
+  This(&'a ThisExpr<'a>),
+  Array(&'a ArrayLit<'a>),
+  Object(&'a ObjectLit<'a>),
+  Fn(&'a FnExpr<'a>),
+  Unary(&'a UnaryExpr<'a>),
   /// `++v`, `--v`, `v++`, `v--`
-  Update(UpdateExpr<'a>),
-  Bin(BinExpr<'a>),
-  Assign(AssignExpr<'a>),
+  Update(&'a UpdateExpr<'a>),
+  Bin(&'a BinExpr<'a>),
+  Assign(&'a AssignExpr<'a>),
   /// A member expression. If computed is true, the node corresponds to a
   /// computed (a[b]) member expression and property is an Expression. If
   /// computed is false, the node corresponds to a static (a.b) member
   /// expression and property is an Identifier.
-  Member(MemberExpr<'a>),
+  Member(&'a MemberExpr<'a>),
   /// true ? 'a' : 'b'
-  Cond(CondExpr<'a>),
-  Call(CallExpr<'a>),
+  Cond(&'a CondExpr<'a>),
+  Call(&'a CallExpr<'a>),
   /// `new Cat()`
-  New(NewExpr<'a>),
-  Seq(SeqExpr<'a>),
-  Ident(Ident<'a>),
+  New(&'a NewExpr<'a>),
+  Seq(&'a SeqExpr<'a>),
+  Ident(&'a Ident<'a>),
   Lit(Lit<'a>),
-  Tpl(Tpl<'a>),
-  TaggedTpl(TaggedTpl<'a>),
-  Arrow(ArrowExpr<'a>),
-  Class(ClassExpr<'a>),
-  Yield(YieldExpr<'a>),
-  MetaProp(MetaPropExpr<'a>),
-  Await(AwaitExpr<'a>),
-  Paren(ParenExpr<'a>),
-  JSXMember(JSXMemberExpr<'a>),
-  JSXNamespacedName(JSXNamespacedName<'a>),
-  JSXEmpty(JSXEmptyExpr<'a>),
-  JSXElement(Box<JSXElement<'a>>),
-  JSXFragment(JSXFragment<'a>),
-  TsTypeAssertion(TsTypeAssertion<'a>),
-  TsConstAssertion(TsConstAssertion<'a>),
-  TsNonNull(TsNonNullExpr<'a>),
-  TsTypeCast(TsTypeCastExpr<'a>),
-  TsAs(TsAsExpr<'a>),
-  PrivateName(PrivateName<'a>),
-  OptChain(OptChainExpr<'a>),
-  Invalid(Invalid<'a>),
+  Tpl(&'a Tpl<'a>),
+  TaggedTpl(&'a TaggedTpl<'a>),
+  Arrow(&'a ArrowExpr<'a>),
+  Class(&'a ClassExpr<'a>),
+  Yield(&'a YieldExpr<'a>),
+  MetaProp(&'a MetaPropExpr<'a>),
+  Await(&'a AwaitExpr<'a>),
+  Paren(&'a ParenExpr<'a>),
+  JSXMember(&'a JSXMemberExpr<'a>),
+  JSXNamespacedName(&'a JSXNamespacedName<'a>),
+  JSXEmpty(&'a JSXEmptyExpr<'a>),
+  JSXElement(&'a JSXElement<'a>),
+  JSXFragment(&'a JSXFragment<'a>),
+  TsTypeAssertion(&'a TsTypeAssertion<'a>),
+  TsConstAssertion(&'a TsConstAssertion<'a>),
+  TsNonNull(&'a TsNonNullExpr<'a>),
+  TsTypeCast(&'a TsTypeCastExpr<'a>),
+  TsAs(&'a TsAsExpr<'a>),
+  PrivateName(&'a PrivateName<'a>),
+  OptChain(&'a OptChainExpr<'a>),
+  Invalid(&'a Invalid<'a>),
 }
 
 impl<'a> Expr<'a> {
@@ -3645,208 +4051,249 @@ impl<'a> NodeTrait<'a> for Expr<'a> {
       Expr::Invalid(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      Expr::This(node) => node.into_node(),
+      Expr::Array(node) => node.into_node(),
+      Expr::Object(node) => node.into_node(),
+      Expr::Fn(node) => node.into_node(),
+      Expr::Unary(node) => node.into_node(),
+      Expr::Update(node) => node.into_node(),
+      Expr::Bin(node) => node.into_node(),
+      Expr::Assign(node) => node.into_node(),
+      Expr::Member(node) => node.into_node(),
+      Expr::Cond(node) => node.into_node(),
+      Expr::Call(node) => node.into_node(),
+      Expr::New(node) => node.into_node(),
+      Expr::Seq(node) => node.into_node(),
+      Expr::Ident(node) => node.into_node(),
+      Expr::Lit(node) => node.into_node(),
+      Expr::Tpl(node) => node.into_node(),
+      Expr::TaggedTpl(node) => node.into_node(),
+      Expr::Arrow(node) => node.into_node(),
+      Expr::Class(node) => node.into_node(),
+      Expr::Yield(node) => node.into_node(),
+      Expr::MetaProp(node) => node.into_node(),
+      Expr::Await(node) => node.into_node(),
+      Expr::Paren(node) => node.into_node(),
+      Expr::JSXMember(node) => node.into_node(),
+      Expr::JSXNamespacedName(node) => node.into_node(),
+      Expr::JSXEmpty(node) => node.into_node(),
+      Expr::JSXElement(node) => node.into_node(),
+      Expr::JSXFragment(node) => node.into_node(),
+      Expr::TsTypeAssertion(node) => node.into_node(),
+      Expr::TsConstAssertion(node) => node.into_node(),
+      Expr::TsNonNull(node) => node.into_node(),
+      Expr::TsTypeCast(node) => node.into_node(),
+      Expr::TsAs(node) => node.into_node(),
+      Expr::PrivateName(node) => node.into_node(),
+      Expr::OptChain(node) => node.into_node(),
+      Expr::Invalid(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&Expr<'a>> for Node<'a> {
   fn from(node: &Expr<'a>) -> Node<'a> {
     match node {
-      Expr::This(node) => node.into(),
-      Expr::Array(node) => node.into(),
-      Expr::Object(node) => node.into(),
-      Expr::Fn(node) => node.into(),
-      Expr::Unary(node) => node.into(),
-      Expr::Update(node) => node.into(),
-      Expr::Bin(node) => node.into(),
-      Expr::Assign(node) => node.into(),
-      Expr::Member(node) => node.into(),
-      Expr::Cond(node) => node.into(),
-      Expr::Call(node) => node.into(),
-      Expr::New(node) => node.into(),
-      Expr::Seq(node) => node.into(),
-      Expr::Ident(node) => node.into(),
+      Expr::This(node) => (*node).into(),
+      Expr::Array(node) => (*node).into(),
+      Expr::Object(node) => (*node).into(),
+      Expr::Fn(node) => (*node).into(),
+      Expr::Unary(node) => (*node).into(),
+      Expr::Update(node) => (*node).into(),
+      Expr::Bin(node) => (*node).into(),
+      Expr::Assign(node) => (*node).into(),
+      Expr::Member(node) => (*node).into(),
+      Expr::Cond(node) => (*node).into(),
+      Expr::Call(node) => (*node).into(),
+      Expr::New(node) => (*node).into(),
+      Expr::Seq(node) => (*node).into(),
+      Expr::Ident(node) => (*node).into(),
       Expr::Lit(node) => node.into(),
-      Expr::Tpl(node) => node.into(),
-      Expr::TaggedTpl(node) => node.into(),
-      Expr::Arrow(node) => node.into(),
-      Expr::Class(node) => node.into(),
-      Expr::Yield(node) => node.into(),
-      Expr::MetaProp(node) => node.into(),
-      Expr::Await(node) => node.into(),
-      Expr::Paren(node) => node.into(),
-      Expr::JSXMember(node) => node.into(),
-      Expr::JSXNamespacedName(node) => node.into(),
-      Expr::JSXEmpty(node) => node.into(),
-      Expr::JSXElement(node) => node.into(),
-      Expr::JSXFragment(node) => node.into(),
-      Expr::TsTypeAssertion(node) => node.into(),
-      Expr::TsConstAssertion(node) => node.into(),
-      Expr::TsNonNull(node) => node.into(),
-      Expr::TsTypeCast(node) => node.into(),
-      Expr::TsAs(node) => node.into(),
-      Expr::PrivateName(node) => node.into(),
-      Expr::OptChain(node) => node.into(),
-      Expr::Invalid(node) => node.into(),
+      Expr::Tpl(node) => (*node).into(),
+      Expr::TaggedTpl(node) => (*node).into(),
+      Expr::Arrow(node) => (*node).into(),
+      Expr::Class(node) => (*node).into(),
+      Expr::Yield(node) => (*node).into(),
+      Expr::MetaProp(node) => (*node).into(),
+      Expr::Await(node) => (*node).into(),
+      Expr::Paren(node) => (*node).into(),
+      Expr::JSXMember(node) => (*node).into(),
+      Expr::JSXNamespacedName(node) => (*node).into(),
+      Expr::JSXEmpty(node) => (*node).into(),
+      Expr::JSXElement(node) => (*node).into(),
+      Expr::JSXFragment(node) => (*node).into(),
+      Expr::TsTypeAssertion(node) => (*node).into(),
+      Expr::TsConstAssertion(node) => (*node).into(),
+      Expr::TsNonNull(node) => (*node).into(),
+      Expr::TsTypeCast(node) => (*node).into(),
+      Expr::TsAs(node) => (*node).into(),
+      Expr::PrivateName(node) => (*node).into(),
+      Expr::OptChain(node) => (*node).into(),
+      Expr::Invalid(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_expr<'a>(ref_node: &'a swc_ecma_ast::Expr) -> Expr<'a> {
+fn get_view_for_expr<'a>(ref_node: &'a swc_ast::Expr, bump: &'a Bump) -> Expr<'a> {
   match ref_node {
-    swc_ecma_ast::Expr::This(value) => Expr::This(get_view_for_this_expr(value)),
-    swc_ecma_ast::Expr::Array(value) => Expr::Array(get_view_for_array_lit(value)),
-    swc_ecma_ast::Expr::Object(value) => Expr::Object(get_view_for_object_lit(value)),
-    swc_ecma_ast::Expr::Fn(value) => Expr::Fn(get_view_for_fn_expr(value)),
-    swc_ecma_ast::Expr::Unary(value) => Expr::Unary(get_view_for_unary_expr(value)),
-    swc_ecma_ast::Expr::Update(value) => Expr::Update(get_view_for_update_expr(value)),
-    swc_ecma_ast::Expr::Bin(value) => Expr::Bin(get_view_for_bin_expr(value)),
-    swc_ecma_ast::Expr::Assign(value) => Expr::Assign(get_view_for_assign_expr(value)),
-    swc_ecma_ast::Expr::Member(value) => Expr::Member(get_view_for_member_expr(value)),
-    swc_ecma_ast::Expr::Cond(value) => Expr::Cond(get_view_for_cond_expr(value)),
-    swc_ecma_ast::Expr::Call(value) => Expr::Call(get_view_for_call_expr(value)),
-    swc_ecma_ast::Expr::New(value) => Expr::New(get_view_for_new_expr(value)),
-    swc_ecma_ast::Expr::Seq(value) => Expr::Seq(get_view_for_seq_expr(value)),
-    swc_ecma_ast::Expr::Ident(value) => Expr::Ident(get_view_for_ident(value)),
-    swc_ecma_ast::Expr::Lit(value) => Expr::Lit(get_view_for_lit(value)),
-    swc_ecma_ast::Expr::Tpl(value) => Expr::Tpl(get_view_for_tpl(value)),
-    swc_ecma_ast::Expr::TaggedTpl(value) => Expr::TaggedTpl(get_view_for_tagged_tpl(value)),
-    swc_ecma_ast::Expr::Arrow(value) => Expr::Arrow(get_view_for_arrow_expr(value)),
-    swc_ecma_ast::Expr::Class(value) => Expr::Class(get_view_for_class_expr(value)),
-    swc_ecma_ast::Expr::Yield(value) => Expr::Yield(get_view_for_yield_expr(value)),
-    swc_ecma_ast::Expr::MetaProp(value) => Expr::MetaProp(get_view_for_meta_prop_expr(value)),
-    swc_ecma_ast::Expr::Await(value) => Expr::Await(get_view_for_await_expr(value)),
-    swc_ecma_ast::Expr::Paren(value) => Expr::Paren(get_view_for_paren_expr(value)),
-    swc_ecma_ast::Expr::JSXMember(value) => Expr::JSXMember(get_view_for_jsxmember_expr(value)),
-    swc_ecma_ast::Expr::JSXNamespacedName(value) => Expr::JSXNamespacedName(get_view_for_jsxnamespaced_name(value)),
-    swc_ecma_ast::Expr::JSXEmpty(value) => Expr::JSXEmpty(get_view_for_jsxempty_expr(value)),
-    swc_ecma_ast::Expr::JSXElement(value) => Expr::JSXElement(Box::new(get_view_for_jsxelement(value))),
-    swc_ecma_ast::Expr::JSXFragment(value) => Expr::JSXFragment(get_view_for_jsxfragment(value)),
-    swc_ecma_ast::Expr::TsTypeAssertion(value) => Expr::TsTypeAssertion(get_view_for_ts_type_assertion(value)),
-    swc_ecma_ast::Expr::TsConstAssertion(value) => Expr::TsConstAssertion(get_view_for_ts_const_assertion(value)),
-    swc_ecma_ast::Expr::TsNonNull(value) => Expr::TsNonNull(get_view_for_ts_non_null_expr(value)),
-    swc_ecma_ast::Expr::TsTypeCast(value) => Expr::TsTypeCast(get_view_for_ts_type_cast_expr(value)),
-    swc_ecma_ast::Expr::TsAs(value) => Expr::TsAs(get_view_for_ts_as_expr(value)),
-    swc_ecma_ast::Expr::PrivateName(value) => Expr::PrivateName(get_view_for_private_name(value)),
-    swc_ecma_ast::Expr::OptChain(value) => Expr::OptChain(get_view_for_opt_chain_expr(value)),
-    swc_ecma_ast::Expr::Invalid(value) => Expr::Invalid(get_view_for_invalid(value)),
+    swc_ast::Expr::This(value) => Expr::This(get_view_for_this_expr(value, bump)),
+    swc_ast::Expr::Array(value) => Expr::Array(get_view_for_array_lit(value, bump)),
+    swc_ast::Expr::Object(value) => Expr::Object(get_view_for_object_lit(value, bump)),
+    swc_ast::Expr::Fn(value) => Expr::Fn(get_view_for_fn_expr(value, bump)),
+    swc_ast::Expr::Unary(value) => Expr::Unary(get_view_for_unary_expr(value, bump)),
+    swc_ast::Expr::Update(value) => Expr::Update(get_view_for_update_expr(value, bump)),
+    swc_ast::Expr::Bin(value) => Expr::Bin(get_view_for_bin_expr(value, bump)),
+    swc_ast::Expr::Assign(value) => Expr::Assign(get_view_for_assign_expr(value, bump)),
+    swc_ast::Expr::Member(value) => Expr::Member(get_view_for_member_expr(value, bump)),
+    swc_ast::Expr::Cond(value) => Expr::Cond(get_view_for_cond_expr(value, bump)),
+    swc_ast::Expr::Call(value) => Expr::Call(get_view_for_call_expr(value, bump)),
+    swc_ast::Expr::New(value) => Expr::New(get_view_for_new_expr(value, bump)),
+    swc_ast::Expr::Seq(value) => Expr::Seq(get_view_for_seq_expr(value, bump)),
+    swc_ast::Expr::Ident(value) => Expr::Ident(get_view_for_ident(value, bump)),
+    swc_ast::Expr::Lit(value) => Expr::Lit(get_view_for_lit(value, bump)),
+    swc_ast::Expr::Tpl(value) => Expr::Tpl(get_view_for_tpl(value, bump)),
+    swc_ast::Expr::TaggedTpl(value) => Expr::TaggedTpl(get_view_for_tagged_tpl(value, bump)),
+    swc_ast::Expr::Arrow(value) => Expr::Arrow(get_view_for_arrow_expr(value, bump)),
+    swc_ast::Expr::Class(value) => Expr::Class(get_view_for_class_expr(value, bump)),
+    swc_ast::Expr::Yield(value) => Expr::Yield(get_view_for_yield_expr(value, bump)),
+    swc_ast::Expr::MetaProp(value) => Expr::MetaProp(get_view_for_meta_prop_expr(value, bump)),
+    swc_ast::Expr::Await(value) => Expr::Await(get_view_for_await_expr(value, bump)),
+    swc_ast::Expr::Paren(value) => Expr::Paren(get_view_for_paren_expr(value, bump)),
+    swc_ast::Expr::JSXMember(value) => Expr::JSXMember(get_view_for_jsxmember_expr(value, bump)),
+    swc_ast::Expr::JSXNamespacedName(value) => Expr::JSXNamespacedName(get_view_for_jsxnamespaced_name(value, bump)),
+    swc_ast::Expr::JSXEmpty(value) => Expr::JSXEmpty(get_view_for_jsxempty_expr(value, bump)),
+    swc_ast::Expr::JSXElement(value) => Expr::JSXElement(get_view_for_jsxelement(value, bump)),
+    swc_ast::Expr::JSXFragment(value) => Expr::JSXFragment(get_view_for_jsxfragment(value, bump)),
+    swc_ast::Expr::TsTypeAssertion(value) => Expr::TsTypeAssertion(get_view_for_ts_type_assertion(value, bump)),
+    swc_ast::Expr::TsConstAssertion(value) => Expr::TsConstAssertion(get_view_for_ts_const_assertion(value, bump)),
+    swc_ast::Expr::TsNonNull(value) => Expr::TsNonNull(get_view_for_ts_non_null_expr(value, bump)),
+    swc_ast::Expr::TsTypeCast(value) => Expr::TsTypeCast(get_view_for_ts_type_cast_expr(value, bump)),
+    swc_ast::Expr::TsAs(value) => Expr::TsAs(get_view_for_ts_as_expr(value, bump)),
+    swc_ast::Expr::PrivateName(value) => Expr::PrivateName(get_view_for_private_name(value, bump)),
+    swc_ast::Expr::OptChain(value) => Expr::OptChain(get_view_for_opt_chain_expr(value, bump)),
+    swc_ast::Expr::Invalid(value) => Expr::Invalid(get_view_for_invalid(value, bump)),
   }
 }
 
-fn set_parent_for_expr<'a>(node: &mut Expr<'a>, parent: Node<'a>) {
+fn set_parent_for_expr<'a>(node: &Expr<'a>, parent: Node<'a>) {
   match node {
     Expr::This(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::Array(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::Object(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::Fn(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::Unary(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::Update(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::Bin(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::Assign(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::Member(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::Cond(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::Call(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::New(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::Seq(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::Ident(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::Lit(node) => {
       set_parent_for_lit(node, parent);
     },
     Expr::Tpl(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::TaggedTpl(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::Arrow(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::Class(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::Yield(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::MetaProp(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::Await(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::Paren(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::JSXMember(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::JSXNamespacedName(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::JSXEmpty(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::JSXElement(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::JSXFragment(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::TsTypeAssertion(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::TsConstAssertion(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::TsNonNull(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::TsTypeCast(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::TsAs(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::PrivateName(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::OptChain(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     Expr::Invalid(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
 
 /// Used for `obj` property of `JSXMemberExpr`.
 pub enum JSXObject<'a> {
-  JSXMemberExpr(Box<JSXMemberExpr<'a>>),
-  Ident(Ident<'a>),
+  JSXMemberExpr(&'a JSXMemberExpr<'a>),
+  Ident(&'a Ident<'a>),
 }
 
 impl<'a> JSXObject<'a> {
@@ -3882,37 +4329,44 @@ impl<'a> NodeTrait<'a> for JSXObject<'a> {
       JSXObject::Ident(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      JSXObject::JSXMemberExpr(node) => node.into_node(),
+      JSXObject::Ident(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&JSXObject<'a>> for Node<'a> {
   fn from(node: &JSXObject<'a>) -> Node<'a> {
     match node {
-      JSXObject::JSXMemberExpr(node) => node.into(),
-      JSXObject::Ident(node) => node.into(),
+      JSXObject::JSXMemberExpr(node) => (*node).into(),
+      JSXObject::Ident(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_jsxobject<'a>(ref_node: &'a swc_ecma_ast::JSXObject) -> JSXObject<'a> {
+fn get_view_for_jsxobject<'a>(ref_node: &'a swc_ast::JSXObject, bump: &'a Bump) -> JSXObject<'a> {
   match ref_node {
-    swc_ecma_ast::JSXObject::JSXMemberExpr(value) => JSXObject::JSXMemberExpr(Box::new(get_view_for_jsxmember_expr(value))),
-    swc_ecma_ast::JSXObject::Ident(value) => JSXObject::Ident(get_view_for_ident(value)),
+    swc_ast::JSXObject::JSXMemberExpr(value) => JSXObject::JSXMemberExpr(get_view_for_jsxmember_expr(value, bump)),
+    swc_ast::JSXObject::Ident(value) => JSXObject::Ident(get_view_for_ident(value, bump)),
   }
 }
 
-fn set_parent_for_jsxobject<'a>(node: &mut JSXObject<'a>, parent: Node<'a>) {
+fn set_parent_for_jsxobject<'a>(node: &JSXObject<'a>, parent: Node<'a>) {
   match node {
     JSXObject::JSXMemberExpr(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     JSXObject::Ident(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
 
 pub enum PatOrExpr<'a> {
-  Expr(Box<Expr<'a>>),
-  Pat(Box<Pat<'a>>),
+  Expr(Expr<'a>),
+  Pat(Pat<'a>),
 }
 
 impl<'a> PatOrExpr<'a> {
@@ -3948,6 +4402,13 @@ impl<'a> NodeTrait<'a> for PatOrExpr<'a> {
       PatOrExpr::Pat(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      PatOrExpr::Expr(node) => node.into_node(),
+      PatOrExpr::Pat(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&PatOrExpr<'a>> for Node<'a> {
   fn from(node: &PatOrExpr<'a>) -> Node<'a> {
@@ -3958,14 +4419,14 @@ impl<'a> From<&PatOrExpr<'a>> for Node<'a> {
   }
 }
 
-fn get_view_for_pat_or_expr<'a>(ref_node: &'a swc_ecma_ast::PatOrExpr) -> PatOrExpr<'a> {
+fn get_view_for_pat_or_expr<'a>(ref_node: &'a swc_ast::PatOrExpr, bump: &'a Bump) -> PatOrExpr<'a> {
   match ref_node {
-    swc_ecma_ast::PatOrExpr::Expr(value) => PatOrExpr::Expr(Box::new(get_view_for_expr(value))),
-    swc_ecma_ast::PatOrExpr::Pat(value) => PatOrExpr::Pat(Box::new(get_view_for_pat(value))),
+    swc_ast::PatOrExpr::Expr(value) => PatOrExpr::Expr(get_view_for_expr(value, bump)),
+    swc_ast::PatOrExpr::Pat(value) => PatOrExpr::Pat(get_view_for_pat(value, bump)),
   }
 }
 
-fn set_parent_for_pat_or_expr<'a>(node: &mut PatOrExpr<'a>, parent: Node<'a>) {
+fn set_parent_for_pat_or_expr<'a>(node: &PatOrExpr<'a>, parent: Node<'a>) {
   match node {
     PatOrExpr::Expr(node) => {
       set_parent_for_expr(node, parent);
@@ -3977,15 +4438,15 @@ fn set_parent_for_pat_or_expr<'a>(node: &mut PatOrExpr<'a>, parent: Node<'a>) {
 }
 
 pub enum ModuleDecl<'a> {
-  Import(ImportDecl<'a>),
-  ExportDecl(ExportDecl<'a>),
-  ExportNamed(NamedExport<'a>),
-  ExportDefaultDecl(ExportDefaultDecl<'a>),
-  ExportDefaultExpr(ExportDefaultExpr<'a>),
-  ExportAll(ExportAll<'a>),
-  TsImportEquals(TsImportEqualsDecl<'a>),
-  TsExportAssignment(TsExportAssignment<'a>),
-  TsNamespaceExport(TsNamespaceExportDecl<'a>),
+  Import(&'a ImportDecl<'a>),
+  ExportDecl(&'a ExportDecl<'a>),
+  ExportNamed(&'a NamedExport<'a>),
+  ExportDefaultDecl(&'a ExportDefaultDecl<'a>),
+  ExportDefaultExpr(&'a ExportDefaultExpr<'a>),
+  ExportAll(&'a ExportAll<'a>),
+  TsImportEquals(&'a TsImportEqualsDecl<'a>),
+  TsExportAssignment(&'a TsExportAssignment<'a>),
+  TsNamespaceExport(&'a TsNamespaceExportDecl<'a>),
 }
 
 impl<'a> ModuleDecl<'a> {
@@ -4042,73 +4503,87 @@ impl<'a> NodeTrait<'a> for ModuleDecl<'a> {
       ModuleDecl::TsNamespaceExport(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      ModuleDecl::Import(node) => node.into_node(),
+      ModuleDecl::ExportDecl(node) => node.into_node(),
+      ModuleDecl::ExportNamed(node) => node.into_node(),
+      ModuleDecl::ExportDefaultDecl(node) => node.into_node(),
+      ModuleDecl::ExportDefaultExpr(node) => node.into_node(),
+      ModuleDecl::ExportAll(node) => node.into_node(),
+      ModuleDecl::TsImportEquals(node) => node.into_node(),
+      ModuleDecl::TsExportAssignment(node) => node.into_node(),
+      ModuleDecl::TsNamespaceExport(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&ModuleDecl<'a>> for Node<'a> {
   fn from(node: &ModuleDecl<'a>) -> Node<'a> {
     match node {
-      ModuleDecl::Import(node) => node.into(),
-      ModuleDecl::ExportDecl(node) => node.into(),
-      ModuleDecl::ExportNamed(node) => node.into(),
-      ModuleDecl::ExportDefaultDecl(node) => node.into(),
-      ModuleDecl::ExportDefaultExpr(node) => node.into(),
-      ModuleDecl::ExportAll(node) => node.into(),
-      ModuleDecl::TsImportEquals(node) => node.into(),
-      ModuleDecl::TsExportAssignment(node) => node.into(),
-      ModuleDecl::TsNamespaceExport(node) => node.into(),
+      ModuleDecl::Import(node) => (*node).into(),
+      ModuleDecl::ExportDecl(node) => (*node).into(),
+      ModuleDecl::ExportNamed(node) => (*node).into(),
+      ModuleDecl::ExportDefaultDecl(node) => (*node).into(),
+      ModuleDecl::ExportDefaultExpr(node) => (*node).into(),
+      ModuleDecl::ExportAll(node) => (*node).into(),
+      ModuleDecl::TsImportEquals(node) => (*node).into(),
+      ModuleDecl::TsExportAssignment(node) => (*node).into(),
+      ModuleDecl::TsNamespaceExport(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_module_decl<'a>(ref_node: &'a swc_ecma_ast::ModuleDecl) -> ModuleDecl<'a> {
+fn get_view_for_module_decl<'a>(ref_node: &'a swc_ast::ModuleDecl, bump: &'a Bump) -> ModuleDecl<'a> {
   match ref_node {
-    swc_ecma_ast::ModuleDecl::Import(value) => ModuleDecl::Import(get_view_for_import_decl(value)),
-    swc_ecma_ast::ModuleDecl::ExportDecl(value) => ModuleDecl::ExportDecl(get_view_for_export_decl(value)),
-    swc_ecma_ast::ModuleDecl::ExportNamed(value) => ModuleDecl::ExportNamed(get_view_for_named_export(value)),
-    swc_ecma_ast::ModuleDecl::ExportDefaultDecl(value) => ModuleDecl::ExportDefaultDecl(get_view_for_export_default_decl(value)),
-    swc_ecma_ast::ModuleDecl::ExportDefaultExpr(value) => ModuleDecl::ExportDefaultExpr(get_view_for_export_default_expr(value)),
-    swc_ecma_ast::ModuleDecl::ExportAll(value) => ModuleDecl::ExportAll(get_view_for_export_all(value)),
-    swc_ecma_ast::ModuleDecl::TsImportEquals(value) => ModuleDecl::TsImportEquals(get_view_for_ts_import_equals_decl(value)),
-    swc_ecma_ast::ModuleDecl::TsExportAssignment(value) => ModuleDecl::TsExportAssignment(get_view_for_ts_export_assignment(value)),
-    swc_ecma_ast::ModuleDecl::TsNamespaceExport(value) => ModuleDecl::TsNamespaceExport(get_view_for_ts_namespace_export_decl(value)),
+    swc_ast::ModuleDecl::Import(value) => ModuleDecl::Import(get_view_for_import_decl(value, bump)),
+    swc_ast::ModuleDecl::ExportDecl(value) => ModuleDecl::ExportDecl(get_view_for_export_decl(value, bump)),
+    swc_ast::ModuleDecl::ExportNamed(value) => ModuleDecl::ExportNamed(get_view_for_named_export(value, bump)),
+    swc_ast::ModuleDecl::ExportDefaultDecl(value) => ModuleDecl::ExportDefaultDecl(get_view_for_export_default_decl(value, bump)),
+    swc_ast::ModuleDecl::ExportDefaultExpr(value) => ModuleDecl::ExportDefaultExpr(get_view_for_export_default_expr(value, bump)),
+    swc_ast::ModuleDecl::ExportAll(value) => ModuleDecl::ExportAll(get_view_for_export_all(value, bump)),
+    swc_ast::ModuleDecl::TsImportEquals(value) => ModuleDecl::TsImportEquals(get_view_for_ts_import_equals_decl(value, bump)),
+    swc_ast::ModuleDecl::TsExportAssignment(value) => ModuleDecl::TsExportAssignment(get_view_for_ts_export_assignment(value, bump)),
+    swc_ast::ModuleDecl::TsNamespaceExport(value) => ModuleDecl::TsNamespaceExport(get_view_for_ts_namespace_export_decl(value, bump)),
   }
 }
 
-fn set_parent_for_module_decl<'a>(node: &mut ModuleDecl<'a>, parent: Node<'a>) {
+fn set_parent_for_module_decl<'a>(node: &ModuleDecl<'a>, parent: Node<'a>) {
   match node {
     ModuleDecl::Import(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     ModuleDecl::ExportDecl(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     ModuleDecl::ExportNamed(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     ModuleDecl::ExportDefaultDecl(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     ModuleDecl::ExportDefaultExpr(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     ModuleDecl::ExportAll(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     ModuleDecl::TsImportEquals(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     ModuleDecl::TsExportAssignment(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     ModuleDecl::TsNamespaceExport(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
 
 pub enum JSXElementName<'a> {
-  Ident(Ident<'a>),
-  JSXMemberExpr(JSXMemberExpr<'a>),
-  JSXNamespacedName(JSXNamespacedName<'a>),
+  Ident(&'a Ident<'a>),
+  JSXMemberExpr(&'a JSXMemberExpr<'a>),
+  JSXNamespacedName(&'a JSXNamespacedName<'a>),
 }
 
 impl<'a> JSXElementName<'a> {
@@ -4147,42 +4622,50 @@ impl<'a> NodeTrait<'a> for JSXElementName<'a> {
       JSXElementName::JSXNamespacedName(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      JSXElementName::Ident(node) => node.into_node(),
+      JSXElementName::JSXMemberExpr(node) => node.into_node(),
+      JSXElementName::JSXNamespacedName(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&JSXElementName<'a>> for Node<'a> {
   fn from(node: &JSXElementName<'a>) -> Node<'a> {
     match node {
-      JSXElementName::Ident(node) => node.into(),
-      JSXElementName::JSXMemberExpr(node) => node.into(),
-      JSXElementName::JSXNamespacedName(node) => node.into(),
+      JSXElementName::Ident(node) => (*node).into(),
+      JSXElementName::JSXMemberExpr(node) => (*node).into(),
+      JSXElementName::JSXNamespacedName(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_jsxelement_name<'a>(ref_node: &'a swc_ecma_ast::JSXElementName) -> JSXElementName<'a> {
+fn get_view_for_jsxelement_name<'a>(ref_node: &'a swc_ast::JSXElementName, bump: &'a Bump) -> JSXElementName<'a> {
   match ref_node {
-    swc_ecma_ast::JSXElementName::Ident(value) => JSXElementName::Ident(get_view_for_ident(value)),
-    swc_ecma_ast::JSXElementName::JSXMemberExpr(value) => JSXElementName::JSXMemberExpr(get_view_for_jsxmember_expr(value)),
-    swc_ecma_ast::JSXElementName::JSXNamespacedName(value) => JSXElementName::JSXNamespacedName(get_view_for_jsxnamespaced_name(value)),
+    swc_ast::JSXElementName::Ident(value) => JSXElementName::Ident(get_view_for_ident(value, bump)),
+    swc_ast::JSXElementName::JSXMemberExpr(value) => JSXElementName::JSXMemberExpr(get_view_for_jsxmember_expr(value, bump)),
+    swc_ast::JSXElementName::JSXNamespacedName(value) => JSXElementName::JSXNamespacedName(get_view_for_jsxnamespaced_name(value, bump)),
   }
 }
 
-fn set_parent_for_jsxelement_name<'a>(node: &mut JSXElementName<'a>, parent: Node<'a>) {
+fn set_parent_for_jsxelement_name<'a>(node: &JSXElementName<'a>, parent: Node<'a>) {
   match node {
     JSXElementName::Ident(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     JSXElementName::JSXMemberExpr(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     JSXElementName::JSXNamespacedName(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
 
 pub enum JSXExpr<'a> {
-  JSXEmptyExpr(JSXEmptyExpr<'a>),
-  Expr(Box<Expr<'a>>),
+  JSXEmptyExpr(&'a JSXEmptyExpr<'a>),
+  Expr(Expr<'a>),
 }
 
 impl<'a> JSXExpr<'a> {
@@ -4218,27 +4701,34 @@ impl<'a> NodeTrait<'a> for JSXExpr<'a> {
       JSXExpr::Expr(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      JSXExpr::JSXEmptyExpr(node) => node.into_node(),
+      JSXExpr::Expr(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&JSXExpr<'a>> for Node<'a> {
   fn from(node: &JSXExpr<'a>) -> Node<'a> {
     match node {
-      JSXExpr::JSXEmptyExpr(node) => node.into(),
+      JSXExpr::JSXEmptyExpr(node) => (*node).into(),
       JSXExpr::Expr(node) => node.into(),
     }
   }
 }
 
-fn get_view_for_jsxexpr<'a>(ref_node: &'a swc_ecma_ast::JSXExpr) -> JSXExpr<'a> {
+fn get_view_for_jsxexpr<'a>(ref_node: &'a swc_ast::JSXExpr, bump: &'a Bump) -> JSXExpr<'a> {
   match ref_node {
-    swc_ecma_ast::JSXExpr::JSXEmptyExpr(value) => JSXExpr::JSXEmptyExpr(get_view_for_jsxempty_expr(value)),
-    swc_ecma_ast::JSXExpr::Expr(value) => JSXExpr::Expr(Box::new(get_view_for_expr(value))),
+    swc_ast::JSXExpr::JSXEmptyExpr(value) => JSXExpr::JSXEmptyExpr(get_view_for_jsxempty_expr(value, bump)),
+    swc_ast::JSXExpr::Expr(value) => JSXExpr::Expr(get_view_for_expr(value, bump)),
   }
 }
 
-fn set_parent_for_jsxexpr<'a>(node: &mut JSXExpr<'a>, parent: Node<'a>) {
+fn set_parent_for_jsxexpr<'a>(node: &JSXExpr<'a>, parent: Node<'a>) {
   match node {
     JSXExpr::JSXEmptyExpr(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     JSXExpr::Expr(node) => {
       set_parent_for_expr(node, parent);
@@ -4247,26 +4737,26 @@ fn set_parent_for_jsxexpr<'a>(node: &mut JSXExpr<'a>, parent: Node<'a>) {
 }
 
 pub enum TsType<'a> {
-  TsKeywordType(TsKeywordType<'a>),
-  TsThisType(TsThisType<'a>),
+  TsKeywordType(&'a TsKeywordType<'a>),
+  TsThisType(&'a TsThisType<'a>),
   TsFnOrConstructorType(TsFnOrConstructorType<'a>),
-  TsTypeRef(TsTypeRef<'a>),
-  TsTypeQuery(TsTypeQuery<'a>),
-  TsTypeLit(TsTypeLit<'a>),
-  TsArrayType(TsArrayType<'a>),
-  TsTupleType(TsTupleType<'a>),
-  TsOptionalType(TsOptionalType<'a>),
-  TsRestType(TsRestType<'a>),
+  TsTypeRef(&'a TsTypeRef<'a>),
+  TsTypeQuery(&'a TsTypeQuery<'a>),
+  TsTypeLit(&'a TsTypeLit<'a>),
+  TsArrayType(&'a TsArrayType<'a>),
+  TsTupleType(&'a TsTupleType<'a>),
+  TsOptionalType(&'a TsOptionalType<'a>),
+  TsRestType(&'a TsRestType<'a>),
   TsUnionOrIntersectionType(TsUnionOrIntersectionType<'a>),
-  TsConditionalType(TsConditionalType<'a>),
-  TsInferType(TsInferType<'a>),
-  TsParenthesizedType(TsParenthesizedType<'a>),
-  TsTypeOperator(TsTypeOperator<'a>),
-  TsIndexedAccessType(TsIndexedAccessType<'a>),
-  TsMappedType(TsMappedType<'a>),
-  TsLitType(TsLitType<'a>),
-  TsTypePredicate(TsTypePredicate<'a>),
-  TsImportType(TsImportType<'a>),
+  TsConditionalType(&'a TsConditionalType<'a>),
+  TsInferType(&'a TsInferType<'a>),
+  TsParenthesizedType(&'a TsParenthesizedType<'a>),
+  TsTypeOperator(&'a TsTypeOperator<'a>),
+  TsIndexedAccessType(&'a TsIndexedAccessType<'a>),
+  TsMappedType(&'a TsMappedType<'a>),
+  TsLitType(&'a TsLitType<'a>),
+  TsTypePredicate(&'a TsTypePredicate<'a>),
+  TsImportType(&'a TsImportType<'a>),
 }
 
 impl<'a> TsType<'a> {
@@ -4356,128 +4846,153 @@ impl<'a> NodeTrait<'a> for TsType<'a> {
       TsType::TsImportType(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      TsType::TsKeywordType(node) => node.into_node(),
+      TsType::TsThisType(node) => node.into_node(),
+      TsType::TsFnOrConstructorType(node) => node.into_node(),
+      TsType::TsTypeRef(node) => node.into_node(),
+      TsType::TsTypeQuery(node) => node.into_node(),
+      TsType::TsTypeLit(node) => node.into_node(),
+      TsType::TsArrayType(node) => node.into_node(),
+      TsType::TsTupleType(node) => node.into_node(),
+      TsType::TsOptionalType(node) => node.into_node(),
+      TsType::TsRestType(node) => node.into_node(),
+      TsType::TsUnionOrIntersectionType(node) => node.into_node(),
+      TsType::TsConditionalType(node) => node.into_node(),
+      TsType::TsInferType(node) => node.into_node(),
+      TsType::TsParenthesizedType(node) => node.into_node(),
+      TsType::TsTypeOperator(node) => node.into_node(),
+      TsType::TsIndexedAccessType(node) => node.into_node(),
+      TsType::TsMappedType(node) => node.into_node(),
+      TsType::TsLitType(node) => node.into_node(),
+      TsType::TsTypePredicate(node) => node.into_node(),
+      TsType::TsImportType(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&TsType<'a>> for Node<'a> {
   fn from(node: &TsType<'a>) -> Node<'a> {
     match node {
-      TsType::TsKeywordType(node) => node.into(),
-      TsType::TsThisType(node) => node.into(),
+      TsType::TsKeywordType(node) => (*node).into(),
+      TsType::TsThisType(node) => (*node).into(),
       TsType::TsFnOrConstructorType(node) => node.into(),
-      TsType::TsTypeRef(node) => node.into(),
-      TsType::TsTypeQuery(node) => node.into(),
-      TsType::TsTypeLit(node) => node.into(),
-      TsType::TsArrayType(node) => node.into(),
-      TsType::TsTupleType(node) => node.into(),
-      TsType::TsOptionalType(node) => node.into(),
-      TsType::TsRestType(node) => node.into(),
+      TsType::TsTypeRef(node) => (*node).into(),
+      TsType::TsTypeQuery(node) => (*node).into(),
+      TsType::TsTypeLit(node) => (*node).into(),
+      TsType::TsArrayType(node) => (*node).into(),
+      TsType::TsTupleType(node) => (*node).into(),
+      TsType::TsOptionalType(node) => (*node).into(),
+      TsType::TsRestType(node) => (*node).into(),
       TsType::TsUnionOrIntersectionType(node) => node.into(),
-      TsType::TsConditionalType(node) => node.into(),
-      TsType::TsInferType(node) => node.into(),
-      TsType::TsParenthesizedType(node) => node.into(),
-      TsType::TsTypeOperator(node) => node.into(),
-      TsType::TsIndexedAccessType(node) => node.into(),
-      TsType::TsMappedType(node) => node.into(),
-      TsType::TsLitType(node) => node.into(),
-      TsType::TsTypePredicate(node) => node.into(),
-      TsType::TsImportType(node) => node.into(),
+      TsType::TsConditionalType(node) => (*node).into(),
+      TsType::TsInferType(node) => (*node).into(),
+      TsType::TsParenthesizedType(node) => (*node).into(),
+      TsType::TsTypeOperator(node) => (*node).into(),
+      TsType::TsIndexedAccessType(node) => (*node).into(),
+      TsType::TsMappedType(node) => (*node).into(),
+      TsType::TsLitType(node) => (*node).into(),
+      TsType::TsTypePredicate(node) => (*node).into(),
+      TsType::TsImportType(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_ts_type<'a>(ref_node: &'a swc_ecma_ast::TsType) -> TsType<'a> {
+fn get_view_for_ts_type<'a>(ref_node: &'a swc_ast::TsType, bump: &'a Bump) -> TsType<'a> {
   match ref_node {
-    swc_ecma_ast::TsType::TsKeywordType(value) => TsType::TsKeywordType(get_view_for_ts_keyword_type(value)),
-    swc_ecma_ast::TsType::TsThisType(value) => TsType::TsThisType(get_view_for_ts_this_type(value)),
-    swc_ecma_ast::TsType::TsFnOrConstructorType(value) => TsType::TsFnOrConstructorType(get_view_for_ts_fn_or_constructor_type(value)),
-    swc_ecma_ast::TsType::TsTypeRef(value) => TsType::TsTypeRef(get_view_for_ts_type_ref(value)),
-    swc_ecma_ast::TsType::TsTypeQuery(value) => TsType::TsTypeQuery(get_view_for_ts_type_query(value)),
-    swc_ecma_ast::TsType::TsTypeLit(value) => TsType::TsTypeLit(get_view_for_ts_type_lit(value)),
-    swc_ecma_ast::TsType::TsArrayType(value) => TsType::TsArrayType(get_view_for_ts_array_type(value)),
-    swc_ecma_ast::TsType::TsTupleType(value) => TsType::TsTupleType(get_view_for_ts_tuple_type(value)),
-    swc_ecma_ast::TsType::TsOptionalType(value) => TsType::TsOptionalType(get_view_for_ts_optional_type(value)),
-    swc_ecma_ast::TsType::TsRestType(value) => TsType::TsRestType(get_view_for_ts_rest_type(value)),
-    swc_ecma_ast::TsType::TsUnionOrIntersectionType(value) => TsType::TsUnionOrIntersectionType(get_view_for_ts_union_or_intersection_type(value)),
-    swc_ecma_ast::TsType::TsConditionalType(value) => TsType::TsConditionalType(get_view_for_ts_conditional_type(value)),
-    swc_ecma_ast::TsType::TsInferType(value) => TsType::TsInferType(get_view_for_ts_infer_type(value)),
-    swc_ecma_ast::TsType::TsParenthesizedType(value) => TsType::TsParenthesizedType(get_view_for_ts_parenthesized_type(value)),
-    swc_ecma_ast::TsType::TsTypeOperator(value) => TsType::TsTypeOperator(get_view_for_ts_type_operator(value)),
-    swc_ecma_ast::TsType::TsIndexedAccessType(value) => TsType::TsIndexedAccessType(get_view_for_ts_indexed_access_type(value)),
-    swc_ecma_ast::TsType::TsMappedType(value) => TsType::TsMappedType(get_view_for_ts_mapped_type(value)),
-    swc_ecma_ast::TsType::TsLitType(value) => TsType::TsLitType(get_view_for_ts_lit_type(value)),
-    swc_ecma_ast::TsType::TsTypePredicate(value) => TsType::TsTypePredicate(get_view_for_ts_type_predicate(value)),
-    swc_ecma_ast::TsType::TsImportType(value) => TsType::TsImportType(get_view_for_ts_import_type(value)),
+    swc_ast::TsType::TsKeywordType(value) => TsType::TsKeywordType(get_view_for_ts_keyword_type(value, bump)),
+    swc_ast::TsType::TsThisType(value) => TsType::TsThisType(get_view_for_ts_this_type(value, bump)),
+    swc_ast::TsType::TsFnOrConstructorType(value) => TsType::TsFnOrConstructorType(get_view_for_ts_fn_or_constructor_type(value, bump)),
+    swc_ast::TsType::TsTypeRef(value) => TsType::TsTypeRef(get_view_for_ts_type_ref(value, bump)),
+    swc_ast::TsType::TsTypeQuery(value) => TsType::TsTypeQuery(get_view_for_ts_type_query(value, bump)),
+    swc_ast::TsType::TsTypeLit(value) => TsType::TsTypeLit(get_view_for_ts_type_lit(value, bump)),
+    swc_ast::TsType::TsArrayType(value) => TsType::TsArrayType(get_view_for_ts_array_type(value, bump)),
+    swc_ast::TsType::TsTupleType(value) => TsType::TsTupleType(get_view_for_ts_tuple_type(value, bump)),
+    swc_ast::TsType::TsOptionalType(value) => TsType::TsOptionalType(get_view_for_ts_optional_type(value, bump)),
+    swc_ast::TsType::TsRestType(value) => TsType::TsRestType(get_view_for_ts_rest_type(value, bump)),
+    swc_ast::TsType::TsUnionOrIntersectionType(value) => TsType::TsUnionOrIntersectionType(get_view_for_ts_union_or_intersection_type(value, bump)),
+    swc_ast::TsType::TsConditionalType(value) => TsType::TsConditionalType(get_view_for_ts_conditional_type(value, bump)),
+    swc_ast::TsType::TsInferType(value) => TsType::TsInferType(get_view_for_ts_infer_type(value, bump)),
+    swc_ast::TsType::TsParenthesizedType(value) => TsType::TsParenthesizedType(get_view_for_ts_parenthesized_type(value, bump)),
+    swc_ast::TsType::TsTypeOperator(value) => TsType::TsTypeOperator(get_view_for_ts_type_operator(value, bump)),
+    swc_ast::TsType::TsIndexedAccessType(value) => TsType::TsIndexedAccessType(get_view_for_ts_indexed_access_type(value, bump)),
+    swc_ast::TsType::TsMappedType(value) => TsType::TsMappedType(get_view_for_ts_mapped_type(value, bump)),
+    swc_ast::TsType::TsLitType(value) => TsType::TsLitType(get_view_for_ts_lit_type(value, bump)),
+    swc_ast::TsType::TsTypePredicate(value) => TsType::TsTypePredicate(get_view_for_ts_type_predicate(value, bump)),
+    swc_ast::TsType::TsImportType(value) => TsType::TsImportType(get_view_for_ts_import_type(value, bump)),
   }
 }
 
-fn set_parent_for_ts_type<'a>(node: &mut TsType<'a>, parent: Node<'a>) {
+fn set_parent_for_ts_type<'a>(node: &TsType<'a>, parent: Node<'a>) {
   match node {
     TsType::TsKeywordType(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsType::TsThisType(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsType::TsFnOrConstructorType(node) => {
       set_parent_for_ts_fn_or_constructor_type(node, parent);
     },
     TsType::TsTypeRef(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsType::TsTypeQuery(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsType::TsTypeLit(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsType::TsArrayType(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsType::TsTupleType(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsType::TsOptionalType(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsType::TsRestType(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsType::TsUnionOrIntersectionType(node) => {
       set_parent_for_ts_union_or_intersection_type(node, parent);
     },
     TsType::TsConditionalType(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsType::TsInferType(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsType::TsParenthesizedType(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsType::TsTypeOperator(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsType::TsIndexedAccessType(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsType::TsMappedType(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsType::TsLitType(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsType::TsTypePredicate(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsType::TsImportType(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
 
 pub enum ObjectPatProp<'a> {
-  KeyValue(KeyValuePatProp<'a>),
-  Assign(AssignPatProp<'a>),
-  Rest(RestPat<'a>),
+  KeyValue(&'a KeyValuePatProp<'a>),
+  Assign(&'a AssignPatProp<'a>),
+  Rest(&'a RestPat<'a>),
 }
 
 impl<'a> ObjectPatProp<'a> {
@@ -4516,42 +5031,50 @@ impl<'a> NodeTrait<'a> for ObjectPatProp<'a> {
       ObjectPatProp::Rest(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      ObjectPatProp::KeyValue(node) => node.into_node(),
+      ObjectPatProp::Assign(node) => node.into_node(),
+      ObjectPatProp::Rest(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&ObjectPatProp<'a>> for Node<'a> {
   fn from(node: &ObjectPatProp<'a>) -> Node<'a> {
     match node {
-      ObjectPatProp::KeyValue(node) => node.into(),
-      ObjectPatProp::Assign(node) => node.into(),
-      ObjectPatProp::Rest(node) => node.into(),
+      ObjectPatProp::KeyValue(node) => (*node).into(),
+      ObjectPatProp::Assign(node) => (*node).into(),
+      ObjectPatProp::Rest(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_object_pat_prop<'a>(ref_node: &'a swc_ecma_ast::ObjectPatProp) -> ObjectPatProp<'a> {
+fn get_view_for_object_pat_prop<'a>(ref_node: &'a swc_ast::ObjectPatProp, bump: &'a Bump) -> ObjectPatProp<'a> {
   match ref_node {
-    swc_ecma_ast::ObjectPatProp::KeyValue(value) => ObjectPatProp::KeyValue(get_view_for_key_value_pat_prop(value)),
-    swc_ecma_ast::ObjectPatProp::Assign(value) => ObjectPatProp::Assign(get_view_for_assign_pat_prop(value)),
-    swc_ecma_ast::ObjectPatProp::Rest(value) => ObjectPatProp::Rest(get_view_for_rest_pat(value)),
+    swc_ast::ObjectPatProp::KeyValue(value) => ObjectPatProp::KeyValue(get_view_for_key_value_pat_prop(value, bump)),
+    swc_ast::ObjectPatProp::Assign(value) => ObjectPatProp::Assign(get_view_for_assign_pat_prop(value, bump)),
+    swc_ast::ObjectPatProp::Rest(value) => ObjectPatProp::Rest(get_view_for_rest_pat(value, bump)),
   }
 }
 
-fn set_parent_for_object_pat_prop<'a>(node: &mut ObjectPatProp<'a>, parent: Node<'a>) {
+fn set_parent_for_object_pat_prop<'a>(node: &ObjectPatProp<'a>, parent: Node<'a>) {
   match node {
     ObjectPatProp::KeyValue(node) => {
-      node.parent = parent.to::<ObjectPat>();
+      unsafe { *node.inner_parent.get() = Some(parent.to::<ObjectPat>()); }
     },
     ObjectPatProp::Assign(node) => {
-      node.parent = parent.to::<ObjectPat>();
+      unsafe { *node.inner_parent.get() = Some(parent.to::<ObjectPat>()); }
     },
     ObjectPatProp::Rest(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
 
 pub enum TsFnOrConstructorType<'a> {
-  TsFnType(TsFnType<'a>),
-  TsConstructorType(TsConstructorType<'a>),
+  TsFnType(&'a TsFnType<'a>),
+  TsConstructorType(&'a TsConstructorType<'a>),
 }
 
 impl<'a> TsFnOrConstructorType<'a> {
@@ -4587,39 +5110,46 @@ impl<'a> NodeTrait<'a> for TsFnOrConstructorType<'a> {
       TsFnOrConstructorType::TsConstructorType(node) => node.children(),
     }
   }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      TsFnOrConstructorType::TsFnType(node) => node.into_node(),
+      TsFnOrConstructorType::TsConstructorType(node) => node.into_node(),
+    }
+  }
 }
 impl<'a> From<&TsFnOrConstructorType<'a>> for Node<'a> {
   fn from(node: &TsFnOrConstructorType<'a>) -> Node<'a> {
     match node {
-      TsFnOrConstructorType::TsFnType(node) => node.into(),
-      TsFnOrConstructorType::TsConstructorType(node) => node.into(),
+      TsFnOrConstructorType::TsFnType(node) => (*node).into(),
+      TsFnOrConstructorType::TsConstructorType(node) => (*node).into(),
     }
   }
 }
 
-fn get_view_for_ts_fn_or_constructor_type<'a>(ref_node: &'a swc_ecma_ast::TsFnOrConstructorType) -> TsFnOrConstructorType<'a> {
+fn get_view_for_ts_fn_or_constructor_type<'a>(ref_node: &'a swc_ast::TsFnOrConstructorType, bump: &'a Bump) -> TsFnOrConstructorType<'a> {
   match ref_node {
-    swc_ecma_ast::TsFnOrConstructorType::TsFnType(value) => TsFnOrConstructorType::TsFnType(get_view_for_ts_fn_type(value)),
-    swc_ecma_ast::TsFnOrConstructorType::TsConstructorType(value) => TsFnOrConstructorType::TsConstructorType(get_view_for_ts_constructor_type(value)),
+    swc_ast::TsFnOrConstructorType::TsFnType(value) => TsFnOrConstructorType::TsFnType(get_view_for_ts_fn_type(value, bump)),
+    swc_ast::TsFnOrConstructorType::TsConstructorType(value) => TsFnOrConstructorType::TsConstructorType(get_view_for_ts_constructor_type(value, bump)),
   }
 }
 
-fn set_parent_for_ts_fn_or_constructor_type<'a>(node: &mut TsFnOrConstructorType<'a>, parent: Node<'a>) {
+fn set_parent_for_ts_fn_or_constructor_type<'a>(node: &TsFnOrConstructorType<'a>, parent: Node<'a>) {
   match node {
     TsFnOrConstructorType::TsFnType(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
     TsFnOrConstructorType::TsConstructorType(node) => {
-      node.parent = parent;
+      unsafe { *node.inner_parent.get() = Some(parent); }
     },
   }
 }
 
 pub struct SwitchCase<'a> {
-  pub parent: &'a SwitchStmt<'a>,
-  pub inner: &'a swc_ecma_ast::SwitchCase,
+  inner_parent: UnsafeCell<Option<&'a SwitchStmt<'a>>>,
+  pub inner: &'a swc_ast::SwitchCase,
   /// None for `default:`
-  pub test: Option<Box<Expr<'a>>>,
+  pub test: Option<Expr<'a>>,
   pub cons: Vec<Stmt<'a>>,
 }
 
@@ -4629,21 +5159,20 @@ impl<'a> Spanned for SwitchCase<'a> {
   }
 }
 
-impl<'a> From<&SwitchCase<'a>> for Node<'a> {
-  fn from(node: &SwitchCase) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&SwitchCase, &'a SwitchCase>(&node) };
-    Node::SwitchCase(static_ref)
+impl<'a> From<&'a SwitchCase<'a>> for Node<'a> {
+  fn from(node: &'a SwitchCase<'a>) -> Node<'a> {
+    Node::SwitchCase(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for SwitchCase<'a> {
+impl<'a> NodeTrait<'a> for &'a SwitchCase<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(match &self.test { Some(_value) => 1, None => 0, } + self.cons.len());
-    if let Some(child) = &self.test {
+    if let Some(child) = self.test.as_ref() {
       children.push(child.into());
     }
     for child in self.cons.iter() {
@@ -4652,6 +5181,9 @@ impl<'a> NodeTrait<'a> for SwitchCase<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for SwitchCase<'a> {
@@ -4662,38 +5194,36 @@ impl<'a> CastableNode<'a> for SwitchCase<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_switch_case<'a>(ref_node: &'a swc_ecma_ast::SwitchCase) -> SwitchCase<'a> {
+fn get_view_for_switch_case<'a>(ref_node: &'a swc_ast::SwitchCase, bump: &'a Bump) -> &'a SwitchCase<'a> {
   let value = &ref_node.test;
   let field_test = match value {
-    Some(value) => Some(Box::new(get_view_for_expr(value))),
+    Some(value) => Some(get_view_for_expr(value, bump)),
     None => None,
   };
   let value = &ref_node.cons;
-  let field_cons = value.iter().map(|value| get_view_for_stmt(value)).collect();
-  let mut node = SwitchCase {
+  let field_cons = value.iter().map(|value| get_view_for_stmt(value, bump)).collect();
+  let node = bump.alloc(SwitchCase {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     test: field_test,
     cons: field_cons,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&SwitchCase, &'a SwitchCase>(&node) };
-  let parent = Node::SwitchCase(child_parent_ref);
-  if let Some(node) = node.test.as_mut() {
-    set_parent_for_expr(node, parent.clone());
+  });
+  let parent = Node::SwitchCase(node);
+  if let Some(child) = node.test.as_ref() {
+    set_parent_for_expr(child, parent.clone());
   }
-  for node in node.cons.iter_mut() {
+  for node in node.cons.iter() {
     set_parent_for_stmt(node, parent.clone());
   }
   node
 }
 
 pub struct ThrowStmt<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::ThrowStmt,
-  pub arg: Box<Expr<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::ThrowStmt,
+  pub arg: Expr<'a>,
 }
 
 impl<'a> Spanned for ThrowStmt<'a> {
@@ -4702,16 +5232,15 @@ impl<'a> Spanned for ThrowStmt<'a> {
   }
 }
 
-impl<'a> From<&ThrowStmt<'a>> for Node<'a> {
-  fn from(node: &ThrowStmt) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ThrowStmt, &'a ThrowStmt>(&node) };
-    Node::ThrowStmt(static_ref)
+impl<'a> From<&'a ThrowStmt<'a>> for Node<'a> {
+  fn from(node: &'a ThrowStmt<'a>) -> Node<'a> {
+    Node::ThrowStmt(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ThrowStmt<'a> {
+impl<'a> NodeTrait<'a> for &'a ThrowStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -4720,6 +5249,9 @@ impl<'a> NodeTrait<'a> for ThrowStmt<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ThrowStmt<'a> {
@@ -4730,26 +5262,24 @@ impl<'a> CastableNode<'a> for ThrowStmt<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_throw_stmt<'a>(ref_node: &'a swc_ecma_ast::ThrowStmt) -> ThrowStmt<'a> {
+fn get_view_for_throw_stmt<'a>(ref_node: &'a swc_ast::ThrowStmt, bump: &'a Bump) -> &'a ThrowStmt<'a> {
   let value = &ref_node.arg;
-  let field_arg = Box::new(get_view_for_expr(value));
-  let mut node = ThrowStmt {
+  let field_arg = get_view_for_expr(value, bump);
+  let node = bump.alloc(ThrowStmt {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     arg: field_arg,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ThrowStmt, &'a ThrowStmt>(&node) };
-  let parent = Node::ThrowStmt(child_parent_ref);
-  set_parent_for_expr(&mut node.arg, parent);
+  });
+  let parent = Node::ThrowStmt(node);
+  set_parent_for_expr(&node.arg, parent);
   node
 }
 
 pub struct JSXClosingFragment<'a> {
-  pub parent: &'a JSXFragment<'a>,
-  pub inner: &'a swc_ecma_ast::JSXClosingFragment,
+  inner_parent: UnsafeCell<Option<&'a JSXFragment<'a>>>,
+  pub inner: &'a swc_ast::JSXClosingFragment,
 }
 
 impl<'a> Spanned for JSXClosingFragment<'a> {
@@ -4758,22 +5288,24 @@ impl<'a> Spanned for JSXClosingFragment<'a> {
   }
 }
 
-impl<'a> From<&JSXClosingFragment<'a>> for Node<'a> {
-  fn from(node: &JSXClosingFragment) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&JSXClosingFragment, &'a JSXClosingFragment>(&node) };
-    Node::JSXClosingFragment(static_ref)
+impl<'a> From<&'a JSXClosingFragment<'a>> for Node<'a> {
+  fn from(node: &'a JSXClosingFragment<'a>) -> Node<'a> {
+    Node::JSXClosingFragment(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for JSXClosingFragment<'a> {
+impl<'a> NodeTrait<'a> for &'a JSXClosingFragment<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     Vec::with_capacity(0)
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for JSXClosingFragment<'a> {
@@ -4784,20 +5316,19 @@ impl<'a> CastableNode<'a> for JSXClosingFragment<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_jsxclosing_fragment<'a>(ref_node: &'a swc_ecma_ast::JSXClosingFragment) -> JSXClosingFragment<'a> {
-  let node = JSXClosingFragment {
+fn get_view_for_jsxclosing_fragment<'a>(ref_node: &'a swc_ast::JSXClosingFragment, bump: &'a Bump) -> &'a JSXClosingFragment<'a> {
+  let node = bump.alloc(JSXClosingFragment {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
-  };
+    inner_parent: UnsafeCell::new(None),
+  });
   node
 }
 
 pub struct BigInt<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::BigInt,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::BigInt,
 }
 
 impl<'a> BigInt<'a> {
@@ -4812,22 +5343,24 @@ impl<'a> Spanned for BigInt<'a> {
   }
 }
 
-impl<'a> From<&BigInt<'a>> for Node<'a> {
-  fn from(node: &BigInt) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&BigInt, &'a BigInt>(&node) };
-    Node::BigInt(static_ref)
+impl<'a> From<&'a BigInt<'a>> for Node<'a> {
+  fn from(node: &'a BigInt<'a>) -> Node<'a> {
+    Node::BigInt(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for BigInt<'a> {
+impl<'a> NodeTrait<'a> for &'a BigInt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     Vec::with_capacity(0)
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for BigInt<'a> {
@@ -4838,21 +5371,20 @@ impl<'a> CastableNode<'a> for BigInt<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_big_int<'a>(ref_node: &'a swc_ecma_ast::BigInt) -> BigInt<'a> {
-  let node = BigInt {
+fn get_view_for_big_int<'a>(ref_node: &'a swc_ast::BigInt, bump: &'a Bump) -> &'a BigInt<'a> {
+  let node = bump.alloc(BigInt {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
-  };
+    inner_parent: UnsafeCell::new(None),
+  });
   node
 }
 
 pub struct ExportDefaultSpecifier<'a> {
-  pub parent: &'a NamedExport<'a>,
-  pub inner: &'a swc_ecma_ast::ExportDefaultSpecifier,
-  pub exported: Ident<'a>,
+  inner_parent: UnsafeCell<Option<&'a NamedExport<'a>>>,
+  pub inner: &'a swc_ast::ExportDefaultSpecifier,
+  pub exported: &'a Ident<'a>,
 }
 
 impl<'a> Spanned for ExportDefaultSpecifier<'a> {
@@ -4861,24 +5393,26 @@ impl<'a> Spanned for ExportDefaultSpecifier<'a> {
   }
 }
 
-impl<'a> From<&ExportDefaultSpecifier<'a>> for Node<'a> {
-  fn from(node: &ExportDefaultSpecifier) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ExportDefaultSpecifier, &'a ExportDefaultSpecifier>(&node) };
-    Node::ExportDefaultSpecifier(static_ref)
+impl<'a> From<&'a ExportDefaultSpecifier<'a>> for Node<'a> {
+  fn from(node: &'a ExportDefaultSpecifier<'a>) -> Node<'a> {
+    Node::ExportDefaultSpecifier(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ExportDefaultSpecifier<'a> {
+impl<'a> NodeTrait<'a> for &'a ExportDefaultSpecifier<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1);
-    children.push((&self.exported).into());
+    children.push(self.exported.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ExportDefaultSpecifier<'a> {
@@ -4889,29 +5423,27 @@ impl<'a> CastableNode<'a> for ExportDefaultSpecifier<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_export_default_specifier<'a>(ref_node: &'a swc_ecma_ast::ExportDefaultSpecifier) -> ExportDefaultSpecifier<'a> {
+fn get_view_for_export_default_specifier<'a>(ref_node: &'a swc_ast::ExportDefaultSpecifier, bump: &'a Bump) -> &'a ExportDefaultSpecifier<'a> {
   let value = &ref_node.exported;
-  let field_exported = get_view_for_ident(value);
-  let mut node = ExportDefaultSpecifier {
+  let field_exported = get_view_for_ident(value, bump);
+  let node = bump.alloc(ExportDefaultSpecifier {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     exported: field_exported,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ExportDefaultSpecifier, &'a ExportDefaultSpecifier>(&node) };
-  let parent = Node::ExportDefaultSpecifier(child_parent_ref);
-  node.exported.parent = parent;
+  });
+  let parent = Node::ExportDefaultSpecifier(node);
+  unsafe { *node.exported.inner_parent.get() = Some(parent); }
   node
 }
 
 pub struct TsTypeParam<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsTypeParam,
-  pub name: Ident<'a>,
-  pub constraint: Option<Box<TsType<'a>>>,
-  pub default: Option<Box<TsType<'a>>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsTypeParam,
+  pub name: &'a Ident<'a>,
+  pub constraint: Option<TsType<'a>>,
+  pub default: Option<TsType<'a>>,
 }
 
 impl<'a> Spanned for TsTypeParam<'a> {
@@ -4920,30 +5452,32 @@ impl<'a> Spanned for TsTypeParam<'a> {
   }
 }
 
-impl<'a> From<&TsTypeParam<'a>> for Node<'a> {
-  fn from(node: &TsTypeParam) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsTypeParam, &'a TsTypeParam>(&node) };
-    Node::TsTypeParam(static_ref)
+impl<'a> From<&'a TsTypeParam<'a>> for Node<'a> {
+  fn from(node: &'a TsTypeParam<'a>) -> Node<'a> {
+    Node::TsTypeParam(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsTypeParam<'a> {
+impl<'a> NodeTrait<'a> for &'a TsTypeParam<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.constraint { Some(_value) => 1, None => 0, } + match &self.default { Some(_value) => 1, None => 0, });
-    children.push((&self.name).into());
-    if let Some(child) = &self.constraint {
+    children.push(self.name.into());
+    if let Some(child) = self.constraint.as_ref() {
       children.push(child.into());
     }
-    if let Some(child) = &self.default {
+    if let Some(child) = self.default.as_ref() {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsTypeParam<'a> {
@@ -4954,46 +5488,44 @@ impl<'a> CastableNode<'a> for TsTypeParam<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_type_param<'a>(ref_node: &'a swc_ecma_ast::TsTypeParam) -> TsTypeParam<'a> {
+fn get_view_for_ts_type_param<'a>(ref_node: &'a swc_ast::TsTypeParam, bump: &'a Bump) -> &'a TsTypeParam<'a> {
   let value = &ref_node.name;
-  let field_name = get_view_for_ident(value);
+  let field_name = get_view_for_ident(value, bump);
   let value = &ref_node.constraint;
   let field_constraint = match value {
-    Some(value) => Some(Box::new(get_view_for_ts_type(value))),
+    Some(value) => Some(get_view_for_ts_type(value, bump)),
     None => None,
   };
   let value = &ref_node.default;
   let field_default = match value {
-    Some(value) => Some(Box::new(get_view_for_ts_type(value))),
+    Some(value) => Some(get_view_for_ts_type(value, bump)),
     None => None,
   };
-  let mut node = TsTypeParam {
+  let node = bump.alloc(TsTypeParam {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     name: field_name,
     constraint: field_constraint,
     default: field_default,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsTypeParam, &'a TsTypeParam>(&node) };
-  let parent = Node::TsTypeParam(child_parent_ref);
-  node.name.parent = parent.clone();
-  if let Some(node) = node.constraint.as_mut() {
-    set_parent_for_ts_type(node, parent.clone());
+  });
+  let parent = Node::TsTypeParam(node);
+  unsafe { *node.name.inner_parent.get() = Some(parent.clone()); }
+  if let Some(child) = node.constraint.as_ref() {
+    set_parent_for_ts_type(child, parent.clone());
   }
-  if let Some(node) = node.default.as_mut() {
-    set_parent_for_ts_type(node, parent);
+  if let Some(child) = node.default.as_ref() {
+    set_parent_for_ts_type(child, parent);
   }
   node
 }
 
 pub struct WithStmt<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::WithStmt,
-  pub obj: Box<Expr<'a>>,
-  pub body: Box<Stmt<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::WithStmt,
+  pub obj: Expr<'a>,
+  pub body: Stmt<'a>,
 }
 
 impl<'a> Spanned for WithStmt<'a> {
@@ -5002,16 +5534,15 @@ impl<'a> Spanned for WithStmt<'a> {
   }
 }
 
-impl<'a> From<&WithStmt<'a>> for Node<'a> {
-  fn from(node: &WithStmt) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&WithStmt, &'a WithStmt>(&node) };
-    Node::WithStmt(static_ref)
+impl<'a> From<&'a WithStmt<'a>> for Node<'a> {
+  fn from(node: &'a WithStmt<'a>) -> Node<'a> {
+    Node::WithStmt(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for WithStmt<'a> {
+impl<'a> NodeTrait<'a> for &'a WithStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -5021,6 +5552,9 @@ impl<'a> NodeTrait<'a> for WithStmt<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for WithStmt<'a> {
@@ -5031,30 +5565,28 @@ impl<'a> CastableNode<'a> for WithStmt<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_with_stmt<'a>(ref_node: &'a swc_ecma_ast::WithStmt) -> WithStmt<'a> {
+fn get_view_for_with_stmt<'a>(ref_node: &'a swc_ast::WithStmt, bump: &'a Bump) -> &'a WithStmt<'a> {
   let value = &ref_node.obj;
-  let field_obj = Box::new(get_view_for_expr(value));
+  let field_obj = get_view_for_expr(value, bump);
   let value = &ref_node.body;
-  let field_body = Box::new(get_view_for_stmt(value));
-  let mut node = WithStmt {
+  let field_body = get_view_for_stmt(value, bump);
+  let node = bump.alloc(WithStmt {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     obj: field_obj,
     body: field_body,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&WithStmt, &'a WithStmt>(&node) };
-  let parent = Node::WithStmt(child_parent_ref);
-  set_parent_for_expr(&mut node.obj, parent.clone());
-  set_parent_for_stmt(&mut node.body, parent);
+  });
+  let parent = Node::WithStmt(node);
+  set_parent_for_expr(&node.obj, parent.clone());
+  set_parent_for_stmt(&node.body, parent);
   node
 }
 
 pub struct Regex<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::Regex,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::Regex,
 }
 
 impl<'a> Regex<'a> {
@@ -5073,22 +5605,24 @@ impl<'a> Spanned for Regex<'a> {
   }
 }
 
-impl<'a> From<&Regex<'a>> for Node<'a> {
-  fn from(node: &Regex) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&Regex, &'a Regex>(&node) };
-    Node::Regex(static_ref)
+impl<'a> From<&'a Regex<'a>> for Node<'a> {
+  fn from(node: &'a Regex<'a>) -> Node<'a> {
+    Node::Regex(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for Regex<'a> {
+impl<'a> NodeTrait<'a> for &'a Regex<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     Vec::with_capacity(0)
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for Regex<'a> {
@@ -5099,24 +5633,23 @@ impl<'a> CastableNode<'a> for Regex<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_regex<'a>(ref_node: &'a swc_ecma_ast::Regex) -> Regex<'a> {
-  let node = Regex {
+fn get_view_for_regex<'a>(ref_node: &'a swc_ast::Regex, bump: &'a Bump) -> &'a Regex<'a> {
+  let node = bump.alloc(Regex {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
-  };
+    inner_parent: UnsafeCell::new(None),
+  });
   node
 }
 
 pub struct TsMethodSignature<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsMethodSignature,
-  pub key: Box<Expr<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsMethodSignature,
+  pub key: Expr<'a>,
   pub params: Vec<TsFnParam<'a>>,
-  pub type_ann: Option<TsTypeAnn<'a>>,
-  pub type_params: Option<TsTypeParamDecl<'a>>,
+  pub type_ann: Option<&'a TsTypeAnn<'a>>,
+  pub type_params: Option<&'a TsTypeParamDecl<'a>>,
 }
 
 impl<'a> TsMethodSignature<'a> {
@@ -5139,16 +5672,15 @@ impl<'a> Spanned for TsMethodSignature<'a> {
   }
 }
 
-impl<'a> From<&TsMethodSignature<'a>> for Node<'a> {
-  fn from(node: &TsMethodSignature) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsMethodSignature, &'a TsMethodSignature>(&node) };
-    Node::TsMethodSignature(static_ref)
+impl<'a> From<&'a TsMethodSignature<'a>> for Node<'a> {
+  fn from(node: &'a TsMethodSignature<'a>) -> Node<'a> {
+    Node::TsMethodSignature(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsMethodSignature<'a> {
+impl<'a> NodeTrait<'a> for &'a TsMethodSignature<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -5157,15 +5689,18 @@ impl<'a> NodeTrait<'a> for TsMethodSignature<'a> {
     for child in self.params.iter() {
       children.push(child.into());
     }
-    if let Some(child) = &self.type_ann {
+    if let Some(child) = self.type_ann {
       children.push(child.into());
     }
-    if let Some(child) = &self.type_params {
+    if let Some(child) = self.type_params {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsMethodSignature<'a> {
@@ -5176,51 +5711,49 @@ impl<'a> CastableNode<'a> for TsMethodSignature<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_method_signature<'a>(ref_node: &'a swc_ecma_ast::TsMethodSignature) -> TsMethodSignature<'a> {
+fn get_view_for_ts_method_signature<'a>(ref_node: &'a swc_ast::TsMethodSignature, bump: &'a Bump) -> &'a TsMethodSignature<'a> {
   let value = &ref_node.key;
-  let field_key = Box::new(get_view_for_expr(value));
+  let field_key = get_view_for_expr(value, bump);
   let value = &ref_node.params;
-  let field_params = value.iter().map(|value| get_view_for_ts_fn_param(value)).collect();
+  let field_params = value.iter().map(|value| get_view_for_ts_fn_param(value, bump)).collect();
   let value = &ref_node.type_ann;
   let field_type_ann = match value {
-    Some(value) => Some(get_view_for_ts_type_ann(value)),
+    Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
     None => None,
   };
   let value = &ref_node.type_params;
   let field_type_params = match value {
-    Some(value) => Some(get_view_for_ts_type_param_decl(value)),
+    Some(value) => Some(get_view_for_ts_type_param_decl(value, bump)),
     None => None,
   };
-  let mut node = TsMethodSignature {
+  let node = bump.alloc(TsMethodSignature {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     key: field_key,
     params: field_params,
     type_ann: field_type_ann,
     type_params: field_type_params,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsMethodSignature, &'a TsMethodSignature>(&node) };
-  let parent = Node::TsMethodSignature(child_parent_ref);
-  set_parent_for_expr(&mut node.key, parent.clone());
-  for node in node.params.iter_mut() {
+  });
+  let parent = Node::TsMethodSignature(node);
+  set_parent_for_expr(&node.key, parent.clone());
+  for node in node.params.iter() {
     set_parent_for_ts_fn_param(node, parent.clone());
   }
-  if let Some(node) = node.type_ann.as_mut() {
-    node.parent = parent.clone();
+  if let Some(child) = node.type_ann {
+    unsafe { *child.inner_parent.get() = Some(parent.clone()); }
   }
-  if let Some(node) = node.type_params.as_mut() {
-    node.parent = parent;
+  if let Some(child) = node.type_params {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 pub struct UpdateExpr<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::UpdateExpr,
-  pub arg: Box<Expr<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::UpdateExpr,
+  pub arg: Expr<'a>,
 }
 
 impl<'a> UpdateExpr<'a> {
@@ -5239,16 +5772,15 @@ impl<'a> Spanned for UpdateExpr<'a> {
   }
 }
 
-impl<'a> From<&UpdateExpr<'a>> for Node<'a> {
-  fn from(node: &UpdateExpr) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&UpdateExpr, &'a UpdateExpr>(&node) };
-    Node::UpdateExpr(static_ref)
+impl<'a> From<&'a UpdateExpr<'a>> for Node<'a> {
+  fn from(node: &'a UpdateExpr<'a>) -> Node<'a> {
+    Node::UpdateExpr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for UpdateExpr<'a> {
+impl<'a> NodeTrait<'a> for &'a UpdateExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -5257,6 +5789,9 @@ impl<'a> NodeTrait<'a> for UpdateExpr<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for UpdateExpr<'a> {
@@ -5267,29 +5802,27 @@ impl<'a> CastableNode<'a> for UpdateExpr<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_update_expr<'a>(ref_node: &'a swc_ecma_ast::UpdateExpr) -> UpdateExpr<'a> {
+fn get_view_for_update_expr<'a>(ref_node: &'a swc_ast::UpdateExpr, bump: &'a Bump) -> &'a UpdateExpr<'a> {
   let value = &ref_node.arg;
-  let field_arg = Box::new(get_view_for_expr(value));
-  let mut node = UpdateExpr {
+  let field_arg = get_view_for_expr(value, bump);
+  let node = bump.alloc(UpdateExpr {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     arg: field_arg,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&UpdateExpr, &'a UpdateExpr>(&node) };
-  let parent = Node::UpdateExpr(child_parent_ref);
-  set_parent_for_expr(&mut node.arg, parent);
+  });
+  let parent = Node::UpdateExpr(node);
+  set_parent_for_expr(&node.arg, parent);
   node
 }
 
 pub struct SetterProp<'a> {
-  pub parent: &'a ObjectLit<'a>,
-  pub inner: &'a swc_ecma_ast::SetterProp,
+  inner_parent: UnsafeCell<Option<&'a ObjectLit<'a>>>,
+  pub inner: &'a swc_ast::SetterProp,
   pub key: PropName<'a>,
   pub param: Pat<'a>,
-  pub body: Option<BlockStmt<'a>>,
+  pub body: Option<&'a BlockStmt<'a>>,
 }
 
 impl<'a> Spanned for SetterProp<'a> {
@@ -5298,28 +5831,30 @@ impl<'a> Spanned for SetterProp<'a> {
   }
 }
 
-impl<'a> From<&SetterProp<'a>> for Node<'a> {
-  fn from(node: &SetterProp) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&SetterProp, &'a SetterProp>(&node) };
-    Node::SetterProp(static_ref)
+impl<'a> From<&'a SetterProp<'a>> for Node<'a> {
+  fn from(node: &'a SetterProp<'a>) -> Node<'a> {
+    Node::SetterProp(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for SetterProp<'a> {
+impl<'a> NodeTrait<'a> for &'a SetterProp<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(2 + match &self.body { Some(_value) => 1, None => 0, });
     children.push((&self.key).into());
     children.push((&self.param).into());
-    if let Some(child) = &self.body {
+    if let Some(child) = self.body {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for SetterProp<'a> {
@@ -5330,43 +5865,41 @@ impl<'a> CastableNode<'a> for SetterProp<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_setter_prop<'a>(ref_node: &'a swc_ecma_ast::SetterProp) -> SetterProp<'a> {
+fn get_view_for_setter_prop<'a>(ref_node: &'a swc_ast::SetterProp, bump: &'a Bump) -> &'a SetterProp<'a> {
   let value = &ref_node.key;
-  let field_key = get_view_for_prop_name(value);
+  let field_key = get_view_for_prop_name(value, bump);
   let value = &ref_node.param;
-  let field_param = get_view_for_pat(value);
+  let field_param = get_view_for_pat(value, bump);
   let value = &ref_node.body;
   let field_body = match value {
-    Some(value) => Some(get_view_for_block_stmt(value)),
+    Some(value) => Some(get_view_for_block_stmt(value, bump)),
     None => None,
   };
-  let mut node = SetterProp {
+  let node = bump.alloc(SetterProp {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     key: field_key,
     param: field_param,
     body: field_body,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&SetterProp, &'a SetterProp>(&node) };
-  let parent = Node::SetterProp(child_parent_ref);
-  set_parent_for_prop_name(&mut node.key, parent.clone());
-  set_parent_for_pat(&mut node.param, parent.clone());
-  if let Some(node) = node.body.as_mut() {
-    node.parent = parent;
+  });
+  let parent = Node::SetterProp(node);
+  set_parent_for_prop_name(&node.key, parent.clone());
+  set_parent_for_pat(&node.param, parent.clone());
+  if let Some(child) = node.body {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 pub struct TaggedTpl<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TaggedTpl,
-  pub tag: Box<Expr<'a>>,
-  pub exprs: Vec<Box<Expr<'a>>>,
-  pub quasis: Vec<TplElement<'a>>,
-  pub type_params: Option<TsTypeParamInstantiation<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TaggedTpl,
+  pub tag: Expr<'a>,
+  pub exprs: Vec<Expr<'a>>,
+  pub quasis: Vec<&'a TplElement<'a>>,
+  pub type_params: Option<&'a TsTypeParamInstantiation<'a>>,
 }
 
 impl<'a> Spanned for TaggedTpl<'a> {
@@ -5375,16 +5908,15 @@ impl<'a> Spanned for TaggedTpl<'a> {
   }
 }
 
-impl<'a> From<&TaggedTpl<'a>> for Node<'a> {
-  fn from(node: &TaggedTpl) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TaggedTpl, &'a TaggedTpl>(&node) };
-    Node::TaggedTpl(static_ref)
+impl<'a> From<&'a TaggedTpl<'a>> for Node<'a> {
+  fn from(node: &'a TaggedTpl<'a>) -> Node<'a> {
+    Node::TaggedTpl(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TaggedTpl<'a> {
+impl<'a> NodeTrait<'a> for &'a TaggedTpl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -5394,14 +5926,17 @@ impl<'a> NodeTrait<'a> for TaggedTpl<'a> {
       children.push(child.into());
     }
     for child in self.quasis.iter() {
-      children.push(child.into());
+      children.push((*child).into());
     }
-    if let Some(child) = &self.type_params {
+    if let Some(child) = self.type_params {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TaggedTpl<'a> {
@@ -5412,49 +5947,47 @@ impl<'a> CastableNode<'a> for TaggedTpl<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_tagged_tpl<'a>(ref_node: &'a swc_ecma_ast::TaggedTpl) -> TaggedTpl<'a> {
+fn get_view_for_tagged_tpl<'a>(ref_node: &'a swc_ast::TaggedTpl, bump: &'a Bump) -> &'a TaggedTpl<'a> {
   let value = &ref_node.tag;
-  let field_tag = Box::new(get_view_for_expr(value));
+  let field_tag = get_view_for_expr(value, bump);
   let value = &ref_node.exprs;
-  let field_exprs = value.iter().map(|value| Box::new(get_view_for_expr(value))).collect();
+  let field_exprs = value.iter().map(|value| get_view_for_expr(value, bump)).collect();
   let value = &ref_node.quasis;
-  let field_quasis = value.iter().map(|value| get_view_for_tpl_element(value)).collect();
+  let field_quasis = value.iter().map(|value| get_view_for_tpl_element(value, bump)).collect();
   let value = &ref_node.type_params;
   let field_type_params = match value {
-    Some(value) => Some(get_view_for_ts_type_param_instantiation(value)),
+    Some(value) => Some(get_view_for_ts_type_param_instantiation(value, bump)),
     None => None,
   };
-  let mut node = TaggedTpl {
+  let node = bump.alloc(TaggedTpl {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     tag: field_tag,
     exprs: field_exprs,
     quasis: field_quasis,
     type_params: field_type_params,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TaggedTpl, &'a TaggedTpl>(&node) };
-  let parent = Node::TaggedTpl(child_parent_ref);
-  set_parent_for_expr(&mut node.tag, parent.clone());
-  for node in node.exprs.iter_mut() {
+  });
+  let parent = Node::TaggedTpl(node);
+  set_parent_for_expr(&node.tag, parent.clone());
+  for node in node.exprs.iter() {
     set_parent_for_expr(node, parent.clone());
   }
-  for node in node.quasis.iter_mut() {
-    node.parent = parent.clone();
+  for node in node.quasis.iter() {
+    unsafe { *node.inner_parent.get() = Some(parent.clone()); }
   }
-  if let Some(node) = node.type_params.as_mut() {
-    node.parent = parent;
+  if let Some(child) = node.type_params {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 /// `export * from 'mod'`
 pub struct ExportAll<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::ExportAll,
-  pub src: Str<'a>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::ExportAll,
+  pub src: &'a Str<'a>,
 }
 
 impl<'a> Spanned for ExportAll<'a> {
@@ -5463,24 +5996,26 @@ impl<'a> Spanned for ExportAll<'a> {
   }
 }
 
-impl<'a> From<&ExportAll<'a>> for Node<'a> {
-  fn from(node: &ExportAll) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ExportAll, &'a ExportAll>(&node) };
-    Node::ExportAll(static_ref)
+impl<'a> From<&'a ExportAll<'a>> for Node<'a> {
+  fn from(node: &'a ExportAll<'a>) -> Node<'a> {
+    Node::ExportAll(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ExportAll<'a> {
+impl<'a> NodeTrait<'a> for &'a ExportAll<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1);
-    children.push((&self.src).into());
+    children.push(self.src.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ExportAll<'a> {
@@ -5491,26 +6026,24 @@ impl<'a> CastableNode<'a> for ExportAll<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_export_all<'a>(ref_node: &'a swc_ecma_ast::ExportAll) -> ExportAll<'a> {
+fn get_view_for_export_all<'a>(ref_node: &'a swc_ast::ExportAll, bump: &'a Bump) -> &'a ExportAll<'a> {
   let value = &ref_node.src;
-  let field_src = get_view_for_str(value);
-  let mut node = ExportAll {
+  let field_src = get_view_for_str(value, bump);
+  let node = bump.alloc(ExportAll {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     src: field_src,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ExportAll, &'a ExportAll>(&node) };
-  let parent = Node::ExportAll(child_parent_ref);
-  node.src.parent = parent;
+  });
+  let parent = Node::ExportAll(node);
+  unsafe { *node.src.inner_parent.get() = Some(parent); }
   node
 }
 
 pub struct TsModuleBlock<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsModuleBlock,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsModuleBlock,
   pub body: Vec<ModuleItem<'a>>,
 }
 
@@ -5520,16 +6053,15 @@ impl<'a> Spanned for TsModuleBlock<'a> {
   }
 }
 
-impl<'a> From<&TsModuleBlock<'a>> for Node<'a> {
-  fn from(node: &TsModuleBlock) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsModuleBlock, &'a TsModuleBlock>(&node) };
-    Node::TsModuleBlock(static_ref)
+impl<'a> From<&'a TsModuleBlock<'a>> for Node<'a> {
+  fn from(node: &'a TsModuleBlock<'a>) -> Node<'a> {
+    Node::TsModuleBlock(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsModuleBlock<'a> {
+impl<'a> NodeTrait<'a> for &'a TsModuleBlock<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -5540,6 +6072,9 @@ impl<'a> NodeTrait<'a> for TsModuleBlock<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsModuleBlock<'a> {
@@ -5550,30 +6085,28 @@ impl<'a> CastableNode<'a> for TsModuleBlock<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_module_block<'a>(ref_node: &'a swc_ecma_ast::TsModuleBlock) -> TsModuleBlock<'a> {
+fn get_view_for_ts_module_block<'a>(ref_node: &'a swc_ast::TsModuleBlock, bump: &'a Bump) -> &'a TsModuleBlock<'a> {
   let value = &ref_node.body;
-  let field_body = value.iter().map(|value| get_view_for_module_item(value)).collect();
-  let mut node = TsModuleBlock {
+  let field_body = value.iter().map(|value| get_view_for_module_item(value, bump)).collect();
+  let node = bump.alloc(TsModuleBlock {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     body: field_body,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsModuleBlock, &'a TsModuleBlock>(&node) };
-  let parent = Node::TsModuleBlock(child_parent_ref);
-  for node in node.body.iter_mut() {
+  });
+  let parent = Node::TsModuleBlock(node);
+  for node in node.body.iter() {
     set_parent_for_module_item(node, parent.clone());
   }
   node
 }
 
 pub struct SwitchStmt<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::SwitchStmt,
-  pub discriminant: Box<Expr<'a>>,
-  pub cases: Vec<SwitchCase<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::SwitchStmt,
+  pub discriminant: Expr<'a>,
+  pub cases: Vec<&'a SwitchCase<'a>>,
 }
 
 impl<'a> Spanned for SwitchStmt<'a> {
@@ -5582,27 +6115,29 @@ impl<'a> Spanned for SwitchStmt<'a> {
   }
 }
 
-impl<'a> From<&SwitchStmt<'a>> for Node<'a> {
-  fn from(node: &SwitchStmt) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&SwitchStmt, &'a SwitchStmt>(&node) };
-    Node::SwitchStmt(static_ref)
+impl<'a> From<&'a SwitchStmt<'a>> for Node<'a> {
+  fn from(node: &'a SwitchStmt<'a>) -> Node<'a> {
+    Node::SwitchStmt(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for SwitchStmt<'a> {
+impl<'a> NodeTrait<'a> for &'a SwitchStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + self.cases.len());
     children.push((&self.discriminant).into());
     for child in self.cases.iter() {
-      children.push(child.into());
+      children.push((*child).into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for SwitchStmt<'a> {
@@ -5613,34 +6148,32 @@ impl<'a> CastableNode<'a> for SwitchStmt<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_switch_stmt<'a>(ref_node: &'a swc_ecma_ast::SwitchStmt) -> SwitchStmt<'a> {
+fn get_view_for_switch_stmt<'a>(ref_node: &'a swc_ast::SwitchStmt, bump: &'a Bump) -> &'a SwitchStmt<'a> {
   let value = &ref_node.discriminant;
-  let field_discriminant = Box::new(get_view_for_expr(value));
+  let field_discriminant = get_view_for_expr(value, bump);
   let value = &ref_node.cases;
-  let field_cases = value.iter().map(|value| get_view_for_switch_case(value)).collect();
-  let mut node = SwitchStmt {
+  let field_cases = value.iter().map(|value| get_view_for_switch_case(value, bump)).collect();
+  let node = bump.alloc(SwitchStmt {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     discriminant: field_discriminant,
     cases: field_cases,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&SwitchStmt, &'a SwitchStmt>(&node) };
-  let parent = Node::SwitchStmt(child_parent_ref);
-  set_parent_for_expr(&mut node.discriminant, parent.clone());
-  for node in node.cases.iter_mut() {
-    node.parent = parent.to::<SwitchStmt>();
+  });
+  let parent = Node::SwitchStmt(node);
+  set_parent_for_expr(&node.discriminant, parent.clone());
+  for node in node.cases.iter() {
+    unsafe { *node.inner_parent.get() = Some(parent.to::<SwitchStmt>()); }
   }
   node
 }
 
 pub struct TsEnumMember<'a> {
-  pub parent: &'a TsEnumDecl<'a>,
-  pub inner: &'a swc_ecma_ast::TsEnumMember,
+  inner_parent: UnsafeCell<Option<&'a TsEnumDecl<'a>>>,
+  pub inner: &'a swc_ast::TsEnumMember,
   pub id: TsEnumMemberId<'a>,
-  pub init: Option<Box<Expr<'a>>>,
+  pub init: Option<Expr<'a>>,
 }
 
 impl<'a> Spanned for TsEnumMember<'a> {
@@ -5649,27 +6182,29 @@ impl<'a> Spanned for TsEnumMember<'a> {
   }
 }
 
-impl<'a> From<&TsEnumMember<'a>> for Node<'a> {
-  fn from(node: &TsEnumMember) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsEnumMember, &'a TsEnumMember>(&node) };
-    Node::TsEnumMember(static_ref)
+impl<'a> From<&'a TsEnumMember<'a>> for Node<'a> {
+  fn from(node: &'a TsEnumMember<'a>) -> Node<'a> {
+    Node::TsEnumMember(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsEnumMember<'a> {
+impl<'a> NodeTrait<'a> for &'a TsEnumMember<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.init { Some(_value) => 1, None => 0, });
     children.push((&self.id).into());
-    if let Some(child) = &self.init {
+    if let Some(child) = self.init.as_ref() {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsEnumMember<'a> {
@@ -5680,37 +6215,35 @@ impl<'a> CastableNode<'a> for TsEnumMember<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_enum_member<'a>(ref_node: &'a swc_ecma_ast::TsEnumMember) -> TsEnumMember<'a> {
+fn get_view_for_ts_enum_member<'a>(ref_node: &'a swc_ast::TsEnumMember, bump: &'a Bump) -> &'a TsEnumMember<'a> {
   let value = &ref_node.id;
-  let field_id = get_view_for_ts_enum_member_id(value);
+  let field_id = get_view_for_ts_enum_member_id(value, bump);
   let value = &ref_node.init;
   let field_init = match value {
-    Some(value) => Some(Box::new(get_view_for_expr(value))),
+    Some(value) => Some(get_view_for_expr(value, bump)),
     None => None,
   };
-  let mut node = TsEnumMember {
+  let node = bump.alloc(TsEnumMember {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     id: field_id,
     init: field_init,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsEnumMember, &'a TsEnumMember>(&node) };
-  let parent = Node::TsEnumMember(child_parent_ref);
-  set_parent_for_ts_enum_member_id(&mut node.id, parent.clone());
-  if let Some(node) = node.init.as_mut() {
-    set_parent_for_expr(node, parent);
+  });
+  let parent = Node::TsEnumMember(node);
+  set_parent_for_ts_enum_member_id(&node.id, parent.clone());
+  if let Some(child) = node.init.as_ref() {
+    set_parent_for_expr(child, parent);
   }
   node
 }
 
 pub struct TsIndexedAccessType<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsIndexedAccessType,
-  pub obj_type: Box<TsType<'a>>,
-  pub index_type: Box<TsType<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsIndexedAccessType,
+  pub obj_type: TsType<'a>,
+  pub index_type: TsType<'a>,
 }
 
 impl<'a> TsIndexedAccessType<'a> {
@@ -5725,16 +6258,15 @@ impl<'a> Spanned for TsIndexedAccessType<'a> {
   }
 }
 
-impl<'a> From<&TsIndexedAccessType<'a>> for Node<'a> {
-  fn from(node: &TsIndexedAccessType) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsIndexedAccessType, &'a TsIndexedAccessType>(&node) };
-    Node::TsIndexedAccessType(static_ref)
+impl<'a> From<&'a TsIndexedAccessType<'a>> for Node<'a> {
+  fn from(node: &'a TsIndexedAccessType<'a>) -> Node<'a> {
+    Node::TsIndexedAccessType(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsIndexedAccessType<'a> {
+impl<'a> NodeTrait<'a> for &'a TsIndexedAccessType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -5744,6 +6276,9 @@ impl<'a> NodeTrait<'a> for TsIndexedAccessType<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsIndexedAccessType<'a> {
@@ -5754,31 +6289,29 @@ impl<'a> CastableNode<'a> for TsIndexedAccessType<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_indexed_access_type<'a>(ref_node: &'a swc_ecma_ast::TsIndexedAccessType) -> TsIndexedAccessType<'a> {
+fn get_view_for_ts_indexed_access_type<'a>(ref_node: &'a swc_ast::TsIndexedAccessType, bump: &'a Bump) -> &'a TsIndexedAccessType<'a> {
   let value = &ref_node.obj_type;
-  let field_obj_type = Box::new(get_view_for_ts_type(value));
+  let field_obj_type = get_view_for_ts_type(value, bump);
   let value = &ref_node.index_type;
-  let field_index_type = Box::new(get_view_for_ts_type(value));
-  let mut node = TsIndexedAccessType {
+  let field_index_type = get_view_for_ts_type(value, bump);
+  let node = bump.alloc(TsIndexedAccessType {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     obj_type: field_obj_type,
     index_type: field_index_type,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsIndexedAccessType, &'a TsIndexedAccessType>(&node) };
-  let parent = Node::TsIndexedAccessType(child_parent_ref);
-  set_parent_for_ts_type(&mut node.obj_type, parent.clone());
-  set_parent_for_ts_type(&mut node.index_type, parent);
+  });
+  let parent = Node::TsIndexedAccessType(node);
+  set_parent_for_ts_type(&node.obj_type, parent.clone());
+  set_parent_for_ts_type(&node.index_type, parent);
   node
 }
 
 pub struct TsRestType<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsRestType,
-  pub type_ann: Box<TsType<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsRestType,
+  pub type_ann: TsType<'a>,
 }
 
 impl<'a> Spanned for TsRestType<'a> {
@@ -5787,16 +6320,15 @@ impl<'a> Spanned for TsRestType<'a> {
   }
 }
 
-impl<'a> From<&TsRestType<'a>> for Node<'a> {
-  fn from(node: &TsRestType) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsRestType, &'a TsRestType>(&node) };
-    Node::TsRestType(static_ref)
+impl<'a> From<&'a TsRestType<'a>> for Node<'a> {
+  fn from(node: &'a TsRestType<'a>) -> Node<'a> {
+    Node::TsRestType(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsRestType<'a> {
+impl<'a> NodeTrait<'a> for &'a TsRestType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -5805,6 +6337,9 @@ impl<'a> NodeTrait<'a> for TsRestType<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsRestType<'a> {
@@ -5815,27 +6350,25 @@ impl<'a> CastableNode<'a> for TsRestType<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_rest_type<'a>(ref_node: &'a swc_ecma_ast::TsRestType) -> TsRestType<'a> {
+fn get_view_for_ts_rest_type<'a>(ref_node: &'a swc_ast::TsRestType, bump: &'a Bump) -> &'a TsRestType<'a> {
   let value = &ref_node.type_ann;
-  let field_type_ann = Box::new(get_view_for_ts_type(value));
-  let mut node = TsRestType {
+  let field_type_ann = get_view_for_ts_type(value, bump);
+  let node = bump.alloc(TsRestType {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     type_ann: field_type_ann,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsRestType, &'a TsRestType>(&node) };
-  let parent = Node::TsRestType(child_parent_ref);
-  set_parent_for_ts_type(&mut node.type_ann, parent);
+  });
+  let parent = Node::TsRestType(node);
+  set_parent_for_ts_type(&node.type_ann, parent);
   node
 }
 
 pub struct ExprStmt<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::ExprStmt,
-  pub expr: Box<Expr<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::ExprStmt,
+  pub expr: Expr<'a>,
 }
 
 impl<'a> Spanned for ExprStmt<'a> {
@@ -5844,16 +6377,15 @@ impl<'a> Spanned for ExprStmt<'a> {
   }
 }
 
-impl<'a> From<&ExprStmt<'a>> for Node<'a> {
-  fn from(node: &ExprStmt) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ExprStmt, &'a ExprStmt>(&node) };
-    Node::ExprStmt(static_ref)
+impl<'a> From<&'a ExprStmt<'a>> for Node<'a> {
+  fn from(node: &'a ExprStmt<'a>) -> Node<'a> {
+    Node::ExprStmt(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ExprStmt<'a> {
+impl<'a> NodeTrait<'a> for &'a ExprStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -5862,6 +6394,9 @@ impl<'a> NodeTrait<'a> for ExprStmt<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ExprStmt<'a> {
@@ -5872,27 +6407,25 @@ impl<'a> CastableNode<'a> for ExprStmt<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_expr_stmt<'a>(ref_node: &'a swc_ecma_ast::ExprStmt) -> ExprStmt<'a> {
+fn get_view_for_expr_stmt<'a>(ref_node: &'a swc_ast::ExprStmt, bump: &'a Bump) -> &'a ExprStmt<'a> {
   let value = &ref_node.expr;
-  let field_expr = Box::new(get_view_for_expr(value));
-  let mut node = ExprStmt {
+  let field_expr = get_view_for_expr(value, bump);
+  let node = bump.alloc(ExprStmt {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     expr: field_expr,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ExprStmt, &'a ExprStmt>(&node) };
-  let parent = Node::ExprStmt(child_parent_ref);
-  set_parent_for_expr(&mut node.expr, parent);
+  });
+  let parent = Node::ExprStmt(node);
+  set_parent_for_expr(&node.expr, parent);
   node
 }
 
 pub struct TsOptionalType<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsOptionalType,
-  pub type_ann: Box<TsType<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsOptionalType,
+  pub type_ann: TsType<'a>,
 }
 
 impl<'a> Spanned for TsOptionalType<'a> {
@@ -5901,16 +6434,15 @@ impl<'a> Spanned for TsOptionalType<'a> {
   }
 }
 
-impl<'a> From<&TsOptionalType<'a>> for Node<'a> {
-  fn from(node: &TsOptionalType) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsOptionalType, &'a TsOptionalType>(&node) };
-    Node::TsOptionalType(static_ref)
+impl<'a> From<&'a TsOptionalType<'a>> for Node<'a> {
+  fn from(node: &'a TsOptionalType<'a>) -> Node<'a> {
+    Node::TsOptionalType(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsOptionalType<'a> {
+impl<'a> NodeTrait<'a> for &'a TsOptionalType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -5919,6 +6451,9 @@ impl<'a> NodeTrait<'a> for TsOptionalType<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsOptionalType<'a> {
@@ -5929,28 +6464,26 @@ impl<'a> CastableNode<'a> for TsOptionalType<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_optional_type<'a>(ref_node: &'a swc_ecma_ast::TsOptionalType) -> TsOptionalType<'a> {
+fn get_view_for_ts_optional_type<'a>(ref_node: &'a swc_ast::TsOptionalType, bump: &'a Bump) -> &'a TsOptionalType<'a> {
   let value = &ref_node.type_ann;
-  let field_type_ann = Box::new(get_view_for_ts_type(value));
-  let mut node = TsOptionalType {
+  let field_type_ann = get_view_for_ts_type(value, bump);
+  let node = bump.alloc(TsOptionalType {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     type_ann: field_type_ann,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsOptionalType, &'a TsOptionalType>(&node) };
-  let parent = Node::TsOptionalType(child_parent_ref);
-  set_parent_for_ts_type(&mut node.type_ann, parent);
+  });
+  let parent = Node::TsOptionalType(node);
+  set_parent_for_ts_type(&node.type_ann, parent);
   node
 }
 
 pub struct Tpl<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::Tpl,
-  pub exprs: Vec<Box<Expr<'a>>>,
-  pub quasis: Vec<TplElement<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::Tpl,
+  pub exprs: Vec<Expr<'a>>,
+  pub quasis: Vec<&'a TplElement<'a>>,
 }
 
 impl<'a> Spanned for Tpl<'a> {
@@ -5959,16 +6492,15 @@ impl<'a> Spanned for Tpl<'a> {
   }
 }
 
-impl<'a> From<&Tpl<'a>> for Node<'a> {
-  fn from(node: &Tpl) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&Tpl, &'a Tpl>(&node) };
-    Node::Tpl(static_ref)
+impl<'a> From<&'a Tpl<'a>> for Node<'a> {
+  fn from(node: &'a Tpl<'a>) -> Node<'a> {
+    Node::Tpl(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for Tpl<'a> {
+impl<'a> NodeTrait<'a> for &'a Tpl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -5977,11 +6509,14 @@ impl<'a> NodeTrait<'a> for Tpl<'a> {
       children.push(child.into());
     }
     for child in self.quasis.iter() {
-      children.push(child.into());
+      children.push((*child).into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for Tpl<'a> {
@@ -5992,35 +6527,33 @@ impl<'a> CastableNode<'a> for Tpl<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_tpl<'a>(ref_node: &'a swc_ecma_ast::Tpl) -> Tpl<'a> {
+fn get_view_for_tpl<'a>(ref_node: &'a swc_ast::Tpl, bump: &'a Bump) -> &'a Tpl<'a> {
   let value = &ref_node.exprs;
-  let field_exprs = value.iter().map(|value| Box::new(get_view_for_expr(value))).collect();
+  let field_exprs = value.iter().map(|value| get_view_for_expr(value, bump)).collect();
   let value = &ref_node.quasis;
-  let field_quasis = value.iter().map(|value| get_view_for_tpl_element(value)).collect();
-  let mut node = Tpl {
+  let field_quasis = value.iter().map(|value| get_view_for_tpl_element(value, bump)).collect();
+  let node = bump.alloc(Tpl {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     exprs: field_exprs,
     quasis: field_quasis,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&Tpl, &'a Tpl>(&node) };
-  let parent = Node::Tpl(child_parent_ref);
-  for node in node.exprs.iter_mut() {
+  });
+  let parent = Node::Tpl(node);
+  for node in node.exprs.iter() {
     set_parent_for_expr(node, parent.clone());
   }
-  for node in node.quasis.iter_mut() {
-    node.parent = parent.clone();
+  for node in node.quasis.iter() {
+    unsafe { *node.inner_parent.get() = Some(parent.clone()); }
   }
   node
 }
 
 /// Represents a invalid node.
 pub struct Invalid<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::Invalid,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::Invalid,
 }
 
 impl<'a> Spanned for Invalid<'a> {
@@ -6029,22 +6562,24 @@ impl<'a> Spanned for Invalid<'a> {
   }
 }
 
-impl<'a> From<&Invalid<'a>> for Node<'a> {
-  fn from(node: &Invalid) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&Invalid, &'a Invalid>(&node) };
-    Node::Invalid(static_ref)
+impl<'a> From<&'a Invalid<'a>> for Node<'a> {
+  fn from(node: &'a Invalid<'a>) -> Node<'a> {
+    Node::Invalid(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for Invalid<'a> {
+impl<'a> NodeTrait<'a> for &'a Invalid<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     Vec::with_capacity(0)
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for Invalid<'a> {
@@ -6055,21 +6590,20 @@ impl<'a> CastableNode<'a> for Invalid<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_invalid<'a>(ref_node: &'a swc_ecma_ast::Invalid) -> Invalid<'a> {
-  let node = Invalid {
+fn get_view_for_invalid<'a>(ref_node: &'a swc_ast::Invalid, bump: &'a Bump) -> &'a Invalid<'a> {
+  let node = bump.alloc(Invalid {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
-  };
+    inner_parent: UnsafeCell::new(None),
+  });
   node
 }
 
 pub struct ComputedPropName<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::ComputedPropName,
-  pub expr: Box<Expr<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::ComputedPropName,
+  pub expr: Expr<'a>,
 }
 
 impl<'a> Spanned for ComputedPropName<'a> {
@@ -6078,16 +6612,15 @@ impl<'a> Spanned for ComputedPropName<'a> {
   }
 }
 
-impl<'a> From<&ComputedPropName<'a>> for Node<'a> {
-  fn from(node: &ComputedPropName) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ComputedPropName, &'a ComputedPropName>(&node) };
-    Node::ComputedPropName(static_ref)
+impl<'a> From<&'a ComputedPropName<'a>> for Node<'a> {
+  fn from(node: &'a ComputedPropName<'a>) -> Node<'a> {
+    Node::ComputedPropName(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ComputedPropName<'a> {
+impl<'a> NodeTrait<'a> for &'a ComputedPropName<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -6096,6 +6629,9 @@ impl<'a> NodeTrait<'a> for ComputedPropName<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ComputedPropName<'a> {
@@ -6106,29 +6642,27 @@ impl<'a> CastableNode<'a> for ComputedPropName<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_computed_prop_name<'a>(ref_node: &'a swc_ecma_ast::ComputedPropName) -> ComputedPropName<'a> {
+fn get_view_for_computed_prop_name<'a>(ref_node: &'a swc_ast::ComputedPropName, bump: &'a Bump) -> &'a ComputedPropName<'a> {
   let value = &ref_node.expr;
-  let field_expr = Box::new(get_view_for_expr(value));
-  let mut node = ComputedPropName {
+  let field_expr = get_view_for_expr(value, bump);
+  let node = bump.alloc(ComputedPropName {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     expr: field_expr,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ComputedPropName, &'a ComputedPropName>(&node) };
-  let parent = Node::ComputedPropName(child_parent_ref);
-  set_parent_for_expr(&mut node.expr, parent);
+  });
+  let parent = Node::ComputedPropName(node);
+  set_parent_for_expr(&node.expr, parent);
   node
 }
 
 pub struct TsFnType<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsFnType,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsFnType,
   pub params: Vec<TsFnParam<'a>>,
-  pub type_params: Option<TsTypeParamDecl<'a>>,
-  pub type_ann: TsTypeAnn<'a>,
+  pub type_params: Option<&'a TsTypeParamDecl<'a>>,
+  pub type_ann: &'a TsTypeAnn<'a>,
 }
 
 impl<'a> Spanned for TsFnType<'a> {
@@ -6137,16 +6671,15 @@ impl<'a> Spanned for TsFnType<'a> {
   }
 }
 
-impl<'a> From<&TsFnType<'a>> for Node<'a> {
-  fn from(node: &TsFnType) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsFnType, &'a TsFnType>(&node) };
-    Node::TsFnType(static_ref)
+impl<'a> From<&'a TsFnType<'a>> for Node<'a> {
+  fn from(node: &'a TsFnType<'a>) -> Node<'a> {
+    Node::TsFnType(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsFnType<'a> {
+impl<'a> NodeTrait<'a> for &'a TsFnType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -6154,13 +6687,16 @@ impl<'a> NodeTrait<'a> for TsFnType<'a> {
     for child in self.params.iter() {
       children.push(child.into());
     }
-    if let Some(child) = &self.type_params {
+    if let Some(child) = self.type_params {
       children.push(child.into());
     }
-    children.push((&self.type_ann).into());
+    children.push(self.type_ann.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsFnType<'a> {
@@ -6171,42 +6707,40 @@ impl<'a> CastableNode<'a> for TsFnType<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_fn_type<'a>(ref_node: &'a swc_ecma_ast::TsFnType) -> TsFnType<'a> {
+fn get_view_for_ts_fn_type<'a>(ref_node: &'a swc_ast::TsFnType, bump: &'a Bump) -> &'a TsFnType<'a> {
   let value = &ref_node.params;
-  let field_params = value.iter().map(|value| get_view_for_ts_fn_param(value)).collect();
+  let field_params = value.iter().map(|value| get_view_for_ts_fn_param(value, bump)).collect();
   let value = &ref_node.type_params;
   let field_type_params = match value {
-    Some(value) => Some(get_view_for_ts_type_param_decl(value)),
+    Some(value) => Some(get_view_for_ts_type_param_decl(value, bump)),
     None => None,
   };
   let value = &ref_node.type_ann;
-  let field_type_ann = get_view_for_ts_type_ann(value);
-  let mut node = TsFnType {
+  let field_type_ann = get_view_for_ts_type_ann(value, bump);
+  let node = bump.alloc(TsFnType {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     params: field_params,
     type_params: field_type_params,
     type_ann: field_type_ann,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsFnType, &'a TsFnType>(&node) };
-  let parent = Node::TsFnType(child_parent_ref);
-  for node in node.params.iter_mut() {
+  });
+  let parent = Node::TsFnType(node);
+  for node in node.params.iter() {
     set_parent_for_ts_fn_param(node, parent.clone());
   }
-  if let Some(node) = node.type_params.as_mut() {
-    node.parent = parent.clone();
+  if let Some(child) = node.type_params {
+    unsafe { *child.inner_parent.get() = Some(parent.clone()); }
   }
-  node.type_ann.parent = parent;
+  unsafe { *node.type_ann.inner_parent.get() = Some(parent); }
   node
 }
 
 /// Use when only block statements are allowed.
 pub struct BlockStmt<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::BlockStmt,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::BlockStmt,
   pub stmts: Vec<Stmt<'a>>,
 }
 
@@ -6216,16 +6750,15 @@ impl<'a> Spanned for BlockStmt<'a> {
   }
 }
 
-impl<'a> From<&BlockStmt<'a>> for Node<'a> {
-  fn from(node: &BlockStmt) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&BlockStmt, &'a BlockStmt>(&node) };
-    Node::BlockStmt(static_ref)
+impl<'a> From<&'a BlockStmt<'a>> for Node<'a> {
+  fn from(node: &'a BlockStmt<'a>) -> Node<'a> {
+    Node::BlockStmt(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for BlockStmt<'a> {
+impl<'a> NodeTrait<'a> for &'a BlockStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -6236,6 +6769,9 @@ impl<'a> NodeTrait<'a> for BlockStmt<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for BlockStmt<'a> {
@@ -6246,31 +6782,29 @@ impl<'a> CastableNode<'a> for BlockStmt<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_block_stmt<'a>(ref_node: &'a swc_ecma_ast::BlockStmt) -> BlockStmt<'a> {
+fn get_view_for_block_stmt<'a>(ref_node: &'a swc_ast::BlockStmt, bump: &'a Bump) -> &'a BlockStmt<'a> {
   let value = &ref_node.stmts;
-  let field_stmts = value.iter().map(|value| get_view_for_stmt(value)).collect();
-  let mut node = BlockStmt {
+  let field_stmts = value.iter().map(|value| get_view_for_stmt(value, bump)).collect();
+  let node = bump.alloc(BlockStmt {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     stmts: field_stmts,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&BlockStmt, &'a BlockStmt>(&node) };
-  let parent = Node::BlockStmt(child_parent_ref);
-  for node in node.stmts.iter_mut() {
+  });
+  let parent = Node::BlockStmt(node);
+  for node in node.stmts.iter() {
     set_parent_for_stmt(node, parent.clone());
   }
   node
 }
 
 pub struct TsTypeAliasDecl<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsTypeAliasDecl,
-  pub id: Ident<'a>,
-  pub type_params: Option<TsTypeParamDecl<'a>>,
-  pub type_ann: Box<TsType<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsTypeAliasDecl,
+  pub id: &'a Ident<'a>,
+  pub type_params: Option<&'a TsTypeParamDecl<'a>>,
+  pub type_ann: TsType<'a>,
 }
 
 impl<'a> TsTypeAliasDecl<'a> {
@@ -6285,28 +6819,30 @@ impl<'a> Spanned for TsTypeAliasDecl<'a> {
   }
 }
 
-impl<'a> From<&TsTypeAliasDecl<'a>> for Node<'a> {
-  fn from(node: &TsTypeAliasDecl) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsTypeAliasDecl, &'a TsTypeAliasDecl>(&node) };
-    Node::TsTypeAliasDecl(static_ref)
+impl<'a> From<&'a TsTypeAliasDecl<'a>> for Node<'a> {
+  fn from(node: &'a TsTypeAliasDecl<'a>) -> Node<'a> {
+    Node::TsTypeAliasDecl(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsTypeAliasDecl<'a> {
+impl<'a> NodeTrait<'a> for &'a TsTypeAliasDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(2 + match &self.type_params { Some(_value) => 1, None => 0, });
-    children.push((&self.id).into());
-    if let Some(child) = &self.type_params {
+    children.push(self.id.into());
+    if let Some(child) = self.type_params {
       children.push(child.into());
     }
     children.push((&self.type_ann).into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsTypeAliasDecl<'a> {
@@ -6317,41 +6853,39 @@ impl<'a> CastableNode<'a> for TsTypeAliasDecl<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_type_alias_decl<'a>(ref_node: &'a swc_ecma_ast::TsTypeAliasDecl) -> TsTypeAliasDecl<'a> {
+fn get_view_for_ts_type_alias_decl<'a>(ref_node: &'a swc_ast::TsTypeAliasDecl, bump: &'a Bump) -> &'a TsTypeAliasDecl<'a> {
   let value = &ref_node.id;
-  let field_id = get_view_for_ident(value);
+  let field_id = get_view_for_ident(value, bump);
   let value = &ref_node.type_params;
   let field_type_params = match value {
-    Some(value) => Some(get_view_for_ts_type_param_decl(value)),
+    Some(value) => Some(get_view_for_ts_type_param_decl(value, bump)),
     None => None,
   };
   let value = &ref_node.type_ann;
-  let field_type_ann = Box::new(get_view_for_ts_type(value));
-  let mut node = TsTypeAliasDecl {
+  let field_type_ann = get_view_for_ts_type(value, bump);
+  let node = bump.alloc(TsTypeAliasDecl {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     id: field_id,
     type_params: field_type_params,
     type_ann: field_type_ann,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsTypeAliasDecl, &'a TsTypeAliasDecl>(&node) };
-  let parent = Node::TsTypeAliasDecl(child_parent_ref);
-  node.id.parent = parent.clone();
-  if let Some(node) = node.type_params.as_mut() {
-    node.parent = parent.clone();
+  });
+  let parent = Node::TsTypeAliasDecl(node);
+  unsafe { *node.id.inner_parent.get() = Some(parent.clone()); }
+  if let Some(child) = node.type_params {
+    unsafe { *child.inner_parent.get() = Some(parent.clone()); }
   }
-  set_parent_for_ts_type(&mut node.type_ann, parent);
+  set_parent_for_ts_type(&node.type_ann, parent);
   node
 }
 
 pub struct MemberExpr<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::MemberExpr,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::MemberExpr,
   pub obj: ExprOrSuper<'a>,
-  pub prop: Box<Expr<'a>>,
+  pub prop: Expr<'a>,
 }
 
 impl<'a> MemberExpr<'a> {
@@ -6366,16 +6900,15 @@ impl<'a> Spanned for MemberExpr<'a> {
   }
 }
 
-impl<'a> From<&MemberExpr<'a>> for Node<'a> {
-  fn from(node: &MemberExpr) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&MemberExpr, &'a MemberExpr>(&node) };
-    Node::MemberExpr(static_ref)
+impl<'a> From<&'a MemberExpr<'a>> for Node<'a> {
+  fn from(node: &'a MemberExpr<'a>) -> Node<'a> {
+    Node::MemberExpr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for MemberExpr<'a> {
+impl<'a> NodeTrait<'a> for &'a MemberExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -6385,6 +6918,9 @@ impl<'a> NodeTrait<'a> for MemberExpr<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for MemberExpr<'a> {
@@ -6395,36 +6931,34 @@ impl<'a> CastableNode<'a> for MemberExpr<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_member_expr<'a>(ref_node: &'a swc_ecma_ast::MemberExpr) -> MemberExpr<'a> {
+fn get_view_for_member_expr<'a>(ref_node: &'a swc_ast::MemberExpr, bump: &'a Bump) -> &'a MemberExpr<'a> {
   let value = &ref_node.obj;
-  let field_obj = get_view_for_expr_or_super(value);
+  let field_obj = get_view_for_expr_or_super(value, bump);
   let value = &ref_node.prop;
-  let field_prop = Box::new(get_view_for_expr(value));
-  let mut node = MemberExpr {
+  let field_prop = get_view_for_expr(value, bump);
+  let node = bump.alloc(MemberExpr {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     obj: field_obj,
     prop: field_prop,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&MemberExpr, &'a MemberExpr>(&node) };
-  let parent = Node::MemberExpr(child_parent_ref);
-  set_parent_for_expr_or_super(&mut node.obj, parent.clone());
-  set_parent_for_expr(&mut node.prop, parent);
+  });
+  let parent = Node::MemberExpr(node);
+  set_parent_for_expr_or_super(&node.obj, parent.clone());
+  set_parent_for_expr(&node.prop, parent);
   node
 }
 
 /// Common parts of function and method.
 pub struct Function<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::Function,
-  pub params: Vec<Param<'a>>,
-  pub decorators: Vec<Decorator<'a>>,
-  pub body: Option<BlockStmt<'a>>,
-  pub type_params: Option<TsTypeParamDecl<'a>>,
-  pub return_type: Option<TsTypeAnn<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::Function,
+  pub params: Vec<&'a Param<'a>>,
+  pub decorators: Vec<&'a Decorator<'a>>,
+  pub body: Option<&'a BlockStmt<'a>>,
+  pub type_params: Option<&'a TsTypeParamDecl<'a>>,
+  pub return_type: Option<&'a TsTypeAnn<'a>>,
 }
 
 impl<'a> Function<'a> {
@@ -6445,38 +6979,40 @@ impl<'a> Spanned for Function<'a> {
   }
 }
 
-impl<'a> From<&Function<'a>> for Node<'a> {
-  fn from(node: &Function) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&Function, &'a Function>(&node) };
-    Node::Function(static_ref)
+impl<'a> From<&'a Function<'a>> for Node<'a> {
+  fn from(node: &'a Function<'a>) -> Node<'a> {
+    Node::Function(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for Function<'a> {
+impl<'a> NodeTrait<'a> for &'a Function<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(self.params.len() + self.decorators.len() + match &self.body { Some(_value) => 1, None => 0, } + match &self.type_params { Some(_value) => 1, None => 0, } + match &self.return_type { Some(_value) => 1, None => 0, });
     for child in self.params.iter() {
-      children.push(child.into());
+      children.push((*child).into());
     }
     for child in self.decorators.iter() {
+      children.push((*child).into());
+    }
+    if let Some(child) = self.body {
       children.push(child.into());
     }
-    if let Some(child) = &self.body {
+    if let Some(child) = self.type_params {
       children.push(child.into());
     }
-    if let Some(child) = &self.type_params {
-      children.push(child.into());
-    }
-    if let Some(child) = &self.return_type {
+    if let Some(child) = self.return_type {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for Function<'a> {
@@ -6487,64 +7023,62 @@ impl<'a> CastableNode<'a> for Function<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_function<'a>(ref_node: &'a swc_ecma_ast::Function) -> Function<'a> {
+fn get_view_for_function<'a>(ref_node: &'a swc_ast::Function, bump: &'a Bump) -> &'a Function<'a> {
   let value = &ref_node.params;
-  let field_params = value.iter().map(|value| get_view_for_param(value)).collect();
+  let field_params = value.iter().map(|value| get_view_for_param(value, bump)).collect();
   let value = &ref_node.decorators;
-  let field_decorators = value.iter().map(|value| get_view_for_decorator(value)).collect();
+  let field_decorators = value.iter().map(|value| get_view_for_decorator(value, bump)).collect();
   let value = &ref_node.body;
   let field_body = match value {
-    Some(value) => Some(get_view_for_block_stmt(value)),
+    Some(value) => Some(get_view_for_block_stmt(value, bump)),
     None => None,
   };
   let value = &ref_node.type_params;
   let field_type_params = match value {
-    Some(value) => Some(get_view_for_ts_type_param_decl(value)),
+    Some(value) => Some(get_view_for_ts_type_param_decl(value, bump)),
     None => None,
   };
   let value = &ref_node.return_type;
   let field_return_type = match value {
-    Some(value) => Some(get_view_for_ts_type_ann(value)),
+    Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
     None => None,
   };
-  let mut node = Function {
+  let node = bump.alloc(Function {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     params: field_params,
     decorators: field_decorators,
     body: field_body,
     type_params: field_type_params,
     return_type: field_return_type,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&Function, &'a Function>(&node) };
-  let parent = Node::Function(child_parent_ref);
-  for node in node.params.iter_mut() {
-    node.parent = parent.clone();
+  });
+  let parent = Node::Function(node);
+  for node in node.params.iter() {
+    unsafe { *node.inner_parent.get() = Some(parent.clone()); }
   }
-  for node in node.decorators.iter_mut() {
-    node.parent = parent.clone();
+  for node in node.decorators.iter() {
+    unsafe { *node.inner_parent.get() = Some(parent.clone()); }
   }
-  if let Some(node) = node.body.as_mut() {
-    node.parent = parent.clone();
+  if let Some(child) = node.body {
+    unsafe { *child.inner_parent.get() = Some(parent.clone()); }
   }
-  if let Some(node) = node.type_params.as_mut() {
-    node.parent = parent.clone();
+  if let Some(child) = node.type_params {
+    unsafe { *child.inner_parent.get() = Some(parent.clone()); }
   }
-  if let Some(node) = node.return_type.as_mut() {
-    node.parent = parent;
+  if let Some(child) = node.return_type {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 pub struct ImportDecl<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::ImportDecl,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::ImportDecl,
   pub specifiers: Vec<ImportSpecifier<'a>>,
-  pub src: Str<'a>,
-  pub asserts: Option<ObjectLit<'a>>,
+  pub src: &'a Str<'a>,
+  pub asserts: Option<&'a ObjectLit<'a>>,
 }
 
 impl<'a> ImportDecl<'a> {
@@ -6559,16 +7093,15 @@ impl<'a> Spanned for ImportDecl<'a> {
   }
 }
 
-impl<'a> From<&ImportDecl<'a>> for Node<'a> {
-  fn from(node: &ImportDecl) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ImportDecl, &'a ImportDecl>(&node) };
-    Node::ImportDecl(static_ref)
+impl<'a> From<&'a ImportDecl<'a>> for Node<'a> {
+  fn from(node: &'a ImportDecl<'a>) -> Node<'a> {
+    Node::ImportDecl(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ImportDecl<'a> {
+impl<'a> NodeTrait<'a> for &'a ImportDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -6576,13 +7109,16 @@ impl<'a> NodeTrait<'a> for ImportDecl<'a> {
     for child in self.specifiers.iter() {
       children.push(child.into());
     }
-    children.push((&self.src).into());
-    if let Some(child) = &self.asserts {
+    children.push(self.src.into());
+    if let Some(child) = self.asserts {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ImportDecl<'a> {
@@ -6593,43 +7129,41 @@ impl<'a> CastableNode<'a> for ImportDecl<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_import_decl<'a>(ref_node: &'a swc_ecma_ast::ImportDecl) -> ImportDecl<'a> {
+fn get_view_for_import_decl<'a>(ref_node: &'a swc_ast::ImportDecl, bump: &'a Bump) -> &'a ImportDecl<'a> {
   let value = &ref_node.specifiers;
-  let field_specifiers = value.iter().map(|value| get_view_for_import_specifier(value)).collect();
+  let field_specifiers = value.iter().map(|value| get_view_for_import_specifier(value, bump)).collect();
   let value = &ref_node.src;
-  let field_src = get_view_for_str(value);
+  let field_src = get_view_for_str(value, bump);
   let value = &ref_node.asserts;
   let field_asserts = match value {
-    Some(value) => Some(get_view_for_object_lit(value)),
+    Some(value) => Some(get_view_for_object_lit(value, bump)),
     None => None,
   };
-  let mut node = ImportDecl {
+  let node = bump.alloc(ImportDecl {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     specifiers: field_specifiers,
     src: field_src,
     asserts: field_asserts,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ImportDecl, &'a ImportDecl>(&node) };
-  let parent = Node::ImportDecl(child_parent_ref);
-  for node in node.specifiers.iter_mut() {
+  });
+  let parent = Node::ImportDecl(node);
+  for node in node.specifiers.iter() {
     set_parent_for_import_specifier(node, parent.clone());
   }
-  node.src.parent = parent.clone();
-  if let Some(node) = node.asserts.as_mut() {
-    node.parent = parent;
+  unsafe { *node.src.inner_parent.get() = Some(parent.clone()); }
+  if let Some(child) = node.asserts {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 pub struct TsTypePredicate<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsTypePredicate,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsTypePredicate,
   pub param_name: TsThisTypeOrIdent<'a>,
-  pub type_ann: Option<TsTypeAnn<'a>>,
+  pub type_ann: Option<&'a TsTypeAnn<'a>>,
 }
 
 impl<'a> TsTypePredicate<'a> {
@@ -6644,27 +7178,29 @@ impl<'a> Spanned for TsTypePredicate<'a> {
   }
 }
 
-impl<'a> From<&TsTypePredicate<'a>> for Node<'a> {
-  fn from(node: &TsTypePredicate) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsTypePredicate, &'a TsTypePredicate>(&node) };
-    Node::TsTypePredicate(static_ref)
+impl<'a> From<&'a TsTypePredicate<'a>> for Node<'a> {
+  fn from(node: &'a TsTypePredicate<'a>) -> Node<'a> {
+    Node::TsTypePredicate(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsTypePredicate<'a> {
+impl<'a> NodeTrait<'a> for &'a TsTypePredicate<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.type_ann { Some(_value) => 1, None => 0, });
     children.push((&self.param_name).into());
-    if let Some(child) = &self.type_ann {
+    if let Some(child) = self.type_ann {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsTypePredicate<'a> {
@@ -6675,36 +7211,34 @@ impl<'a> CastableNode<'a> for TsTypePredicate<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_type_predicate<'a>(ref_node: &'a swc_ecma_ast::TsTypePredicate) -> TsTypePredicate<'a> {
+fn get_view_for_ts_type_predicate<'a>(ref_node: &'a swc_ast::TsTypePredicate, bump: &'a Bump) -> &'a TsTypePredicate<'a> {
   let value = &ref_node.param_name;
-  let field_param_name = get_view_for_ts_this_type_or_ident(value);
+  let field_param_name = get_view_for_ts_this_type_or_ident(value, bump);
   let value = &ref_node.type_ann;
   let field_type_ann = match value {
-    Some(value) => Some(get_view_for_ts_type_ann(value)),
+    Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
     None => None,
   };
-  let mut node = TsTypePredicate {
+  let node = bump.alloc(TsTypePredicate {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     param_name: field_param_name,
     type_ann: field_type_ann,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsTypePredicate, &'a TsTypePredicate>(&node) };
-  let parent = Node::TsTypePredicate(child_parent_ref);
-  set_parent_for_ts_this_type_or_ident(&mut node.param_name, parent.clone());
-  if let Some(node) = node.type_ann.as_mut() {
-    node.parent = parent;
+  });
+  let parent = Node::TsTypePredicate(node);
+  set_parent_for_ts_this_type_or_ident(&node.param_name, parent.clone());
+  if let Some(child) = node.type_ann {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 pub struct YieldExpr<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::YieldExpr,
-  pub arg: Option<Box<Expr<'a>>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::YieldExpr,
+  pub arg: Option<Expr<'a>>,
 }
 
 impl<'a> YieldExpr<'a> {
@@ -6719,26 +7253,28 @@ impl<'a> Spanned for YieldExpr<'a> {
   }
 }
 
-impl<'a> From<&YieldExpr<'a>> for Node<'a> {
-  fn from(node: &YieldExpr) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&YieldExpr, &'a YieldExpr>(&node) };
-    Node::YieldExpr(static_ref)
+impl<'a> From<&'a YieldExpr<'a>> for Node<'a> {
+  fn from(node: &'a YieldExpr<'a>) -> Node<'a> {
+    Node::YieldExpr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for YieldExpr<'a> {
+impl<'a> NodeTrait<'a> for &'a YieldExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(match &self.arg { Some(_value) => 1, None => 0, });
-    if let Some(child) = &self.arg {
+    if let Some(child) = self.arg.as_ref() {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for YieldExpr<'a> {
@@ -6749,33 +7285,31 @@ impl<'a> CastableNode<'a> for YieldExpr<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_yield_expr<'a>(ref_node: &'a swc_ecma_ast::YieldExpr) -> YieldExpr<'a> {
+fn get_view_for_yield_expr<'a>(ref_node: &'a swc_ast::YieldExpr, bump: &'a Bump) -> &'a YieldExpr<'a> {
   let value = &ref_node.arg;
   let field_arg = match value {
-    Some(value) => Some(Box::new(get_view_for_expr(value))),
+    Some(value) => Some(get_view_for_expr(value, bump)),
     None => None,
   };
-  let mut node = YieldExpr {
+  let node = bump.alloc(YieldExpr {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     arg: field_arg,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&YieldExpr, &'a YieldExpr>(&node) };
-  let parent = Node::YieldExpr(child_parent_ref);
-  if let Some(node) = node.arg.as_mut() {
-    set_parent_for_expr(node, parent);
+  });
+  let parent = Node::YieldExpr(node);
+  if let Some(child) = node.arg.as_ref() {
+    set_parent_for_expr(child, parent);
   }
   node
 }
 
 pub struct KeyValueProp<'a> {
-  pub parent: &'a ObjectLit<'a>,
-  pub inner: &'a swc_ecma_ast::KeyValueProp,
+  inner_parent: UnsafeCell<Option<&'a ObjectLit<'a>>>,
+  pub inner: &'a swc_ast::KeyValueProp,
   pub key: PropName<'a>,
-  pub value: Box<Expr<'a>>,
+  pub value: Expr<'a>,
 }
 
 impl<'a> Spanned for KeyValueProp<'a> {
@@ -6784,16 +7318,15 @@ impl<'a> Spanned for KeyValueProp<'a> {
   }
 }
 
-impl<'a> From<&KeyValueProp<'a>> for Node<'a> {
-  fn from(node: &KeyValueProp) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&KeyValueProp, &'a KeyValueProp>(&node) };
-    Node::KeyValueProp(static_ref)
+impl<'a> From<&'a KeyValueProp<'a>> for Node<'a> {
+  fn from(node: &'a KeyValueProp<'a>) -> Node<'a> {
+    Node::KeyValueProp(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for KeyValueProp<'a> {
+impl<'a> NodeTrait<'a> for &'a KeyValueProp<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -6803,6 +7336,9 @@ impl<'a> NodeTrait<'a> for KeyValueProp<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for KeyValueProp<'a> {
@@ -6813,31 +7349,29 @@ impl<'a> CastableNode<'a> for KeyValueProp<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_key_value_prop<'a>(ref_node: &'a swc_ecma_ast::KeyValueProp) -> KeyValueProp<'a> {
+fn get_view_for_key_value_prop<'a>(ref_node: &'a swc_ast::KeyValueProp, bump: &'a Bump) -> &'a KeyValueProp<'a> {
   let value = &ref_node.key;
-  let field_key = get_view_for_prop_name(value);
+  let field_key = get_view_for_prop_name(value, bump);
   let value = &ref_node.value;
-  let field_value = Box::new(get_view_for_expr(value));
-  let mut node = KeyValueProp {
+  let field_value = get_view_for_expr(value, bump);
+  let node = bump.alloc(KeyValueProp {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     key: field_key,
     value: field_value,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&KeyValueProp, &'a KeyValueProp>(&node) };
-  let parent = Node::KeyValueProp(child_parent_ref);
-  set_parent_for_prop_name(&mut node.key, parent.clone());
-  set_parent_for_expr(&mut node.value, parent);
+  });
+  let parent = Node::KeyValueProp(node);
+  set_parent_for_prop_name(&node.key, parent.clone());
+  set_parent_for_expr(&node.value, parent);
   node
 }
 
 pub struct Param<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::Param,
-  pub decorators: Vec<Decorator<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::Param,
+  pub decorators: Vec<&'a Decorator<'a>>,
   pub pat: Pat<'a>,
 }
 
@@ -6847,27 +7381,29 @@ impl<'a> Spanned for Param<'a> {
   }
 }
 
-impl<'a> From<&Param<'a>> for Node<'a> {
-  fn from(node: &Param) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&Param, &'a Param>(&node) };
-    Node::Param(static_ref)
+impl<'a> From<&'a Param<'a>> for Node<'a> {
+  fn from(node: &'a Param<'a>) -> Node<'a> {
+    Node::Param(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for Param<'a> {
+impl<'a> NodeTrait<'a> for &'a Param<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + self.decorators.len());
     for child in self.decorators.iter() {
-      children.push(child.into());
+      children.push((*child).into());
     }
     children.push((&self.pat).into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for Param<'a> {
@@ -6878,35 +7414,33 @@ impl<'a> CastableNode<'a> for Param<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_param<'a>(ref_node: &'a swc_ecma_ast::Param) -> Param<'a> {
+fn get_view_for_param<'a>(ref_node: &'a swc_ast::Param, bump: &'a Bump) -> &'a Param<'a> {
   let value = &ref_node.decorators;
-  let field_decorators = value.iter().map(|value| get_view_for_decorator(value)).collect();
+  let field_decorators = value.iter().map(|value| get_view_for_decorator(value, bump)).collect();
   let value = &ref_node.pat;
-  let field_pat = get_view_for_pat(value);
-  let mut node = Param {
+  let field_pat = get_view_for_pat(value, bump);
+  let node = bump.alloc(Param {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     decorators: field_decorators,
     pat: field_pat,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&Param, &'a Param>(&node) };
-  let parent = Node::Param(child_parent_ref);
-  for node in node.decorators.iter_mut() {
-    node.parent = parent.clone();
+  });
+  let parent = Node::Param(node);
+  for node in node.decorators.iter() {
+    unsafe { *node.inner_parent.get() = Some(parent.clone()); }
   }
-  set_parent_for_pat(&mut node.pat, parent);
+  set_parent_for_pat(&node.pat, parent);
   node
 }
 
 pub struct JSXFragment<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::JSXFragment,
-  pub opening: JSXOpeningFragment<'a>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::JSXFragment,
+  pub opening: &'a JSXOpeningFragment<'a>,
   pub children: Vec<JSXElementChild<'a>>,
-  pub closing: JSXClosingFragment<'a>,
+  pub closing: &'a JSXClosingFragment<'a>,
 }
 
 impl<'a> Spanned for JSXFragment<'a> {
@@ -6915,28 +7449,30 @@ impl<'a> Spanned for JSXFragment<'a> {
   }
 }
 
-impl<'a> From<&JSXFragment<'a>> for Node<'a> {
-  fn from(node: &JSXFragment) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&JSXFragment, &'a JSXFragment>(&node) };
-    Node::JSXFragment(static_ref)
+impl<'a> From<&'a JSXFragment<'a>> for Node<'a> {
+  fn from(node: &'a JSXFragment<'a>) -> Node<'a> {
+    Node::JSXFragment(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for JSXFragment<'a> {
+impl<'a> NodeTrait<'a> for &'a JSXFragment<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(2 + self.children.len());
-    children.push((&self.opening).into());
+    children.push(self.opening.into());
     for child in self.children.iter() {
       children.push(child.into());
     }
-    children.push((&self.closing).into());
+    children.push(self.closing.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for JSXFragment<'a> {
@@ -6947,38 +7483,36 @@ impl<'a> CastableNode<'a> for JSXFragment<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_jsxfragment<'a>(ref_node: &'a swc_ecma_ast::JSXFragment) -> JSXFragment<'a> {
+fn get_view_for_jsxfragment<'a>(ref_node: &'a swc_ast::JSXFragment, bump: &'a Bump) -> &'a JSXFragment<'a> {
   let value = &ref_node.opening;
-  let field_opening = get_view_for_jsxopening_fragment(value);
+  let field_opening = get_view_for_jsxopening_fragment(value, bump);
   let value = &ref_node.children;
-  let field_children = value.iter().map(|value| get_view_for_jsxelement_child(value)).collect();
+  let field_children = value.iter().map(|value| get_view_for_jsxelement_child(value, bump)).collect();
   let value = &ref_node.closing;
-  let field_closing = get_view_for_jsxclosing_fragment(value);
-  let mut node = JSXFragment {
+  let field_closing = get_view_for_jsxclosing_fragment(value, bump);
+  let node = bump.alloc(JSXFragment {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     opening: field_opening,
     children: field_children,
     closing: field_closing,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&JSXFragment, &'a JSXFragment>(&node) };
-  let parent = Node::JSXFragment(child_parent_ref);
-  node.opening.parent = parent.to::<JSXFragment>();
-  for node in node.children.iter_mut() {
+  });
+  let parent = Node::JSXFragment(node);
+  unsafe { *node.opening.inner_parent.get() = Some(parent.to::<JSXFragment>()); }
+  for node in node.children.iter() {
     set_parent_for_jsxelement_child(node, parent.clone());
   }
-  node.closing.parent = parent.to::<JSXFragment>();
+  unsafe { *node.closing.inner_parent.get() = Some(parent.to::<JSXFragment>()); }
   node
 }
 
 /// e.g. `import foo from 'mod.js'`
 pub struct ImportDefaultSpecifier<'a> {
-  pub parent: &'a ImportDecl<'a>,
-  pub inner: &'a swc_ecma_ast::ImportDefaultSpecifier,
-  pub local: Ident<'a>,
+  inner_parent: UnsafeCell<Option<&'a ImportDecl<'a>>>,
+  pub inner: &'a swc_ast::ImportDefaultSpecifier,
+  pub local: &'a Ident<'a>,
 }
 
 impl<'a> Spanned for ImportDefaultSpecifier<'a> {
@@ -6987,24 +7521,26 @@ impl<'a> Spanned for ImportDefaultSpecifier<'a> {
   }
 }
 
-impl<'a> From<&ImportDefaultSpecifier<'a>> for Node<'a> {
-  fn from(node: &ImportDefaultSpecifier) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ImportDefaultSpecifier, &'a ImportDefaultSpecifier>(&node) };
-    Node::ImportDefaultSpecifier(static_ref)
+impl<'a> From<&'a ImportDefaultSpecifier<'a>> for Node<'a> {
+  fn from(node: &'a ImportDefaultSpecifier<'a>) -> Node<'a> {
+    Node::ImportDefaultSpecifier(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ImportDefaultSpecifier<'a> {
+impl<'a> NodeTrait<'a> for &'a ImportDefaultSpecifier<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1);
-    children.push((&self.local).into());
+    children.push(self.local.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ImportDefaultSpecifier<'a> {
@@ -7015,26 +7551,24 @@ impl<'a> CastableNode<'a> for ImportDefaultSpecifier<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_import_default_specifier<'a>(ref_node: &'a swc_ecma_ast::ImportDefaultSpecifier) -> ImportDefaultSpecifier<'a> {
+fn get_view_for_import_default_specifier<'a>(ref_node: &'a swc_ast::ImportDefaultSpecifier, bump: &'a Bump) -> &'a ImportDefaultSpecifier<'a> {
   let value = &ref_node.local;
-  let field_local = get_view_for_ident(value);
-  let mut node = ImportDefaultSpecifier {
+  let field_local = get_view_for_ident(value, bump);
+  let node = bump.alloc(ImportDefaultSpecifier {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     local: field_local,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ImportDefaultSpecifier, &'a ImportDefaultSpecifier>(&node) };
-  let parent = Node::ImportDefaultSpecifier(child_parent_ref);
-  node.local.parent = parent;
+  });
+  let parent = Node::ImportDefaultSpecifier(node);
+  unsafe { *node.local.inner_parent.get() = Some(parent); }
   node
 }
 
 pub struct Number<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::Number,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::Number,
 }
 
 impl<'a> Number<'a> {
@@ -7052,22 +7586,24 @@ impl<'a> Spanned for Number<'a> {
   }
 }
 
-impl<'a> From<&Number<'a>> for Node<'a> {
-  fn from(node: &Number) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&Number, &'a Number>(&node) };
-    Node::Number(static_ref)
+impl<'a> From<&'a Number<'a>> for Node<'a> {
+  fn from(node: &'a Number<'a>) -> Node<'a> {
+    Node::Number(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for Number<'a> {
+impl<'a> NodeTrait<'a> for &'a Number<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     Vec::with_capacity(0)
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for Number<'a> {
@@ -7078,20 +7614,19 @@ impl<'a> CastableNode<'a> for Number<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_number<'a>(ref_node: &'a swc_ecma_ast::Number) -> Number<'a> {
-  let node = Number {
+fn get_view_for_number<'a>(ref_node: &'a swc_ast::Number, bump: &'a Bump) -> &'a Number<'a> {
+  let node = bump.alloc(Number {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
-  };
+    inner_parent: UnsafeCell::new(None),
+  });
   node
 }
 
 pub struct JSXAttr<'a> {
-  pub parent: &'a JSXOpeningElement<'a>,
-  pub inner: &'a swc_ecma_ast::JSXAttr,
+  inner_parent: UnsafeCell<Option<&'a JSXOpeningElement<'a>>>,
+  pub inner: &'a swc_ast::JSXAttr,
   pub name: JSXAttrName<'a>,
   /// Babel uses Expr instead of JSXAttrValue
   pub value: Option<JSXAttrValue<'a>>,
@@ -7103,27 +7638,29 @@ impl<'a> Spanned for JSXAttr<'a> {
   }
 }
 
-impl<'a> From<&JSXAttr<'a>> for Node<'a> {
-  fn from(node: &JSXAttr) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&JSXAttr, &'a JSXAttr>(&node) };
-    Node::JSXAttr(static_ref)
+impl<'a> From<&'a JSXAttr<'a>> for Node<'a> {
+  fn from(node: &'a JSXAttr<'a>) -> Node<'a> {
+    Node::JSXAttr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for JSXAttr<'a> {
+impl<'a> NodeTrait<'a> for &'a JSXAttr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.value { Some(_value) => 1, None => 0, });
     children.push((&self.name).into());
-    if let Some(child) = &self.value {
+    if let Some(child) = self.value.as_ref() {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for JSXAttr<'a> {
@@ -7134,36 +7671,34 @@ impl<'a> CastableNode<'a> for JSXAttr<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_jsxattr<'a>(ref_node: &'a swc_ecma_ast::JSXAttr) -> JSXAttr<'a> {
+fn get_view_for_jsxattr<'a>(ref_node: &'a swc_ast::JSXAttr, bump: &'a Bump) -> &'a JSXAttr<'a> {
   let value = &ref_node.name;
-  let field_name = get_view_for_jsxattr_name(value);
+  let field_name = get_view_for_jsxattr_name(value, bump);
   let value = &ref_node.value;
   let field_value = match value {
-    Some(value) => Some(get_view_for_jsxattr_value(value)),
+    Some(value) => Some(get_view_for_jsxattr_value(value, bump)),
     None => None,
   };
-  let mut node = JSXAttr {
+  let node = bump.alloc(JSXAttr {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     name: field_name,
     value: field_value,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&JSXAttr, &'a JSXAttr>(&node) };
-  let parent = Node::JSXAttr(child_parent_ref);
-  set_parent_for_jsxattr_name(&mut node.name, parent.clone());
-  if let Some(node) = node.value.as_mut() {
-    set_parent_for_jsxattr_value(node, parent);
+  });
+  let parent = Node::JSXAttr(node);
+  set_parent_for_jsxattr_name(&node.name, parent.clone());
+  if let Some(child) = node.value.as_ref() {
+    set_parent_for_jsxattr_value(child, parent);
   }
   node
 }
 
 pub struct ParenExpr<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::ParenExpr,
-  pub expr: Box<Expr<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::ParenExpr,
+  pub expr: Expr<'a>,
 }
 
 impl<'a> Spanned for ParenExpr<'a> {
@@ -7172,16 +7707,15 @@ impl<'a> Spanned for ParenExpr<'a> {
   }
 }
 
-impl<'a> From<&ParenExpr<'a>> for Node<'a> {
-  fn from(node: &ParenExpr) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ParenExpr, &'a ParenExpr>(&node) };
-    Node::ParenExpr(static_ref)
+impl<'a> From<&'a ParenExpr<'a>> for Node<'a> {
+  fn from(node: &'a ParenExpr<'a>) -> Node<'a> {
+    Node::ParenExpr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ParenExpr<'a> {
+impl<'a> NodeTrait<'a> for &'a ParenExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -7190,6 +7724,9 @@ impl<'a> NodeTrait<'a> for ParenExpr<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ParenExpr<'a> {
@@ -7200,26 +7737,24 @@ impl<'a> CastableNode<'a> for ParenExpr<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_paren_expr<'a>(ref_node: &'a swc_ecma_ast::ParenExpr) -> ParenExpr<'a> {
+fn get_view_for_paren_expr<'a>(ref_node: &'a swc_ast::ParenExpr, bump: &'a Bump) -> &'a ParenExpr<'a> {
   let value = &ref_node.expr;
-  let field_expr = Box::new(get_view_for_expr(value));
-  let mut node = ParenExpr {
+  let field_expr = get_view_for_expr(value, bump);
+  let node = bump.alloc(ParenExpr {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     expr: field_expr,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ParenExpr, &'a ParenExpr>(&node) };
-  let parent = Node::ParenExpr(child_parent_ref);
-  set_parent_for_expr(&mut node.expr, parent);
+  });
+  let parent = Node::ParenExpr(node);
+  set_parent_for_expr(&node.expr, parent);
   node
 }
 
 pub struct Super<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::Super,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::Super,
 }
 
 impl<'a> Spanned for Super<'a> {
@@ -7228,22 +7763,24 @@ impl<'a> Spanned for Super<'a> {
   }
 }
 
-impl<'a> From<&Super<'a>> for Node<'a> {
-  fn from(node: &Super) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&Super, &'a Super>(&node) };
-    Node::Super(static_ref)
+impl<'a> From<&'a Super<'a>> for Node<'a> {
+  fn from(node: &'a Super<'a>) -> Node<'a> {
+    Node::Super(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for Super<'a> {
+impl<'a> NodeTrait<'a> for &'a Super<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     Vec::with_capacity(0)
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for Super<'a> {
@@ -7254,23 +7791,22 @@ impl<'a> CastableNode<'a> for Super<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_super<'a>(ref_node: &'a swc_ecma_ast::Super) -> Super<'a> {
-  let node = Super {
+fn get_view_for_super<'a>(ref_node: &'a swc_ast::Super, bump: &'a Bump) -> &'a Super<'a> {
+  let node = bump.alloc(Super {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
-  };
+    inner_parent: UnsafeCell::new(None),
+  });
   node
 }
 
 pub struct TsConstructorType<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsConstructorType,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsConstructorType,
   pub params: Vec<TsFnParam<'a>>,
-  pub type_params: Option<TsTypeParamDecl<'a>>,
-  pub type_ann: TsTypeAnn<'a>,
+  pub type_params: Option<&'a TsTypeParamDecl<'a>>,
+  pub type_ann: &'a TsTypeAnn<'a>,
 }
 
 impl<'a> Spanned for TsConstructorType<'a> {
@@ -7279,16 +7815,15 @@ impl<'a> Spanned for TsConstructorType<'a> {
   }
 }
 
-impl<'a> From<&TsConstructorType<'a>> for Node<'a> {
-  fn from(node: &TsConstructorType) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsConstructorType, &'a TsConstructorType>(&node) };
-    Node::TsConstructorType(static_ref)
+impl<'a> From<&'a TsConstructorType<'a>> for Node<'a> {
+  fn from(node: &'a TsConstructorType<'a>) -> Node<'a> {
+    Node::TsConstructorType(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsConstructorType<'a> {
+impl<'a> NodeTrait<'a> for &'a TsConstructorType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -7296,13 +7831,16 @@ impl<'a> NodeTrait<'a> for TsConstructorType<'a> {
     for child in self.params.iter() {
       children.push(child.into());
     }
-    if let Some(child) = &self.type_params {
+    if let Some(child) = self.type_params {
       children.push(child.into());
     }
-    children.push((&self.type_ann).into());
+    children.push(self.type_ann.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsConstructorType<'a> {
@@ -7313,48 +7851,46 @@ impl<'a> CastableNode<'a> for TsConstructorType<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_constructor_type<'a>(ref_node: &'a swc_ecma_ast::TsConstructorType) -> TsConstructorType<'a> {
+fn get_view_for_ts_constructor_type<'a>(ref_node: &'a swc_ast::TsConstructorType, bump: &'a Bump) -> &'a TsConstructorType<'a> {
   let value = &ref_node.params;
-  let field_params = value.iter().map(|value| get_view_for_ts_fn_param(value)).collect();
+  let field_params = value.iter().map(|value| get_view_for_ts_fn_param(value, bump)).collect();
   let value = &ref_node.type_params;
   let field_type_params = match value {
-    Some(value) => Some(get_view_for_ts_type_param_decl(value)),
+    Some(value) => Some(get_view_for_ts_type_param_decl(value, bump)),
     None => None,
   };
   let value = &ref_node.type_ann;
-  let field_type_ann = get_view_for_ts_type_ann(value);
-  let mut node = TsConstructorType {
+  let field_type_ann = get_view_for_ts_type_ann(value, bump);
+  let node = bump.alloc(TsConstructorType {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     params: field_params,
     type_params: field_type_params,
     type_ann: field_type_ann,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsConstructorType, &'a TsConstructorType>(&node) };
-  let parent = Node::TsConstructorType(child_parent_ref);
-  for node in node.params.iter_mut() {
+  });
+  let parent = Node::TsConstructorType(node);
+  for node in node.params.iter() {
     set_parent_for_ts_fn_param(node, parent.clone());
   }
-  if let Some(node) = node.type_params.as_mut() {
-    node.parent = parent.clone();
+  if let Some(child) = node.type_params {
+    unsafe { *child.inner_parent.get() = Some(parent.clone()); }
   }
-  node.type_ann.parent = parent;
+  unsafe { *node.type_ann.inner_parent.get() = Some(parent); }
   node
 }
 
 pub struct Class<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::Class,
-  pub decorators: Vec<Decorator<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::Class,
+  pub decorators: Vec<&'a Decorator<'a>>,
   pub body: Vec<ClassMember<'a>>,
-  pub super_class: Option<Box<Expr<'a>>>,
-  pub type_params: Option<TsTypeParamDecl<'a>>,
-  pub super_type_params: Option<TsTypeParamInstantiation<'a>>,
+  pub super_class: Option<Expr<'a>>,
+  pub type_params: Option<&'a TsTypeParamDecl<'a>>,
+  pub super_type_params: Option<&'a TsTypeParamInstantiation<'a>>,
   /// Typescript extension.
-  pub implements: Vec<TsExprWithTypeArgs<'a>>,
+  pub implements: Vec<&'a TsExprWithTypeArgs<'a>>,
 }
 
 impl<'a> Class<'a> {
@@ -7369,41 +7905,43 @@ impl<'a> Spanned for Class<'a> {
   }
 }
 
-impl<'a> From<&Class<'a>> for Node<'a> {
-  fn from(node: &Class) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&Class, &'a Class>(&node) };
-    Node::Class(static_ref)
+impl<'a> From<&'a Class<'a>> for Node<'a> {
+  fn from(node: &'a Class<'a>) -> Node<'a> {
+    Node::Class(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for Class<'a> {
+impl<'a> NodeTrait<'a> for &'a Class<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(self.decorators.len() + self.body.len() + match &self.super_class { Some(_value) => 1, None => 0, } + match &self.type_params { Some(_value) => 1, None => 0, } + match &self.super_type_params { Some(_value) => 1, None => 0, } + self.implements.len());
     for child in self.decorators.iter() {
-      children.push(child.into());
+      children.push((*child).into());
     }
     for child in self.body.iter() {
       children.push(child.into());
     }
-    if let Some(child) = &self.super_class {
+    if let Some(child) = self.super_class.as_ref() {
       children.push(child.into());
     }
-    if let Some(child) = &self.type_params {
+    if let Some(child) = self.type_params {
       children.push(child.into());
     }
-    if let Some(child) = &self.super_type_params {
+    if let Some(child) = self.super_type_params {
       children.push(child.into());
     }
     for child in self.implements.iter() {
-      children.push(child.into());
+      children.push((*child).into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for Class<'a> {
@@ -7414,70 +7952,68 @@ impl<'a> CastableNode<'a> for Class<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_class<'a>(ref_node: &'a swc_ecma_ast::Class) -> Class<'a> {
+fn get_view_for_class<'a>(ref_node: &'a swc_ast::Class, bump: &'a Bump) -> &'a Class<'a> {
   let value = &ref_node.decorators;
-  let field_decorators = value.iter().map(|value| get_view_for_decorator(value)).collect();
+  let field_decorators = value.iter().map(|value| get_view_for_decorator(value, bump)).collect();
   let value = &ref_node.body;
-  let field_body = value.iter().map(|value| get_view_for_class_member(value)).collect();
+  let field_body = value.iter().map(|value| get_view_for_class_member(value, bump)).collect();
   let value = &ref_node.super_class;
   let field_super_class = match value {
-    Some(value) => Some(Box::new(get_view_for_expr(value))),
+    Some(value) => Some(get_view_for_expr(value, bump)),
     None => None,
   };
   let value = &ref_node.type_params;
   let field_type_params = match value {
-    Some(value) => Some(get_view_for_ts_type_param_decl(value)),
+    Some(value) => Some(get_view_for_ts_type_param_decl(value, bump)),
     None => None,
   };
   let value = &ref_node.super_type_params;
   let field_super_type_params = match value {
-    Some(value) => Some(get_view_for_ts_type_param_instantiation(value)),
+    Some(value) => Some(get_view_for_ts_type_param_instantiation(value, bump)),
     None => None,
   };
   let value = &ref_node.implements;
-  let field_implements = value.iter().map(|value| get_view_for_ts_expr_with_type_args(value)).collect();
-  let mut node = Class {
+  let field_implements = value.iter().map(|value| get_view_for_ts_expr_with_type_args(value, bump)).collect();
+  let node = bump.alloc(Class {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     decorators: field_decorators,
     body: field_body,
     super_class: field_super_class,
     type_params: field_type_params,
     super_type_params: field_super_type_params,
     implements: field_implements,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&Class, &'a Class>(&node) };
-  let parent = Node::Class(child_parent_ref);
-  for node in node.decorators.iter_mut() {
-    node.parent = parent.clone();
+  });
+  let parent = Node::Class(node);
+  for node in node.decorators.iter() {
+    unsafe { *node.inner_parent.get() = Some(parent.clone()); }
   }
-  for node in node.body.iter_mut() {
+  for node in node.body.iter() {
     set_parent_for_class_member(node, parent.clone());
   }
-  if let Some(node) = node.super_class.as_mut() {
-    set_parent_for_expr(node, parent.clone());
+  if let Some(child) = node.super_class.as_ref() {
+    set_parent_for_expr(child, parent.clone());
   }
-  if let Some(node) = node.type_params.as_mut() {
-    node.parent = parent.clone();
+  if let Some(child) = node.type_params {
+    unsafe { *child.inner_parent.get() = Some(parent.clone()); }
   }
-  if let Some(node) = node.super_type_params.as_mut() {
-    node.parent = parent.clone();
+  if let Some(child) = node.super_type_params {
+    unsafe { *child.inner_parent.get() = Some(parent.clone()); }
   }
-  for node in node.implements.iter_mut() {
-    node.parent = parent.clone();
+  for node in node.implements.iter() {
+    unsafe { *node.inner_parent.get() = Some(parent.clone()); }
   }
   node
 }
 
 /// EsTree `RestElement`
 pub struct RestPat<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::RestPat,
-  pub arg: Box<Pat<'a>>,
-  pub type_ann: Option<TsTypeAnn<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::RestPat,
+  pub arg: Pat<'a>,
+  pub type_ann: Option<&'a TsTypeAnn<'a>>,
 }
 
 impl<'a> RestPat<'a> {
@@ -7492,27 +8028,29 @@ impl<'a> Spanned for RestPat<'a> {
   }
 }
 
-impl<'a> From<&RestPat<'a>> for Node<'a> {
-  fn from(node: &RestPat) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&RestPat, &'a RestPat>(&node) };
-    Node::RestPat(static_ref)
+impl<'a> From<&'a RestPat<'a>> for Node<'a> {
+  fn from(node: &'a RestPat<'a>) -> Node<'a> {
+    Node::RestPat(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for RestPat<'a> {
+impl<'a> NodeTrait<'a> for &'a RestPat<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.type_ann { Some(_value) => 1, None => 0, });
     children.push((&self.arg).into());
-    if let Some(child) = &self.type_ann {
+    if let Some(child) = self.type_ann {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for RestPat<'a> {
@@ -7523,36 +8061,34 @@ impl<'a> CastableNode<'a> for RestPat<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_rest_pat<'a>(ref_node: &'a swc_ecma_ast::RestPat) -> RestPat<'a> {
+fn get_view_for_rest_pat<'a>(ref_node: &'a swc_ast::RestPat, bump: &'a Bump) -> &'a RestPat<'a> {
   let value = &ref_node.arg;
-  let field_arg = Box::new(get_view_for_pat(value));
+  let field_arg = get_view_for_pat(value, bump);
   let value = &ref_node.type_ann;
   let field_type_ann = match value {
-    Some(value) => Some(get_view_for_ts_type_ann(value)),
+    Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
     None => None,
   };
-  let mut node = RestPat {
+  let node = bump.alloc(RestPat {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     arg: field_arg,
     type_ann: field_type_ann,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&RestPat, &'a RestPat>(&node) };
-  let parent = Node::RestPat(child_parent_ref);
-  set_parent_for_pat(&mut node.arg, parent.clone());
-  if let Some(node) = node.type_ann.as_mut() {
-    node.parent = parent;
+  });
+  let parent = Node::RestPat(node);
+  set_parent_for_pat(&node.arg, parent.clone());
+  if let Some(child) = node.type_ann {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 pub struct TsNamespaceExportDecl<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsNamespaceExportDecl,
-  pub id: Ident<'a>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsNamespaceExportDecl,
+  pub id: &'a Ident<'a>,
 }
 
 impl<'a> Spanned for TsNamespaceExportDecl<'a> {
@@ -7561,24 +8097,26 @@ impl<'a> Spanned for TsNamespaceExportDecl<'a> {
   }
 }
 
-impl<'a> From<&TsNamespaceExportDecl<'a>> for Node<'a> {
-  fn from(node: &TsNamespaceExportDecl) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsNamespaceExportDecl, &'a TsNamespaceExportDecl>(&node) };
-    Node::TsNamespaceExportDecl(static_ref)
+impl<'a> From<&'a TsNamespaceExportDecl<'a>> for Node<'a> {
+  fn from(node: &'a TsNamespaceExportDecl<'a>) -> Node<'a> {
+    Node::TsNamespaceExportDecl(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsNamespaceExportDecl<'a> {
+impl<'a> NodeTrait<'a> for &'a TsNamespaceExportDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1);
-    children.push((&self.id).into());
+    children.push(self.id.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsNamespaceExportDecl<'a> {
@@ -7589,26 +8127,24 @@ impl<'a> CastableNode<'a> for TsNamespaceExportDecl<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_namespace_export_decl<'a>(ref_node: &'a swc_ecma_ast::TsNamespaceExportDecl) -> TsNamespaceExportDecl<'a> {
+fn get_view_for_ts_namespace_export_decl<'a>(ref_node: &'a swc_ast::TsNamespaceExportDecl, bump: &'a Bump) -> &'a TsNamespaceExportDecl<'a> {
   let value = &ref_node.id;
-  let field_id = get_view_for_ident(value);
-  let mut node = TsNamespaceExportDecl {
+  let field_id = get_view_for_ident(value, bump);
+  let node = bump.alloc(TsNamespaceExportDecl {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     id: field_id,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsNamespaceExportDecl, &'a TsNamespaceExportDecl>(&node) };
-  let parent = Node::TsNamespaceExportDecl(child_parent_ref);
-  node.id.parent = parent;
+  });
+  let parent = Node::TsNamespaceExportDecl(node);
+  unsafe { *node.id.inner_parent.get() = Some(parent); }
   node
 }
 
 pub struct JSXOpeningFragment<'a> {
-  pub parent: &'a JSXFragment<'a>,
-  pub inner: &'a swc_ecma_ast::JSXOpeningFragment,
+  inner_parent: UnsafeCell<Option<&'a JSXFragment<'a>>>,
+  pub inner: &'a swc_ast::JSXOpeningFragment,
 }
 
 impl<'a> Spanned for JSXOpeningFragment<'a> {
@@ -7617,22 +8153,24 @@ impl<'a> Spanned for JSXOpeningFragment<'a> {
   }
 }
 
-impl<'a> From<&JSXOpeningFragment<'a>> for Node<'a> {
-  fn from(node: &JSXOpeningFragment) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&JSXOpeningFragment, &'a JSXOpeningFragment>(&node) };
-    Node::JSXOpeningFragment(static_ref)
+impl<'a> From<&'a JSXOpeningFragment<'a>> for Node<'a> {
+  fn from(node: &'a JSXOpeningFragment<'a>) -> Node<'a> {
+    Node::JSXOpeningFragment(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for JSXOpeningFragment<'a> {
+impl<'a> NodeTrait<'a> for &'a JSXOpeningFragment<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     Vec::with_capacity(0)
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for JSXOpeningFragment<'a> {
@@ -7643,23 +8181,22 @@ impl<'a> CastableNode<'a> for JSXOpeningFragment<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_jsxopening_fragment<'a>(ref_node: &'a swc_ecma_ast::JSXOpeningFragment) -> JSXOpeningFragment<'a> {
-  let node = JSXOpeningFragment {
+fn get_view_for_jsxopening_fragment<'a>(ref_node: &'a swc_ast::JSXOpeningFragment, bump: &'a Bump) -> &'a JSXOpeningFragment<'a> {
+  let node = bump.alloc(JSXOpeningFragment {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
-  };
+    inner_parent: UnsafeCell::new(None),
+  });
   node
 }
 
 pub struct NewExpr<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::NewExpr,
-  pub callee: Box<Expr<'a>>,
-  pub args: Option<Vec<ExprOrSpread<'a>>>,
-  pub type_args: Option<TsTypeParamInstantiation<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::NewExpr,
+  pub callee: Expr<'a>,
+  pub args: Option<Vec<&'a ExprOrSpread<'a>>>,
+  pub type_args: Option<&'a TsTypeParamInstantiation<'a>>,
 }
 
 impl<'a> Spanned for NewExpr<'a> {
@@ -7668,32 +8205,34 @@ impl<'a> Spanned for NewExpr<'a> {
   }
 }
 
-impl<'a> From<&NewExpr<'a>> for Node<'a> {
-  fn from(node: &NewExpr) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&NewExpr, &'a NewExpr>(&node) };
-    Node::NewExpr(static_ref)
+impl<'a> From<&'a NewExpr<'a>> for Node<'a> {
+  fn from(node: &'a NewExpr<'a>) -> Node<'a> {
+    Node::NewExpr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for NewExpr<'a> {
+impl<'a> NodeTrait<'a> for &'a NewExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.args { Some(_value) => _value.len(), None => 0, } + match &self.type_args { Some(_value) => 1, None => 0, });
     children.push((&self.callee).into());
-    if let Some(child) = &self.args {
+    if let Some(child) = self.args.as_ref() {
       for child in child.iter() {
-        children.push(child.into());
+        children.push((*child).into());
       }
     }
-    if let Some(child) = &self.type_args {
+    if let Some(child) = self.type_args {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for NewExpr<'a> {
@@ -7704,49 +8243,47 @@ impl<'a> CastableNode<'a> for NewExpr<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_new_expr<'a>(ref_node: &'a swc_ecma_ast::NewExpr) -> NewExpr<'a> {
+fn get_view_for_new_expr<'a>(ref_node: &'a swc_ast::NewExpr, bump: &'a Bump) -> &'a NewExpr<'a> {
   let value = &ref_node.callee;
-  let field_callee = Box::new(get_view_for_expr(value));
+  let field_callee = get_view_for_expr(value, bump);
   let value = &ref_node.args;
   let field_args = match value {
-    Some(value) => Some(value.iter().map(|value| get_view_for_expr_or_spread(value)).collect()),
+    Some(value) => Some(value.iter().map(|value| get_view_for_expr_or_spread(value, bump)).collect()),
     None => None,
   };
   let value = &ref_node.type_args;
   let field_type_args = match value {
-    Some(value) => Some(get_view_for_ts_type_param_instantiation(value)),
+    Some(value) => Some(get_view_for_ts_type_param_instantiation(value, bump)),
     None => None,
   };
-  let mut node = NewExpr {
+  let node = bump.alloc(NewExpr {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     callee: field_callee,
     args: field_args,
     type_args: field_type_args,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&NewExpr, &'a NewExpr>(&node) };
-  let parent = Node::NewExpr(child_parent_ref);
-  set_parent_for_expr(&mut node.callee, parent.clone());
-  if let Some(node) = node.args.as_mut() {
-    for node in node.iter_mut() {
-      node.parent = parent.clone();
+  });
+  let parent = Node::NewExpr(node);
+  set_parent_for_expr(&node.callee, parent.clone());
+  if let Some(child) = node.args.as_ref() {
+    for node in child.iter() {
+      unsafe { *node.inner_parent.get() = Some(parent.clone()); }
     }
   }
-  if let Some(node) = node.type_args.as_mut() {
-    node.parent = parent;
+  if let Some(child) = node.type_args {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 /// Function expression.
 pub struct FnExpr<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::FnExpr,
-  pub ident: Option<Ident<'a>>,
-  pub function: Function<'a>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::FnExpr,
+  pub ident: Option<&'a Ident<'a>>,
+  pub function: &'a Function<'a>,
 }
 
 impl<'a> Spanned for FnExpr<'a> {
@@ -7755,27 +8292,29 @@ impl<'a> Spanned for FnExpr<'a> {
   }
 }
 
-impl<'a> From<&FnExpr<'a>> for Node<'a> {
-  fn from(node: &FnExpr) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&FnExpr, &'a FnExpr>(&node) };
-    Node::FnExpr(static_ref)
+impl<'a> From<&'a FnExpr<'a>> for Node<'a> {
+  fn from(node: &'a FnExpr<'a>) -> Node<'a> {
+    Node::FnExpr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for FnExpr<'a> {
+impl<'a> NodeTrait<'a> for &'a FnExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.ident { Some(_value) => 1, None => 0, });
-    if let Some(child) = &self.ident {
+    if let Some(child) = self.ident {
       children.push(child.into());
     }
-    children.push((&self.function).into());
+    children.push(self.function.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for FnExpr<'a> {
@@ -7786,38 +8325,36 @@ impl<'a> CastableNode<'a> for FnExpr<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_fn_expr<'a>(ref_node: &'a swc_ecma_ast::FnExpr) -> FnExpr<'a> {
+fn get_view_for_fn_expr<'a>(ref_node: &'a swc_ast::FnExpr, bump: &'a Bump) -> &'a FnExpr<'a> {
   let value = &ref_node.ident;
   let field_ident = match value {
-    Some(value) => Some(get_view_for_ident(value)),
+    Some(value) => Some(get_view_for_ident(value, bump)),
     None => None,
   };
   let value = &ref_node.function;
-  let field_function = get_view_for_function(value);
-  let mut node = FnExpr {
+  let field_function = get_view_for_function(value, bump);
+  let node = bump.alloc(FnExpr {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     ident: field_ident,
     function: field_function,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&FnExpr, &'a FnExpr>(&node) };
-  let parent = Node::FnExpr(child_parent_ref);
-  if let Some(node) = node.ident.as_mut() {
-    node.parent = parent.clone();
+  });
+  let parent = Node::FnExpr(node);
+  if let Some(child) = node.ident {
+    unsafe { *child.inner_parent.get() = Some(parent.clone()); }
   }
-  node.function.parent = parent;
+  unsafe { *node.function.inner_parent.get() = Some(parent); }
   node
 }
 
 pub struct IfStmt<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::IfStmt,
-  pub test: Box<Expr<'a>>,
-  pub cons: Box<Stmt<'a>>,
-  pub alt: Option<Box<Stmt<'a>>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::IfStmt,
+  pub test: Expr<'a>,
+  pub cons: Stmt<'a>,
+  pub alt: Option<Stmt<'a>>,
 }
 
 impl<'a> Spanned for IfStmt<'a> {
@@ -7826,28 +8363,30 @@ impl<'a> Spanned for IfStmt<'a> {
   }
 }
 
-impl<'a> From<&IfStmt<'a>> for Node<'a> {
-  fn from(node: &IfStmt) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&IfStmt, &'a IfStmt>(&node) };
-    Node::IfStmt(static_ref)
+impl<'a> From<&'a IfStmt<'a>> for Node<'a> {
+  fn from(node: &'a IfStmt<'a>) -> Node<'a> {
+    Node::IfStmt(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for IfStmt<'a> {
+impl<'a> NodeTrait<'a> for &'a IfStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(2 + match &self.alt { Some(_value) => 1, None => 0, });
     children.push((&self.test).into());
     children.push((&self.cons).into());
-    if let Some(child) = &self.alt {
+    if let Some(child) = self.alt.as_ref() {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for IfStmt<'a> {
@@ -7858,40 +8397,38 @@ impl<'a> CastableNode<'a> for IfStmt<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_if_stmt<'a>(ref_node: &'a swc_ecma_ast::IfStmt) -> IfStmt<'a> {
+fn get_view_for_if_stmt<'a>(ref_node: &'a swc_ast::IfStmt, bump: &'a Bump) -> &'a IfStmt<'a> {
   let value = &ref_node.test;
-  let field_test = Box::new(get_view_for_expr(value));
+  let field_test = get_view_for_expr(value, bump);
   let value = &ref_node.cons;
-  let field_cons = Box::new(get_view_for_stmt(value));
+  let field_cons = get_view_for_stmt(value, bump);
   let value = &ref_node.alt;
   let field_alt = match value {
-    Some(value) => Some(Box::new(get_view_for_stmt(value))),
+    Some(value) => Some(get_view_for_stmt(value, bump)),
     None => None,
   };
-  let mut node = IfStmt {
+  let node = bump.alloc(IfStmt {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     test: field_test,
     cons: field_cons,
     alt: field_alt,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&IfStmt, &'a IfStmt>(&node) };
-  let parent = Node::IfStmt(child_parent_ref);
-  set_parent_for_expr(&mut node.test, parent.clone());
-  set_parent_for_stmt(&mut node.cons, parent.clone());
-  if let Some(node) = node.alt.as_mut() {
-    set_parent_for_stmt(node, parent);
+  });
+  let parent = Node::IfStmt(node);
+  set_parent_for_expr(&node.test, parent.clone());
+  set_parent_for_stmt(&node.cons, parent.clone());
+  if let Some(child) = node.alt.as_ref() {
+    set_parent_for_stmt(child, parent);
   }
   node
 }
 
 pub struct TsParenthesizedType<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsParenthesizedType,
-  pub type_ann: Box<TsType<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsParenthesizedType,
+  pub type_ann: TsType<'a>,
 }
 
 impl<'a> Spanned for TsParenthesizedType<'a> {
@@ -7900,16 +8437,15 @@ impl<'a> Spanned for TsParenthesizedType<'a> {
   }
 }
 
-impl<'a> From<&TsParenthesizedType<'a>> for Node<'a> {
-  fn from(node: &TsParenthesizedType) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsParenthesizedType, &'a TsParenthesizedType>(&node) };
-    Node::TsParenthesizedType(static_ref)
+impl<'a> From<&'a TsParenthesizedType<'a>> for Node<'a> {
+  fn from(node: &'a TsParenthesizedType<'a>) -> Node<'a> {
+    Node::TsParenthesizedType(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsParenthesizedType<'a> {
+impl<'a> NodeTrait<'a> for &'a TsParenthesizedType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -7918,6 +8454,9 @@ impl<'a> NodeTrait<'a> for TsParenthesizedType<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsParenthesizedType<'a> {
@@ -7928,29 +8467,27 @@ impl<'a> CastableNode<'a> for TsParenthesizedType<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_parenthesized_type<'a>(ref_node: &'a swc_ecma_ast::TsParenthesizedType) -> TsParenthesizedType<'a> {
+fn get_view_for_ts_parenthesized_type<'a>(ref_node: &'a swc_ast::TsParenthesizedType, bump: &'a Bump) -> &'a TsParenthesizedType<'a> {
   let value = &ref_node.type_ann;
-  let field_type_ann = Box::new(get_view_for_ts_type(value));
-  let mut node = TsParenthesizedType {
+  let field_type_ann = get_view_for_ts_type(value, bump);
+  let node = bump.alloc(TsParenthesizedType {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     type_ann: field_type_ann,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsParenthesizedType, &'a TsParenthesizedType>(&node) };
-  let parent = Node::TsParenthesizedType(child_parent_ref);
-  set_parent_for_ts_type(&mut node.type_ann, parent);
+  });
+  let parent = Node::TsParenthesizedType(node);
+  set_parent_for_ts_type(&node.type_ann, parent);
   node
 }
 
 /// `{key}` or `{key = value}`
 pub struct AssignPatProp<'a> {
-  pub parent: &'a ObjectPat<'a>,
-  pub inner: &'a swc_ecma_ast::AssignPatProp,
-  pub key: Ident<'a>,
-  pub value: Option<Box<Expr<'a>>>,
+  inner_parent: UnsafeCell<Option<&'a ObjectPat<'a>>>,
+  pub inner: &'a swc_ast::AssignPatProp,
+  pub key: &'a Ident<'a>,
+  pub value: Option<Expr<'a>>,
 }
 
 impl<'a> Spanned for AssignPatProp<'a> {
@@ -7959,27 +8496,29 @@ impl<'a> Spanned for AssignPatProp<'a> {
   }
 }
 
-impl<'a> From<&AssignPatProp<'a>> for Node<'a> {
-  fn from(node: &AssignPatProp) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&AssignPatProp, &'a AssignPatProp>(&node) };
-    Node::AssignPatProp(static_ref)
+impl<'a> From<&'a AssignPatProp<'a>> for Node<'a> {
+  fn from(node: &'a AssignPatProp<'a>) -> Node<'a> {
+    Node::AssignPatProp(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for AssignPatProp<'a> {
+impl<'a> NodeTrait<'a> for &'a AssignPatProp<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.value { Some(_value) => 1, None => 0, });
-    children.push((&self.key).into());
-    if let Some(child) = &self.value {
+    children.push(self.key.into());
+    if let Some(child) = self.value.as_ref() {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for AssignPatProp<'a> {
@@ -7990,38 +8529,36 @@ impl<'a> CastableNode<'a> for AssignPatProp<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_assign_pat_prop<'a>(ref_node: &'a swc_ecma_ast::AssignPatProp) -> AssignPatProp<'a> {
+fn get_view_for_assign_pat_prop<'a>(ref_node: &'a swc_ast::AssignPatProp, bump: &'a Bump) -> &'a AssignPatProp<'a> {
   let value = &ref_node.key;
-  let field_key = get_view_for_ident(value);
+  let field_key = get_view_for_ident(value, bump);
   let value = &ref_node.value;
   let field_value = match value {
-    Some(value) => Some(Box::new(get_view_for_expr(value))),
+    Some(value) => Some(get_view_for_expr(value, bump)),
     None => None,
   };
-  let mut node = AssignPatProp {
+  let node = bump.alloc(AssignPatProp {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     key: field_key,
     value: field_value,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&AssignPatProp, &'a AssignPatProp>(&node) };
-  let parent = Node::AssignPatProp(child_parent_ref);
-  node.key.parent = parent.clone();
-  if let Some(node) = node.value.as_mut() {
-    set_parent_for_expr(node, parent);
+  });
+  let parent = Node::AssignPatProp(node);
+  unsafe { *node.key.inner_parent.get() = Some(parent.clone()); }
+  if let Some(child) = node.value.as_ref() {
+    set_parent_for_expr(child, parent);
   }
   node
 }
 
 pub struct TsImportType<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsImportType,
-  pub arg: Str<'a>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsImportType,
+  pub arg: &'a Str<'a>,
   pub qualifier: Option<TsEntityName<'a>>,
-  pub type_args: Option<TsTypeParamInstantiation<'a>>,
+  pub type_args: Option<&'a TsTypeParamInstantiation<'a>>,
 }
 
 impl<'a> Spanned for TsImportType<'a> {
@@ -8030,30 +8567,32 @@ impl<'a> Spanned for TsImportType<'a> {
   }
 }
 
-impl<'a> From<&TsImportType<'a>> for Node<'a> {
-  fn from(node: &TsImportType) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsImportType, &'a TsImportType>(&node) };
-    Node::TsImportType(static_ref)
+impl<'a> From<&'a TsImportType<'a>> for Node<'a> {
+  fn from(node: &'a TsImportType<'a>) -> Node<'a> {
+    Node::TsImportType(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsImportType<'a> {
+impl<'a> NodeTrait<'a> for &'a TsImportType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.qualifier { Some(_value) => 1, None => 0, } + match &self.type_args { Some(_value) => 1, None => 0, });
-    children.push((&self.arg).into());
-    if let Some(child) = &self.qualifier {
+    children.push(self.arg.into());
+    if let Some(child) = self.qualifier.as_ref() {
       children.push(child.into());
     }
-    if let Some(child) = &self.type_args {
+    if let Some(child) = self.type_args {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsImportType<'a> {
@@ -8064,44 +8603,42 @@ impl<'a> CastableNode<'a> for TsImportType<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_import_type<'a>(ref_node: &'a swc_ecma_ast::TsImportType) -> TsImportType<'a> {
+fn get_view_for_ts_import_type<'a>(ref_node: &'a swc_ast::TsImportType, bump: &'a Bump) -> &'a TsImportType<'a> {
   let value = &ref_node.arg;
-  let field_arg = get_view_for_str(value);
+  let field_arg = get_view_for_str(value, bump);
   let value = &ref_node.qualifier;
   let field_qualifier = match value {
-    Some(value) => Some(get_view_for_ts_entity_name(value)),
+    Some(value) => Some(get_view_for_ts_entity_name(value, bump)),
     None => None,
   };
   let value = &ref_node.type_args;
   let field_type_args = match value {
-    Some(value) => Some(get_view_for_ts_type_param_instantiation(value)),
+    Some(value) => Some(get_view_for_ts_type_param_instantiation(value, bump)),
     None => None,
   };
-  let mut node = TsImportType {
+  let node = bump.alloc(TsImportType {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     arg: field_arg,
     qualifier: field_qualifier,
     type_args: field_type_args,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsImportType, &'a TsImportType>(&node) };
-  let parent = Node::TsImportType(child_parent_ref);
-  node.arg.parent = parent.clone();
-  if let Some(node) = node.qualifier.as_mut() {
-    set_parent_for_ts_entity_name(node, parent.clone());
+  });
+  let parent = Node::TsImportType(node);
+  unsafe { *node.arg.inner_parent.get() = Some(parent.clone()); }
+  if let Some(child) = node.qualifier.as_ref() {
+    set_parent_for_ts_entity_name(child, parent.clone());
   }
-  if let Some(node) = node.type_args.as_mut() {
-    node.parent = parent;
+  if let Some(child) = node.type_args {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 pub struct Bool<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::Bool,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::Bool,
 }
 
 impl<'a> Bool<'a> {
@@ -8116,22 +8653,24 @@ impl<'a> Spanned for Bool<'a> {
   }
 }
 
-impl<'a> From<&Bool<'a>> for Node<'a> {
-  fn from(node: &Bool) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&Bool, &'a Bool>(&node) };
-    Node::Bool(static_ref)
+impl<'a> From<&'a Bool<'a>> for Node<'a> {
+  fn from(node: &'a Bool<'a>) -> Node<'a> {
+    Node::Bool(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for Bool<'a> {
+impl<'a> NodeTrait<'a> for &'a Bool<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     Vec::with_capacity(0)
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for Bool<'a> {
@@ -8142,21 +8681,20 @@ impl<'a> CastableNode<'a> for Bool<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_bool<'a>(ref_node: &'a swc_ecma_ast::Bool) -> Bool<'a> {
-  let node = Bool {
+fn get_view_for_bool<'a>(ref_node: &'a swc_ast::Bool, bump: &'a Bump) -> &'a Bool<'a> {
+  let node = bump.alloc(Bool {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
-  };
+    inner_parent: UnsafeCell::new(None),
+  });
   node
 }
 
 pub struct TsImportEqualsDecl<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsImportEqualsDecl,
-  pub id: Ident<'a>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsImportEqualsDecl,
+  pub id: &'a Ident<'a>,
   pub module_ref: TsModuleRef<'a>,
 }
 
@@ -8176,25 +8714,27 @@ impl<'a> Spanned for TsImportEqualsDecl<'a> {
   }
 }
 
-impl<'a> From<&TsImportEqualsDecl<'a>> for Node<'a> {
-  fn from(node: &TsImportEqualsDecl) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsImportEqualsDecl, &'a TsImportEqualsDecl>(&node) };
-    Node::TsImportEqualsDecl(static_ref)
+impl<'a> From<&'a TsImportEqualsDecl<'a>> for Node<'a> {
+  fn from(node: &'a TsImportEqualsDecl<'a>) -> Node<'a> {
+    Node::TsImportEqualsDecl(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsImportEqualsDecl<'a> {
+impl<'a> NodeTrait<'a> for &'a TsImportEqualsDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(2);
-    children.push((&self.id).into());
+    children.push(self.id.into());
     children.push((&self.module_ref).into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsImportEqualsDecl<'a> {
@@ -8205,32 +8745,30 @@ impl<'a> CastableNode<'a> for TsImportEqualsDecl<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_import_equals_decl<'a>(ref_node: &'a swc_ecma_ast::TsImportEqualsDecl) -> TsImportEqualsDecl<'a> {
+fn get_view_for_ts_import_equals_decl<'a>(ref_node: &'a swc_ast::TsImportEqualsDecl, bump: &'a Bump) -> &'a TsImportEqualsDecl<'a> {
   let value = &ref_node.id;
-  let field_id = get_view_for_ident(value);
+  let field_id = get_view_for_ident(value, bump);
   let value = &ref_node.module_ref;
-  let field_module_ref = get_view_for_ts_module_ref(value);
-  let mut node = TsImportEqualsDecl {
+  let field_module_ref = get_view_for_ts_module_ref(value, bump);
+  let node = bump.alloc(TsImportEqualsDecl {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     id: field_id,
     module_ref: field_module_ref,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsImportEqualsDecl, &'a TsImportEqualsDecl>(&node) };
-  let parent = Node::TsImportEqualsDecl(child_parent_ref);
-  node.id.parent = parent.clone();
-  set_parent_for_ts_module_ref(&mut node.module_ref, parent);
+  });
+  let parent = Node::TsImportEqualsDecl(node);
+  unsafe { *node.id.inner_parent.get() = Some(parent.clone()); }
+  set_parent_for_ts_module_ref(&node.module_ref, parent);
   node
 }
 
 pub struct AssignProp<'a> {
-  pub parent: &'a ObjectLit<'a>,
-  pub inner: &'a swc_ecma_ast::AssignProp,
-  pub key: Ident<'a>,
-  pub value: Box<Expr<'a>>,
+  inner_parent: UnsafeCell<Option<&'a ObjectLit<'a>>>,
+  pub inner: &'a swc_ast::AssignProp,
+  pub key: &'a Ident<'a>,
+  pub value: Expr<'a>,
 }
 
 impl<'a> Spanned for AssignProp<'a> {
@@ -8239,25 +8777,27 @@ impl<'a> Spanned for AssignProp<'a> {
   }
 }
 
-impl<'a> From<&AssignProp<'a>> for Node<'a> {
-  fn from(node: &AssignProp) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&AssignProp, &'a AssignProp>(&node) };
-    Node::AssignProp(static_ref)
+impl<'a> From<&'a AssignProp<'a>> for Node<'a> {
+  fn from(node: &'a AssignProp<'a>) -> Node<'a> {
+    Node::AssignProp(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for AssignProp<'a> {
+impl<'a> NodeTrait<'a> for &'a AssignProp<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(2);
-    children.push((&self.key).into());
+    children.push(self.key.into());
     children.push((&self.value).into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for AssignProp<'a> {
@@ -8268,34 +8808,32 @@ impl<'a> CastableNode<'a> for AssignProp<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_assign_prop<'a>(ref_node: &'a swc_ecma_ast::AssignProp) -> AssignProp<'a> {
+fn get_view_for_assign_prop<'a>(ref_node: &'a swc_ast::AssignProp, bump: &'a Bump) -> &'a AssignProp<'a> {
   let value = &ref_node.key;
-  let field_key = get_view_for_ident(value);
+  let field_key = get_view_for_ident(value, bump);
   let value = &ref_node.value;
-  let field_value = Box::new(get_view_for_expr(value));
-  let mut node = AssignProp {
+  let field_value = get_view_for_expr(value, bump);
+  let node = bump.alloc(AssignProp {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     key: field_key,
     value: field_value,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&AssignProp, &'a AssignProp>(&node) };
-  let parent = Node::AssignProp(child_parent_ref);
-  node.key.parent = parent.clone();
-  set_parent_for_expr(&mut node.value, parent);
+  });
+  let parent = Node::AssignProp(node);
+  unsafe { *node.key.inner_parent.get() = Some(parent.clone()); }
+  set_parent_for_expr(&node.value, parent);
   node
 }
 
 pub struct TsInterfaceDecl<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsInterfaceDecl,
-  pub id: Ident<'a>,
-  pub type_params: Option<TsTypeParamDecl<'a>>,
-  pub extends: Vec<TsExprWithTypeArgs<'a>>,
-  pub body: TsInterfaceBody<'a>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsInterfaceDecl,
+  pub id: &'a Ident<'a>,
+  pub type_params: Option<&'a TsTypeParamDecl<'a>>,
+  pub extends: Vec<&'a TsExprWithTypeArgs<'a>>,
+  pub body: &'a TsInterfaceBody<'a>,
 }
 
 impl<'a> TsInterfaceDecl<'a> {
@@ -8310,31 +8848,33 @@ impl<'a> Spanned for TsInterfaceDecl<'a> {
   }
 }
 
-impl<'a> From<&TsInterfaceDecl<'a>> for Node<'a> {
-  fn from(node: &TsInterfaceDecl) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsInterfaceDecl, &'a TsInterfaceDecl>(&node) };
-    Node::TsInterfaceDecl(static_ref)
+impl<'a> From<&'a TsInterfaceDecl<'a>> for Node<'a> {
+  fn from(node: &'a TsInterfaceDecl<'a>) -> Node<'a> {
+    Node::TsInterfaceDecl(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsInterfaceDecl<'a> {
+impl<'a> NodeTrait<'a> for &'a TsInterfaceDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(2 + match &self.type_params { Some(_value) => 1, None => 0, } + self.extends.len());
-    children.push((&self.id).into());
-    if let Some(child) = &self.type_params {
+    children.push(self.id.into());
+    if let Some(child) = self.type_params {
       children.push(child.into());
     }
     for child in self.extends.iter() {
-      children.push(child.into());
+      children.push((*child).into());
     }
-    children.push((&self.body).into());
+    children.push(self.body.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsInterfaceDecl<'a> {
@@ -8345,45 +8885,43 @@ impl<'a> CastableNode<'a> for TsInterfaceDecl<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_interface_decl<'a>(ref_node: &'a swc_ecma_ast::TsInterfaceDecl) -> TsInterfaceDecl<'a> {
+fn get_view_for_ts_interface_decl<'a>(ref_node: &'a swc_ast::TsInterfaceDecl, bump: &'a Bump) -> &'a TsInterfaceDecl<'a> {
   let value = &ref_node.id;
-  let field_id = get_view_for_ident(value);
+  let field_id = get_view_for_ident(value, bump);
   let value = &ref_node.type_params;
   let field_type_params = match value {
-    Some(value) => Some(get_view_for_ts_type_param_decl(value)),
+    Some(value) => Some(get_view_for_ts_type_param_decl(value, bump)),
     None => None,
   };
   let value = &ref_node.extends;
-  let field_extends = value.iter().map(|value| get_view_for_ts_expr_with_type_args(value)).collect();
+  let field_extends = value.iter().map(|value| get_view_for_ts_expr_with_type_args(value, bump)).collect();
   let value = &ref_node.body;
-  let field_body = get_view_for_ts_interface_body(value);
-  let mut node = TsInterfaceDecl {
+  let field_body = get_view_for_ts_interface_body(value, bump);
+  let node = bump.alloc(TsInterfaceDecl {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     id: field_id,
     type_params: field_type_params,
     extends: field_extends,
     body: field_body,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsInterfaceDecl, &'a TsInterfaceDecl>(&node) };
-  let parent = Node::TsInterfaceDecl(child_parent_ref);
-  node.id.parent = parent.clone();
-  if let Some(node) = node.type_params.as_mut() {
-    node.parent = parent.clone();
+  });
+  let parent = Node::TsInterfaceDecl(node);
+  unsafe { *node.id.inner_parent.get() = Some(parent.clone()); }
+  if let Some(child) = node.type_params {
+    unsafe { *child.inner_parent.get() = Some(parent.clone()); }
   }
-  for node in node.extends.iter_mut() {
-    node.parent = parent.clone();
+  for node in node.extends.iter() {
+    unsafe { *node.inner_parent.get() = Some(parent.clone()); }
   }
-  node.body.parent = parent.to::<TsInterfaceDecl>();
+  unsafe { *node.body.inner_parent.get() = Some(parent.to::<TsInterfaceDecl>()); }
   node
 }
 
 pub struct JSXEmptyExpr<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::JSXEmptyExpr,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::JSXEmptyExpr,
 }
 
 impl<'a> Spanned for JSXEmptyExpr<'a> {
@@ -8392,22 +8930,24 @@ impl<'a> Spanned for JSXEmptyExpr<'a> {
   }
 }
 
-impl<'a> From<&JSXEmptyExpr<'a>> for Node<'a> {
-  fn from(node: &JSXEmptyExpr) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&JSXEmptyExpr, &'a JSXEmptyExpr>(&node) };
-    Node::JSXEmptyExpr(static_ref)
+impl<'a> From<&'a JSXEmptyExpr<'a>> for Node<'a> {
+  fn from(node: &'a JSXEmptyExpr<'a>) -> Node<'a> {
+    Node::JSXEmptyExpr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for JSXEmptyExpr<'a> {
+impl<'a> NodeTrait<'a> for &'a JSXEmptyExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     Vec::with_capacity(0)
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for JSXEmptyExpr<'a> {
@@ -8418,22 +8958,21 @@ impl<'a> CastableNode<'a> for JSXEmptyExpr<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_jsxempty_expr<'a>(ref_node: &'a swc_ecma_ast::JSXEmptyExpr) -> JSXEmptyExpr<'a> {
-  let node = JSXEmptyExpr {
+fn get_view_for_jsxempty_expr<'a>(ref_node: &'a swc_ast::JSXEmptyExpr, bump: &'a Bump) -> &'a JSXEmptyExpr<'a> {
+  let node = bump.alloc(JSXEmptyExpr {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
-  };
+    inner_parent: UnsafeCell::new(None),
+  });
   node
 }
 
 pub struct TsQualifiedName<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsQualifiedName,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsQualifiedName,
   pub left: TsEntityName<'a>,
-  pub right: Ident<'a>,
+  pub right: &'a Ident<'a>,
 }
 
 impl<'a> Spanned for TsQualifiedName<'a> {
@@ -8442,25 +8981,27 @@ impl<'a> Spanned for TsQualifiedName<'a> {
   }
 }
 
-impl<'a> From<&TsQualifiedName<'a>> for Node<'a> {
-  fn from(node: &TsQualifiedName) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsQualifiedName, &'a TsQualifiedName>(&node) };
-    Node::TsQualifiedName(static_ref)
+impl<'a> From<&'a TsQualifiedName<'a>> for Node<'a> {
+  fn from(node: &'a TsQualifiedName<'a>) -> Node<'a> {
+    Node::TsQualifiedName(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsQualifiedName<'a> {
+impl<'a> NodeTrait<'a> for &'a TsQualifiedName<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(2);
     children.push((&self.left).into());
-    children.push((&self.right).into());
+    children.push(self.right.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsQualifiedName<'a> {
@@ -8471,30 +9012,28 @@ impl<'a> CastableNode<'a> for TsQualifiedName<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_qualified_name<'a>(ref_node: &'a swc_ecma_ast::TsQualifiedName) -> TsQualifiedName<'a> {
+fn get_view_for_ts_qualified_name<'a>(ref_node: &'a swc_ast::TsQualifiedName, bump: &'a Bump) -> &'a TsQualifiedName<'a> {
   let value = &ref_node.left;
-  let field_left = get_view_for_ts_entity_name(value);
+  let field_left = get_view_for_ts_entity_name(value, bump);
   let value = &ref_node.right;
-  let field_right = get_view_for_ident(value);
-  let mut node = TsQualifiedName {
+  let field_right = get_view_for_ident(value, bump);
+  let node = bump.alloc(TsQualifiedName {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     left: field_left,
     right: field_right,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsQualifiedName, &'a TsQualifiedName>(&node) };
-  let parent = Node::TsQualifiedName(child_parent_ref);
-  set_parent_for_ts_entity_name(&mut node.left, parent.clone());
-  node.right.parent = parent;
+  });
+  let parent = Node::TsQualifiedName(node);
+  set_parent_for_ts_entity_name(&node.left, parent.clone());
+  unsafe { *node.right.inner_parent.get() = Some(parent); }
   node
 }
 
 pub struct ExportDecl<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::ExportDecl,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::ExportDecl,
   pub decl: Decl<'a>,
 }
 
@@ -8504,16 +9043,15 @@ impl<'a> Spanned for ExportDecl<'a> {
   }
 }
 
-impl<'a> From<&ExportDecl<'a>> for Node<'a> {
-  fn from(node: &ExportDecl) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ExportDecl, &'a ExportDecl>(&node) };
-    Node::ExportDecl(static_ref)
+impl<'a> From<&'a ExportDecl<'a>> for Node<'a> {
+  fn from(node: &'a ExportDecl<'a>) -> Node<'a> {
+    Node::ExportDecl(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ExportDecl<'a> {
+impl<'a> NodeTrait<'a> for &'a ExportDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -8522,6 +9060,9 @@ impl<'a> NodeTrait<'a> for ExportDecl<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ExportDecl<'a> {
@@ -8532,32 +9073,30 @@ impl<'a> CastableNode<'a> for ExportDecl<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_export_decl<'a>(ref_node: &'a swc_ecma_ast::ExportDecl) -> ExportDecl<'a> {
+fn get_view_for_export_decl<'a>(ref_node: &'a swc_ast::ExportDecl, bump: &'a Bump) -> &'a ExportDecl<'a> {
   let value = &ref_node.decl;
-  let field_decl = get_view_for_decl(value);
-  let mut node = ExportDecl {
+  let field_decl = get_view_for_decl(value, bump);
+  let node = bump.alloc(ExportDecl {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     decl: field_decl,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ExportDecl, &'a ExportDecl>(&node) };
-  let parent = Node::ExportDecl(child_parent_ref);
-  set_parent_for_decl(&mut node.decl, parent);
+  });
+  let parent = Node::ExportDecl(node);
+  set_parent_for_decl(&node.decl, parent);
   node
 }
 
 pub struct CatchClause<'a> {
-  pub parent: &'a TryStmt<'a>,
-  pub inner: &'a swc_ecma_ast::CatchClause,
+  inner_parent: UnsafeCell<Option<&'a TryStmt<'a>>>,
+  pub inner: &'a swc_ast::CatchClause,
   /// es2019
   /// 
   /// The param is null if the catch binding is omitted. E.g., try { foo() }
   /// catch { bar() }
   pub param: Option<Pat<'a>>,
-  pub body: BlockStmt<'a>,
+  pub body: &'a BlockStmt<'a>,
 }
 
 impl<'a> Spanned for CatchClause<'a> {
@@ -8566,27 +9105,29 @@ impl<'a> Spanned for CatchClause<'a> {
   }
 }
 
-impl<'a> From<&CatchClause<'a>> for Node<'a> {
-  fn from(node: &CatchClause) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&CatchClause, &'a CatchClause>(&node) };
-    Node::CatchClause(static_ref)
+impl<'a> From<&'a CatchClause<'a>> for Node<'a> {
+  fn from(node: &'a CatchClause<'a>) -> Node<'a> {
+    Node::CatchClause(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for CatchClause<'a> {
+impl<'a> NodeTrait<'a> for &'a CatchClause<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.param { Some(_value) => 1, None => 0, });
-    if let Some(child) = &self.param {
+    if let Some(child) = self.param.as_ref() {
       children.push(child.into());
     }
-    children.push((&self.body).into());
+    children.push(self.body.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for CatchClause<'a> {
@@ -8597,37 +9138,35 @@ impl<'a> CastableNode<'a> for CatchClause<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_catch_clause<'a>(ref_node: &'a swc_ecma_ast::CatchClause) -> CatchClause<'a> {
+fn get_view_for_catch_clause<'a>(ref_node: &'a swc_ast::CatchClause, bump: &'a Bump) -> &'a CatchClause<'a> {
   let value = &ref_node.param;
   let field_param = match value {
-    Some(value) => Some(get_view_for_pat(value)),
+    Some(value) => Some(get_view_for_pat(value, bump)),
     None => None,
   };
   let value = &ref_node.body;
-  let field_body = get_view_for_block_stmt(value);
-  let mut node = CatchClause {
+  let field_body = get_view_for_block_stmt(value, bump);
+  let node = bump.alloc(CatchClause {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     param: field_param,
     body: field_body,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&CatchClause, &'a CatchClause>(&node) };
-  let parent = Node::CatchClause(child_parent_ref);
-  if let Some(node) = node.param.as_mut() {
-    set_parent_for_pat(node, parent.clone());
+  });
+  let parent = Node::CatchClause(node);
+  if let Some(child) = node.param.as_ref() {
+    set_parent_for_pat(child, parent.clone());
   }
-  node.body.parent = parent;
+  unsafe { *node.body.inner_parent.get() = Some(parent); }
   node
 }
 
 pub struct LabeledStmt<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::LabeledStmt,
-  pub label: Ident<'a>,
-  pub body: Box<Stmt<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::LabeledStmt,
+  pub label: &'a Ident<'a>,
+  pub body: Stmt<'a>,
 }
 
 impl<'a> Spanned for LabeledStmt<'a> {
@@ -8636,25 +9175,27 @@ impl<'a> Spanned for LabeledStmt<'a> {
   }
 }
 
-impl<'a> From<&LabeledStmt<'a>> for Node<'a> {
-  fn from(node: &LabeledStmt) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&LabeledStmt, &'a LabeledStmt>(&node) };
-    Node::LabeledStmt(static_ref)
+impl<'a> From<&'a LabeledStmt<'a>> for Node<'a> {
+  fn from(node: &'a LabeledStmt<'a>) -> Node<'a> {
+    Node::LabeledStmt(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for LabeledStmt<'a> {
+impl<'a> NodeTrait<'a> for &'a LabeledStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(2);
-    children.push((&self.label).into());
+    children.push(self.label.into());
     children.push((&self.body).into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for LabeledStmt<'a> {
@@ -8665,31 +9206,29 @@ impl<'a> CastableNode<'a> for LabeledStmt<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_labeled_stmt<'a>(ref_node: &'a swc_ecma_ast::LabeledStmt) -> LabeledStmt<'a> {
+fn get_view_for_labeled_stmt<'a>(ref_node: &'a swc_ast::LabeledStmt, bump: &'a Bump) -> &'a LabeledStmt<'a> {
   let value = &ref_node.label;
-  let field_label = get_view_for_ident(value);
+  let field_label = get_view_for_ident(value, bump);
   let value = &ref_node.body;
-  let field_body = Box::new(get_view_for_stmt(value));
-  let mut node = LabeledStmt {
+  let field_body = get_view_for_stmt(value, bump);
+  let node = bump.alloc(LabeledStmt {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     label: field_label,
     body: field_body,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&LabeledStmt, &'a LabeledStmt>(&node) };
-  let parent = Node::LabeledStmt(child_parent_ref);
-  node.label.parent = parent.clone();
-  set_parent_for_stmt(&mut node.body, parent);
+  });
+  let parent = Node::LabeledStmt(node);
+  unsafe { *node.label.inner_parent.get() = Some(parent.clone()); }
+  set_parent_for_stmt(&node.body, parent);
   node
 }
 
 pub struct ContinueStmt<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::ContinueStmt,
-  pub label: Option<Ident<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::ContinueStmt,
+  pub label: Option<&'a Ident<'a>>,
 }
 
 impl<'a> Spanned for ContinueStmt<'a> {
@@ -8698,26 +9237,28 @@ impl<'a> Spanned for ContinueStmt<'a> {
   }
 }
 
-impl<'a> From<&ContinueStmt<'a>> for Node<'a> {
-  fn from(node: &ContinueStmt) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ContinueStmt, &'a ContinueStmt>(&node) };
-    Node::ContinueStmt(static_ref)
+impl<'a> From<&'a ContinueStmt<'a>> for Node<'a> {
+  fn from(node: &'a ContinueStmt<'a>) -> Node<'a> {
+    Node::ContinueStmt(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ContinueStmt<'a> {
+impl<'a> NodeTrait<'a> for &'a ContinueStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(match &self.label { Some(_value) => 1, None => 0, });
-    if let Some(child) = &self.label {
+    if let Some(child) = self.label {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ContinueStmt<'a> {
@@ -8728,34 +9269,32 @@ impl<'a> CastableNode<'a> for ContinueStmt<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_continue_stmt<'a>(ref_node: &'a swc_ecma_ast::ContinueStmt) -> ContinueStmt<'a> {
+fn get_view_for_continue_stmt<'a>(ref_node: &'a swc_ast::ContinueStmt, bump: &'a Bump) -> &'a ContinueStmt<'a> {
   let value = &ref_node.label;
   let field_label = match value {
-    Some(value) => Some(get_view_for_ident(value)),
+    Some(value) => Some(get_view_for_ident(value, bump)),
     None => None,
   };
-  let mut node = ContinueStmt {
+  let node = bump.alloc(ContinueStmt {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     label: field_label,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ContinueStmt, &'a ContinueStmt>(&node) };
-  let parent = Node::ContinueStmt(child_parent_ref);
-  if let Some(node) = node.label.as_mut() {
-    node.parent = parent;
+  });
+  let parent = Node::ContinueStmt(node);
+  if let Some(child) = node.label {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 pub struct TsConstructSignatureDecl<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsConstructSignatureDecl,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsConstructSignatureDecl,
   pub params: Vec<TsFnParam<'a>>,
-  pub type_ann: Option<TsTypeAnn<'a>>,
-  pub type_params: Option<TsTypeParamDecl<'a>>,
+  pub type_ann: Option<&'a TsTypeAnn<'a>>,
+  pub type_params: Option<&'a TsTypeParamDecl<'a>>,
 }
 
 impl<'a> Spanned for TsConstructSignatureDecl<'a> {
@@ -8764,16 +9303,15 @@ impl<'a> Spanned for TsConstructSignatureDecl<'a> {
   }
 }
 
-impl<'a> From<&TsConstructSignatureDecl<'a>> for Node<'a> {
-  fn from(node: &TsConstructSignatureDecl) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsConstructSignatureDecl, &'a TsConstructSignatureDecl>(&node) };
-    Node::TsConstructSignatureDecl(static_ref)
+impl<'a> From<&'a TsConstructSignatureDecl<'a>> for Node<'a> {
+  fn from(node: &'a TsConstructSignatureDecl<'a>) -> Node<'a> {
+    Node::TsConstructSignatureDecl(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsConstructSignatureDecl<'a> {
+impl<'a> NodeTrait<'a> for &'a TsConstructSignatureDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -8781,15 +9319,18 @@ impl<'a> NodeTrait<'a> for TsConstructSignatureDecl<'a> {
     for child in self.params.iter() {
       children.push(child.into());
     }
-    if let Some(child) = &self.type_ann {
+    if let Some(child) = self.type_ann {
       children.push(child.into());
     }
-    if let Some(child) = &self.type_params {
+    if let Some(child) = self.type_params {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsConstructSignatureDecl<'a> {
@@ -8800,48 +9341,46 @@ impl<'a> CastableNode<'a> for TsConstructSignatureDecl<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_construct_signature_decl<'a>(ref_node: &'a swc_ecma_ast::TsConstructSignatureDecl) -> TsConstructSignatureDecl<'a> {
+fn get_view_for_ts_construct_signature_decl<'a>(ref_node: &'a swc_ast::TsConstructSignatureDecl, bump: &'a Bump) -> &'a TsConstructSignatureDecl<'a> {
   let value = &ref_node.params;
-  let field_params = value.iter().map(|value| get_view_for_ts_fn_param(value)).collect();
+  let field_params = value.iter().map(|value| get_view_for_ts_fn_param(value, bump)).collect();
   let value = &ref_node.type_ann;
   let field_type_ann = match value {
-    Some(value) => Some(get_view_for_ts_type_ann(value)),
+    Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
     None => None,
   };
   let value = &ref_node.type_params;
   let field_type_params = match value {
-    Some(value) => Some(get_view_for_ts_type_param_decl(value)),
+    Some(value) => Some(get_view_for_ts_type_param_decl(value, bump)),
     None => None,
   };
-  let mut node = TsConstructSignatureDecl {
+  let node = bump.alloc(TsConstructSignatureDecl {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     params: field_params,
     type_ann: field_type_ann,
     type_params: field_type_params,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsConstructSignatureDecl, &'a TsConstructSignatureDecl>(&node) };
-  let parent = Node::TsConstructSignatureDecl(child_parent_ref);
-  for node in node.params.iter_mut() {
+  });
+  let parent = Node::TsConstructSignatureDecl(node);
+  for node in node.params.iter() {
     set_parent_for_ts_fn_param(node, parent.clone());
   }
-  if let Some(node) = node.type_ann.as_mut() {
-    node.parent = parent.clone();
+  if let Some(child) = node.type_ann {
+    unsafe { *child.inner_parent.get() = Some(parent.clone()); }
   }
-  if let Some(node) = node.type_params.as_mut() {
-    node.parent = parent;
+  if let Some(child) = node.type_params {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 pub struct TsEnumDecl<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsEnumDecl,
-  pub id: Ident<'a>,
-  pub members: Vec<TsEnumMember<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsEnumDecl,
+  pub id: &'a Ident<'a>,
+  pub members: Vec<&'a TsEnumMember<'a>>,
 }
 
 impl<'a> TsEnumDecl<'a> {
@@ -8860,27 +9399,29 @@ impl<'a> Spanned for TsEnumDecl<'a> {
   }
 }
 
-impl<'a> From<&TsEnumDecl<'a>> for Node<'a> {
-  fn from(node: &TsEnumDecl) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsEnumDecl, &'a TsEnumDecl>(&node) };
-    Node::TsEnumDecl(static_ref)
+impl<'a> From<&'a TsEnumDecl<'a>> for Node<'a> {
+  fn from(node: &'a TsEnumDecl<'a>) -> Node<'a> {
+    Node::TsEnumDecl(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsEnumDecl<'a> {
+impl<'a> NodeTrait<'a> for &'a TsEnumDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + self.members.len());
-    children.push((&self.id).into());
+    children.push(self.id.into());
     for child in self.members.iter() {
-      children.push(child.into());
+      children.push((*child).into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsEnumDecl<'a> {
@@ -8891,33 +9432,31 @@ impl<'a> CastableNode<'a> for TsEnumDecl<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_enum_decl<'a>(ref_node: &'a swc_ecma_ast::TsEnumDecl) -> TsEnumDecl<'a> {
+fn get_view_for_ts_enum_decl<'a>(ref_node: &'a swc_ast::TsEnumDecl, bump: &'a Bump) -> &'a TsEnumDecl<'a> {
   let value = &ref_node.id;
-  let field_id = get_view_for_ident(value);
+  let field_id = get_view_for_ident(value, bump);
   let value = &ref_node.members;
-  let field_members = value.iter().map(|value| get_view_for_ts_enum_member(value)).collect();
-  let mut node = TsEnumDecl {
+  let field_members = value.iter().map(|value| get_view_for_ts_enum_member(value, bump)).collect();
+  let node = bump.alloc(TsEnumDecl {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     id: field_id,
     members: field_members,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsEnumDecl, &'a TsEnumDecl>(&node) };
-  let parent = Node::TsEnumDecl(child_parent_ref);
-  node.id.parent = parent.clone();
-  for node in node.members.iter_mut() {
-    node.parent = parent.to::<TsEnumDecl>();
+  });
+  let parent = Node::TsEnumDecl(node);
+  unsafe { *node.id.inner_parent.get() = Some(parent.clone()); }
+  for node in node.members.iter() {
+    unsafe { *node.inner_parent.get() = Some(parent.to::<TsEnumDecl>()); }
   }
   node
 }
 
 pub struct OptChainExpr<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::OptChainExpr,
-  pub expr: Box<Expr<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::OptChainExpr,
+  pub expr: Expr<'a>,
 }
 
 impl<'a> OptChainExpr<'a> {
@@ -8932,16 +9471,15 @@ impl<'a> Spanned for OptChainExpr<'a> {
   }
 }
 
-impl<'a> From<&OptChainExpr<'a>> for Node<'a> {
-  fn from(node: &OptChainExpr) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&OptChainExpr, &'a OptChainExpr>(&node) };
-    Node::OptChainExpr(static_ref)
+impl<'a> From<&'a OptChainExpr<'a>> for Node<'a> {
+  fn from(node: &'a OptChainExpr<'a>) -> Node<'a> {
+    Node::OptChainExpr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for OptChainExpr<'a> {
+impl<'a> NodeTrait<'a> for &'a OptChainExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -8950,6 +9488,9 @@ impl<'a> NodeTrait<'a> for OptChainExpr<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for OptChainExpr<'a> {
@@ -8960,28 +9501,26 @@ impl<'a> CastableNode<'a> for OptChainExpr<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_opt_chain_expr<'a>(ref_node: &'a swc_ecma_ast::OptChainExpr) -> OptChainExpr<'a> {
+fn get_view_for_opt_chain_expr<'a>(ref_node: &'a swc_ast::OptChainExpr, bump: &'a Bump) -> &'a OptChainExpr<'a> {
   let value = &ref_node.expr;
-  let field_expr = Box::new(get_view_for_expr(value));
-  let mut node = OptChainExpr {
+  let field_expr = get_view_for_expr(value, bump);
+  let node = bump.alloc(OptChainExpr {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     expr: field_expr,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&OptChainExpr, &'a OptChainExpr>(&node) };
-  let parent = Node::OptChainExpr(child_parent_ref);
-  set_parent_for_expr(&mut node.expr, parent);
+  });
+  let parent = Node::OptChainExpr(node);
+  set_parent_for_expr(&node.expr, parent);
   node
 }
 
 pub struct TsNamespaceDecl<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsNamespaceDecl,
-  pub id: Ident<'a>,
-  pub body: Box<TsNamespaceBody<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsNamespaceDecl,
+  pub id: &'a Ident<'a>,
+  pub body: TsNamespaceBody<'a>,
 }
 
 impl<'a> TsNamespaceDecl<'a> {
@@ -9001,25 +9540,27 @@ impl<'a> Spanned for TsNamespaceDecl<'a> {
   }
 }
 
-impl<'a> From<&TsNamespaceDecl<'a>> for Node<'a> {
-  fn from(node: &TsNamespaceDecl) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsNamespaceDecl, &'a TsNamespaceDecl>(&node) };
-    Node::TsNamespaceDecl(static_ref)
+impl<'a> From<&'a TsNamespaceDecl<'a>> for Node<'a> {
+  fn from(node: &'a TsNamespaceDecl<'a>) -> Node<'a> {
+    Node::TsNamespaceDecl(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsNamespaceDecl<'a> {
+impl<'a> NodeTrait<'a> for &'a TsNamespaceDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(2);
-    children.push((&self.id).into());
+    children.push(self.id.into());
     children.push((&self.body).into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsNamespaceDecl<'a> {
@@ -9030,31 +9571,29 @@ impl<'a> CastableNode<'a> for TsNamespaceDecl<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_namespace_decl<'a>(ref_node: &'a swc_ecma_ast::TsNamespaceDecl) -> TsNamespaceDecl<'a> {
+fn get_view_for_ts_namespace_decl<'a>(ref_node: &'a swc_ast::TsNamespaceDecl, bump: &'a Bump) -> &'a TsNamespaceDecl<'a> {
   let value = &ref_node.id;
-  let field_id = get_view_for_ident(value);
+  let field_id = get_view_for_ident(value, bump);
   let value = &ref_node.body;
-  let field_body = Box::new(get_view_for_ts_namespace_body(value));
-  let mut node = TsNamespaceDecl {
+  let field_body = get_view_for_ts_namespace_body(value, bump);
+  let node = bump.alloc(TsNamespaceDecl {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     id: field_id,
     body: field_body,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsNamespaceDecl, &'a TsNamespaceDecl>(&node) };
-  let parent = Node::TsNamespaceDecl(child_parent_ref);
-  node.id.parent = parent.clone();
-  set_parent_for_ts_namespace_body(&mut node.body, parent);
+  });
+  let parent = Node::TsNamespaceDecl(node);
+  unsafe { *node.id.inner_parent.get() = Some(parent.clone()); }
+  set_parent_for_ts_namespace_body(&node.body, parent);
   node
 }
 
 pub struct SeqExpr<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::SeqExpr,
-  pub exprs: Vec<Box<Expr<'a>>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::SeqExpr,
+  pub exprs: Vec<Expr<'a>>,
 }
 
 impl<'a> Spanned for SeqExpr<'a> {
@@ -9063,16 +9602,15 @@ impl<'a> Spanned for SeqExpr<'a> {
   }
 }
 
-impl<'a> From<&SeqExpr<'a>> for Node<'a> {
-  fn from(node: &SeqExpr) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&SeqExpr, &'a SeqExpr>(&node) };
-    Node::SeqExpr(static_ref)
+impl<'a> From<&'a SeqExpr<'a>> for Node<'a> {
+  fn from(node: &'a SeqExpr<'a>) -> Node<'a> {
+    Node::SeqExpr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for SeqExpr<'a> {
+impl<'a> NodeTrait<'a> for &'a SeqExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -9083,6 +9621,9 @@ impl<'a> NodeTrait<'a> for SeqExpr<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for SeqExpr<'a> {
@@ -9093,29 +9634,27 @@ impl<'a> CastableNode<'a> for SeqExpr<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_seq_expr<'a>(ref_node: &'a swc_ecma_ast::SeqExpr) -> SeqExpr<'a> {
+fn get_view_for_seq_expr<'a>(ref_node: &'a swc_ast::SeqExpr, bump: &'a Bump) -> &'a SeqExpr<'a> {
   let value = &ref_node.exprs;
-  let field_exprs = value.iter().map(|value| Box::new(get_view_for_expr(value))).collect();
-  let mut node = SeqExpr {
+  let field_exprs = value.iter().map(|value| get_view_for_expr(value, bump)).collect();
+  let node = bump.alloc(SeqExpr {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     exprs: field_exprs,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&SeqExpr, &'a SeqExpr>(&node) };
-  let parent = Node::SeqExpr(child_parent_ref);
-  for node in node.exprs.iter_mut() {
+  });
+  let parent = Node::SeqExpr(node);
+  for node in node.exprs.iter() {
     set_parent_for_expr(node, parent.clone());
   }
   node
 }
 
 pub struct TsExternalModuleRef<'a> {
-  pub parent: &'a TsImportEqualsDecl<'a>,
-  pub inner: &'a swc_ecma_ast::TsExternalModuleRef,
-  pub expr: Str<'a>,
+  inner_parent: UnsafeCell<Option<&'a TsImportEqualsDecl<'a>>>,
+  pub inner: &'a swc_ast::TsExternalModuleRef,
+  pub expr: &'a Str<'a>,
 }
 
 impl<'a> Spanned for TsExternalModuleRef<'a> {
@@ -9124,24 +9663,26 @@ impl<'a> Spanned for TsExternalModuleRef<'a> {
   }
 }
 
-impl<'a> From<&TsExternalModuleRef<'a>> for Node<'a> {
-  fn from(node: &TsExternalModuleRef) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsExternalModuleRef, &'a TsExternalModuleRef>(&node) };
-    Node::TsExternalModuleRef(static_ref)
+impl<'a> From<&'a TsExternalModuleRef<'a>> for Node<'a> {
+  fn from(node: &'a TsExternalModuleRef<'a>) -> Node<'a> {
+    Node::TsExternalModuleRef(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsExternalModuleRef<'a> {
+impl<'a> NodeTrait<'a> for &'a TsExternalModuleRef<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1);
-    children.push((&self.expr).into());
+    children.push(self.expr.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsExternalModuleRef<'a> {
@@ -9152,27 +9693,25 @@ impl<'a> CastableNode<'a> for TsExternalModuleRef<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_external_module_ref<'a>(ref_node: &'a swc_ecma_ast::TsExternalModuleRef) -> TsExternalModuleRef<'a> {
+fn get_view_for_ts_external_module_ref<'a>(ref_node: &'a swc_ast::TsExternalModuleRef, bump: &'a Bump) -> &'a TsExternalModuleRef<'a> {
   let value = &ref_node.expr;
-  let field_expr = get_view_for_str(value);
-  let mut node = TsExternalModuleRef {
+  let field_expr = get_view_for_str(value, bump);
+  let node = bump.alloc(TsExternalModuleRef {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     expr: field_expr,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsExternalModuleRef, &'a TsExternalModuleRef>(&node) };
-  let parent = Node::TsExternalModuleRef(child_parent_ref);
-  node.expr.parent = parent;
+  });
+  let parent = Node::TsExternalModuleRef(node);
+  unsafe { *node.expr.inner_parent.get() = Some(parent); }
   node
 }
 
 pub struct TsTypeParamInstantiation<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsTypeParamInstantiation,
-  pub params: Vec<Box<TsType<'a>>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsTypeParamInstantiation,
+  pub params: Vec<TsType<'a>>,
 }
 
 impl<'a> Spanned for TsTypeParamInstantiation<'a> {
@@ -9181,16 +9720,15 @@ impl<'a> Spanned for TsTypeParamInstantiation<'a> {
   }
 }
 
-impl<'a> From<&TsTypeParamInstantiation<'a>> for Node<'a> {
-  fn from(node: &TsTypeParamInstantiation) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsTypeParamInstantiation, &'a TsTypeParamInstantiation>(&node) };
-    Node::TsTypeParamInstantiation(static_ref)
+impl<'a> From<&'a TsTypeParamInstantiation<'a>> for Node<'a> {
+  fn from(node: &'a TsTypeParamInstantiation<'a>) -> Node<'a> {
+    Node::TsTypeParamInstantiation(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsTypeParamInstantiation<'a> {
+impl<'a> NodeTrait<'a> for &'a TsTypeParamInstantiation<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -9201,6 +9739,9 @@ impl<'a> NodeTrait<'a> for TsTypeParamInstantiation<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsTypeParamInstantiation<'a> {
@@ -9211,29 +9752,27 @@ impl<'a> CastableNode<'a> for TsTypeParamInstantiation<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_type_param_instantiation<'a>(ref_node: &'a swc_ecma_ast::TsTypeParamInstantiation) -> TsTypeParamInstantiation<'a> {
+fn get_view_for_ts_type_param_instantiation<'a>(ref_node: &'a swc_ast::TsTypeParamInstantiation, bump: &'a Bump) -> &'a TsTypeParamInstantiation<'a> {
   let value = &ref_node.params;
-  let field_params = value.iter().map(|value| Box::new(get_view_for_ts_type(value))).collect();
-  let mut node = TsTypeParamInstantiation {
+  let field_params = value.iter().map(|value| get_view_for_ts_type(value, bump)).collect();
+  let node = bump.alloc(TsTypeParamInstantiation {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     params: field_params,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsTypeParamInstantiation, &'a TsTypeParamInstantiation>(&node) };
-  let parent = Node::TsTypeParamInstantiation(child_parent_ref);
-  for node in node.params.iter_mut() {
+  });
+  let parent = Node::TsTypeParamInstantiation(node);
+  for node in node.params.iter() {
     set_parent_for_ts_type(node, parent.clone());
   }
   node
 }
 
 pub struct ReturnStmt<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::ReturnStmt,
-  pub arg: Option<Box<Expr<'a>>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::ReturnStmt,
+  pub arg: Option<Expr<'a>>,
 }
 
 impl<'a> Spanned for ReturnStmt<'a> {
@@ -9242,26 +9781,28 @@ impl<'a> Spanned for ReturnStmt<'a> {
   }
 }
 
-impl<'a> From<&ReturnStmt<'a>> for Node<'a> {
-  fn from(node: &ReturnStmt) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ReturnStmt, &'a ReturnStmt>(&node) };
-    Node::ReturnStmt(static_ref)
+impl<'a> From<&'a ReturnStmt<'a>> for Node<'a> {
+  fn from(node: &'a ReturnStmt<'a>) -> Node<'a> {
+    Node::ReturnStmt(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ReturnStmt<'a> {
+impl<'a> NodeTrait<'a> for &'a ReturnStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(match &self.arg { Some(_value) => 1, None => 0, });
-    if let Some(child) = &self.arg {
+    if let Some(child) = self.arg.as_ref() {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ReturnStmt<'a> {
@@ -9272,33 +9813,31 @@ impl<'a> CastableNode<'a> for ReturnStmt<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_return_stmt<'a>(ref_node: &'a swc_ecma_ast::ReturnStmt) -> ReturnStmt<'a> {
+fn get_view_for_return_stmt<'a>(ref_node: &'a swc_ast::ReturnStmt, bump: &'a Bump) -> &'a ReturnStmt<'a> {
   let value = &ref_node.arg;
   let field_arg = match value {
-    Some(value) => Some(Box::new(get_view_for_expr(value))),
+    Some(value) => Some(get_view_for_expr(value, bump)),
     None => None,
   };
-  let mut node = ReturnStmt {
+  let node = bump.alloc(ReturnStmt {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     arg: field_arg,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ReturnStmt, &'a ReturnStmt>(&node) };
-  let parent = Node::ReturnStmt(child_parent_ref);
-  if let Some(node) = node.arg.as_mut() {
-    set_parent_for_expr(node, parent);
+  });
+  let parent = Node::ReturnStmt(node);
+  if let Some(child) = node.arg.as_ref() {
+    set_parent_for_expr(child, parent);
   }
   node
 }
 
 pub struct TsTplLitType<'a> {
-  pub parent: &'a TsLitType<'a>,
-  pub inner: &'a swc_ecma_ast::TsTplLitType,
-  pub types: Vec<Box<TsType<'a>>>,
-  pub quasis: Vec<TplElement<'a>>,
+  inner_parent: UnsafeCell<Option<&'a TsLitType<'a>>>,
+  pub inner: &'a swc_ast::TsTplLitType,
+  pub types: Vec<TsType<'a>>,
+  pub quasis: Vec<&'a TplElement<'a>>,
 }
 
 impl<'a> Spanned for TsTplLitType<'a> {
@@ -9307,16 +9846,15 @@ impl<'a> Spanned for TsTplLitType<'a> {
   }
 }
 
-impl<'a> From<&TsTplLitType<'a>> for Node<'a> {
-  fn from(node: &TsTplLitType) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsTplLitType, &'a TsTplLitType>(&node) };
-    Node::TsTplLitType(static_ref)
+impl<'a> From<&'a TsTplLitType<'a>> for Node<'a> {
+  fn from(node: &'a TsTplLitType<'a>) -> Node<'a> {
+    Node::TsTplLitType(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsTplLitType<'a> {
+impl<'a> NodeTrait<'a> for &'a TsTplLitType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -9325,11 +9863,14 @@ impl<'a> NodeTrait<'a> for TsTplLitType<'a> {
       children.push(child.into());
     }
     for child in self.quasis.iter() {
-      children.push(child.into());
+      children.push((*child).into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsTplLitType<'a> {
@@ -9340,35 +9881,33 @@ impl<'a> CastableNode<'a> for TsTplLitType<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_tpl_lit_type<'a>(ref_node: &'a swc_ecma_ast::TsTplLitType) -> TsTplLitType<'a> {
+fn get_view_for_ts_tpl_lit_type<'a>(ref_node: &'a swc_ast::TsTplLitType, bump: &'a Bump) -> &'a TsTplLitType<'a> {
   let value = &ref_node.types;
-  let field_types = value.iter().map(|value| Box::new(get_view_for_ts_type(value))).collect();
+  let field_types = value.iter().map(|value| get_view_for_ts_type(value, bump)).collect();
   let value = &ref_node.quasis;
-  let field_quasis = value.iter().map(|value| get_view_for_tpl_element(value)).collect();
-  let mut node = TsTplLitType {
+  let field_quasis = value.iter().map(|value| get_view_for_tpl_element(value, bump)).collect();
+  let node = bump.alloc(TsTplLitType {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     types: field_types,
     quasis: field_quasis,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsTplLitType, &'a TsTplLitType>(&node) };
-  let parent = Node::TsTplLitType(child_parent_ref);
-  for node in node.types.iter_mut() {
+  });
+  let parent = Node::TsTplLitType(node);
+  for node in node.types.iter() {
     set_parent_for_ts_type(node, parent.clone());
   }
-  for node in node.quasis.iter_mut() {
-    node.parent = parent.clone();
+  for node in node.quasis.iter() {
+    unsafe { *node.inner_parent.get() = Some(parent.clone()); }
   }
   node
 }
 
 pub struct ExportDefaultExpr<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::ExportDefaultExpr,
-  pub expr: Box<Expr<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::ExportDefaultExpr,
+  pub expr: Expr<'a>,
 }
 
 impl<'a> Spanned for ExportDefaultExpr<'a> {
@@ -9377,16 +9916,15 @@ impl<'a> Spanned for ExportDefaultExpr<'a> {
   }
 }
 
-impl<'a> From<&ExportDefaultExpr<'a>> for Node<'a> {
-  fn from(node: &ExportDefaultExpr) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ExportDefaultExpr, &'a ExportDefaultExpr>(&node) };
-    Node::ExportDefaultExpr(static_ref)
+impl<'a> From<&'a ExportDefaultExpr<'a>> for Node<'a> {
+  fn from(node: &'a ExportDefaultExpr<'a>) -> Node<'a> {
+    Node::ExportDefaultExpr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ExportDefaultExpr<'a> {
+impl<'a> NodeTrait<'a> for &'a ExportDefaultExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -9395,6 +9933,9 @@ impl<'a> NodeTrait<'a> for ExportDefaultExpr<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ExportDefaultExpr<'a> {
@@ -9405,29 +9946,27 @@ impl<'a> CastableNode<'a> for ExportDefaultExpr<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_export_default_expr<'a>(ref_node: &'a swc_ecma_ast::ExportDefaultExpr) -> ExportDefaultExpr<'a> {
+fn get_view_for_export_default_expr<'a>(ref_node: &'a swc_ast::ExportDefaultExpr, bump: &'a Bump) -> &'a ExportDefaultExpr<'a> {
   let value = &ref_node.expr;
-  let field_expr = Box::new(get_view_for_expr(value));
-  let mut node = ExportDefaultExpr {
+  let field_expr = get_view_for_expr(value, bump);
+  let node = bump.alloc(ExportDefaultExpr {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     expr: field_expr,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ExportDefaultExpr, &'a ExportDefaultExpr>(&node) };
-  let parent = Node::ExportDefaultExpr(child_parent_ref);
-  set_parent_for_expr(&mut node.expr, parent);
+  });
+  let parent = Node::ExportDefaultExpr(node);
+  set_parent_for_expr(&node.expr, parent);
   node
 }
 
 pub struct TsCallSignatureDecl<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsCallSignatureDecl,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsCallSignatureDecl,
   pub params: Vec<TsFnParam<'a>>,
-  pub type_ann: Option<TsTypeAnn<'a>>,
-  pub type_params: Option<TsTypeParamDecl<'a>>,
+  pub type_ann: Option<&'a TsTypeAnn<'a>>,
+  pub type_params: Option<&'a TsTypeParamDecl<'a>>,
 }
 
 impl<'a> Spanned for TsCallSignatureDecl<'a> {
@@ -9436,16 +9975,15 @@ impl<'a> Spanned for TsCallSignatureDecl<'a> {
   }
 }
 
-impl<'a> From<&TsCallSignatureDecl<'a>> for Node<'a> {
-  fn from(node: &TsCallSignatureDecl) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsCallSignatureDecl, &'a TsCallSignatureDecl>(&node) };
-    Node::TsCallSignatureDecl(static_ref)
+impl<'a> From<&'a TsCallSignatureDecl<'a>> for Node<'a> {
+  fn from(node: &'a TsCallSignatureDecl<'a>) -> Node<'a> {
+    Node::TsCallSignatureDecl(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsCallSignatureDecl<'a> {
+impl<'a> NodeTrait<'a> for &'a TsCallSignatureDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -9453,15 +9991,18 @@ impl<'a> NodeTrait<'a> for TsCallSignatureDecl<'a> {
     for child in self.params.iter() {
       children.push(child.into());
     }
-    if let Some(child) = &self.type_ann {
+    if let Some(child) = self.type_ann {
       children.push(child.into());
     }
-    if let Some(child) = &self.type_params {
+    if let Some(child) = self.type_params {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsCallSignatureDecl<'a> {
@@ -9472,47 +10013,45 @@ impl<'a> CastableNode<'a> for TsCallSignatureDecl<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_call_signature_decl<'a>(ref_node: &'a swc_ecma_ast::TsCallSignatureDecl) -> TsCallSignatureDecl<'a> {
+fn get_view_for_ts_call_signature_decl<'a>(ref_node: &'a swc_ast::TsCallSignatureDecl, bump: &'a Bump) -> &'a TsCallSignatureDecl<'a> {
   let value = &ref_node.params;
-  let field_params = value.iter().map(|value| get_view_for_ts_fn_param(value)).collect();
+  let field_params = value.iter().map(|value| get_view_for_ts_fn_param(value, bump)).collect();
   let value = &ref_node.type_ann;
   let field_type_ann = match value {
-    Some(value) => Some(get_view_for_ts_type_ann(value)),
+    Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
     None => None,
   };
   let value = &ref_node.type_params;
   let field_type_params = match value {
-    Some(value) => Some(get_view_for_ts_type_param_decl(value)),
+    Some(value) => Some(get_view_for_ts_type_param_decl(value, bump)),
     None => None,
   };
-  let mut node = TsCallSignatureDecl {
+  let node = bump.alloc(TsCallSignatureDecl {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     params: field_params,
     type_ann: field_type_ann,
     type_params: field_type_params,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsCallSignatureDecl, &'a TsCallSignatureDecl>(&node) };
-  let parent = Node::TsCallSignatureDecl(child_parent_ref);
-  for node in node.params.iter_mut() {
+  });
+  let parent = Node::TsCallSignatureDecl(node);
+  for node in node.params.iter() {
     set_parent_for_ts_fn_param(node, parent.clone());
   }
-  if let Some(node) = node.type_ann.as_mut() {
-    node.parent = parent.clone();
+  if let Some(child) = node.type_ann {
+    unsafe { *child.inner_parent.get() = Some(parent.clone()); }
   }
-  if let Some(node) = node.type_params.as_mut() {
-    node.parent = parent;
+  if let Some(child) = node.type_params {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 pub struct AwaitExpr<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::AwaitExpr,
-  pub arg: Box<Expr<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::AwaitExpr,
+  pub arg: Expr<'a>,
 }
 
 impl<'a> Spanned for AwaitExpr<'a> {
@@ -9521,16 +10060,15 @@ impl<'a> Spanned for AwaitExpr<'a> {
   }
 }
 
-impl<'a> From<&AwaitExpr<'a>> for Node<'a> {
-  fn from(node: &AwaitExpr) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&AwaitExpr, &'a AwaitExpr>(&node) };
-    Node::AwaitExpr(static_ref)
+impl<'a> From<&'a AwaitExpr<'a>> for Node<'a> {
+  fn from(node: &'a AwaitExpr<'a>) -> Node<'a> {
+    Node::AwaitExpr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for AwaitExpr<'a> {
+impl<'a> NodeTrait<'a> for &'a AwaitExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -9539,6 +10077,9 @@ impl<'a> NodeTrait<'a> for AwaitExpr<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for AwaitExpr<'a> {
@@ -9549,28 +10090,26 @@ impl<'a> CastableNode<'a> for AwaitExpr<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_await_expr<'a>(ref_node: &'a swc_ecma_ast::AwaitExpr) -> AwaitExpr<'a> {
+fn get_view_for_await_expr<'a>(ref_node: &'a swc_ast::AwaitExpr, bump: &'a Bump) -> &'a AwaitExpr<'a> {
   let value = &ref_node.arg;
-  let field_arg = Box::new(get_view_for_expr(value));
-  let mut node = AwaitExpr {
+  let field_arg = get_view_for_expr(value, bump);
+  let node = bump.alloc(AwaitExpr {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     arg: field_arg,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&AwaitExpr, &'a AwaitExpr>(&node) };
-  let parent = Node::AwaitExpr(child_parent_ref);
-  set_parent_for_expr(&mut node.arg, parent);
+  });
+  let parent = Node::AwaitExpr(node);
+  set_parent_for_expr(&node.arg, parent);
   node
 }
 
 pub struct ClassMethod<'a> {
-  pub parent: &'a Class<'a>,
-  pub inner: &'a swc_ecma_ast::ClassMethod,
+  inner_parent: UnsafeCell<Option<&'a Class<'a>>>,
+  pub inner: &'a swc_ast::ClassMethod,
   pub key: PropName<'a>,
-  pub function: Function<'a>,
+  pub function: &'a Function<'a>,
 }
 
 impl<'a> ClassMethod<'a> {
@@ -9603,25 +10142,27 @@ impl<'a> Spanned for ClassMethod<'a> {
   }
 }
 
-impl<'a> From<&ClassMethod<'a>> for Node<'a> {
-  fn from(node: &ClassMethod) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ClassMethod, &'a ClassMethod>(&node) };
-    Node::ClassMethod(static_ref)
+impl<'a> From<&'a ClassMethod<'a>> for Node<'a> {
+  fn from(node: &'a ClassMethod<'a>) -> Node<'a> {
+    Node::ClassMethod(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ClassMethod<'a> {
+impl<'a> NodeTrait<'a> for &'a ClassMethod<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(2);
     children.push((&self.key).into());
-    children.push((&self.function).into());
+    children.push(self.function.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ClassMethod<'a> {
@@ -9632,31 +10173,29 @@ impl<'a> CastableNode<'a> for ClassMethod<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_class_method<'a>(ref_node: &'a swc_ecma_ast::ClassMethod) -> ClassMethod<'a> {
+fn get_view_for_class_method<'a>(ref_node: &'a swc_ast::ClassMethod, bump: &'a Bump) -> &'a ClassMethod<'a> {
   let value = &ref_node.key;
-  let field_key = get_view_for_prop_name(value);
+  let field_key = get_view_for_prop_name(value, bump);
   let value = &ref_node.function;
-  let field_function = get_view_for_function(value);
-  let mut node = ClassMethod {
+  let field_function = get_view_for_function(value, bump);
+  let node = bump.alloc(ClassMethod {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     key: field_key,
     function: field_function,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ClassMethod, &'a ClassMethod>(&node) };
-  let parent = Node::ClassMethod(child_parent_ref);
-  set_parent_for_prop_name(&mut node.key, parent.clone());
-  node.function.parent = parent;
+  });
+  let parent = Node::ClassMethod(node);
+  set_parent_for_prop_name(&node.key, parent.clone());
+  unsafe { *node.function.inner_parent.get() = Some(parent); }
   node
 }
 
 pub struct TsParamProp<'a> {
-  pub parent: &'a Constructor<'a>,
-  pub inner: &'a swc_ecma_ast::TsParamProp,
-  pub decorators: Vec<Decorator<'a>>,
+  inner_parent: UnsafeCell<Option<&'a Constructor<'a>>>,
+  pub inner: &'a swc_ast::TsParamProp,
+  pub decorators: Vec<&'a Decorator<'a>>,
   pub param: TsParamPropParam<'a>,
 }
 
@@ -9677,27 +10216,29 @@ impl<'a> Spanned for TsParamProp<'a> {
   }
 }
 
-impl<'a> From<&TsParamProp<'a>> for Node<'a> {
-  fn from(node: &TsParamProp) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsParamProp, &'a TsParamProp>(&node) };
-    Node::TsParamProp(static_ref)
+impl<'a> From<&'a TsParamProp<'a>> for Node<'a> {
+  fn from(node: &'a TsParamProp<'a>) -> Node<'a> {
+    Node::TsParamProp(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsParamProp<'a> {
+impl<'a> NodeTrait<'a> for &'a TsParamProp<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + self.decorators.len());
     for child in self.decorators.iter() {
-      children.push(child.into());
+      children.push((*child).into());
     }
     children.push((&self.param).into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsParamProp<'a> {
@@ -9708,36 +10249,34 @@ impl<'a> CastableNode<'a> for TsParamProp<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_param_prop<'a>(ref_node: &'a swc_ecma_ast::TsParamProp) -> TsParamProp<'a> {
+fn get_view_for_ts_param_prop<'a>(ref_node: &'a swc_ast::TsParamProp, bump: &'a Bump) -> &'a TsParamProp<'a> {
   let value = &ref_node.decorators;
-  let field_decorators = value.iter().map(|value| get_view_for_decorator(value)).collect();
+  let field_decorators = value.iter().map(|value| get_view_for_decorator(value, bump)).collect();
   let value = &ref_node.param;
-  let field_param = get_view_for_ts_param_prop_param(value);
-  let mut node = TsParamProp {
+  let field_param = get_view_for_ts_param_prop_param(value, bump);
+  let node = bump.alloc(TsParamProp {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     decorators: field_decorators,
     param: field_param,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsParamProp, &'a TsParamProp>(&node) };
-  let parent = Node::TsParamProp(child_parent_ref);
-  for node in node.decorators.iter_mut() {
-    node.parent = parent.clone();
+  });
+  let parent = Node::TsParamProp(node);
+  for node in node.decorators.iter() {
+    unsafe { *node.inner_parent.get() = Some(parent.clone()); }
   }
-  set_parent_for_ts_param_prop_param(&mut node.param, parent);
+  set_parent_for_ts_param_prop_param(&node.param, parent);
   node
 }
 
 pub struct ClassProp<'a> {
-  pub parent: &'a Class<'a>,
-  pub inner: &'a swc_ecma_ast::ClassProp,
-  pub key: Box<Expr<'a>>,
-  pub value: Option<Box<Expr<'a>>>,
-  pub type_ann: Option<TsTypeAnn<'a>>,
-  pub decorators: Vec<Decorator<'a>>,
+  inner_parent: UnsafeCell<Option<&'a Class<'a>>>,
+  pub inner: &'a swc_ast::ClassProp,
+  pub key: Expr<'a>,
+  pub value: Option<Expr<'a>>,
+  pub type_ann: Option<&'a TsTypeAnn<'a>>,
+  pub decorators: Vec<&'a Decorator<'a>>,
 }
 
 impl<'a> ClassProp<'a> {
@@ -9782,33 +10321,35 @@ impl<'a> Spanned for ClassProp<'a> {
   }
 }
 
-impl<'a> From<&ClassProp<'a>> for Node<'a> {
-  fn from(node: &ClassProp) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ClassProp, &'a ClassProp>(&node) };
-    Node::ClassProp(static_ref)
+impl<'a> From<&'a ClassProp<'a>> for Node<'a> {
+  fn from(node: &'a ClassProp<'a>) -> Node<'a> {
+    Node::ClassProp(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ClassProp<'a> {
+impl<'a> NodeTrait<'a> for &'a ClassProp<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.value { Some(_value) => 1, None => 0, } + match &self.type_ann { Some(_value) => 1, None => 0, } + self.decorators.len());
     children.push((&self.key).into());
-    if let Some(child) = &self.value {
+    if let Some(child) = self.value.as_ref() {
       children.push(child.into());
     }
-    if let Some(child) = &self.type_ann {
+    if let Some(child) = self.type_ann {
       children.push(child.into());
     }
     for child in self.decorators.iter() {
-      children.push(child.into());
+      children.push((*child).into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ClassProp<'a> {
@@ -9819,51 +10360,49 @@ impl<'a> CastableNode<'a> for ClassProp<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_class_prop<'a>(ref_node: &'a swc_ecma_ast::ClassProp) -> ClassProp<'a> {
+fn get_view_for_class_prop<'a>(ref_node: &'a swc_ast::ClassProp, bump: &'a Bump) -> &'a ClassProp<'a> {
   let value = &ref_node.key;
-  let field_key = Box::new(get_view_for_expr(value));
+  let field_key = get_view_for_expr(value, bump);
   let value = &ref_node.value;
   let field_value = match value {
-    Some(value) => Some(Box::new(get_view_for_expr(value))),
+    Some(value) => Some(get_view_for_expr(value, bump)),
     None => None,
   };
   let value = &ref_node.type_ann;
   let field_type_ann = match value {
-    Some(value) => Some(get_view_for_ts_type_ann(value)),
+    Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
     None => None,
   };
   let value = &ref_node.decorators;
-  let field_decorators = value.iter().map(|value| get_view_for_decorator(value)).collect();
-  let mut node = ClassProp {
+  let field_decorators = value.iter().map(|value| get_view_for_decorator(value, bump)).collect();
+  let node = bump.alloc(ClassProp {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     key: field_key,
     value: field_value,
     type_ann: field_type_ann,
     decorators: field_decorators,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ClassProp, &'a ClassProp>(&node) };
-  let parent = Node::ClassProp(child_parent_ref);
-  set_parent_for_expr(&mut node.key, parent.clone());
-  if let Some(node) = node.value.as_mut() {
-    set_parent_for_expr(node, parent.clone());
+  });
+  let parent = Node::ClassProp(node);
+  set_parent_for_expr(&node.key, parent.clone());
+  if let Some(child) = node.value.as_ref() {
+    set_parent_for_expr(child, parent.clone());
   }
-  if let Some(node) = node.type_ann.as_mut() {
-    node.parent = parent.clone();
+  if let Some(child) = node.type_ann {
+    unsafe { *child.inner_parent.get() = Some(parent.clone()); }
   }
-  for node in node.decorators.iter_mut() {
-    node.parent = parent.clone();
+  for node in node.decorators.iter() {
+    unsafe { *node.inner_parent.get() = Some(parent.clone()); }
   }
   node
 }
 
 pub struct TsTypeAnn<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsTypeAnn,
-  pub type_ann: Box<TsType<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsTypeAnn,
+  pub type_ann: TsType<'a>,
 }
 
 impl<'a> Spanned for TsTypeAnn<'a> {
@@ -9872,16 +10411,15 @@ impl<'a> Spanned for TsTypeAnn<'a> {
   }
 }
 
-impl<'a> From<&TsTypeAnn<'a>> for Node<'a> {
-  fn from(node: &TsTypeAnn) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsTypeAnn, &'a TsTypeAnn>(&node) };
-    Node::TsTypeAnn(static_ref)
+impl<'a> From<&'a TsTypeAnn<'a>> for Node<'a> {
+  fn from(node: &'a TsTypeAnn<'a>) -> Node<'a> {
+    Node::TsTypeAnn(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsTypeAnn<'a> {
+impl<'a> NodeTrait<'a> for &'a TsTypeAnn<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -9890,6 +10428,9 @@ impl<'a> NodeTrait<'a> for TsTypeAnn<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsTypeAnn<'a> {
@@ -9900,30 +10441,28 @@ impl<'a> CastableNode<'a> for TsTypeAnn<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_type_ann<'a>(ref_node: &'a swc_ecma_ast::TsTypeAnn) -> TsTypeAnn<'a> {
+fn get_view_for_ts_type_ann<'a>(ref_node: &'a swc_ast::TsTypeAnn, bump: &'a Bump) -> &'a TsTypeAnn<'a> {
   let value = &ref_node.type_ann;
-  let field_type_ann = Box::new(get_view_for_ts_type(value));
-  let mut node = TsTypeAnn {
+  let field_type_ann = get_view_for_ts_type(value, bump);
+  let node = bump.alloc(TsTypeAnn {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     type_ann: field_type_ann,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsTypeAnn, &'a TsTypeAnn>(&node) };
-  let parent = Node::TsTypeAnn(child_parent_ref);
-  set_parent_for_ts_type(&mut node.type_ann, parent);
+  });
+  let parent = Node::TsTypeAnn(node);
+  set_parent_for_ts_type(&node.type_ann, parent);
   node
 }
 
 pub struct ForStmt<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::ForStmt,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::ForStmt,
   pub init: Option<VarDeclOrExpr<'a>>,
-  pub test: Option<Box<Expr<'a>>>,
-  pub update: Option<Box<Expr<'a>>>,
-  pub body: Box<Stmt<'a>>,
+  pub test: Option<Expr<'a>>,
+  pub update: Option<Expr<'a>>,
+  pub body: Stmt<'a>,
 }
 
 impl<'a> Spanned for ForStmt<'a> {
@@ -9932,33 +10471,35 @@ impl<'a> Spanned for ForStmt<'a> {
   }
 }
 
-impl<'a> From<&ForStmt<'a>> for Node<'a> {
-  fn from(node: &ForStmt) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ForStmt, &'a ForStmt>(&node) };
-    Node::ForStmt(static_ref)
+impl<'a> From<&'a ForStmt<'a>> for Node<'a> {
+  fn from(node: &'a ForStmt<'a>) -> Node<'a> {
+    Node::ForStmt(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ForStmt<'a> {
+impl<'a> NodeTrait<'a> for &'a ForStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.init { Some(_value) => 1, None => 0, } + match &self.test { Some(_value) => 1, None => 0, } + match &self.update { Some(_value) => 1, None => 0, });
-    if let Some(child) = &self.init {
+    if let Some(child) = self.init.as_ref() {
       children.push(child.into());
     }
-    if let Some(child) = &self.test {
+    if let Some(child) = self.test.as_ref() {
       children.push(child.into());
     }
-    if let Some(child) = &self.update {
+    if let Some(child) = self.update.as_ref() {
       children.push(child.into());
     }
     children.push((&self.body).into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ForStmt<'a> {
@@ -9969,55 +10510,53 @@ impl<'a> CastableNode<'a> for ForStmt<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_for_stmt<'a>(ref_node: &'a swc_ecma_ast::ForStmt) -> ForStmt<'a> {
+fn get_view_for_for_stmt<'a>(ref_node: &'a swc_ast::ForStmt, bump: &'a Bump) -> &'a ForStmt<'a> {
   let value = &ref_node.init;
   let field_init = match value {
-    Some(value) => Some(get_view_for_var_decl_or_expr(value)),
+    Some(value) => Some(get_view_for_var_decl_or_expr(value, bump)),
     None => None,
   };
   let value = &ref_node.test;
   let field_test = match value {
-    Some(value) => Some(Box::new(get_view_for_expr(value))),
+    Some(value) => Some(get_view_for_expr(value, bump)),
     None => None,
   };
   let value = &ref_node.update;
   let field_update = match value {
-    Some(value) => Some(Box::new(get_view_for_expr(value))),
+    Some(value) => Some(get_view_for_expr(value, bump)),
     None => None,
   };
   let value = &ref_node.body;
-  let field_body = Box::new(get_view_for_stmt(value));
-  let mut node = ForStmt {
+  let field_body = get_view_for_stmt(value, bump);
+  let node = bump.alloc(ForStmt {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     init: field_init,
     test: field_test,
     update: field_update,
     body: field_body,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ForStmt, &'a ForStmt>(&node) };
-  let parent = Node::ForStmt(child_parent_ref);
-  if let Some(node) = node.init.as_mut() {
-    set_parent_for_var_decl_or_expr(node, parent.clone());
+  });
+  let parent = Node::ForStmt(node);
+  if let Some(child) = node.init.as_ref() {
+    set_parent_for_var_decl_or_expr(child, parent.clone());
   }
-  if let Some(node) = node.test.as_mut() {
-    set_parent_for_expr(node, parent.clone());
+  if let Some(child) = node.test.as_ref() {
+    set_parent_for_expr(child, parent.clone());
   }
-  if let Some(node) = node.update.as_mut() {
-    set_parent_for_expr(node, parent.clone());
+  if let Some(child) = node.update.as_ref() {
+    set_parent_for_expr(child, parent.clone());
   }
-  set_parent_for_stmt(&mut node.body, parent);
+  set_parent_for_stmt(&node.body, parent);
   node
 }
 
 pub struct ObjectPat<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::ObjectPat,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::ObjectPat,
   pub props: Vec<ObjectPatProp<'a>>,
-  pub type_ann: Option<TsTypeAnn<'a>>,
+  pub type_ann: Option<&'a TsTypeAnn<'a>>,
 }
 
 impl<'a> ObjectPat<'a> {
@@ -10033,16 +10572,15 @@ impl<'a> Spanned for ObjectPat<'a> {
   }
 }
 
-impl<'a> From<&ObjectPat<'a>> for Node<'a> {
-  fn from(node: &ObjectPat) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ObjectPat, &'a ObjectPat>(&node) };
-    Node::ObjectPat(static_ref)
+impl<'a> From<&'a ObjectPat<'a>> for Node<'a> {
+  fn from(node: &'a ObjectPat<'a>) -> Node<'a> {
+    Node::ObjectPat(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ObjectPat<'a> {
+impl<'a> NodeTrait<'a> for &'a ObjectPat<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -10050,12 +10588,15 @@ impl<'a> NodeTrait<'a> for ObjectPat<'a> {
     for child in self.props.iter() {
       children.push(child.into());
     }
-    if let Some(child) = &self.type_ann {
+    if let Some(child) = self.type_ann {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ObjectPat<'a> {
@@ -10066,38 +10607,36 @@ impl<'a> CastableNode<'a> for ObjectPat<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_object_pat<'a>(ref_node: &'a swc_ecma_ast::ObjectPat) -> ObjectPat<'a> {
+fn get_view_for_object_pat<'a>(ref_node: &'a swc_ast::ObjectPat, bump: &'a Bump) -> &'a ObjectPat<'a> {
   let value = &ref_node.props;
-  let field_props = value.iter().map(|value| get_view_for_object_pat_prop(value)).collect();
+  let field_props = value.iter().map(|value| get_view_for_object_pat_prop(value, bump)).collect();
   let value = &ref_node.type_ann;
   let field_type_ann = match value {
-    Some(value) => Some(get_view_for_ts_type_ann(value)),
+    Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
     None => None,
   };
-  let mut node = ObjectPat {
+  let node = bump.alloc(ObjectPat {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     props: field_props,
     type_ann: field_type_ann,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ObjectPat, &'a ObjectPat>(&node) };
-  let parent = Node::ObjectPat(child_parent_ref);
-  for node in node.props.iter_mut() {
+  });
+  let parent = Node::ObjectPat(node);
+  for node in node.props.iter() {
     set_parent_for_object_pat_prop(node, parent.clone());
   }
-  if let Some(node) = node.type_ann.as_mut() {
-    node.parent = parent;
+  if let Some(child) = node.type_ann {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 /// `typeof` operator
 pub struct TsTypeQuery<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsTypeQuery,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsTypeQuery,
   pub expr_name: TsTypeQueryExpr<'a>,
 }
 
@@ -10107,16 +10646,15 @@ impl<'a> Spanned for TsTypeQuery<'a> {
   }
 }
 
-impl<'a> From<&TsTypeQuery<'a>> for Node<'a> {
-  fn from(node: &TsTypeQuery) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsTypeQuery, &'a TsTypeQuery>(&node) };
-    Node::TsTypeQuery(static_ref)
+impl<'a> From<&'a TsTypeQuery<'a>> for Node<'a> {
+  fn from(node: &'a TsTypeQuery<'a>) -> Node<'a> {
+    Node::TsTypeQuery(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsTypeQuery<'a> {
+impl<'a> NodeTrait<'a> for &'a TsTypeQuery<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -10125,6 +10663,9 @@ impl<'a> NodeTrait<'a> for TsTypeQuery<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsTypeQuery<'a> {
@@ -10135,26 +10676,24 @@ impl<'a> CastableNode<'a> for TsTypeQuery<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_type_query<'a>(ref_node: &'a swc_ecma_ast::TsTypeQuery) -> TsTypeQuery<'a> {
+fn get_view_for_ts_type_query<'a>(ref_node: &'a swc_ast::TsTypeQuery, bump: &'a Bump) -> &'a TsTypeQuery<'a> {
   let value = &ref_node.expr_name;
-  let field_expr_name = get_view_for_ts_type_query_expr(value);
-  let mut node = TsTypeQuery {
+  let field_expr_name = get_view_for_ts_type_query_expr(value, bump);
+  let node = bump.alloc(TsTypeQuery {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     expr_name: field_expr_name,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsTypeQuery, &'a TsTypeQuery>(&node) };
-  let parent = Node::TsTypeQuery(child_parent_ref);
-  set_parent_for_ts_type_query_expr(&mut node.expr_name, parent);
+  });
+  let parent = Node::TsTypeQuery(node);
+  set_parent_for_ts_type_query_expr(&node.expr_name, parent);
   node
 }
 
 pub struct ThisExpr<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::ThisExpr,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::ThisExpr,
 }
 
 impl<'a> Spanned for ThisExpr<'a> {
@@ -10163,22 +10702,24 @@ impl<'a> Spanned for ThisExpr<'a> {
   }
 }
 
-impl<'a> From<&ThisExpr<'a>> for Node<'a> {
-  fn from(node: &ThisExpr) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ThisExpr, &'a ThisExpr>(&node) };
-    Node::ThisExpr(static_ref)
+impl<'a> From<&'a ThisExpr<'a>> for Node<'a> {
+  fn from(node: &'a ThisExpr<'a>) -> Node<'a> {
+    Node::ThisExpr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ThisExpr<'a> {
+impl<'a> NodeTrait<'a> for &'a ThisExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     Vec::with_capacity(0)
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ThisExpr<'a> {
@@ -10189,20 +10730,19 @@ impl<'a> CastableNode<'a> for ThisExpr<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_this_expr<'a>(ref_node: &'a swc_ecma_ast::ThisExpr) -> ThisExpr<'a> {
-  let node = ThisExpr {
+fn get_view_for_this_expr<'a>(ref_node: &'a swc_ast::ThisExpr, bump: &'a Bump) -> &'a ThisExpr<'a> {
+  let node = bump.alloc(ThisExpr {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
-  };
+    inner_parent: UnsafeCell::new(None),
+  });
   node
 }
 
 pub struct DebuggerStmt<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::DebuggerStmt,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::DebuggerStmt,
 }
 
 impl<'a> Spanned for DebuggerStmt<'a> {
@@ -10211,22 +10751,24 @@ impl<'a> Spanned for DebuggerStmt<'a> {
   }
 }
 
-impl<'a> From<&DebuggerStmt<'a>> for Node<'a> {
-  fn from(node: &DebuggerStmt) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&DebuggerStmt, &'a DebuggerStmt>(&node) };
-    Node::DebuggerStmt(static_ref)
+impl<'a> From<&'a DebuggerStmt<'a>> for Node<'a> {
+  fn from(node: &'a DebuggerStmt<'a>) -> Node<'a> {
+    Node::DebuggerStmt(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for DebuggerStmt<'a> {
+impl<'a> NodeTrait<'a> for &'a DebuggerStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     Vec::with_capacity(0)
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for DebuggerStmt<'a> {
@@ -10237,21 +10779,20 @@ impl<'a> CastableNode<'a> for DebuggerStmt<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_debugger_stmt<'a>(ref_node: &'a swc_ecma_ast::DebuggerStmt) -> DebuggerStmt<'a> {
-  let node = DebuggerStmt {
+fn get_view_for_debugger_stmt<'a>(ref_node: &'a swc_ast::DebuggerStmt, bump: &'a Bump) -> &'a DebuggerStmt<'a> {
+  let node = bump.alloc(DebuggerStmt {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
-  };
+    inner_parent: UnsafeCell::new(None),
+  });
   node
 }
 
 pub struct TsTypeParamDecl<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsTypeParamDecl,
-  pub params: Vec<TsTypeParam<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsTypeParamDecl,
+  pub params: Vec<&'a TsTypeParam<'a>>,
 }
 
 impl<'a> Spanned for TsTypeParamDecl<'a> {
@@ -10260,26 +10801,28 @@ impl<'a> Spanned for TsTypeParamDecl<'a> {
   }
 }
 
-impl<'a> From<&TsTypeParamDecl<'a>> for Node<'a> {
-  fn from(node: &TsTypeParamDecl) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsTypeParamDecl, &'a TsTypeParamDecl>(&node) };
-    Node::TsTypeParamDecl(static_ref)
+impl<'a> From<&'a TsTypeParamDecl<'a>> for Node<'a> {
+  fn from(node: &'a TsTypeParamDecl<'a>) -> Node<'a> {
+    Node::TsTypeParamDecl(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsTypeParamDecl<'a> {
+impl<'a> NodeTrait<'a> for &'a TsTypeParamDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(self.params.len());
     for child in self.params.iter() {
-      children.push(child.into());
+      children.push((*child).into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsTypeParamDecl<'a> {
@@ -10290,30 +10833,28 @@ impl<'a> CastableNode<'a> for TsTypeParamDecl<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_type_param_decl<'a>(ref_node: &'a swc_ecma_ast::TsTypeParamDecl) -> TsTypeParamDecl<'a> {
+fn get_view_for_ts_type_param_decl<'a>(ref_node: &'a swc_ast::TsTypeParamDecl, bump: &'a Bump) -> &'a TsTypeParamDecl<'a> {
   let value = &ref_node.params;
-  let field_params = value.iter().map(|value| get_view_for_ts_type_param(value)).collect();
-  let mut node = TsTypeParamDecl {
+  let field_params = value.iter().map(|value| get_view_for_ts_type_param(value, bump)).collect();
+  let node = bump.alloc(TsTypeParamDecl {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     params: field_params,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsTypeParamDecl, &'a TsTypeParamDecl>(&node) };
-  let parent = Node::TsTypeParamDecl(child_parent_ref);
-  for node in node.params.iter_mut() {
-    node.parent = parent.clone();
+  });
+  let parent = Node::TsTypeParamDecl(node);
+  for node in node.params.iter() {
+    unsafe { *node.inner_parent.get() = Some(parent.clone()); }
   }
   node
 }
 
 pub struct TsTypeAssertion<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsTypeAssertion,
-  pub expr: Box<Expr<'a>>,
-  pub type_ann: Box<TsType<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsTypeAssertion,
+  pub expr: Expr<'a>,
+  pub type_ann: TsType<'a>,
 }
 
 impl<'a> Spanned for TsTypeAssertion<'a> {
@@ -10322,16 +10863,15 @@ impl<'a> Spanned for TsTypeAssertion<'a> {
   }
 }
 
-impl<'a> From<&TsTypeAssertion<'a>> for Node<'a> {
-  fn from(node: &TsTypeAssertion) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsTypeAssertion, &'a TsTypeAssertion>(&node) };
-    Node::TsTypeAssertion(static_ref)
+impl<'a> From<&'a TsTypeAssertion<'a>> for Node<'a> {
+  fn from(node: &'a TsTypeAssertion<'a>) -> Node<'a> {
+    Node::TsTypeAssertion(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsTypeAssertion<'a> {
+impl<'a> NodeTrait<'a> for &'a TsTypeAssertion<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -10341,6 +10881,9 @@ impl<'a> NodeTrait<'a> for TsTypeAssertion<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsTypeAssertion<'a> {
@@ -10351,32 +10894,30 @@ impl<'a> CastableNode<'a> for TsTypeAssertion<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_type_assertion<'a>(ref_node: &'a swc_ecma_ast::TsTypeAssertion) -> TsTypeAssertion<'a> {
+fn get_view_for_ts_type_assertion<'a>(ref_node: &'a swc_ast::TsTypeAssertion, bump: &'a Bump) -> &'a TsTypeAssertion<'a> {
   let value = &ref_node.expr;
-  let field_expr = Box::new(get_view_for_expr(value));
+  let field_expr = get_view_for_expr(value, bump);
   let value = &ref_node.type_ann;
-  let field_type_ann = Box::new(get_view_for_ts_type(value));
-  let mut node = TsTypeAssertion {
+  let field_type_ann = get_view_for_ts_type(value, bump);
+  let node = bump.alloc(TsTypeAssertion {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     expr: field_expr,
     type_ann: field_type_ann,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsTypeAssertion, &'a TsTypeAssertion>(&node) };
-  let parent = Node::TsTypeAssertion(child_parent_ref);
-  set_parent_for_expr(&mut node.expr, parent.clone());
-  set_parent_for_ts_type(&mut node.type_ann, parent);
+  });
+  let parent = Node::TsTypeAssertion(node);
+  set_parent_for_expr(&node.expr, parent.clone());
+  set_parent_for_ts_type(&node.type_ann, parent);
   node
 }
 
 pub struct TplElement<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TplElement,
-  pub cooked: Option<Str<'a>>,
-  pub raw: Str<'a>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TplElement,
+  pub cooked: Option<&'a Str<'a>>,
+  pub raw: &'a Str<'a>,
 }
 
 impl<'a> TplElement<'a> {
@@ -10391,27 +10932,29 @@ impl<'a> Spanned for TplElement<'a> {
   }
 }
 
-impl<'a> From<&TplElement<'a>> for Node<'a> {
-  fn from(node: &TplElement) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TplElement, &'a TplElement>(&node) };
-    Node::TplElement(static_ref)
+impl<'a> From<&'a TplElement<'a>> for Node<'a> {
+  fn from(node: &'a TplElement<'a>) -> Node<'a> {
+    Node::TplElement(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TplElement<'a> {
+impl<'a> NodeTrait<'a> for &'a TplElement<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.cooked { Some(_value) => 1, None => 0, });
-    if let Some(child) = &self.cooked {
+    if let Some(child) = self.cooked {
       children.push(child.into());
     }
-    children.push((&self.raw).into());
+    children.push(self.raw.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TplElement<'a> {
@@ -10422,35 +10965,33 @@ impl<'a> CastableNode<'a> for TplElement<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_tpl_element<'a>(ref_node: &'a swc_ecma_ast::TplElement) -> TplElement<'a> {
+fn get_view_for_tpl_element<'a>(ref_node: &'a swc_ast::TplElement, bump: &'a Bump) -> &'a TplElement<'a> {
   let value = &ref_node.cooked;
   let field_cooked = match value {
-    Some(value) => Some(get_view_for_str(value)),
+    Some(value) => Some(get_view_for_str(value, bump)),
     None => None,
   };
   let value = &ref_node.raw;
-  let field_raw = get_view_for_str(value);
-  let mut node = TplElement {
+  let field_raw = get_view_for_str(value, bump);
+  let node = bump.alloc(TplElement {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     cooked: field_cooked,
     raw: field_raw,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TplElement, &'a TplElement>(&node) };
-  let parent = Node::TplElement(child_parent_ref);
-  if let Some(node) = node.cooked.as_mut() {
-    node.parent = parent.clone();
+  });
+  let parent = Node::TplElement(node);
+  if let Some(child) = node.cooked {
+    unsafe { *child.inner_parent.get() = Some(parent.clone()); }
   }
-  node.raw.parent = parent;
+  unsafe { *node.raw.inner_parent.get() = Some(parent); }
   node
 }
 
 pub struct TsKeywordType<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsKeywordType,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsKeywordType,
 }
 
 impl<'a> TsKeywordType<'a> {
@@ -10465,22 +11006,24 @@ impl<'a> Spanned for TsKeywordType<'a> {
   }
 }
 
-impl<'a> From<&TsKeywordType<'a>> for Node<'a> {
-  fn from(node: &TsKeywordType) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsKeywordType, &'a TsKeywordType>(&node) };
-    Node::TsKeywordType(static_ref)
+impl<'a> From<&'a TsKeywordType<'a>> for Node<'a> {
+  fn from(node: &'a TsKeywordType<'a>) -> Node<'a> {
+    Node::TsKeywordType(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsKeywordType<'a> {
+impl<'a> NodeTrait<'a> for &'a TsKeywordType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     Vec::with_capacity(0)
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsKeywordType<'a> {
@@ -10491,21 +11034,20 @@ impl<'a> CastableNode<'a> for TsKeywordType<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_keyword_type<'a>(ref_node: &'a swc_ecma_ast::TsKeywordType) -> TsKeywordType<'a> {
-  let node = TsKeywordType {
+fn get_view_for_ts_keyword_type<'a>(ref_node: &'a swc_ast::TsKeywordType, bump: &'a Bump) -> &'a TsKeywordType<'a> {
+  let node = bump.alloc(TsKeywordType {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
-  };
+    inner_parent: UnsafeCell::new(None),
+  });
   node
 }
 
 pub struct JSXSpreadChild<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::JSXSpreadChild,
-  pub expr: Box<Expr<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::JSXSpreadChild,
+  pub expr: Expr<'a>,
 }
 
 impl<'a> Spanned for JSXSpreadChild<'a> {
@@ -10514,16 +11056,15 @@ impl<'a> Spanned for JSXSpreadChild<'a> {
   }
 }
 
-impl<'a> From<&JSXSpreadChild<'a>> for Node<'a> {
-  fn from(node: &JSXSpreadChild) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&JSXSpreadChild, &'a JSXSpreadChild>(&node) };
-    Node::JSXSpreadChild(static_ref)
+impl<'a> From<&'a JSXSpreadChild<'a>> for Node<'a> {
+  fn from(node: &'a JSXSpreadChild<'a>) -> Node<'a> {
+    Node::JSXSpreadChild(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for JSXSpreadChild<'a> {
+impl<'a> NodeTrait<'a> for &'a JSXSpreadChild<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -10532,6 +11073,9 @@ impl<'a> NodeTrait<'a> for JSXSpreadChild<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for JSXSpreadChild<'a> {
@@ -10542,27 +11086,25 @@ impl<'a> CastableNode<'a> for JSXSpreadChild<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_jsxspread_child<'a>(ref_node: &'a swc_ecma_ast::JSXSpreadChild) -> JSXSpreadChild<'a> {
+fn get_view_for_jsxspread_child<'a>(ref_node: &'a swc_ast::JSXSpreadChild, bump: &'a Bump) -> &'a JSXSpreadChild<'a> {
   let value = &ref_node.expr;
-  let field_expr = Box::new(get_view_for_expr(value));
-  let mut node = JSXSpreadChild {
+  let field_expr = get_view_for_expr(value, bump);
+  let node = bump.alloc(JSXSpreadChild {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     expr: field_expr,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&JSXSpreadChild, &'a JSXSpreadChild>(&node) };
-  let parent = Node::JSXSpreadChild(child_parent_ref);
-  set_parent_for_expr(&mut node.expr, parent);
+  });
+  let parent = Node::JSXSpreadChild(node);
+  set_parent_for_expr(&node.expr, parent);
   node
 }
 
 pub struct TsIntersectionType<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsIntersectionType,
-  pub types: Vec<Box<TsType<'a>>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsIntersectionType,
+  pub types: Vec<TsType<'a>>,
 }
 
 impl<'a> Spanned for TsIntersectionType<'a> {
@@ -10571,16 +11113,15 @@ impl<'a> Spanned for TsIntersectionType<'a> {
   }
 }
 
-impl<'a> From<&TsIntersectionType<'a>> for Node<'a> {
-  fn from(node: &TsIntersectionType) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsIntersectionType, &'a TsIntersectionType>(&node) };
-    Node::TsIntersectionType(static_ref)
+impl<'a> From<&'a TsIntersectionType<'a>> for Node<'a> {
+  fn from(node: &'a TsIntersectionType<'a>) -> Node<'a> {
+    Node::TsIntersectionType(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsIntersectionType<'a> {
+impl<'a> NodeTrait<'a> for &'a TsIntersectionType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -10591,6 +11132,9 @@ impl<'a> NodeTrait<'a> for TsIntersectionType<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsIntersectionType<'a> {
@@ -10601,30 +11145,28 @@ impl<'a> CastableNode<'a> for TsIntersectionType<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_intersection_type<'a>(ref_node: &'a swc_ecma_ast::TsIntersectionType) -> TsIntersectionType<'a> {
+fn get_view_for_ts_intersection_type<'a>(ref_node: &'a swc_ast::TsIntersectionType, bump: &'a Bump) -> &'a TsIntersectionType<'a> {
   let value = &ref_node.types;
-  let field_types = value.iter().map(|value| Box::new(get_view_for_ts_type(value))).collect();
-  let mut node = TsIntersectionType {
+  let field_types = value.iter().map(|value| get_view_for_ts_type(value, bump)).collect();
+  let node = bump.alloc(TsIntersectionType {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     types: field_types,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsIntersectionType, &'a TsIntersectionType>(&node) };
-  let parent = Node::TsIntersectionType(child_parent_ref);
-  for node in node.types.iter_mut() {
+  });
+  let parent = Node::TsIntersectionType(node);
+  for node in node.types.iter() {
     set_parent_for_ts_type(node, parent.clone());
   }
   node
 }
 
 pub struct MetaPropExpr<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::MetaPropExpr,
-  pub meta: Ident<'a>,
-  pub prop: Ident<'a>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::MetaPropExpr,
+  pub meta: &'a Ident<'a>,
+  pub prop: &'a Ident<'a>,
 }
 
 impl<'a> Spanned for MetaPropExpr<'a> {
@@ -10633,25 +11175,27 @@ impl<'a> Spanned for MetaPropExpr<'a> {
   }
 }
 
-impl<'a> From<&MetaPropExpr<'a>> for Node<'a> {
-  fn from(node: &MetaPropExpr) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&MetaPropExpr, &'a MetaPropExpr>(&node) };
-    Node::MetaPropExpr(static_ref)
+impl<'a> From<&'a MetaPropExpr<'a>> for Node<'a> {
+  fn from(node: &'a MetaPropExpr<'a>) -> Node<'a> {
+    Node::MetaPropExpr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for MetaPropExpr<'a> {
+impl<'a> NodeTrait<'a> for &'a MetaPropExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(2);
-    children.push((&self.meta).into());
-    children.push((&self.prop).into());
+    children.push(self.meta.into());
+    children.push(self.prop.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for MetaPropExpr<'a> {
@@ -10662,31 +11206,29 @@ impl<'a> CastableNode<'a> for MetaPropExpr<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_meta_prop_expr<'a>(ref_node: &'a swc_ecma_ast::MetaPropExpr) -> MetaPropExpr<'a> {
+fn get_view_for_meta_prop_expr<'a>(ref_node: &'a swc_ast::MetaPropExpr, bump: &'a Bump) -> &'a MetaPropExpr<'a> {
   let value = &ref_node.meta;
-  let field_meta = get_view_for_ident(value);
+  let field_meta = get_view_for_ident(value, bump);
   let value = &ref_node.prop;
-  let field_prop = get_view_for_ident(value);
-  let mut node = MetaPropExpr {
+  let field_prop = get_view_for_ident(value, bump);
+  let node = bump.alloc(MetaPropExpr {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     meta: field_meta,
     prop: field_prop,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&MetaPropExpr, &'a MetaPropExpr>(&node) };
-  let parent = Node::MetaPropExpr(child_parent_ref);
-  node.meta.parent = parent.clone();
-  node.prop.parent = parent;
+  });
+  let parent = Node::MetaPropExpr(node);
+  unsafe { *node.meta.inner_parent.get() = Some(parent.clone()); }
+  unsafe { *node.prop.inner_parent.get() = Some(parent); }
   node
 }
 
 pub struct ExprOrSpread<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::ExprOrSpread,
-  pub expr: Box<Expr<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::ExprOrSpread,
+  pub expr: Expr<'a>,
 }
 
 impl<'a> ExprOrSpread<'a> {
@@ -10701,16 +11243,15 @@ impl<'a> Spanned for ExprOrSpread<'a> {
   }
 }
 
-impl<'a> From<&ExprOrSpread<'a>> for Node<'a> {
-  fn from(node: &ExprOrSpread) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ExprOrSpread, &'a ExprOrSpread>(&node) };
-    Node::ExprOrSpread(static_ref)
+impl<'a> From<&'a ExprOrSpread<'a>> for Node<'a> {
+  fn from(node: &'a ExprOrSpread<'a>) -> Node<'a> {
+    Node::ExprOrSpread(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ExprOrSpread<'a> {
+impl<'a> NodeTrait<'a> for &'a ExprOrSpread<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -10719,6 +11260,9 @@ impl<'a> NodeTrait<'a> for ExprOrSpread<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ExprOrSpread<'a> {
@@ -10729,27 +11273,25 @@ impl<'a> CastableNode<'a> for ExprOrSpread<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_expr_or_spread<'a>(ref_node: &'a swc_ecma_ast::ExprOrSpread) -> ExprOrSpread<'a> {
+fn get_view_for_expr_or_spread<'a>(ref_node: &'a swc_ast::ExprOrSpread, bump: &'a Bump) -> &'a ExprOrSpread<'a> {
   let value = &ref_node.expr;
-  let field_expr = Box::new(get_view_for_expr(value));
-  let mut node = ExprOrSpread {
+  let field_expr = get_view_for_expr(value, bump);
+  let node = bump.alloc(ExprOrSpread {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     expr: field_expr,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ExprOrSpread, &'a ExprOrSpread>(&node) };
-  let parent = Node::ExprOrSpread(child_parent_ref);
-  set_parent_for_expr(&mut node.expr, parent);
+  });
+  let parent = Node::ExprOrSpread(node);
+  set_parent_for_expr(&node.expr, parent);
   node
 }
 
 pub struct TsArrayType<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsArrayType,
-  pub elem_type: Box<TsType<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsArrayType,
+  pub elem_type: TsType<'a>,
 }
 
 impl<'a> Spanned for TsArrayType<'a> {
@@ -10758,16 +11300,15 @@ impl<'a> Spanned for TsArrayType<'a> {
   }
 }
 
-impl<'a> From<&TsArrayType<'a>> for Node<'a> {
-  fn from(node: &TsArrayType) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsArrayType, &'a TsArrayType>(&node) };
-    Node::TsArrayType(static_ref)
+impl<'a> From<&'a TsArrayType<'a>> for Node<'a> {
+  fn from(node: &'a TsArrayType<'a>) -> Node<'a> {
+    Node::TsArrayType(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsArrayType<'a> {
+impl<'a> NodeTrait<'a> for &'a TsArrayType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -10776,6 +11317,9 @@ impl<'a> NodeTrait<'a> for TsArrayType<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsArrayType<'a> {
@@ -10786,28 +11330,26 @@ impl<'a> CastableNode<'a> for TsArrayType<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_array_type<'a>(ref_node: &'a swc_ecma_ast::TsArrayType) -> TsArrayType<'a> {
+fn get_view_for_ts_array_type<'a>(ref_node: &'a swc_ast::TsArrayType, bump: &'a Bump) -> &'a TsArrayType<'a> {
   let value = &ref_node.elem_type;
-  let field_elem_type = Box::new(get_view_for_ts_type(value));
-  let mut node = TsArrayType {
+  let field_elem_type = get_view_for_ts_type(value, bump);
+  let node = bump.alloc(TsArrayType {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     elem_type: field_elem_type,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsArrayType, &'a TsArrayType>(&node) };
-  let parent = Node::TsArrayType(child_parent_ref);
-  set_parent_for_ts_type(&mut node.elem_type, parent);
+  });
+  let parent = Node::TsArrayType(node);
+  set_parent_for_ts_type(&node.elem_type, parent);
   node
 }
 
 pub struct TsTypeRef<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsTypeRef,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsTypeRef,
   pub type_name: TsEntityName<'a>,
-  pub type_params: Option<TsTypeParamInstantiation<'a>>,
+  pub type_params: Option<&'a TsTypeParamInstantiation<'a>>,
 }
 
 impl<'a> Spanned for TsTypeRef<'a> {
@@ -10816,27 +11358,29 @@ impl<'a> Spanned for TsTypeRef<'a> {
   }
 }
 
-impl<'a> From<&TsTypeRef<'a>> for Node<'a> {
-  fn from(node: &TsTypeRef) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsTypeRef, &'a TsTypeRef>(&node) };
-    Node::TsTypeRef(static_ref)
+impl<'a> From<&'a TsTypeRef<'a>> for Node<'a> {
+  fn from(node: &'a TsTypeRef<'a>) -> Node<'a> {
+    Node::TsTypeRef(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsTypeRef<'a> {
+impl<'a> NodeTrait<'a> for &'a TsTypeRef<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.type_params { Some(_value) => 1, None => 0, });
     children.push((&self.type_name).into());
-    if let Some(child) = &self.type_params {
+    if let Some(child) = self.type_params {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsTypeRef<'a> {
@@ -10847,35 +11391,33 @@ impl<'a> CastableNode<'a> for TsTypeRef<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_type_ref<'a>(ref_node: &'a swc_ecma_ast::TsTypeRef) -> TsTypeRef<'a> {
+fn get_view_for_ts_type_ref<'a>(ref_node: &'a swc_ast::TsTypeRef, bump: &'a Bump) -> &'a TsTypeRef<'a> {
   let value = &ref_node.type_name;
-  let field_type_name = get_view_for_ts_entity_name(value);
+  let field_type_name = get_view_for_ts_entity_name(value, bump);
   let value = &ref_node.type_params;
   let field_type_params = match value {
-    Some(value) => Some(get_view_for_ts_type_param_instantiation(value)),
+    Some(value) => Some(get_view_for_ts_type_param_instantiation(value, bump)),
     None => None,
   };
-  let mut node = TsTypeRef {
+  let node = bump.alloc(TsTypeRef {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     type_name: field_type_name,
     type_params: field_type_params,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsTypeRef, &'a TsTypeRef>(&node) };
-  let parent = Node::TsTypeRef(child_parent_ref);
-  set_parent_for_ts_entity_name(&mut node.type_name, parent.clone());
-  if let Some(node) = node.type_params.as_mut() {
-    node.parent = parent;
+  });
+  let parent = Node::TsTypeRef(node);
+  set_parent_for_ts_entity_name(&node.type_name, parent.clone());
+  if let Some(child) = node.type_params {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 pub struct TsThisType<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsThisType,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsThisType,
 }
 
 impl<'a> Spanned for TsThisType<'a> {
@@ -10884,22 +11426,24 @@ impl<'a> Spanned for TsThisType<'a> {
   }
 }
 
-impl<'a> From<&TsThisType<'a>> for Node<'a> {
-  fn from(node: &TsThisType) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsThisType, &'a TsThisType>(&node) };
-    Node::TsThisType(static_ref)
+impl<'a> From<&'a TsThisType<'a>> for Node<'a> {
+  fn from(node: &'a TsThisType<'a>) -> Node<'a> {
+    Node::TsThisType(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsThisType<'a> {
+impl<'a> NodeTrait<'a> for &'a TsThisType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     Vec::with_capacity(0)
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsThisType<'a> {
@@ -10910,23 +11454,22 @@ impl<'a> CastableNode<'a> for TsThisType<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_this_type<'a>(ref_node: &'a swc_ecma_ast::TsThisType) -> TsThisType<'a> {
-  let node = TsThisType {
+fn get_view_for_ts_this_type<'a>(ref_node: &'a swc_ast::TsThisType, bump: &'a Bump) -> &'a TsThisType<'a> {
+  let node = bump.alloc(TsThisType {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
-  };
+    inner_parent: UnsafeCell::new(None),
+  });
   node
 }
 
 pub struct TryStmt<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TryStmt,
-  pub block: BlockStmt<'a>,
-  pub handler: Option<CatchClause<'a>>,
-  pub finalizer: Option<BlockStmt<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TryStmt,
+  pub block: &'a BlockStmt<'a>,
+  pub handler: Option<&'a CatchClause<'a>>,
+  pub finalizer: Option<&'a BlockStmt<'a>>,
 }
 
 impl<'a> Spanned for TryStmt<'a> {
@@ -10935,30 +11478,32 @@ impl<'a> Spanned for TryStmt<'a> {
   }
 }
 
-impl<'a> From<&TryStmt<'a>> for Node<'a> {
-  fn from(node: &TryStmt) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TryStmt, &'a TryStmt>(&node) };
-    Node::TryStmt(static_ref)
+impl<'a> From<&'a TryStmt<'a>> for Node<'a> {
+  fn from(node: &'a TryStmt<'a>) -> Node<'a> {
+    Node::TryStmt(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TryStmt<'a> {
+impl<'a> NodeTrait<'a> for &'a TryStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.handler { Some(_value) => 1, None => 0, } + match &self.finalizer { Some(_value) => 1, None => 0, });
-    children.push((&self.block).into());
-    if let Some(child) = &self.handler {
+    children.push(self.block.into());
+    if let Some(child) = self.handler {
       children.push(child.into());
     }
-    if let Some(child) = &self.finalizer {
+    if let Some(child) = self.finalizer {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TryStmt<'a> {
@@ -10969,47 +11514,45 @@ impl<'a> CastableNode<'a> for TryStmt<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_try_stmt<'a>(ref_node: &'a swc_ecma_ast::TryStmt) -> TryStmt<'a> {
+fn get_view_for_try_stmt<'a>(ref_node: &'a swc_ast::TryStmt, bump: &'a Bump) -> &'a TryStmt<'a> {
   let value = &ref_node.block;
-  let field_block = get_view_for_block_stmt(value);
+  let field_block = get_view_for_block_stmt(value, bump);
   let value = &ref_node.handler;
   let field_handler = match value {
-    Some(value) => Some(get_view_for_catch_clause(value)),
+    Some(value) => Some(get_view_for_catch_clause(value, bump)),
     None => None,
   };
   let value = &ref_node.finalizer;
   let field_finalizer = match value {
-    Some(value) => Some(get_view_for_block_stmt(value)),
+    Some(value) => Some(get_view_for_block_stmt(value, bump)),
     None => None,
   };
-  let mut node = TryStmt {
+  let node = bump.alloc(TryStmt {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     block: field_block,
     handler: field_handler,
     finalizer: field_finalizer,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TryStmt, &'a TryStmt>(&node) };
-  let parent = Node::TryStmt(child_parent_ref);
-  node.block.parent = parent.clone();
-  if let Some(node) = node.handler.as_mut() {
-    node.parent = parent.to::<TryStmt>();
+  });
+  let parent = Node::TryStmt(node);
+  unsafe { *node.block.inner_parent.get() = Some(parent.clone()); }
+  if let Some(child) = node.handler {
+    unsafe { *child.inner_parent.get() = Some(parent.to::<TryStmt>()); }
   }
-  if let Some(node) = node.finalizer.as_mut() {
-    node.parent = parent;
+  if let Some(child) = node.finalizer {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 pub struct CallExpr<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::CallExpr,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::CallExpr,
   pub callee: ExprOrSuper<'a>,
-  pub args: Vec<ExprOrSpread<'a>>,
-  pub type_args: Option<TsTypeParamInstantiation<'a>>,
+  pub args: Vec<&'a ExprOrSpread<'a>>,
+  pub type_args: Option<&'a TsTypeParamInstantiation<'a>>,
 }
 
 impl<'a> Spanned for CallExpr<'a> {
@@ -11018,30 +11561,32 @@ impl<'a> Spanned for CallExpr<'a> {
   }
 }
 
-impl<'a> From<&CallExpr<'a>> for Node<'a> {
-  fn from(node: &CallExpr) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&CallExpr, &'a CallExpr>(&node) };
-    Node::CallExpr(static_ref)
+impl<'a> From<&'a CallExpr<'a>> for Node<'a> {
+  fn from(node: &'a CallExpr<'a>) -> Node<'a> {
+    Node::CallExpr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for CallExpr<'a> {
+impl<'a> NodeTrait<'a> for &'a CallExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + self.args.len() + match &self.type_args { Some(_value) => 1, None => 0, });
     children.push((&self.callee).into());
     for child in self.args.iter() {
-      children.push(child.into());
+      children.push((*child).into());
     }
-    if let Some(child) = &self.type_args {
+    if let Some(child) = self.type_args {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for CallExpr<'a> {
@@ -11052,44 +11597,42 @@ impl<'a> CastableNode<'a> for CallExpr<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_call_expr<'a>(ref_node: &'a swc_ecma_ast::CallExpr) -> CallExpr<'a> {
+fn get_view_for_call_expr<'a>(ref_node: &'a swc_ast::CallExpr, bump: &'a Bump) -> &'a CallExpr<'a> {
   let value = &ref_node.callee;
-  let field_callee = get_view_for_expr_or_super(value);
+  let field_callee = get_view_for_expr_or_super(value, bump);
   let value = &ref_node.args;
-  let field_args = value.iter().map(|value| get_view_for_expr_or_spread(value)).collect();
+  let field_args = value.iter().map(|value| get_view_for_expr_or_spread(value, bump)).collect();
   let value = &ref_node.type_args;
   let field_type_args = match value {
-    Some(value) => Some(get_view_for_ts_type_param_instantiation(value)),
+    Some(value) => Some(get_view_for_ts_type_param_instantiation(value, bump)),
     None => None,
   };
-  let mut node = CallExpr {
+  let node = bump.alloc(CallExpr {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     callee: field_callee,
     args: field_args,
     type_args: field_type_args,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&CallExpr, &'a CallExpr>(&node) };
-  let parent = Node::CallExpr(child_parent_ref);
-  set_parent_for_expr_or_super(&mut node.callee, parent.clone());
-  for node in node.args.iter_mut() {
-    node.parent = parent.clone();
+  });
+  let parent = Node::CallExpr(node);
+  set_parent_for_expr_or_super(&node.callee, parent.clone());
+  for node in node.args.iter() {
+    unsafe { *node.inner_parent.get() = Some(parent.clone()); }
   }
-  if let Some(node) = node.type_args.as_mut() {
-    node.parent = parent;
+  if let Some(child) = node.type_args {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 pub struct TsMappedType<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsMappedType,
-  pub type_param: TsTypeParam<'a>,
-  pub name_type: Option<Box<TsType<'a>>>,
-  pub type_ann: Option<Box<TsType<'a>>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsMappedType,
+  pub type_param: &'a TsTypeParam<'a>,
+  pub name_type: Option<TsType<'a>>,
+  pub type_ann: Option<TsType<'a>>,
 }
 
 impl<'a> TsMappedType<'a> {
@@ -11108,30 +11651,32 @@ impl<'a> Spanned for TsMappedType<'a> {
   }
 }
 
-impl<'a> From<&TsMappedType<'a>> for Node<'a> {
-  fn from(node: &TsMappedType) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsMappedType, &'a TsMappedType>(&node) };
-    Node::TsMappedType(static_ref)
+impl<'a> From<&'a TsMappedType<'a>> for Node<'a> {
+  fn from(node: &'a TsMappedType<'a>) -> Node<'a> {
+    Node::TsMappedType(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsMappedType<'a> {
+impl<'a> NodeTrait<'a> for &'a TsMappedType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.name_type { Some(_value) => 1, None => 0, } + match &self.type_ann { Some(_value) => 1, None => 0, });
-    children.push((&self.type_param).into());
-    if let Some(child) = &self.name_type {
+    children.push(self.type_param.into());
+    if let Some(child) = self.name_type.as_ref() {
       children.push(child.into());
     }
-    if let Some(child) = &self.type_ann {
+    if let Some(child) = self.type_ann.as_ref() {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsMappedType<'a> {
@@ -11142,44 +11687,42 @@ impl<'a> CastableNode<'a> for TsMappedType<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_mapped_type<'a>(ref_node: &'a swc_ecma_ast::TsMappedType) -> TsMappedType<'a> {
+fn get_view_for_ts_mapped_type<'a>(ref_node: &'a swc_ast::TsMappedType, bump: &'a Bump) -> &'a TsMappedType<'a> {
   let value = &ref_node.type_param;
-  let field_type_param = get_view_for_ts_type_param(value);
+  let field_type_param = get_view_for_ts_type_param(value, bump);
   let value = &ref_node.name_type;
   let field_name_type = match value {
-    Some(value) => Some(Box::new(get_view_for_ts_type(value))),
+    Some(value) => Some(get_view_for_ts_type(value, bump)),
     None => None,
   };
   let value = &ref_node.type_ann;
   let field_type_ann = match value {
-    Some(value) => Some(Box::new(get_view_for_ts_type(value))),
+    Some(value) => Some(get_view_for_ts_type(value, bump)),
     None => None,
   };
-  let mut node = TsMappedType {
+  let node = bump.alloc(TsMappedType {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     type_param: field_type_param,
     name_type: field_name_type,
     type_ann: field_type_ann,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsMappedType, &'a TsMappedType>(&node) };
-  let parent = Node::TsMappedType(child_parent_ref);
-  node.type_param.parent = parent.clone();
-  if let Some(node) = node.name_type.as_mut() {
-    set_parent_for_ts_type(node, parent.clone());
+  });
+  let parent = Node::TsMappedType(node);
+  unsafe { *node.type_param.inner_parent.get() = Some(parent.clone()); }
+  if let Some(child) = node.name_type.as_ref() {
+    set_parent_for_ts_type(child, parent.clone());
   }
-  if let Some(node) = node.type_ann.as_mut() {
-    set_parent_for_ts_type(node, parent);
+  if let Some(child) = node.type_ann.as_ref() {
+    set_parent_for_ts_type(child, parent);
   }
   node
 }
 
 pub struct JSXExprContainer<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::JSXExprContainer,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::JSXExprContainer,
   pub expr: JSXExpr<'a>,
 }
 
@@ -11189,16 +11732,15 @@ impl<'a> Spanned for JSXExprContainer<'a> {
   }
 }
 
-impl<'a> From<&JSXExprContainer<'a>> for Node<'a> {
-  fn from(node: &JSXExprContainer) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&JSXExprContainer, &'a JSXExprContainer>(&node) };
-    Node::JSXExprContainer(static_ref)
+impl<'a> From<&'a JSXExprContainer<'a>> for Node<'a> {
+  fn from(node: &'a JSXExprContainer<'a>) -> Node<'a> {
+    Node::JSXExprContainer(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for JSXExprContainer<'a> {
+impl<'a> NodeTrait<'a> for &'a JSXExprContainer<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -11207,6 +11749,9 @@ impl<'a> NodeTrait<'a> for JSXExprContainer<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for JSXExprContainer<'a> {
@@ -11217,30 +11762,28 @@ impl<'a> CastableNode<'a> for JSXExprContainer<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_jsxexpr_container<'a>(ref_node: &'a swc_ecma_ast::JSXExprContainer) -> JSXExprContainer<'a> {
+fn get_view_for_jsxexpr_container<'a>(ref_node: &'a swc_ast::JSXExprContainer, bump: &'a Bump) -> &'a JSXExprContainer<'a> {
   let value = &ref_node.expr;
-  let field_expr = get_view_for_jsxexpr(value);
-  let mut node = JSXExprContainer {
+  let field_expr = get_view_for_jsxexpr(value, bump);
+  let node = bump.alloc(JSXExprContainer {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     expr: field_expr,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&JSXExprContainer, &'a JSXExprContainer>(&node) };
-  let parent = Node::JSXExprContainer(child_parent_ref);
-  set_parent_for_jsxexpr(&mut node.expr, parent);
+  });
+  let parent = Node::JSXExprContainer(node);
+  set_parent_for_jsxexpr(&node.expr, parent);
   node
 }
 
 pub struct PrivateProp<'a> {
-  pub parent: &'a Class<'a>,
-  pub inner: &'a swc_ecma_ast::PrivateProp,
-  pub key: PrivateName<'a>,
-  pub value: Option<Box<Expr<'a>>>,
-  pub type_ann: Option<TsTypeAnn<'a>>,
-  pub decorators: Vec<Decorator<'a>>,
+  inner_parent: UnsafeCell<Option<&'a Class<'a>>>,
+  pub inner: &'a swc_ast::PrivateProp,
+  pub key: &'a PrivateName<'a>,
+  pub value: Option<Expr<'a>>,
+  pub type_ann: Option<&'a TsTypeAnn<'a>>,
+  pub decorators: Vec<&'a Decorator<'a>>,
 }
 
 impl<'a> PrivateProp<'a> {
@@ -11281,33 +11824,35 @@ impl<'a> Spanned for PrivateProp<'a> {
   }
 }
 
-impl<'a> From<&PrivateProp<'a>> for Node<'a> {
-  fn from(node: &PrivateProp) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&PrivateProp, &'a PrivateProp>(&node) };
-    Node::PrivateProp(static_ref)
+impl<'a> From<&'a PrivateProp<'a>> for Node<'a> {
+  fn from(node: &'a PrivateProp<'a>) -> Node<'a> {
+    Node::PrivateProp(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for PrivateProp<'a> {
+impl<'a> NodeTrait<'a> for &'a PrivateProp<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.value { Some(_value) => 1, None => 0, } + match &self.type_ann { Some(_value) => 1, None => 0, } + self.decorators.len());
-    children.push((&self.key).into());
-    if let Some(child) = &self.value {
+    children.push(self.key.into());
+    if let Some(child) = self.value.as_ref() {
       children.push(child.into());
     }
-    if let Some(child) = &self.type_ann {
+    if let Some(child) = self.type_ann {
       children.push(child.into());
     }
     for child in self.decorators.iter() {
-      children.push(child.into());
+      children.push((*child).into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for PrivateProp<'a> {
@@ -11318,43 +11863,41 @@ impl<'a> CastableNode<'a> for PrivateProp<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_private_prop<'a>(ref_node: &'a swc_ecma_ast::PrivateProp) -> PrivateProp<'a> {
+fn get_view_for_private_prop<'a>(ref_node: &'a swc_ast::PrivateProp, bump: &'a Bump) -> &'a PrivateProp<'a> {
   let value = &ref_node.key;
-  let field_key = get_view_for_private_name(value);
+  let field_key = get_view_for_private_name(value, bump);
   let value = &ref_node.value;
   let field_value = match value {
-    Some(value) => Some(Box::new(get_view_for_expr(value))),
+    Some(value) => Some(get_view_for_expr(value, bump)),
     None => None,
   };
   let value = &ref_node.type_ann;
   let field_type_ann = match value {
-    Some(value) => Some(get_view_for_ts_type_ann(value)),
+    Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
     None => None,
   };
   let value = &ref_node.decorators;
-  let field_decorators = value.iter().map(|value| get_view_for_decorator(value)).collect();
-  let mut node = PrivateProp {
+  let field_decorators = value.iter().map(|value| get_view_for_decorator(value, bump)).collect();
+  let node = bump.alloc(PrivateProp {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     key: field_key,
     value: field_value,
     type_ann: field_type_ann,
     decorators: field_decorators,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&PrivateProp, &'a PrivateProp>(&node) };
-  let parent = Node::PrivateProp(child_parent_ref);
-  node.key.parent = parent.clone();
-  if let Some(node) = node.value.as_mut() {
-    set_parent_for_expr(node, parent.clone());
+  });
+  let parent = Node::PrivateProp(node);
+  unsafe { *node.key.inner_parent.get() = Some(parent.clone()); }
+  if let Some(child) = node.value.as_ref() {
+    set_parent_for_expr(child, parent.clone());
   }
-  if let Some(node) = node.type_ann.as_mut() {
-    node.parent = parent.clone();
+  if let Some(child) = node.type_ann {
+    unsafe { *child.inner_parent.get() = Some(parent.clone()); }
   }
-  for node in node.decorators.iter_mut() {
-    node.parent = parent.clone();
+  for node in node.decorators.iter() {
+    unsafe { *node.inner_parent.get() = Some(parent.clone()); }
   }
   node
 }
@@ -11363,9 +11906,9 @@ fn get_view_for_private_prop<'a>(ref_node: &'a swc_ecma_ast::PrivateProp) -> Pri
 /// `export =`. But for @babel/parser, `export default` is an ExportDefaultDecl,
 /// so a TsExportAssignment is always `export =`.
 pub struct TsExportAssignment<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsExportAssignment,
-  pub expr: Box<Expr<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsExportAssignment,
+  pub expr: Expr<'a>,
 }
 
 impl<'a> Spanned for TsExportAssignment<'a> {
@@ -11374,16 +11917,15 @@ impl<'a> Spanned for TsExportAssignment<'a> {
   }
 }
 
-impl<'a> From<&TsExportAssignment<'a>> for Node<'a> {
-  fn from(node: &TsExportAssignment) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsExportAssignment, &'a TsExportAssignment>(&node) };
-    Node::TsExportAssignment(static_ref)
+impl<'a> From<&'a TsExportAssignment<'a>> for Node<'a> {
+  fn from(node: &'a TsExportAssignment<'a>) -> Node<'a> {
+    Node::TsExportAssignment(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsExportAssignment<'a> {
+impl<'a> NodeTrait<'a> for &'a TsExportAssignment<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -11392,6 +11934,9 @@ impl<'a> NodeTrait<'a> for TsExportAssignment<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsExportAssignment<'a> {
@@ -11402,26 +11947,24 @@ impl<'a> CastableNode<'a> for TsExportAssignment<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_export_assignment<'a>(ref_node: &'a swc_ecma_ast::TsExportAssignment) -> TsExportAssignment<'a> {
+fn get_view_for_ts_export_assignment<'a>(ref_node: &'a swc_ast::TsExportAssignment, bump: &'a Bump) -> &'a TsExportAssignment<'a> {
   let value = &ref_node.expr;
-  let field_expr = Box::new(get_view_for_expr(value));
-  let mut node = TsExportAssignment {
+  let field_expr = get_view_for_expr(value, bump);
+  let node = bump.alloc(TsExportAssignment {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     expr: field_expr,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsExportAssignment, &'a TsExportAssignment>(&node) };
-  let parent = Node::TsExportAssignment(child_parent_ref);
-  set_parent_for_expr(&mut node.expr, parent);
+  });
+  let parent = Node::TsExportAssignment(node);
+  set_parent_for_expr(&node.expr, parent);
   node
 }
 
 pub struct TsInterfaceBody<'a> {
-  pub parent: &'a TsInterfaceDecl<'a>,
-  pub inner: &'a swc_ecma_ast::TsInterfaceBody,
+  inner_parent: UnsafeCell<Option<&'a TsInterfaceDecl<'a>>>,
+  pub inner: &'a swc_ast::TsInterfaceBody,
   pub body: Vec<TsTypeElement<'a>>,
 }
 
@@ -11431,16 +11974,15 @@ impl<'a> Spanned for TsInterfaceBody<'a> {
   }
 }
 
-impl<'a> From<&TsInterfaceBody<'a>> for Node<'a> {
-  fn from(node: &TsInterfaceBody) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsInterfaceBody, &'a TsInterfaceBody>(&node) };
-    Node::TsInterfaceBody(static_ref)
+impl<'a> From<&'a TsInterfaceBody<'a>> for Node<'a> {
+  fn from(node: &'a TsInterfaceBody<'a>) -> Node<'a> {
+    Node::TsInterfaceBody(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsInterfaceBody<'a> {
+impl<'a> NodeTrait<'a> for &'a TsInterfaceBody<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -11451,6 +11993,9 @@ impl<'a> NodeTrait<'a> for TsInterfaceBody<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsInterfaceBody<'a> {
@@ -11461,28 +12006,26 @@ impl<'a> CastableNode<'a> for TsInterfaceBody<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_interface_body<'a>(ref_node: &'a swc_ecma_ast::TsInterfaceBody) -> TsInterfaceBody<'a> {
+fn get_view_for_ts_interface_body<'a>(ref_node: &'a swc_ast::TsInterfaceBody, bump: &'a Bump) -> &'a TsInterfaceBody<'a> {
   let value = &ref_node.body;
-  let field_body = value.iter().map(|value| get_view_for_ts_type_element(value)).collect();
-  let mut node = TsInterfaceBody {
+  let field_body = value.iter().map(|value| get_view_for_ts_type_element(value, bump)).collect();
+  let node = bump.alloc(TsInterfaceBody {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     body: field_body,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsInterfaceBody, &'a TsInterfaceBody>(&node) };
-  let parent = Node::TsInterfaceBody(child_parent_ref);
-  for node in node.body.iter_mut() {
+  });
+  let parent = Node::TsInterfaceBody(node);
+  for node in node.body.iter() {
     set_parent_for_ts_type_element(node, parent.clone());
   }
   node
 }
 
 pub struct TsTupleElement<'a> {
-  pub parent: &'a TsTupleType<'a>,
-  pub inner: &'a swc_ecma_ast::TsTupleElement,
+  inner_parent: UnsafeCell<Option<&'a TsTupleType<'a>>>,
+  pub inner: &'a swc_ast::TsTupleElement,
   /// `Ident` or `RestPat { arg: Ident }`
   pub label: Option<Pat<'a>>,
   pub ty: TsType<'a>,
@@ -11494,27 +12037,29 @@ impl<'a> Spanned for TsTupleElement<'a> {
   }
 }
 
-impl<'a> From<&TsTupleElement<'a>> for Node<'a> {
-  fn from(node: &TsTupleElement) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsTupleElement, &'a TsTupleElement>(&node) };
-    Node::TsTupleElement(static_ref)
+impl<'a> From<&'a TsTupleElement<'a>> for Node<'a> {
+  fn from(node: &'a TsTupleElement<'a>) -> Node<'a> {
+    Node::TsTupleElement(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsTupleElement<'a> {
+impl<'a> NodeTrait<'a> for &'a TsTupleElement<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.label { Some(_value) => 1, None => 0, });
-    if let Some(child) = &self.label {
+    if let Some(child) = self.label.as_ref() {
       children.push(child.into());
     }
     children.push((&self.ty).into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsTupleElement<'a> {
@@ -11525,38 +12070,36 @@ impl<'a> CastableNode<'a> for TsTupleElement<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_tuple_element<'a>(ref_node: &'a swc_ecma_ast::TsTupleElement) -> TsTupleElement<'a> {
+fn get_view_for_ts_tuple_element<'a>(ref_node: &'a swc_ast::TsTupleElement, bump: &'a Bump) -> &'a TsTupleElement<'a> {
   let value = &ref_node.label;
   let field_label = match value {
-    Some(value) => Some(get_view_for_pat(value)),
+    Some(value) => Some(get_view_for_pat(value, bump)),
     None => None,
   };
   let value = &ref_node.ty;
-  let field_ty = get_view_for_ts_type(value);
-  let mut node = TsTupleElement {
+  let field_ty = get_view_for_ts_type(value, bump);
+  let node = bump.alloc(TsTupleElement {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     label: field_label,
     ty: field_ty,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsTupleElement, &'a TsTupleElement>(&node) };
-  let parent = Node::TsTupleElement(child_parent_ref);
-  if let Some(node) = node.label.as_mut() {
-    set_parent_for_pat(node, parent.clone());
+  });
+  let parent = Node::TsTupleElement(node);
+  if let Some(child) = node.label.as_ref() {
+    set_parent_for_pat(child, parent.clone());
   }
-  set_parent_for_ts_type(&mut node.ty, parent);
+  set_parent_for_ts_type(&node.ty, parent);
   node
 }
 
 pub struct VarDeclarator<'a> {
-  pub parent: &'a VarDecl<'a>,
-  pub inner: &'a swc_ecma_ast::VarDeclarator,
+  inner_parent: UnsafeCell<Option<&'a VarDecl<'a>>>,
+  pub inner: &'a swc_ast::VarDeclarator,
   pub name: Pat<'a>,
   /// Initialization expresion.
-  pub init: Option<Box<Expr<'a>>>,
+  pub init: Option<Expr<'a>>,
 }
 
 impl<'a> VarDeclarator<'a> {
@@ -11572,27 +12115,29 @@ impl<'a> Spanned for VarDeclarator<'a> {
   }
 }
 
-impl<'a> From<&VarDeclarator<'a>> for Node<'a> {
-  fn from(node: &VarDeclarator) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&VarDeclarator, &'a VarDeclarator>(&node) };
-    Node::VarDeclarator(static_ref)
+impl<'a> From<&'a VarDeclarator<'a>> for Node<'a> {
+  fn from(node: &'a VarDeclarator<'a>) -> Node<'a> {
+    Node::VarDeclarator(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for VarDeclarator<'a> {
+impl<'a> NodeTrait<'a> for &'a VarDeclarator<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.init { Some(_value) => 1, None => 0, });
     children.push((&self.name).into());
-    if let Some(child) = &self.init {
+    if let Some(child) = self.init.as_ref() {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for VarDeclarator<'a> {
@@ -11603,37 +12148,35 @@ impl<'a> CastableNode<'a> for VarDeclarator<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_var_declarator<'a>(ref_node: &'a swc_ecma_ast::VarDeclarator) -> VarDeclarator<'a> {
+fn get_view_for_var_declarator<'a>(ref_node: &'a swc_ast::VarDeclarator, bump: &'a Bump) -> &'a VarDeclarator<'a> {
   let value = &ref_node.name;
-  let field_name = get_view_for_pat(value);
+  let field_name = get_view_for_pat(value, bump);
   let value = &ref_node.init;
   let field_init = match value {
-    Some(value) => Some(Box::new(get_view_for_expr(value))),
+    Some(value) => Some(get_view_for_expr(value, bump)),
     None => None,
   };
-  let mut node = VarDeclarator {
+  let node = bump.alloc(VarDeclarator {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     name: field_name,
     init: field_init,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&VarDeclarator, &'a VarDeclarator>(&node) };
-  let parent = Node::VarDeclarator(child_parent_ref);
-  set_parent_for_pat(&mut node.name, parent.clone());
-  if let Some(node) = node.init.as_mut() {
-    set_parent_for_expr(node, parent);
+  });
+  let parent = Node::VarDeclarator(node);
+  set_parent_for_pat(&node.name, parent.clone());
+  if let Some(child) = node.init.as_ref() {
+    set_parent_for_expr(child, parent);
   }
   node
 }
 
 pub struct JSXMemberExpr<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::JSXMemberExpr,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::JSXMemberExpr,
   pub obj: JSXObject<'a>,
-  pub prop: Ident<'a>,
+  pub prop: &'a Ident<'a>,
 }
 
 impl<'a> Spanned for JSXMemberExpr<'a> {
@@ -11642,25 +12185,27 @@ impl<'a> Spanned for JSXMemberExpr<'a> {
   }
 }
 
-impl<'a> From<&JSXMemberExpr<'a>> for Node<'a> {
-  fn from(node: &JSXMemberExpr) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&JSXMemberExpr, &'a JSXMemberExpr>(&node) };
-    Node::JSXMemberExpr(static_ref)
+impl<'a> From<&'a JSXMemberExpr<'a>> for Node<'a> {
+  fn from(node: &'a JSXMemberExpr<'a>) -> Node<'a> {
+    Node::JSXMemberExpr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for JSXMemberExpr<'a> {
+impl<'a> NodeTrait<'a> for &'a JSXMemberExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(2);
     children.push((&self.obj).into());
-    children.push((&self.prop).into());
+    children.push(self.prop.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for JSXMemberExpr<'a> {
@@ -11671,31 +12216,29 @@ impl<'a> CastableNode<'a> for JSXMemberExpr<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_jsxmember_expr<'a>(ref_node: &'a swc_ecma_ast::JSXMemberExpr) -> JSXMemberExpr<'a> {
+fn get_view_for_jsxmember_expr<'a>(ref_node: &'a swc_ast::JSXMemberExpr, bump: &'a Bump) -> &'a JSXMemberExpr<'a> {
   let value = &ref_node.obj;
-  let field_obj = get_view_for_jsxobject(value);
+  let field_obj = get_view_for_jsxobject(value, bump);
   let value = &ref_node.prop;
-  let field_prop = get_view_for_ident(value);
-  let mut node = JSXMemberExpr {
+  let field_prop = get_view_for_ident(value, bump);
+  let node = bump.alloc(JSXMemberExpr {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     obj: field_obj,
     prop: field_prop,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&JSXMemberExpr, &'a JSXMemberExpr>(&node) };
-  let parent = Node::JSXMemberExpr(child_parent_ref);
-  set_parent_for_jsxobject(&mut node.obj, parent.clone());
-  node.prop.parent = parent;
+  });
+  let parent = Node::JSXMemberExpr(node);
+  set_parent_for_jsxobject(&node.obj, parent.clone());
+  unsafe { *node.prop.inner_parent.get() = Some(parent); }
   node
 }
 
 pub struct TsConstAssertion<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsConstAssertion,
-  pub expr: Box<Expr<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsConstAssertion,
+  pub expr: Expr<'a>,
 }
 
 impl<'a> Spanned for TsConstAssertion<'a> {
@@ -11704,16 +12247,15 @@ impl<'a> Spanned for TsConstAssertion<'a> {
   }
 }
 
-impl<'a> From<&TsConstAssertion<'a>> for Node<'a> {
-  fn from(node: &TsConstAssertion) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsConstAssertion, &'a TsConstAssertion>(&node) };
-    Node::TsConstAssertion(static_ref)
+impl<'a> From<&'a TsConstAssertion<'a>> for Node<'a> {
+  fn from(node: &'a TsConstAssertion<'a>) -> Node<'a> {
+    Node::TsConstAssertion(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsConstAssertion<'a> {
+impl<'a> NodeTrait<'a> for &'a TsConstAssertion<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -11722,6 +12264,9 @@ impl<'a> NodeTrait<'a> for TsConstAssertion<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsConstAssertion<'a> {
@@ -11732,28 +12277,26 @@ impl<'a> CastableNode<'a> for TsConstAssertion<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_const_assertion<'a>(ref_node: &'a swc_ecma_ast::TsConstAssertion) -> TsConstAssertion<'a> {
+fn get_view_for_ts_const_assertion<'a>(ref_node: &'a swc_ast::TsConstAssertion, bump: &'a Bump) -> &'a TsConstAssertion<'a> {
   let value = &ref_node.expr;
-  let field_expr = Box::new(get_view_for_expr(value));
-  let mut node = TsConstAssertion {
+  let field_expr = get_view_for_expr(value, bump);
+  let node = bump.alloc(TsConstAssertion {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     expr: field_expr,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsConstAssertion, &'a TsConstAssertion>(&node) };
-  let parent = Node::TsConstAssertion(child_parent_ref);
-  set_parent_for_expr(&mut node.expr, parent);
+  });
+  let parent = Node::TsConstAssertion(node);
+  set_parent_for_expr(&node.expr, parent);
   node
 }
 
 /// `export * as foo from 'src';`
 pub struct ExportNamespaceSpecifier<'a> {
-  pub parent: &'a NamedExport<'a>,
-  pub inner: &'a swc_ecma_ast::ExportNamespaceSpecifier,
-  pub name: Ident<'a>,
+  inner_parent: UnsafeCell<Option<&'a NamedExport<'a>>>,
+  pub inner: &'a swc_ast::ExportNamespaceSpecifier,
+  pub name: &'a Ident<'a>,
 }
 
 impl<'a> Spanned for ExportNamespaceSpecifier<'a> {
@@ -11762,24 +12305,26 @@ impl<'a> Spanned for ExportNamespaceSpecifier<'a> {
   }
 }
 
-impl<'a> From<&ExportNamespaceSpecifier<'a>> for Node<'a> {
-  fn from(node: &ExportNamespaceSpecifier) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ExportNamespaceSpecifier, &'a ExportNamespaceSpecifier>(&node) };
-    Node::ExportNamespaceSpecifier(static_ref)
+impl<'a> From<&'a ExportNamespaceSpecifier<'a>> for Node<'a> {
+  fn from(node: &'a ExportNamespaceSpecifier<'a>) -> Node<'a> {
+    Node::ExportNamespaceSpecifier(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ExportNamespaceSpecifier<'a> {
+impl<'a> NodeTrait<'a> for &'a ExportNamespaceSpecifier<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1);
-    children.push((&self.name).into());
+    children.push(self.name.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ExportNamespaceSpecifier<'a> {
@@ -11790,27 +12335,25 @@ impl<'a> CastableNode<'a> for ExportNamespaceSpecifier<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_export_namespace_specifier<'a>(ref_node: &'a swc_ecma_ast::ExportNamespaceSpecifier) -> ExportNamespaceSpecifier<'a> {
+fn get_view_for_export_namespace_specifier<'a>(ref_node: &'a swc_ast::ExportNamespaceSpecifier, bump: &'a Bump) -> &'a ExportNamespaceSpecifier<'a> {
   let value = &ref_node.name;
-  let field_name = get_view_for_ident(value);
-  let mut node = ExportNamespaceSpecifier {
+  let field_name = get_view_for_ident(value, bump);
+  let node = bump.alloc(ExportNamespaceSpecifier {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     name: field_name,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ExportNamespaceSpecifier, &'a ExportNamespaceSpecifier>(&node) };
-  let parent = Node::ExportNamespaceSpecifier(child_parent_ref);
-  node.name.parent = parent;
+  });
+  let parent = Node::ExportNamespaceSpecifier(node);
+  unsafe { *node.name.inner_parent.get() = Some(parent); }
   node
 }
 
 /// Object literal.
 pub struct ObjectLit<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::ObjectLit,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::ObjectLit,
   pub props: Vec<PropOrSpread<'a>>,
 }
 
@@ -11820,16 +12363,15 @@ impl<'a> Spanned for ObjectLit<'a> {
   }
 }
 
-impl<'a> From<&ObjectLit<'a>> for Node<'a> {
-  fn from(node: &ObjectLit) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ObjectLit, &'a ObjectLit>(&node) };
-    Node::ObjectLit(static_ref)
+impl<'a> From<&'a ObjectLit<'a>> for Node<'a> {
+  fn from(node: &'a ObjectLit<'a>) -> Node<'a> {
+    Node::ObjectLit(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ObjectLit<'a> {
+impl<'a> NodeTrait<'a> for &'a ObjectLit<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -11840,6 +12382,9 @@ impl<'a> NodeTrait<'a> for ObjectLit<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ObjectLit<'a> {
@@ -11850,27 +12395,27 @@ impl<'a> CastableNode<'a> for ObjectLit<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_object_lit<'a>(ref_node: &'a swc_ecma_ast::ObjectLit) -> ObjectLit<'a> {
+fn get_view_for_object_lit<'a>(ref_node: &'a swc_ast::ObjectLit, bump: &'a Bump) -> &'a ObjectLit<'a> {
   let value = &ref_node.props;
-  let field_props = value.iter().map(|value| get_view_for_prop_or_spread(value)).collect();
-  let mut node = ObjectLit {
+  let field_props = value.iter().map(|value| get_view_for_prop_or_spread(value, bump)).collect();
+  let node = bump.alloc(ObjectLit {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     props: field_props,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ObjectLit, &'a ObjectLit>(&node) };
-  let parent = Node::ObjectLit(child_parent_ref);
-  for node in node.props.iter_mut() {
+  });
+  let parent = Node::ObjectLit(node);
+  for node in node.props.iter() {
     set_parent_for_prop_or_spread(node, parent.clone());
   }
   node
 }
 
 pub struct Module<'a> {
-  pub inner: &'a swc_ecma_ast::Module,
+  pub text: Option<&'a str>,
+  pub tokens: Option<&'a Vec<swc_ecmascript::parser::token::TokenAndSpan>>,
+  pub inner: &'a swc_ast::Module,
   pub body: Vec<ModuleItem<'a>>,
 }
 
@@ -11886,14 +12431,13 @@ impl<'a> Spanned for Module<'a> {
   }
 }
 
-impl<'a> From<&Module<'a>> for Node<'a> {
-  fn from(node: &Module) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&Module, &'a Module>(&node) };
-    Node::Module(static_ref)
+impl<'a> From<&'a Module<'a>> for Node<'a> {
+  fn from(node: &'a Module<'a>) -> Node<'a> {
+    Node::Module(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for Module<'a> {
+impl<'a> NodeTrait<'a> for &'a Module<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     None
   }
@@ -11906,6 +12450,9 @@ impl<'a> NodeTrait<'a> for Module<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for Module<'a> {
@@ -11916,29 +12463,30 @@ impl<'a> CastableNode<'a> for Module<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_module<'a>(ref_node: &'a swc_ecma_ast::Module) -> Module<'a> {
+fn get_view_for_module<'a>(source_file_info: &'a SourceFileInfo<'a>, bump: &'a Bump) -> &'a Module<'a> {
+  let ref_node = source_file_info.module;
   let value = &ref_node.body;
-  let field_body = value.iter().map(|value| get_view_for_module_item(value)).collect();
-  let mut node = Module {
+  let field_body = value.iter().map(|value| get_view_for_module_item(value, bump)).collect();
+  let node = bump.alloc(Module {
     inner: ref_node,
+    text: source_file_info.file_text,
+    tokens: source_file_info.tokens,
     body: field_body,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&Module, &'a Module>(&node) };
-  let parent = Node::Module(child_parent_ref);
-  for node in node.body.iter_mut() {
+  });
+  let parent = Node::Module(node);
+  for node in node.body.iter() {
     set_parent_for_module_item(node, parent.clone());
   }
   node
 }
 
 pub struct TsIndexSignature<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsIndexSignature,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsIndexSignature,
   pub params: Vec<TsFnParam<'a>>,
-  pub type_ann: Option<TsTypeAnn<'a>>,
+  pub type_ann: Option<&'a TsTypeAnn<'a>>,
 }
 
 impl<'a> TsIndexSignature<'a> {
@@ -11953,16 +12501,15 @@ impl<'a> Spanned for TsIndexSignature<'a> {
   }
 }
 
-impl<'a> From<&TsIndexSignature<'a>> for Node<'a> {
-  fn from(node: &TsIndexSignature) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsIndexSignature, &'a TsIndexSignature>(&node) };
-    Node::TsIndexSignature(static_ref)
+impl<'a> From<&'a TsIndexSignature<'a>> for Node<'a> {
+  fn from(node: &'a TsIndexSignature<'a>) -> Node<'a> {
+    Node::TsIndexSignature(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsIndexSignature<'a> {
+impl<'a> NodeTrait<'a> for &'a TsIndexSignature<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -11970,12 +12517,15 @@ impl<'a> NodeTrait<'a> for TsIndexSignature<'a> {
     for child in self.params.iter() {
       children.push(child.into());
     }
-    if let Some(child) = &self.type_ann {
+    if let Some(child) = self.type_ann {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsIndexSignature<'a> {
@@ -11986,39 +12536,37 @@ impl<'a> CastableNode<'a> for TsIndexSignature<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_index_signature<'a>(ref_node: &'a swc_ecma_ast::TsIndexSignature) -> TsIndexSignature<'a> {
+fn get_view_for_ts_index_signature<'a>(ref_node: &'a swc_ast::TsIndexSignature, bump: &'a Bump) -> &'a TsIndexSignature<'a> {
   let value = &ref_node.params;
-  let field_params = value.iter().map(|value| get_view_for_ts_fn_param(value)).collect();
+  let field_params = value.iter().map(|value| get_view_for_ts_fn_param(value, bump)).collect();
   let value = &ref_node.type_ann;
   let field_type_ann = match value {
-    Some(value) => Some(get_view_for_ts_type_ann(value)),
+    Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
     None => None,
   };
-  let mut node = TsIndexSignature {
+  let node = bump.alloc(TsIndexSignature {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     params: field_params,
     type_ann: field_type_ann,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsIndexSignature, &'a TsIndexSignature>(&node) };
-  let parent = Node::TsIndexSignature(child_parent_ref);
-  for node in node.params.iter_mut() {
+  });
+  let parent = Node::TsIndexSignature(node);
+  for node in node.params.iter() {
     set_parent_for_ts_fn_param(node, parent.clone());
   }
-  if let Some(node) = node.type_ann.as_mut() {
-    node.parent = parent;
+  if let Some(child) = node.type_ann {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 pub struct TsTypeCastExpr<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsTypeCastExpr,
-  pub expr: Box<Expr<'a>>,
-  pub type_ann: TsTypeAnn<'a>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsTypeCastExpr,
+  pub expr: Expr<'a>,
+  pub type_ann: &'a TsTypeAnn<'a>,
 }
 
 impl<'a> Spanned for TsTypeCastExpr<'a> {
@@ -12027,25 +12575,27 @@ impl<'a> Spanned for TsTypeCastExpr<'a> {
   }
 }
 
-impl<'a> From<&TsTypeCastExpr<'a>> for Node<'a> {
-  fn from(node: &TsTypeCastExpr) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsTypeCastExpr, &'a TsTypeCastExpr>(&node) };
-    Node::TsTypeCastExpr(static_ref)
+impl<'a> From<&'a TsTypeCastExpr<'a>> for Node<'a> {
+  fn from(node: &'a TsTypeCastExpr<'a>) -> Node<'a> {
+    Node::TsTypeCastExpr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsTypeCastExpr<'a> {
+impl<'a> NodeTrait<'a> for &'a TsTypeCastExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(2);
     children.push((&self.expr).into());
-    children.push((&self.type_ann).into());
+    children.push(self.type_ann.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsTypeCastExpr<'a> {
@@ -12056,31 +12606,29 @@ impl<'a> CastableNode<'a> for TsTypeCastExpr<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_type_cast_expr<'a>(ref_node: &'a swc_ecma_ast::TsTypeCastExpr) -> TsTypeCastExpr<'a> {
+fn get_view_for_ts_type_cast_expr<'a>(ref_node: &'a swc_ast::TsTypeCastExpr, bump: &'a Bump) -> &'a TsTypeCastExpr<'a> {
   let value = &ref_node.expr;
-  let field_expr = Box::new(get_view_for_expr(value));
+  let field_expr = get_view_for_expr(value, bump);
   let value = &ref_node.type_ann;
-  let field_type_ann = get_view_for_ts_type_ann(value);
-  let mut node = TsTypeCastExpr {
+  let field_type_ann = get_view_for_ts_type_ann(value, bump);
+  let node = bump.alloc(TsTypeCastExpr {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     expr: field_expr,
     type_ann: field_type_ann,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsTypeCastExpr, &'a TsTypeCastExpr>(&node) };
-  let parent = Node::TsTypeCastExpr(child_parent_ref);
-  set_parent_for_expr(&mut node.expr, parent.clone());
-  node.type_ann.parent = parent;
+  });
+  let parent = Node::TsTypeCastExpr(node);
+  set_parent_for_expr(&node.expr, parent.clone());
+  unsafe { *node.type_ann.inner_parent.get() = Some(parent); }
   node
 }
 
 pub struct TsTupleType<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsTupleType,
-  pub elem_types: Vec<TsTupleElement<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsTupleType,
+  pub elem_types: Vec<&'a TsTupleElement<'a>>,
 }
 
 impl<'a> Spanned for TsTupleType<'a> {
@@ -12089,26 +12637,28 @@ impl<'a> Spanned for TsTupleType<'a> {
   }
 }
 
-impl<'a> From<&TsTupleType<'a>> for Node<'a> {
-  fn from(node: &TsTupleType) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsTupleType, &'a TsTupleType>(&node) };
-    Node::TsTupleType(static_ref)
+impl<'a> From<&'a TsTupleType<'a>> for Node<'a> {
+  fn from(node: &'a TsTupleType<'a>) -> Node<'a> {
+    Node::TsTupleType(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsTupleType<'a> {
+impl<'a> NodeTrait<'a> for &'a TsTupleType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(self.elem_types.len());
     for child in self.elem_types.iter() {
-      children.push(child.into());
+      children.push((*child).into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsTupleType<'a> {
@@ -12119,28 +12669,26 @@ impl<'a> CastableNode<'a> for TsTupleType<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_tuple_type<'a>(ref_node: &'a swc_ecma_ast::TsTupleType) -> TsTupleType<'a> {
+fn get_view_for_ts_tuple_type<'a>(ref_node: &'a swc_ast::TsTupleType, bump: &'a Bump) -> &'a TsTupleType<'a> {
   let value = &ref_node.elem_types;
-  let field_elem_types = value.iter().map(|value| get_view_for_ts_tuple_element(value)).collect();
-  let mut node = TsTupleType {
+  let field_elem_types = value.iter().map(|value| get_view_for_ts_tuple_element(value, bump)).collect();
+  let node = bump.alloc(TsTupleType {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     elem_types: field_elem_types,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsTupleType, &'a TsTupleType>(&node) };
-  let parent = Node::TsTupleType(child_parent_ref);
-  for node in node.elem_types.iter_mut() {
-    node.parent = parent.to::<TsTupleType>();
+  });
+  let parent = Node::TsTupleType(node);
+  for node in node.elem_types.iter() {
+    unsafe { *node.inner_parent.get() = Some(parent.to::<TsTupleType>()); }
   }
   node
 }
 
 pub struct Null<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::Null,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::Null,
 }
 
 impl<'a> Spanned for Null<'a> {
@@ -12149,22 +12697,24 @@ impl<'a> Spanned for Null<'a> {
   }
 }
 
-impl<'a> From<&Null<'a>> for Node<'a> {
-  fn from(node: &Null) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&Null, &'a Null>(&node) };
-    Node::Null(static_ref)
+impl<'a> From<&'a Null<'a>> for Node<'a> {
+  fn from(node: &'a Null<'a>) -> Node<'a> {
+    Node::Null(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for Null<'a> {
+impl<'a> NodeTrait<'a> for &'a Null<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     Vec::with_capacity(0)
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for Null<'a> {
@@ -12175,21 +12725,20 @@ impl<'a> CastableNode<'a> for Null<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_null<'a>(ref_node: &'a swc_ecma_ast::Null) -> Null<'a> {
-  let node = Null {
+fn get_view_for_null<'a>(ref_node: &'a swc_ast::Null, bump: &'a Bump) -> &'a Null<'a> {
+  let node = bump.alloc(Null {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
-  };
+    inner_parent: UnsafeCell::new(None),
+  });
   node
 }
 
 pub struct TsTypeOperator<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsTypeOperator,
-  pub type_ann: Box<TsType<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsTypeOperator,
+  pub type_ann: TsType<'a>,
 }
 
 impl<'a> TsTypeOperator<'a> {
@@ -12204,16 +12753,15 @@ impl<'a> Spanned for TsTypeOperator<'a> {
   }
 }
 
-impl<'a> From<&TsTypeOperator<'a>> for Node<'a> {
-  fn from(node: &TsTypeOperator) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsTypeOperator, &'a TsTypeOperator>(&node) };
-    Node::TsTypeOperator(static_ref)
+impl<'a> From<&'a TsTypeOperator<'a>> for Node<'a> {
+  fn from(node: &'a TsTypeOperator<'a>) -> Node<'a> {
+    Node::TsTypeOperator(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsTypeOperator<'a> {
+impl<'a> NodeTrait<'a> for &'a TsTypeOperator<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -12222,6 +12770,9 @@ impl<'a> NodeTrait<'a> for TsTypeOperator<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsTypeOperator<'a> {
@@ -12232,26 +12783,24 @@ impl<'a> CastableNode<'a> for TsTypeOperator<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_type_operator<'a>(ref_node: &'a swc_ecma_ast::TsTypeOperator) -> TsTypeOperator<'a> {
+fn get_view_for_ts_type_operator<'a>(ref_node: &'a swc_ast::TsTypeOperator, bump: &'a Bump) -> &'a TsTypeOperator<'a> {
   let value = &ref_node.type_ann;
-  let field_type_ann = Box::new(get_view_for_ts_type(value));
-  let mut node = TsTypeOperator {
+  let field_type_ann = get_view_for_ts_type(value, bump);
+  let node = bump.alloc(TsTypeOperator {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     type_ann: field_type_ann,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsTypeOperator, &'a TsTypeOperator>(&node) };
-  let parent = Node::TsTypeOperator(child_parent_ref);
-  set_parent_for_ts_type(&mut node.type_ann, parent);
+  });
+  let parent = Node::TsTypeOperator(node);
+  set_parent_for_ts_type(&node.type_ann, parent);
   node
 }
 
 pub struct JSXClosingElement<'a> {
-  pub parent: &'a JSXElement<'a>,
-  pub inner: &'a swc_ecma_ast::JSXClosingElement,
+  inner_parent: UnsafeCell<Option<&'a JSXElement<'a>>>,
+  pub inner: &'a swc_ast::JSXClosingElement,
   pub name: JSXElementName<'a>,
 }
 
@@ -12261,16 +12810,15 @@ impl<'a> Spanned for JSXClosingElement<'a> {
   }
 }
 
-impl<'a> From<&JSXClosingElement<'a>> for Node<'a> {
-  fn from(node: &JSXClosingElement) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&JSXClosingElement, &'a JSXClosingElement>(&node) };
-    Node::JSXClosingElement(static_ref)
+impl<'a> From<&'a JSXClosingElement<'a>> for Node<'a> {
+  fn from(node: &'a JSXClosingElement<'a>) -> Node<'a> {
+    Node::JSXClosingElement(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for JSXClosingElement<'a> {
+impl<'a> NodeTrait<'a> for &'a JSXClosingElement<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -12279,6 +12827,9 @@ impl<'a> NodeTrait<'a> for JSXClosingElement<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for JSXClosingElement<'a> {
@@ -12289,28 +12840,26 @@ impl<'a> CastableNode<'a> for JSXClosingElement<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_jsxclosing_element<'a>(ref_node: &'a swc_ecma_ast::JSXClosingElement) -> JSXClosingElement<'a> {
+fn get_view_for_jsxclosing_element<'a>(ref_node: &'a swc_ast::JSXClosingElement, bump: &'a Bump) -> &'a JSXClosingElement<'a> {
   let value = &ref_node.name;
-  let field_name = get_view_for_jsxelement_name(value);
-  let mut node = JSXClosingElement {
+  let field_name = get_view_for_jsxelement_name(value, bump);
+  let node = bump.alloc(JSXClosingElement {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     name: field_name,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&JSXClosingElement, &'a JSXClosingElement>(&node) };
-  let parent = Node::JSXClosingElement(child_parent_ref);
-  set_parent_for_jsxelement_name(&mut node.name, parent);
+  });
+  let parent = Node::JSXClosingElement(node);
+  set_parent_for_jsxelement_name(&node.name, parent);
   node
 }
 
 pub struct BinExpr<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::BinExpr,
-  pub left: Box<Expr<'a>>,
-  pub right: Box<Expr<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::BinExpr,
+  pub left: Expr<'a>,
+  pub right: Expr<'a>,
 }
 
 impl<'a> BinExpr<'a> {
@@ -12325,16 +12874,15 @@ impl<'a> Spanned for BinExpr<'a> {
   }
 }
 
-impl<'a> From<&BinExpr<'a>> for Node<'a> {
-  fn from(node: &BinExpr) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&BinExpr, &'a BinExpr>(&node) };
-    Node::BinExpr(static_ref)
+impl<'a> From<&'a BinExpr<'a>> for Node<'a> {
+  fn from(node: &'a BinExpr<'a>) -> Node<'a> {
+    Node::BinExpr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for BinExpr<'a> {
+impl<'a> NodeTrait<'a> for &'a BinExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -12344,6 +12892,9 @@ impl<'a> NodeTrait<'a> for BinExpr<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for BinExpr<'a> {
@@ -12354,31 +12905,29 @@ impl<'a> CastableNode<'a> for BinExpr<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_bin_expr<'a>(ref_node: &'a swc_ecma_ast::BinExpr) -> BinExpr<'a> {
+fn get_view_for_bin_expr<'a>(ref_node: &'a swc_ast::BinExpr, bump: &'a Bump) -> &'a BinExpr<'a> {
   let value = &ref_node.left;
-  let field_left = Box::new(get_view_for_expr(value));
+  let field_left = get_view_for_expr(value, bump);
   let value = &ref_node.right;
-  let field_right = Box::new(get_view_for_expr(value));
-  let mut node = BinExpr {
+  let field_right = get_view_for_expr(value, bump);
+  let node = bump.alloc(BinExpr {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     left: field_left,
     right: field_right,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&BinExpr, &'a BinExpr>(&node) };
-  let parent = Node::BinExpr(child_parent_ref);
-  set_parent_for_expr(&mut node.left, parent.clone());
-  set_parent_for_expr(&mut node.right, parent);
+  });
+  let parent = Node::BinExpr(node);
+  set_parent_for_expr(&node.left, parent.clone());
+  set_parent_for_expr(&node.right, parent);
   node
 }
 
 pub struct UnaryExpr<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::UnaryExpr,
-  pub arg: Box<Expr<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::UnaryExpr,
+  pub arg: Expr<'a>,
 }
 
 impl<'a> UnaryExpr<'a> {
@@ -12393,16 +12942,15 @@ impl<'a> Spanned for UnaryExpr<'a> {
   }
 }
 
-impl<'a> From<&UnaryExpr<'a>> for Node<'a> {
-  fn from(node: &UnaryExpr) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&UnaryExpr, &'a UnaryExpr>(&node) };
-    Node::UnaryExpr(static_ref)
+impl<'a> From<&'a UnaryExpr<'a>> for Node<'a> {
+  fn from(node: &'a UnaryExpr<'a>) -> Node<'a> {
+    Node::UnaryExpr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for UnaryExpr<'a> {
+impl<'a> NodeTrait<'a> for &'a UnaryExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -12411,6 +12959,9 @@ impl<'a> NodeTrait<'a> for UnaryExpr<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for UnaryExpr<'a> {
@@ -12421,31 +12972,29 @@ impl<'a> CastableNode<'a> for UnaryExpr<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_unary_expr<'a>(ref_node: &'a swc_ecma_ast::UnaryExpr) -> UnaryExpr<'a> {
+fn get_view_for_unary_expr<'a>(ref_node: &'a swc_ast::UnaryExpr, bump: &'a Bump) -> &'a UnaryExpr<'a> {
   let value = &ref_node.arg;
-  let field_arg = Box::new(get_view_for_expr(value));
-  let mut node = UnaryExpr {
+  let field_arg = get_view_for_expr(value, bump);
+  let node = bump.alloc(UnaryExpr {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     arg: field_arg,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&UnaryExpr, &'a UnaryExpr>(&node) };
-  let parent = Node::UnaryExpr(child_parent_ref);
-  set_parent_for_expr(&mut node.arg, parent);
+  });
+  let parent = Node::UnaryExpr(node);
+  set_parent_for_expr(&node.arg, parent);
   node
 }
 
 pub struct TsPropertySignature<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsPropertySignature,
-  pub key: Box<Expr<'a>>,
-  pub init: Option<Box<Expr<'a>>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsPropertySignature,
+  pub key: Expr<'a>,
+  pub init: Option<Expr<'a>>,
   pub params: Vec<TsFnParam<'a>>,
-  pub type_ann: Option<TsTypeAnn<'a>>,
-  pub type_params: Option<TsTypeParamDecl<'a>>,
+  pub type_ann: Option<&'a TsTypeAnn<'a>>,
+  pub type_params: Option<&'a TsTypeParamDecl<'a>>,
 }
 
 impl<'a> TsPropertySignature<'a> {
@@ -12468,36 +13017,38 @@ impl<'a> Spanned for TsPropertySignature<'a> {
   }
 }
 
-impl<'a> From<&TsPropertySignature<'a>> for Node<'a> {
-  fn from(node: &TsPropertySignature) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsPropertySignature, &'a TsPropertySignature>(&node) };
-    Node::TsPropertySignature(static_ref)
+impl<'a> From<&'a TsPropertySignature<'a>> for Node<'a> {
+  fn from(node: &'a TsPropertySignature<'a>) -> Node<'a> {
+    Node::TsPropertySignature(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsPropertySignature<'a> {
+impl<'a> NodeTrait<'a> for &'a TsPropertySignature<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.init { Some(_value) => 1, None => 0, } + self.params.len() + match &self.type_ann { Some(_value) => 1, None => 0, } + match &self.type_params { Some(_value) => 1, None => 0, });
     children.push((&self.key).into());
-    if let Some(child) = &self.init {
+    if let Some(child) = self.init.as_ref() {
       children.push(child.into());
     }
     for child in self.params.iter() {
       children.push(child.into());
     }
-    if let Some(child) = &self.type_ann {
+    if let Some(child) = self.type_ann {
       children.push(child.into());
     }
-    if let Some(child) = &self.type_params {
+    if let Some(child) = self.type_params {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsPropertySignature<'a> {
@@ -12508,62 +13059,60 @@ impl<'a> CastableNode<'a> for TsPropertySignature<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_property_signature<'a>(ref_node: &'a swc_ecma_ast::TsPropertySignature) -> TsPropertySignature<'a> {
+fn get_view_for_ts_property_signature<'a>(ref_node: &'a swc_ast::TsPropertySignature, bump: &'a Bump) -> &'a TsPropertySignature<'a> {
   let value = &ref_node.key;
-  let field_key = Box::new(get_view_for_expr(value));
+  let field_key = get_view_for_expr(value, bump);
   let value = &ref_node.init;
   let field_init = match value {
-    Some(value) => Some(Box::new(get_view_for_expr(value))),
+    Some(value) => Some(get_view_for_expr(value, bump)),
     None => None,
   };
   let value = &ref_node.params;
-  let field_params = value.iter().map(|value| get_view_for_ts_fn_param(value)).collect();
+  let field_params = value.iter().map(|value| get_view_for_ts_fn_param(value, bump)).collect();
   let value = &ref_node.type_ann;
   let field_type_ann = match value {
-    Some(value) => Some(get_view_for_ts_type_ann(value)),
+    Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
     None => None,
   };
   let value = &ref_node.type_params;
   let field_type_params = match value {
-    Some(value) => Some(get_view_for_ts_type_param_decl(value)),
+    Some(value) => Some(get_view_for_ts_type_param_decl(value, bump)),
     None => None,
   };
-  let mut node = TsPropertySignature {
+  let node = bump.alloc(TsPropertySignature {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     key: field_key,
     init: field_init,
     params: field_params,
     type_ann: field_type_ann,
     type_params: field_type_params,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsPropertySignature, &'a TsPropertySignature>(&node) };
-  let parent = Node::TsPropertySignature(child_parent_ref);
-  set_parent_for_expr(&mut node.key, parent.clone());
-  if let Some(node) = node.init.as_mut() {
-    set_parent_for_expr(node, parent.clone());
+  });
+  let parent = Node::TsPropertySignature(node);
+  set_parent_for_expr(&node.key, parent.clone());
+  if let Some(child) = node.init.as_ref() {
+    set_parent_for_expr(child, parent.clone());
   }
-  for node in node.params.iter_mut() {
+  for node in node.params.iter() {
     set_parent_for_ts_fn_param(node, parent.clone());
   }
-  if let Some(node) = node.type_ann.as_mut() {
-    node.parent = parent.clone();
+  if let Some(child) = node.type_ann {
+    unsafe { *child.inner_parent.get() = Some(parent.clone()); }
   }
-  if let Some(node) = node.type_params.as_mut() {
-    node.parent = parent;
+  if let Some(child) = node.type_params {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 pub struct Constructor<'a> {
-  pub parent: &'a Class<'a>,
-  pub inner: &'a swc_ecma_ast::Constructor,
+  inner_parent: UnsafeCell<Option<&'a Class<'a>>>,
+  pub inner: &'a swc_ast::Constructor,
   pub key: PropName<'a>,
   pub params: Vec<ParamOrTsParamProp<'a>>,
-  pub body: Option<BlockStmt<'a>>,
+  pub body: Option<&'a BlockStmt<'a>>,
 }
 
 impl<'a> Constructor<'a> {
@@ -12582,16 +13131,15 @@ impl<'a> Spanned for Constructor<'a> {
   }
 }
 
-impl<'a> From<&Constructor<'a>> for Node<'a> {
-  fn from(node: &Constructor) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&Constructor, &'a Constructor>(&node) };
-    Node::Constructor(static_ref)
+impl<'a> From<&'a Constructor<'a>> for Node<'a> {
+  fn from(node: &'a Constructor<'a>) -> Node<'a> {
+    Node::Constructor(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for Constructor<'a> {
+impl<'a> NodeTrait<'a> for &'a Constructor<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -12600,12 +13148,15 @@ impl<'a> NodeTrait<'a> for Constructor<'a> {
     for child in self.params.iter() {
       children.push(child.into());
     }
-    if let Some(child) = &self.body {
+    if let Some(child) = self.body {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for Constructor<'a> {
@@ -12616,43 +13167,41 @@ impl<'a> CastableNode<'a> for Constructor<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_constructor<'a>(ref_node: &'a swc_ecma_ast::Constructor) -> Constructor<'a> {
+fn get_view_for_constructor<'a>(ref_node: &'a swc_ast::Constructor, bump: &'a Bump) -> &'a Constructor<'a> {
   let value = &ref_node.key;
-  let field_key = get_view_for_prop_name(value);
+  let field_key = get_view_for_prop_name(value, bump);
   let value = &ref_node.params;
-  let field_params = value.iter().map(|value| get_view_for_param_or_ts_param_prop(value)).collect();
+  let field_params = value.iter().map(|value| get_view_for_param_or_ts_param_prop(value, bump)).collect();
   let value = &ref_node.body;
   let field_body = match value {
-    Some(value) => Some(get_view_for_block_stmt(value)),
+    Some(value) => Some(get_view_for_block_stmt(value, bump)),
     None => None,
   };
-  let mut node = Constructor {
+  let node = bump.alloc(Constructor {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     key: field_key,
     params: field_params,
     body: field_body,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&Constructor, &'a Constructor>(&node) };
-  let parent = Node::Constructor(child_parent_ref);
-  set_parent_for_prop_name(&mut node.key, parent.clone());
-  for node in node.params.iter_mut() {
+  });
+  let parent = Node::Constructor(node);
+  set_parent_for_prop_name(&node.key, parent.clone());
+  for node in node.params.iter() {
     set_parent_for_param_or_ts_param_prop(node, parent.clone());
   }
-  if let Some(node) = node.body.as_mut() {
-    node.parent = parent;
+  if let Some(child) = node.body {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 pub struct FnDecl<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::FnDecl,
-  pub ident: Ident<'a>,
-  pub function: Function<'a>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::FnDecl,
+  pub ident: &'a Ident<'a>,
+  pub function: &'a Function<'a>,
 }
 
 impl<'a> FnDecl<'a> {
@@ -12667,25 +13216,27 @@ impl<'a> Spanned for FnDecl<'a> {
   }
 }
 
-impl<'a> From<&FnDecl<'a>> for Node<'a> {
-  fn from(node: &FnDecl) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&FnDecl, &'a FnDecl>(&node) };
-    Node::FnDecl(static_ref)
+impl<'a> From<&'a FnDecl<'a>> for Node<'a> {
+  fn from(node: &'a FnDecl<'a>) -> Node<'a> {
+    Node::FnDecl(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for FnDecl<'a> {
+impl<'a> NodeTrait<'a> for &'a FnDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(2);
-    children.push((&self.ident).into());
-    children.push((&self.function).into());
+    children.push(self.ident.into());
+    children.push(self.function.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for FnDecl<'a> {
@@ -12696,31 +13247,29 @@ impl<'a> CastableNode<'a> for FnDecl<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_fn_decl<'a>(ref_node: &'a swc_ecma_ast::FnDecl) -> FnDecl<'a> {
+fn get_view_for_fn_decl<'a>(ref_node: &'a swc_ast::FnDecl, bump: &'a Bump) -> &'a FnDecl<'a> {
   let value = &ref_node.ident;
-  let field_ident = get_view_for_ident(value);
+  let field_ident = get_view_for_ident(value, bump);
   let value = &ref_node.function;
-  let field_function = get_view_for_function(value);
-  let mut node = FnDecl {
+  let field_function = get_view_for_function(value, bump);
+  let node = bump.alloc(FnDecl {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     ident: field_ident,
     function: field_function,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&FnDecl, &'a FnDecl>(&node) };
-  let parent = Node::FnDecl(child_parent_ref);
-  node.ident.parent = parent.clone();
-  node.function.parent = parent;
+  });
+  let parent = Node::FnDecl(node);
+  unsafe { *node.ident.inner_parent.get() = Some(parent.clone()); }
+  unsafe { *node.function.inner_parent.get() = Some(parent); }
   node
 }
 
 pub struct TsNonNullExpr<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsNonNullExpr,
-  pub expr: Box<Expr<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsNonNullExpr,
+  pub expr: Expr<'a>,
 }
 
 impl<'a> Spanned for TsNonNullExpr<'a> {
@@ -12729,16 +13278,15 @@ impl<'a> Spanned for TsNonNullExpr<'a> {
   }
 }
 
-impl<'a> From<&TsNonNullExpr<'a>> for Node<'a> {
-  fn from(node: &TsNonNullExpr) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsNonNullExpr, &'a TsNonNullExpr>(&node) };
-    Node::TsNonNullExpr(static_ref)
+impl<'a> From<&'a TsNonNullExpr<'a>> for Node<'a> {
+  fn from(node: &'a TsNonNullExpr<'a>) -> Node<'a> {
+    Node::TsNonNullExpr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsNonNullExpr<'a> {
+impl<'a> NodeTrait<'a> for &'a TsNonNullExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -12747,6 +13295,9 @@ impl<'a> NodeTrait<'a> for TsNonNullExpr<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsNonNullExpr<'a> {
@@ -12757,29 +13308,27 @@ impl<'a> CastableNode<'a> for TsNonNullExpr<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_non_null_expr<'a>(ref_node: &'a swc_ecma_ast::TsNonNullExpr) -> TsNonNullExpr<'a> {
+fn get_view_for_ts_non_null_expr<'a>(ref_node: &'a swc_ast::TsNonNullExpr, bump: &'a Bump) -> &'a TsNonNullExpr<'a> {
   let value = &ref_node.expr;
-  let field_expr = Box::new(get_view_for_expr(value));
-  let mut node = TsNonNullExpr {
+  let field_expr = get_view_for_expr(value, bump);
+  let node = bump.alloc(TsNonNullExpr {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     expr: field_expr,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsNonNullExpr, &'a TsNonNullExpr>(&node) };
-  let parent = Node::TsNonNullExpr(child_parent_ref);
-  set_parent_for_expr(&mut node.expr, parent);
+  });
+  let parent = Node::TsNonNullExpr(node);
+  set_parent_for_expr(&node.expr, parent);
   node
 }
 
 /// Class expression.
 pub struct ClassExpr<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::ClassExpr,
-  pub ident: Option<Ident<'a>>,
-  pub class: Class<'a>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::ClassExpr,
+  pub ident: Option<&'a Ident<'a>>,
+  pub class: &'a Class<'a>,
 }
 
 impl<'a> Spanned for ClassExpr<'a> {
@@ -12788,27 +13337,29 @@ impl<'a> Spanned for ClassExpr<'a> {
   }
 }
 
-impl<'a> From<&ClassExpr<'a>> for Node<'a> {
-  fn from(node: &ClassExpr) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ClassExpr, &'a ClassExpr>(&node) };
-    Node::ClassExpr(static_ref)
+impl<'a> From<&'a ClassExpr<'a>> for Node<'a> {
+  fn from(node: &'a ClassExpr<'a>) -> Node<'a> {
+    Node::ClassExpr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ClassExpr<'a> {
+impl<'a> NodeTrait<'a> for &'a ClassExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.ident { Some(_value) => 1, None => 0, });
-    if let Some(child) = &self.ident {
+    if let Some(child) = self.ident {
       children.push(child.into());
     }
-    children.push((&self.class).into());
+    children.push(self.class.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ClassExpr<'a> {
@@ -12819,38 +13370,36 @@ impl<'a> CastableNode<'a> for ClassExpr<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_class_expr<'a>(ref_node: &'a swc_ecma_ast::ClassExpr) -> ClassExpr<'a> {
+fn get_view_for_class_expr<'a>(ref_node: &'a swc_ast::ClassExpr, bump: &'a Bump) -> &'a ClassExpr<'a> {
   let value = &ref_node.ident;
   let field_ident = match value {
-    Some(value) => Some(get_view_for_ident(value)),
+    Some(value) => Some(get_view_for_ident(value, bump)),
     None => None,
   };
   let value = &ref_node.class;
-  let field_class = get_view_for_class(value);
-  let mut node = ClassExpr {
+  let field_class = get_view_for_class(value, bump);
+  let node = bump.alloc(ClassExpr {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     ident: field_ident,
     class: field_class,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ClassExpr, &'a ClassExpr>(&node) };
-  let parent = Node::ClassExpr(child_parent_ref);
-  if let Some(node) = node.ident.as_mut() {
-    node.parent = parent.clone();
+  });
+  let parent = Node::ClassExpr(node);
+  if let Some(child) = node.ident {
+    unsafe { *child.inner_parent.get() = Some(parent.clone()); }
   }
-  node.class.parent = parent;
+  unsafe { *node.class.inner_parent.get() = Some(parent); }
   node
 }
 
 pub struct ForInStmt<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::ForInStmt,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::ForInStmt,
   pub left: VarDeclOrPat<'a>,
-  pub right: Box<Expr<'a>>,
-  pub body: Box<Stmt<'a>>,
+  pub right: Expr<'a>,
+  pub body: Stmt<'a>,
 }
 
 impl<'a> Spanned for ForInStmt<'a> {
@@ -12859,16 +13408,15 @@ impl<'a> Spanned for ForInStmt<'a> {
   }
 }
 
-impl<'a> From<&ForInStmt<'a>> for Node<'a> {
-  fn from(node: &ForInStmt) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ForInStmt, &'a ForInStmt>(&node) };
-    Node::ForInStmt(static_ref)
+impl<'a> From<&'a ForInStmt<'a>> for Node<'a> {
+  fn from(node: &'a ForInStmt<'a>) -> Node<'a> {
+    Node::ForInStmt(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ForInStmt<'a> {
+impl<'a> NodeTrait<'a> for &'a ForInStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -12879,6 +13427,9 @@ impl<'a> NodeTrait<'a> for ForInStmt<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ForInStmt<'a> {
@@ -12889,34 +13440,32 @@ impl<'a> CastableNode<'a> for ForInStmt<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_for_in_stmt<'a>(ref_node: &'a swc_ecma_ast::ForInStmt) -> ForInStmt<'a> {
+fn get_view_for_for_in_stmt<'a>(ref_node: &'a swc_ast::ForInStmt, bump: &'a Bump) -> &'a ForInStmt<'a> {
   let value = &ref_node.left;
-  let field_left = get_view_for_var_decl_or_pat(value);
+  let field_left = get_view_for_var_decl_or_pat(value, bump);
   let value = &ref_node.right;
-  let field_right = Box::new(get_view_for_expr(value));
+  let field_right = get_view_for_expr(value, bump);
   let value = &ref_node.body;
-  let field_body = Box::new(get_view_for_stmt(value));
-  let mut node = ForInStmt {
+  let field_body = get_view_for_stmt(value, bump);
+  let node = bump.alloc(ForInStmt {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     left: field_left,
     right: field_right,
     body: field_body,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ForInStmt, &'a ForInStmt>(&node) };
-  let parent = Node::ForInStmt(child_parent_ref);
-  set_parent_for_var_decl_or_pat(&mut node.left, parent.clone());
-  set_parent_for_expr(&mut node.right, parent.clone());
-  set_parent_for_stmt(&mut node.body, parent);
+  });
+  let parent = Node::ForInStmt(node);
+  set_parent_for_var_decl_or_pat(&node.left, parent.clone());
+  set_parent_for_expr(&node.right, parent.clone());
+  set_parent_for_stmt(&node.body, parent);
   node
 }
 
 pub struct EmptyStmt<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::EmptyStmt,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::EmptyStmt,
 }
 
 impl<'a> Spanned for EmptyStmt<'a> {
@@ -12925,22 +13474,24 @@ impl<'a> Spanned for EmptyStmt<'a> {
   }
 }
 
-impl<'a> From<&EmptyStmt<'a>> for Node<'a> {
-  fn from(node: &EmptyStmt) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&EmptyStmt, &'a EmptyStmt>(&node) };
-    Node::EmptyStmt(static_ref)
+impl<'a> From<&'a EmptyStmt<'a>> for Node<'a> {
+  fn from(node: &'a EmptyStmt<'a>) -> Node<'a> {
+    Node::EmptyStmt(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for EmptyStmt<'a> {
+impl<'a> NodeTrait<'a> for &'a EmptyStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     Vec::with_capacity(0)
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for EmptyStmt<'a> {
@@ -12951,22 +13502,21 @@ impl<'a> CastableNode<'a> for EmptyStmt<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_empty_stmt<'a>(ref_node: &'a swc_ecma_ast::EmptyStmt) -> EmptyStmt<'a> {
-  let node = EmptyStmt {
+fn get_view_for_empty_stmt<'a>(ref_node: &'a swc_ast::EmptyStmt, bump: &'a Bump) -> &'a EmptyStmt<'a> {
+  let node = bump.alloc(EmptyStmt {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
-  };
+    inner_parent: UnsafeCell::new(None),
+  });
   node
 }
 
 pub struct WhileStmt<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::WhileStmt,
-  pub test: Box<Expr<'a>>,
-  pub body: Box<Stmt<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::WhileStmt,
+  pub test: Expr<'a>,
+  pub body: Stmt<'a>,
 }
 
 impl<'a> Spanned for WhileStmt<'a> {
@@ -12975,16 +13525,15 @@ impl<'a> Spanned for WhileStmt<'a> {
   }
 }
 
-impl<'a> From<&WhileStmt<'a>> for Node<'a> {
-  fn from(node: &WhileStmt) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&WhileStmt, &'a WhileStmt>(&node) };
-    Node::WhileStmt(static_ref)
+impl<'a> From<&'a WhileStmt<'a>> for Node<'a> {
+  fn from(node: &'a WhileStmt<'a>) -> Node<'a> {
+    Node::WhileStmt(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for WhileStmt<'a> {
+impl<'a> NodeTrait<'a> for &'a WhileStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -12994,6 +13543,9 @@ impl<'a> NodeTrait<'a> for WhileStmt<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for WhileStmt<'a> {
@@ -13004,30 +13556,28 @@ impl<'a> CastableNode<'a> for WhileStmt<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_while_stmt<'a>(ref_node: &'a swc_ecma_ast::WhileStmt) -> WhileStmt<'a> {
+fn get_view_for_while_stmt<'a>(ref_node: &'a swc_ast::WhileStmt, bump: &'a Bump) -> &'a WhileStmt<'a> {
   let value = &ref_node.test;
-  let field_test = Box::new(get_view_for_expr(value));
+  let field_test = get_view_for_expr(value, bump);
   let value = &ref_node.body;
-  let field_body = Box::new(get_view_for_stmt(value));
-  let mut node = WhileStmt {
+  let field_body = get_view_for_stmt(value, bump);
+  let node = bump.alloc(WhileStmt {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     test: field_test,
     body: field_body,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&WhileStmt, &'a WhileStmt>(&node) };
-  let parent = Node::WhileStmt(child_parent_ref);
-  set_parent_for_expr(&mut node.test, parent.clone());
-  set_parent_for_stmt(&mut node.body, parent);
+  });
+  let parent = Node::WhileStmt(node);
+  set_parent_for_expr(&node.test, parent.clone());
+  set_parent_for_stmt(&node.body, parent);
   node
 }
 
 pub struct Str<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::Str,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::Str,
 }
 
 impl<'a> Str<'a> {
@@ -13047,22 +13597,24 @@ impl<'a> Spanned for Str<'a> {
   }
 }
 
-impl<'a> From<&Str<'a>> for Node<'a> {
-  fn from(node: &Str) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&Str, &'a Str>(&node) };
-    Node::Str(static_ref)
+impl<'a> From<&'a Str<'a>> for Node<'a> {
+  fn from(node: &'a Str<'a>) -> Node<'a> {
+    Node::Str(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for Str<'a> {
+impl<'a> NodeTrait<'a> for &'a Str<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     Vec::with_capacity(0)
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for Str<'a> {
@@ -13073,22 +13625,21 @@ impl<'a> CastableNode<'a> for Str<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_str<'a>(ref_node: &'a swc_ecma_ast::Str) -> Str<'a> {
-  let node = Str {
+fn get_view_for_str<'a>(ref_node: &'a swc_ast::Str, bump: &'a Bump) -> &'a Str<'a> {
+  let node = bump.alloc(Str {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
-  };
+    inner_parent: UnsafeCell::new(None),
+  });
   node
 }
 
 pub struct TsExprWithTypeArgs<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsExprWithTypeArgs,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsExprWithTypeArgs,
   pub expr: TsEntityName<'a>,
-  pub type_args: Option<TsTypeParamInstantiation<'a>>,
+  pub type_args: Option<&'a TsTypeParamInstantiation<'a>>,
 }
 
 impl<'a> Spanned for TsExprWithTypeArgs<'a> {
@@ -13097,27 +13648,29 @@ impl<'a> Spanned for TsExprWithTypeArgs<'a> {
   }
 }
 
-impl<'a> From<&TsExprWithTypeArgs<'a>> for Node<'a> {
-  fn from(node: &TsExprWithTypeArgs) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsExprWithTypeArgs, &'a TsExprWithTypeArgs>(&node) };
-    Node::TsExprWithTypeArgs(static_ref)
+impl<'a> From<&'a TsExprWithTypeArgs<'a>> for Node<'a> {
+  fn from(node: &'a TsExprWithTypeArgs<'a>) -> Node<'a> {
+    Node::TsExprWithTypeArgs(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsExprWithTypeArgs<'a> {
+impl<'a> NodeTrait<'a> for &'a TsExprWithTypeArgs<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.type_args { Some(_value) => 1, None => 0, });
     children.push((&self.expr).into());
-    if let Some(child) = &self.type_args {
+    if let Some(child) = self.type_args {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsExprWithTypeArgs<'a> {
@@ -13128,38 +13681,36 @@ impl<'a> CastableNode<'a> for TsExprWithTypeArgs<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_expr_with_type_args<'a>(ref_node: &'a swc_ecma_ast::TsExprWithTypeArgs) -> TsExprWithTypeArgs<'a> {
+fn get_view_for_ts_expr_with_type_args<'a>(ref_node: &'a swc_ast::TsExprWithTypeArgs, bump: &'a Bump) -> &'a TsExprWithTypeArgs<'a> {
   let value = &ref_node.expr;
-  let field_expr = get_view_for_ts_entity_name(value);
+  let field_expr = get_view_for_ts_entity_name(value, bump);
   let value = &ref_node.type_args;
   let field_type_args = match value {
-    Some(value) => Some(get_view_for_ts_type_param_instantiation(value)),
+    Some(value) => Some(get_view_for_ts_type_param_instantiation(value, bump)),
     None => None,
   };
-  let mut node = TsExprWithTypeArgs {
+  let node = bump.alloc(TsExprWithTypeArgs {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     expr: field_expr,
     type_args: field_type_args,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsExprWithTypeArgs, &'a TsExprWithTypeArgs>(&node) };
-  let parent = Node::TsExprWithTypeArgs(child_parent_ref);
-  set_parent_for_ts_entity_name(&mut node.expr, parent.clone());
-  if let Some(node) = node.type_args.as_mut() {
-    node.parent = parent;
+  });
+  let parent = Node::TsExprWithTypeArgs(node);
+  set_parent_for_ts_entity_name(&node.expr, parent.clone());
+  if let Some(child) = node.type_args {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 pub struct AssignPat<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::AssignPat,
-  pub left: Box<Pat<'a>>,
-  pub right: Box<Expr<'a>>,
-  pub type_ann: Option<TsTypeAnn<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::AssignPat,
+  pub left: Pat<'a>,
+  pub right: Expr<'a>,
+  pub type_ann: Option<&'a TsTypeAnn<'a>>,
 }
 
 impl<'a> Spanned for AssignPat<'a> {
@@ -13168,28 +13719,30 @@ impl<'a> Spanned for AssignPat<'a> {
   }
 }
 
-impl<'a> From<&AssignPat<'a>> for Node<'a> {
-  fn from(node: &AssignPat) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&AssignPat, &'a AssignPat>(&node) };
-    Node::AssignPat(static_ref)
+impl<'a> From<&'a AssignPat<'a>> for Node<'a> {
+  fn from(node: &'a AssignPat<'a>) -> Node<'a> {
+    Node::AssignPat(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for AssignPat<'a> {
+impl<'a> NodeTrait<'a> for &'a AssignPat<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(2 + match &self.type_ann { Some(_value) => 1, None => 0, });
     children.push((&self.left).into());
     children.push((&self.right).into());
-    if let Some(child) = &self.type_ann {
+    if let Some(child) = self.type_ann {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for AssignPat<'a> {
@@ -13200,43 +13753,41 @@ impl<'a> CastableNode<'a> for AssignPat<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_assign_pat<'a>(ref_node: &'a swc_ecma_ast::AssignPat) -> AssignPat<'a> {
+fn get_view_for_assign_pat<'a>(ref_node: &'a swc_ast::AssignPat, bump: &'a Bump) -> &'a AssignPat<'a> {
   let value = &ref_node.left;
-  let field_left = Box::new(get_view_for_pat(value));
+  let field_left = get_view_for_pat(value, bump);
   let value = &ref_node.right;
-  let field_right = Box::new(get_view_for_expr(value));
+  let field_right = get_view_for_expr(value, bump);
   let value = &ref_node.type_ann;
   let field_type_ann = match value {
-    Some(value) => Some(get_view_for_ts_type_ann(value)),
+    Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
     None => None,
   };
-  let mut node = AssignPat {
+  let node = bump.alloc(AssignPat {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     left: field_left,
     right: field_right,
     type_ann: field_type_ann,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&AssignPat, &'a AssignPat>(&node) };
-  let parent = Node::AssignPat(child_parent_ref);
-  set_parent_for_pat(&mut node.left, parent.clone());
-  set_parent_for_expr(&mut node.right, parent.clone());
-  if let Some(node) = node.type_ann.as_mut() {
-    node.parent = parent;
+  });
+  let parent = Node::AssignPat(node);
+  set_parent_for_pat(&node.left, parent.clone());
+  set_parent_for_expr(&node.right, parent.clone());
+  if let Some(child) = node.type_ann {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 pub struct ExportNamedSpecifier<'a> {
-  pub parent: &'a NamedExport<'a>,
-  pub inner: &'a swc_ecma_ast::ExportNamedSpecifier,
+  inner_parent: UnsafeCell<Option<&'a NamedExport<'a>>>,
+  pub inner: &'a swc_ast::ExportNamedSpecifier,
   /// `foo` in `export { foo as bar }`
-  pub orig: Ident<'a>,
+  pub orig: &'a Ident<'a>,
   /// `Some(bar)` in `export { foo as bar }`
-  pub exported: Option<Ident<'a>>,
+  pub exported: Option<&'a Ident<'a>>,
 }
 
 impl<'a> Spanned for ExportNamedSpecifier<'a> {
@@ -13245,27 +13796,29 @@ impl<'a> Spanned for ExportNamedSpecifier<'a> {
   }
 }
 
-impl<'a> From<&ExportNamedSpecifier<'a>> for Node<'a> {
-  fn from(node: &ExportNamedSpecifier) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ExportNamedSpecifier, &'a ExportNamedSpecifier>(&node) };
-    Node::ExportNamedSpecifier(static_ref)
+impl<'a> From<&'a ExportNamedSpecifier<'a>> for Node<'a> {
+  fn from(node: &'a ExportNamedSpecifier<'a>) -> Node<'a> {
+    Node::ExportNamedSpecifier(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ExportNamedSpecifier<'a> {
+impl<'a> NodeTrait<'a> for &'a ExportNamedSpecifier<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.exported { Some(_value) => 1, None => 0, });
-    children.push((&self.orig).into());
-    if let Some(child) = &self.exported {
+    children.push(self.orig.into());
+    if let Some(child) = self.exported {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ExportNamedSpecifier<'a> {
@@ -13276,39 +13829,37 @@ impl<'a> CastableNode<'a> for ExportNamedSpecifier<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_export_named_specifier<'a>(ref_node: &'a swc_ecma_ast::ExportNamedSpecifier) -> ExportNamedSpecifier<'a> {
+fn get_view_for_export_named_specifier<'a>(ref_node: &'a swc_ast::ExportNamedSpecifier, bump: &'a Bump) -> &'a ExportNamedSpecifier<'a> {
   let value = &ref_node.orig;
-  let field_orig = get_view_for_ident(value);
+  let field_orig = get_view_for_ident(value, bump);
   let value = &ref_node.exported;
   let field_exported = match value {
-    Some(value) => Some(get_view_for_ident(value)),
+    Some(value) => Some(get_view_for_ident(value, bump)),
     None => None,
   };
-  let mut node = ExportNamedSpecifier {
+  let node = bump.alloc(ExportNamedSpecifier {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     orig: field_orig,
     exported: field_exported,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ExportNamedSpecifier, &'a ExportNamedSpecifier>(&node) };
-  let parent = Node::ExportNamedSpecifier(child_parent_ref);
-  node.orig.parent = parent.clone();
-  if let Some(node) = node.exported.as_mut() {
-    node.parent = parent;
+  });
+  let parent = Node::ExportNamedSpecifier(node);
+  unsafe { *node.orig.inner_parent.get() = Some(parent.clone()); }
+  if let Some(child) = node.exported {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 pub struct TsConditionalType<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsConditionalType,
-  pub check_type: Box<TsType<'a>>,
-  pub extends_type: Box<TsType<'a>>,
-  pub true_type: Box<TsType<'a>>,
-  pub false_type: Box<TsType<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsConditionalType,
+  pub check_type: TsType<'a>,
+  pub extends_type: TsType<'a>,
+  pub true_type: TsType<'a>,
+  pub false_type: TsType<'a>,
 }
 
 impl<'a> Spanned for TsConditionalType<'a> {
@@ -13317,16 +13868,15 @@ impl<'a> Spanned for TsConditionalType<'a> {
   }
 }
 
-impl<'a> From<&TsConditionalType<'a>> for Node<'a> {
-  fn from(node: &TsConditionalType) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsConditionalType, &'a TsConditionalType>(&node) };
-    Node::TsConditionalType(static_ref)
+impl<'a> From<&'a TsConditionalType<'a>> for Node<'a> {
+  fn from(node: &'a TsConditionalType<'a>) -> Node<'a> {
+    Node::TsConditionalType(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsConditionalType<'a> {
+impl<'a> NodeTrait<'a> for &'a TsConditionalType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -13338,6 +13888,9 @@ impl<'a> NodeTrait<'a> for TsConditionalType<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsConditionalType<'a> {
@@ -13348,38 +13901,36 @@ impl<'a> CastableNode<'a> for TsConditionalType<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_conditional_type<'a>(ref_node: &'a swc_ecma_ast::TsConditionalType) -> TsConditionalType<'a> {
+fn get_view_for_ts_conditional_type<'a>(ref_node: &'a swc_ast::TsConditionalType, bump: &'a Bump) -> &'a TsConditionalType<'a> {
   let value = &ref_node.check_type;
-  let field_check_type = Box::new(get_view_for_ts_type(value));
+  let field_check_type = get_view_for_ts_type(value, bump);
   let value = &ref_node.extends_type;
-  let field_extends_type = Box::new(get_view_for_ts_type(value));
+  let field_extends_type = get_view_for_ts_type(value, bump);
   let value = &ref_node.true_type;
-  let field_true_type = Box::new(get_view_for_ts_type(value));
+  let field_true_type = get_view_for_ts_type(value, bump);
   let value = &ref_node.false_type;
-  let field_false_type = Box::new(get_view_for_ts_type(value));
-  let mut node = TsConditionalType {
+  let field_false_type = get_view_for_ts_type(value, bump);
+  let node = bump.alloc(TsConditionalType {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     check_type: field_check_type,
     extends_type: field_extends_type,
     true_type: field_true_type,
     false_type: field_false_type,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsConditionalType, &'a TsConditionalType>(&node) };
-  let parent = Node::TsConditionalType(child_parent_ref);
-  set_parent_for_ts_type(&mut node.check_type, parent.clone());
-  set_parent_for_ts_type(&mut node.extends_type, parent.clone());
-  set_parent_for_ts_type(&mut node.true_type, parent.clone());
-  set_parent_for_ts_type(&mut node.false_type, parent);
+  });
+  let parent = Node::TsConditionalType(node);
+  set_parent_for_ts_type(&node.check_type, parent.clone());
+  set_parent_for_ts_type(&node.extends_type, parent.clone());
+  set_parent_for_ts_type(&node.true_type, parent.clone());
+  set_parent_for_ts_type(&node.false_type, parent);
   node
 }
 
 pub struct TsTypeLit<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsTypeLit,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsTypeLit,
   pub members: Vec<TsTypeElement<'a>>,
 }
 
@@ -13389,16 +13940,15 @@ impl<'a> Spanned for TsTypeLit<'a> {
   }
 }
 
-impl<'a> From<&TsTypeLit<'a>> for Node<'a> {
-  fn from(node: &TsTypeLit) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsTypeLit, &'a TsTypeLit>(&node) };
-    Node::TsTypeLit(static_ref)
+impl<'a> From<&'a TsTypeLit<'a>> for Node<'a> {
+  fn from(node: &'a TsTypeLit<'a>) -> Node<'a> {
+    Node::TsTypeLit(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsTypeLit<'a> {
+impl<'a> NodeTrait<'a> for &'a TsTypeLit<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -13409,6 +13959,9 @@ impl<'a> NodeTrait<'a> for TsTypeLit<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsTypeLit<'a> {
@@ -13419,29 +13972,27 @@ impl<'a> CastableNode<'a> for TsTypeLit<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_type_lit<'a>(ref_node: &'a swc_ecma_ast::TsTypeLit) -> TsTypeLit<'a> {
+fn get_view_for_ts_type_lit<'a>(ref_node: &'a swc_ast::TsTypeLit, bump: &'a Bump) -> &'a TsTypeLit<'a> {
   let value = &ref_node.members;
-  let field_members = value.iter().map(|value| get_view_for_ts_type_element(value)).collect();
-  let mut node = TsTypeLit {
+  let field_members = value.iter().map(|value| get_view_for_ts_type_element(value, bump)).collect();
+  let node = bump.alloc(TsTypeLit {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     members: field_members,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsTypeLit, &'a TsTypeLit>(&node) };
-  let parent = Node::TsTypeLit(child_parent_ref);
-  for node in node.members.iter_mut() {
+  });
+  let parent = Node::TsTypeLit(node);
+  for node in node.members.iter() {
     set_parent_for_ts_type_element(node, parent.clone());
   }
   node
 }
 
 pub struct BreakStmt<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::BreakStmt,
-  pub label: Option<Ident<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::BreakStmt,
+  pub label: Option<&'a Ident<'a>>,
 }
 
 impl<'a> Spanned for BreakStmt<'a> {
@@ -13450,26 +14001,28 @@ impl<'a> Spanned for BreakStmt<'a> {
   }
 }
 
-impl<'a> From<&BreakStmt<'a>> for Node<'a> {
-  fn from(node: &BreakStmt) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&BreakStmt, &'a BreakStmt>(&node) };
-    Node::BreakStmt(static_ref)
+impl<'a> From<&'a BreakStmt<'a>> for Node<'a> {
+  fn from(node: &'a BreakStmt<'a>) -> Node<'a> {
+    Node::BreakStmt(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for BreakStmt<'a> {
+impl<'a> NodeTrait<'a> for &'a BreakStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(match &self.label { Some(_value) => 1, None => 0, });
-    if let Some(child) = &self.label {
+    if let Some(child) = self.label {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for BreakStmt<'a> {
@@ -13480,33 +14033,31 @@ impl<'a> CastableNode<'a> for BreakStmt<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_break_stmt<'a>(ref_node: &'a swc_ecma_ast::BreakStmt) -> BreakStmt<'a> {
+fn get_view_for_break_stmt<'a>(ref_node: &'a swc_ast::BreakStmt, bump: &'a Bump) -> &'a BreakStmt<'a> {
   let value = &ref_node.label;
   let field_label = match value {
-    Some(value) => Some(get_view_for_ident(value)),
+    Some(value) => Some(get_view_for_ident(value, bump)),
     None => None,
   };
-  let mut node = BreakStmt {
+  let node = bump.alloc(BreakStmt {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     label: field_label,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&BreakStmt, &'a BreakStmt>(&node) };
-  let parent = Node::BreakStmt(child_parent_ref);
-  if let Some(node) = node.label.as_mut() {
-    node.parent = parent;
+  });
+  let parent = Node::BreakStmt(node);
+  if let Some(child) = node.label {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 /// e.g. `import * as foo from 'mod.js'`.
 pub struct ImportStarAsSpecifier<'a> {
-  pub parent: &'a ImportDecl<'a>,
-  pub inner: &'a swc_ecma_ast::ImportStarAsSpecifier,
-  pub local: Ident<'a>,
+  inner_parent: UnsafeCell<Option<&'a ImportDecl<'a>>>,
+  pub inner: &'a swc_ast::ImportStarAsSpecifier,
+  pub local: &'a Ident<'a>,
 }
 
 impl<'a> Spanned for ImportStarAsSpecifier<'a> {
@@ -13515,24 +14066,26 @@ impl<'a> Spanned for ImportStarAsSpecifier<'a> {
   }
 }
 
-impl<'a> From<&ImportStarAsSpecifier<'a>> for Node<'a> {
-  fn from(node: &ImportStarAsSpecifier) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ImportStarAsSpecifier, &'a ImportStarAsSpecifier>(&node) };
-    Node::ImportStarAsSpecifier(static_ref)
+impl<'a> From<&'a ImportStarAsSpecifier<'a>> for Node<'a> {
+  fn from(node: &'a ImportStarAsSpecifier<'a>) -> Node<'a> {
+    Node::ImportStarAsSpecifier(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ImportStarAsSpecifier<'a> {
+impl<'a> NodeTrait<'a> for &'a ImportStarAsSpecifier<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1);
-    children.push((&self.local).into());
+    children.push(self.local.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ImportStarAsSpecifier<'a> {
@@ -13543,27 +14096,25 @@ impl<'a> CastableNode<'a> for ImportStarAsSpecifier<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_import_star_as_specifier<'a>(ref_node: &'a swc_ecma_ast::ImportStarAsSpecifier) -> ImportStarAsSpecifier<'a> {
+fn get_view_for_import_star_as_specifier<'a>(ref_node: &'a swc_ast::ImportStarAsSpecifier, bump: &'a Bump) -> &'a ImportStarAsSpecifier<'a> {
   let value = &ref_node.local;
-  let field_local = get_view_for_ident(value);
-  let mut node = ImportStarAsSpecifier {
+  let field_local = get_view_for_ident(value, bump);
+  let node = bump.alloc(ImportStarAsSpecifier {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     local: field_local,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ImportStarAsSpecifier, &'a ImportStarAsSpecifier>(&node) };
-  let parent = Node::ImportStarAsSpecifier(child_parent_ref);
-  node.local.parent = parent;
+  });
+  let parent = Node::ImportStarAsSpecifier(node);
+  unsafe { *node.local.inner_parent.get() = Some(parent); }
   node
 }
 
 pub struct TsInferType<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsInferType,
-  pub type_param: TsTypeParam<'a>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsInferType,
+  pub type_param: &'a TsTypeParam<'a>,
 }
 
 impl<'a> Spanned for TsInferType<'a> {
@@ -13572,24 +14123,26 @@ impl<'a> Spanned for TsInferType<'a> {
   }
 }
 
-impl<'a> From<&TsInferType<'a>> for Node<'a> {
-  fn from(node: &TsInferType) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsInferType, &'a TsInferType>(&node) };
-    Node::TsInferType(static_ref)
+impl<'a> From<&'a TsInferType<'a>> for Node<'a> {
+  fn from(node: &'a TsInferType<'a>) -> Node<'a> {
+    Node::TsInferType(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsInferType<'a> {
+impl<'a> NodeTrait<'a> for &'a TsInferType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1);
-    children.push((&self.type_param).into());
+    children.push(self.type_param.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsInferType<'a> {
@@ -13600,28 +14153,26 @@ impl<'a> CastableNode<'a> for TsInferType<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_infer_type<'a>(ref_node: &'a swc_ecma_ast::TsInferType) -> TsInferType<'a> {
+fn get_view_for_ts_infer_type<'a>(ref_node: &'a swc_ast::TsInferType, bump: &'a Bump) -> &'a TsInferType<'a> {
   let value = &ref_node.type_param;
-  let field_type_param = get_view_for_ts_type_param(value);
-  let mut node = TsInferType {
+  let field_type_param = get_view_for_ts_type_param(value, bump);
+  let node = bump.alloc(TsInferType {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     type_param: field_type_param,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsInferType, &'a TsInferType>(&node) };
-  let parent = Node::TsInferType(child_parent_ref);
-  node.type_param.parent = parent;
+  });
+  let parent = Node::TsInferType(node);
+  unsafe { *node.type_param.inner_parent.get() = Some(parent); }
   node
 }
 
 pub struct PrivateMethod<'a> {
-  pub parent: &'a Class<'a>,
-  pub inner: &'a swc_ecma_ast::PrivateMethod,
-  pub key: PrivateName<'a>,
-  pub function: Function<'a>,
+  inner_parent: UnsafeCell<Option<&'a Class<'a>>>,
+  pub inner: &'a swc_ast::PrivateMethod,
+  pub key: &'a PrivateName<'a>,
+  pub function: &'a Function<'a>,
 }
 
 impl<'a> PrivateMethod<'a> {
@@ -13654,25 +14205,27 @@ impl<'a> Spanned for PrivateMethod<'a> {
   }
 }
 
-impl<'a> From<&PrivateMethod<'a>> for Node<'a> {
-  fn from(node: &PrivateMethod) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&PrivateMethod, &'a PrivateMethod>(&node) };
-    Node::PrivateMethod(static_ref)
+impl<'a> From<&'a PrivateMethod<'a>> for Node<'a> {
+  fn from(node: &'a PrivateMethod<'a>) -> Node<'a> {
+    Node::PrivateMethod(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for PrivateMethod<'a> {
+impl<'a> NodeTrait<'a> for &'a PrivateMethod<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(2);
-    children.push((&self.key).into());
-    children.push((&self.function).into());
+    children.push(self.key.into());
+    children.push(self.function.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for PrivateMethod<'a> {
@@ -13683,33 +14236,31 @@ impl<'a> CastableNode<'a> for PrivateMethod<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_private_method<'a>(ref_node: &'a swc_ecma_ast::PrivateMethod) -> PrivateMethod<'a> {
+fn get_view_for_private_method<'a>(ref_node: &'a swc_ast::PrivateMethod, bump: &'a Bump) -> &'a PrivateMethod<'a> {
   let value = &ref_node.key;
-  let field_key = get_view_for_private_name(value);
+  let field_key = get_view_for_private_name(value, bump);
   let value = &ref_node.function;
-  let field_function = get_view_for_function(value);
-  let mut node = PrivateMethod {
+  let field_function = get_view_for_function(value, bump);
+  let node = bump.alloc(PrivateMethod {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     key: field_key,
     function: field_function,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&PrivateMethod, &'a PrivateMethod>(&node) };
-  let parent = Node::PrivateMethod(child_parent_ref);
-  node.key.parent = parent.clone();
-  node.function.parent = parent;
+  });
+  let parent = Node::PrivateMethod(node);
+  unsafe { *node.key.inner_parent.get() = Some(parent.clone()); }
+  unsafe { *node.function.inner_parent.get() = Some(parent); }
   node
 }
 
 pub struct ForOfStmt<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::ForOfStmt,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::ForOfStmt,
   pub left: VarDeclOrPat<'a>,
-  pub right: Box<Expr<'a>>,
-  pub body: Box<Stmt<'a>>,
+  pub right: Expr<'a>,
+  pub body: Stmt<'a>,
 }
 
 impl<'a> ForOfStmt<'a> {
@@ -13729,16 +14280,15 @@ impl<'a> Spanned for ForOfStmt<'a> {
   }
 }
 
-impl<'a> From<&ForOfStmt<'a>> for Node<'a> {
-  fn from(node: &ForOfStmt) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ForOfStmt, &'a ForOfStmt>(&node) };
-    Node::ForOfStmt(static_ref)
+impl<'a> From<&'a ForOfStmt<'a>> for Node<'a> {
+  fn from(node: &'a ForOfStmt<'a>) -> Node<'a> {
+    Node::ForOfStmt(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ForOfStmt<'a> {
+impl<'a> NodeTrait<'a> for &'a ForOfStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -13749,6 +14299,9 @@ impl<'a> NodeTrait<'a> for ForOfStmt<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ForOfStmt<'a> {
@@ -13759,35 +14312,33 @@ impl<'a> CastableNode<'a> for ForOfStmt<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_for_of_stmt<'a>(ref_node: &'a swc_ecma_ast::ForOfStmt) -> ForOfStmt<'a> {
+fn get_view_for_for_of_stmt<'a>(ref_node: &'a swc_ast::ForOfStmt, bump: &'a Bump) -> &'a ForOfStmt<'a> {
   let value = &ref_node.left;
-  let field_left = get_view_for_var_decl_or_pat(value);
+  let field_left = get_view_for_var_decl_or_pat(value, bump);
   let value = &ref_node.right;
-  let field_right = Box::new(get_view_for_expr(value));
+  let field_right = get_view_for_expr(value, bump);
   let value = &ref_node.body;
-  let field_body = Box::new(get_view_for_stmt(value));
-  let mut node = ForOfStmt {
+  let field_body = get_view_for_stmt(value, bump);
+  let node = bump.alloc(ForOfStmt {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     left: field_left,
     right: field_right,
     body: field_body,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ForOfStmt, &'a ForOfStmt>(&node) };
-  let parent = Node::ForOfStmt(child_parent_ref);
-  set_parent_for_var_decl_or_pat(&mut node.left, parent.clone());
-  set_parent_for_expr(&mut node.right, parent.clone());
-  set_parent_for_stmt(&mut node.body, parent);
+  });
+  let parent = Node::ForOfStmt(node);
+  set_parent_for_var_decl_or_pat(&node.left, parent.clone());
+  set_parent_for_expr(&node.right, parent.clone());
+  set_parent_for_stmt(&node.body, parent);
   node
 }
 
 pub struct TsUnionType<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsUnionType,
-  pub types: Vec<Box<TsType<'a>>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsUnionType,
+  pub types: Vec<TsType<'a>>,
 }
 
 impl<'a> Spanned for TsUnionType<'a> {
@@ -13796,16 +14347,15 @@ impl<'a> Spanned for TsUnionType<'a> {
   }
 }
 
-impl<'a> From<&TsUnionType<'a>> for Node<'a> {
-  fn from(node: &TsUnionType) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsUnionType, &'a TsUnionType>(&node) };
-    Node::TsUnionType(static_ref)
+impl<'a> From<&'a TsUnionType<'a>> for Node<'a> {
+  fn from(node: &'a TsUnionType<'a>) -> Node<'a> {
+    Node::TsUnionType(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsUnionType<'a> {
+impl<'a> NodeTrait<'a> for &'a TsUnionType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -13816,6 +14366,9 @@ impl<'a> NodeTrait<'a> for TsUnionType<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsUnionType<'a> {
@@ -13826,28 +14379,26 @@ impl<'a> CastableNode<'a> for TsUnionType<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_union_type<'a>(ref_node: &'a swc_ecma_ast::TsUnionType) -> TsUnionType<'a> {
+fn get_view_for_ts_union_type<'a>(ref_node: &'a swc_ast::TsUnionType, bump: &'a Bump) -> &'a TsUnionType<'a> {
   let value = &ref_node.types;
-  let field_types = value.iter().map(|value| Box::new(get_view_for_ts_type(value))).collect();
-  let mut node = TsUnionType {
+  let field_types = value.iter().map(|value| get_view_for_ts_type(value, bump)).collect();
+  let node = bump.alloc(TsUnionType {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     types: field_types,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsUnionType, &'a TsUnionType>(&node) };
-  let parent = Node::TsUnionType(child_parent_ref);
-  for node in node.types.iter_mut() {
+  });
+  let parent = Node::TsUnionType(node);
+  for node in node.types.iter() {
     set_parent_for_ts_type(node, parent.clone());
   }
   node
 }
 
 pub struct TsModuleDecl<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsModuleDecl,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsModuleDecl,
   pub id: TsModuleName<'a>,
   pub body: Option<TsNamespaceBody<'a>>,
 }
@@ -13869,27 +14420,29 @@ impl<'a> Spanned for TsModuleDecl<'a> {
   }
 }
 
-impl<'a> From<&TsModuleDecl<'a>> for Node<'a> {
-  fn from(node: &TsModuleDecl) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsModuleDecl, &'a TsModuleDecl>(&node) };
-    Node::TsModuleDecl(static_ref)
+impl<'a> From<&'a TsModuleDecl<'a>> for Node<'a> {
+  fn from(node: &'a TsModuleDecl<'a>) -> Node<'a> {
+    Node::TsModuleDecl(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsModuleDecl<'a> {
+impl<'a> NodeTrait<'a> for &'a TsModuleDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.body { Some(_value) => 1, None => 0, });
     children.push((&self.id).into());
-    if let Some(child) = &self.body {
+    if let Some(child) = self.body.as_ref() {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsModuleDecl<'a> {
@@ -13900,38 +14453,36 @@ impl<'a> CastableNode<'a> for TsModuleDecl<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_module_decl<'a>(ref_node: &'a swc_ecma_ast::TsModuleDecl) -> TsModuleDecl<'a> {
+fn get_view_for_ts_module_decl<'a>(ref_node: &'a swc_ast::TsModuleDecl, bump: &'a Bump) -> &'a TsModuleDecl<'a> {
   let value = &ref_node.id;
-  let field_id = get_view_for_ts_module_name(value);
+  let field_id = get_view_for_ts_module_name(value, bump);
   let value = &ref_node.body;
   let field_body = match value {
-    Some(value) => Some(get_view_for_ts_namespace_body(value)),
+    Some(value) => Some(get_view_for_ts_namespace_body(value, bump)),
     None => None,
   };
-  let mut node = TsModuleDecl {
+  let node = bump.alloc(TsModuleDecl {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     id: field_id,
     body: field_body,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsModuleDecl, &'a TsModuleDecl>(&node) };
-  let parent = Node::TsModuleDecl(child_parent_ref);
-  set_parent_for_ts_module_name(&mut node.id, parent.clone());
-  if let Some(node) = node.body.as_mut() {
-    set_parent_for_ts_namespace_body(node, parent);
+  });
+  let parent = Node::TsModuleDecl(node);
+  set_parent_for_ts_module_name(&node.id, parent.clone());
+  if let Some(child) = node.body.as_ref() {
+    set_parent_for_ts_namespace_body(child, parent);
   }
   node
 }
 
 pub struct GetterProp<'a> {
-  pub parent: &'a ObjectLit<'a>,
-  pub inner: &'a swc_ecma_ast::GetterProp,
+  inner_parent: UnsafeCell<Option<&'a ObjectLit<'a>>>,
+  pub inner: &'a swc_ast::GetterProp,
   pub key: PropName<'a>,
-  pub type_ann: Option<TsTypeAnn<'a>>,
-  pub body: Option<BlockStmt<'a>>,
+  pub type_ann: Option<&'a TsTypeAnn<'a>>,
+  pub body: Option<&'a BlockStmt<'a>>,
 }
 
 impl<'a> Spanned for GetterProp<'a> {
@@ -13940,30 +14491,32 @@ impl<'a> Spanned for GetterProp<'a> {
   }
 }
 
-impl<'a> From<&GetterProp<'a>> for Node<'a> {
-  fn from(node: &GetterProp) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&GetterProp, &'a GetterProp>(&node) };
-    Node::GetterProp(static_ref)
+impl<'a> From<&'a GetterProp<'a>> for Node<'a> {
+  fn from(node: &'a GetterProp<'a>) -> Node<'a> {
+    Node::GetterProp(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for GetterProp<'a> {
+impl<'a> NodeTrait<'a> for &'a GetterProp<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.type_ann { Some(_value) => 1, None => 0, } + match &self.body { Some(_value) => 1, None => 0, });
     children.push((&self.key).into());
-    if let Some(child) = &self.type_ann {
+    if let Some(child) = self.type_ann {
       children.push(child.into());
     }
-    if let Some(child) = &self.body {
+    if let Some(child) = self.body {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for GetterProp<'a> {
@@ -13974,47 +14527,45 @@ impl<'a> CastableNode<'a> for GetterProp<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_getter_prop<'a>(ref_node: &'a swc_ecma_ast::GetterProp) -> GetterProp<'a> {
+fn get_view_for_getter_prop<'a>(ref_node: &'a swc_ast::GetterProp, bump: &'a Bump) -> &'a GetterProp<'a> {
   let value = &ref_node.key;
-  let field_key = get_view_for_prop_name(value);
+  let field_key = get_view_for_prop_name(value, bump);
   let value = &ref_node.type_ann;
   let field_type_ann = match value {
-    Some(value) => Some(get_view_for_ts_type_ann(value)),
+    Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
     None => None,
   };
   let value = &ref_node.body;
   let field_body = match value {
-    Some(value) => Some(get_view_for_block_stmt(value)),
+    Some(value) => Some(get_view_for_block_stmt(value, bump)),
     None => None,
   };
-  let mut node = GetterProp {
+  let node = bump.alloc(GetterProp {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     key: field_key,
     type_ann: field_type_ann,
     body: field_body,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&GetterProp, &'a GetterProp>(&node) };
-  let parent = Node::GetterProp(child_parent_ref);
-  set_parent_for_prop_name(&mut node.key, parent.clone());
-  if let Some(node) = node.type_ann.as_mut() {
-    node.parent = parent.clone();
+  });
+  let parent = Node::GetterProp(node);
+  set_parent_for_prop_name(&node.key, parent.clone());
+  if let Some(child) = node.type_ann {
+    unsafe { *child.inner_parent.get() = Some(parent.clone()); }
   }
-  if let Some(node) = node.body.as_mut() {
-    node.parent = parent;
+  if let Some(child) = node.body {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 pub struct CondExpr<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::CondExpr,
-  pub test: Box<Expr<'a>>,
-  pub cons: Box<Expr<'a>>,
-  pub alt: Box<Expr<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::CondExpr,
+  pub test: Expr<'a>,
+  pub cons: Expr<'a>,
+  pub alt: Expr<'a>,
 }
 
 impl<'a> Spanned for CondExpr<'a> {
@@ -14023,16 +14574,15 @@ impl<'a> Spanned for CondExpr<'a> {
   }
 }
 
-impl<'a> From<&CondExpr<'a>> for Node<'a> {
-  fn from(node: &CondExpr) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&CondExpr, &'a CondExpr>(&node) };
-    Node::CondExpr(static_ref)
+impl<'a> From<&'a CondExpr<'a>> for Node<'a> {
+  fn from(node: &'a CondExpr<'a>) -> Node<'a> {
+    Node::CondExpr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for CondExpr<'a> {
+impl<'a> NodeTrait<'a> for &'a CondExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -14043,6 +14593,9 @@ impl<'a> NodeTrait<'a> for CondExpr<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for CondExpr<'a> {
@@ -14053,28 +14606,26 @@ impl<'a> CastableNode<'a> for CondExpr<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_cond_expr<'a>(ref_node: &'a swc_ecma_ast::CondExpr) -> CondExpr<'a> {
+fn get_view_for_cond_expr<'a>(ref_node: &'a swc_ast::CondExpr, bump: &'a Bump) -> &'a CondExpr<'a> {
   let value = &ref_node.test;
-  let field_test = Box::new(get_view_for_expr(value));
+  let field_test = get_view_for_expr(value, bump);
   let value = &ref_node.cons;
-  let field_cons = Box::new(get_view_for_expr(value));
+  let field_cons = get_view_for_expr(value, bump);
   let value = &ref_node.alt;
-  let field_alt = Box::new(get_view_for_expr(value));
-  let mut node = CondExpr {
+  let field_alt = get_view_for_expr(value, bump);
+  let node = bump.alloc(CondExpr {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     test: field_test,
     cons: field_cons,
     alt: field_alt,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&CondExpr, &'a CondExpr>(&node) };
-  let parent = Node::CondExpr(child_parent_ref);
-  set_parent_for_expr(&mut node.test, parent.clone());
-  set_parent_for_expr(&mut node.cons, parent.clone());
-  set_parent_for_expr(&mut node.alt, parent);
+  });
+  let parent = Node::CondExpr(node);
+  set_parent_for_expr(&node.test, parent.clone());
+  set_parent_for_expr(&node.cons, parent.clone());
+  set_parent_for_expr(&node.alt, parent);
   node
 }
 
@@ -14082,10 +14633,10 @@ fn get_view_for_cond_expr<'a>(ref_node: &'a swc_ecma_ast::CondExpr) -> CondExpr<
 /// e.g. local = bar, imported = Some(foo) for `import { foo as bar } from
 /// 'mod.js'`
 pub struct ImportNamedSpecifier<'a> {
-  pub parent: &'a ImportDecl<'a>,
-  pub inner: &'a swc_ecma_ast::ImportNamedSpecifier,
-  pub local: Ident<'a>,
-  pub imported: Option<Ident<'a>>,
+  inner_parent: UnsafeCell<Option<&'a ImportDecl<'a>>>,
+  pub inner: &'a swc_ast::ImportNamedSpecifier,
+  pub local: &'a Ident<'a>,
+  pub imported: Option<&'a Ident<'a>>,
 }
 
 impl<'a> Spanned for ImportNamedSpecifier<'a> {
@@ -14094,27 +14645,29 @@ impl<'a> Spanned for ImportNamedSpecifier<'a> {
   }
 }
 
-impl<'a> From<&ImportNamedSpecifier<'a>> for Node<'a> {
-  fn from(node: &ImportNamedSpecifier) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ImportNamedSpecifier, &'a ImportNamedSpecifier>(&node) };
-    Node::ImportNamedSpecifier(static_ref)
+impl<'a> From<&'a ImportNamedSpecifier<'a>> for Node<'a> {
+  fn from(node: &'a ImportNamedSpecifier<'a>) -> Node<'a> {
+    Node::ImportNamedSpecifier(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ImportNamedSpecifier<'a> {
+impl<'a> NodeTrait<'a> for &'a ImportNamedSpecifier<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.imported { Some(_value) => 1, None => 0, });
-    children.push((&self.local).into());
-    if let Some(child) = &self.imported {
+    children.push(self.local.into());
+    if let Some(child) = self.imported {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ImportNamedSpecifier<'a> {
@@ -14125,28 +14678,26 @@ impl<'a> CastableNode<'a> for ImportNamedSpecifier<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_import_named_specifier<'a>(ref_node: &'a swc_ecma_ast::ImportNamedSpecifier) -> ImportNamedSpecifier<'a> {
+fn get_view_for_import_named_specifier<'a>(ref_node: &'a swc_ast::ImportNamedSpecifier, bump: &'a Bump) -> &'a ImportNamedSpecifier<'a> {
   let value = &ref_node.local;
-  let field_local = get_view_for_ident(value);
+  let field_local = get_view_for_ident(value, bump);
   let value = &ref_node.imported;
   let field_imported = match value {
-    Some(value) => Some(get_view_for_ident(value)),
+    Some(value) => Some(get_view_for_ident(value, bump)),
     None => None,
   };
-  let mut node = ImportNamedSpecifier {
+  let node = bump.alloc(ImportNamedSpecifier {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     local: field_local,
     imported: field_imported,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ImportNamedSpecifier, &'a ImportNamedSpecifier>(&node) };
-  let parent = Node::ImportNamedSpecifier(child_parent_ref);
-  node.local.parent = parent.clone();
-  if let Some(node) = node.imported.as_mut() {
-    node.parent = parent;
+  });
+  let parent = Node::ImportNamedSpecifier(node);
+  unsafe { *node.local.inner_parent.get() = Some(parent.clone()); }
+  if let Some(child) = node.imported {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
@@ -14154,10 +14705,10 @@ fn get_view_for_import_named_specifier<'a>(ref_node: &'a swc_ecma_ast::ImportNam
 /// `export { foo } from 'mod'`
 /// `export { foo as bar } from 'mod'`
 pub struct NamedExport<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::NamedExport,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::NamedExport,
   pub specifiers: Vec<ExportSpecifier<'a>>,
-  pub src: Option<Str<'a>>,
+  pub src: Option<&'a Str<'a>>,
 }
 
 impl<'a> NamedExport<'a> {
@@ -14172,16 +14723,15 @@ impl<'a> Spanned for NamedExport<'a> {
   }
 }
 
-impl<'a> From<&NamedExport<'a>> for Node<'a> {
-  fn from(node: &NamedExport) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&NamedExport, &'a NamedExport>(&node) };
-    Node::NamedExport(static_ref)
+impl<'a> From<&'a NamedExport<'a>> for Node<'a> {
+  fn from(node: &'a NamedExport<'a>) -> Node<'a> {
+    Node::NamedExport(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for NamedExport<'a> {
+impl<'a> NodeTrait<'a> for &'a NamedExport<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -14189,12 +14739,15 @@ impl<'a> NodeTrait<'a> for NamedExport<'a> {
     for child in self.specifiers.iter() {
       children.push(child.into());
     }
-    if let Some(child) = &self.src {
+    if let Some(child) = self.src {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for NamedExport<'a> {
@@ -14205,40 +14758,38 @@ impl<'a> CastableNode<'a> for NamedExport<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_named_export<'a>(ref_node: &'a swc_ecma_ast::NamedExport) -> NamedExport<'a> {
+fn get_view_for_named_export<'a>(ref_node: &'a swc_ast::NamedExport, bump: &'a Bump) -> &'a NamedExport<'a> {
   let value = &ref_node.specifiers;
-  let field_specifiers = value.iter().map(|value| get_view_for_export_specifier(value)).collect();
+  let field_specifiers = value.iter().map(|value| get_view_for_export_specifier(value, bump)).collect();
   let value = &ref_node.src;
   let field_src = match value {
-    Some(value) => Some(get_view_for_str(value)),
+    Some(value) => Some(get_view_for_str(value, bump)),
     None => None,
   };
-  let mut node = NamedExport {
+  let node = bump.alloc(NamedExport {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     specifiers: field_specifiers,
     src: field_src,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&NamedExport, &'a NamedExport>(&node) };
-  let parent = Node::NamedExport(child_parent_ref);
-  for node in node.specifiers.iter_mut() {
+  });
+  let parent = Node::NamedExport(node);
+  for node in node.specifiers.iter() {
     set_parent_for_export_specifier(node, parent.clone());
   }
-  if let Some(node) = node.src.as_mut() {
-    node.parent = parent;
+  if let Some(child) = node.src {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 pub struct JSXElement<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::JSXElement,
-  pub opening: JSXOpeningElement<'a>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::JSXElement,
+  pub opening: &'a JSXOpeningElement<'a>,
   pub children: Vec<JSXElementChild<'a>>,
-  pub closing: Option<JSXClosingElement<'a>>,
+  pub closing: Option<&'a JSXClosingElement<'a>>,
 }
 
 impl<'a> Spanned for JSXElement<'a> {
@@ -14247,30 +14798,32 @@ impl<'a> Spanned for JSXElement<'a> {
   }
 }
 
-impl<'a> From<&JSXElement<'a>> for Node<'a> {
-  fn from(node: &JSXElement) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&JSXElement, &'a JSXElement>(&node) };
-    Node::JSXElement(static_ref)
+impl<'a> From<&'a JSXElement<'a>> for Node<'a> {
+  fn from(node: &'a JSXElement<'a>) -> Node<'a> {
+    Node::JSXElement(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for JSXElement<'a> {
+impl<'a> NodeTrait<'a> for &'a JSXElement<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + self.children.len() + match &self.closing { Some(_value) => 1, None => 0, });
-    children.push((&self.opening).into());
+    children.push(self.opening.into());
     for child in self.children.iter() {
       children.push(child.into());
     }
-    if let Some(child) = &self.closing {
+    if let Some(child) = self.closing {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for JSXElement<'a> {
@@ -14281,43 +14834,41 @@ impl<'a> CastableNode<'a> for JSXElement<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_jsxelement<'a>(ref_node: &'a swc_ecma_ast::JSXElement) -> JSXElement<'a> {
+fn get_view_for_jsxelement<'a>(ref_node: &'a swc_ast::JSXElement, bump: &'a Bump) -> &'a JSXElement<'a> {
   let value = &ref_node.opening;
-  let field_opening = get_view_for_jsxopening_element(value);
+  let field_opening = get_view_for_jsxopening_element(value, bump);
   let value = &ref_node.children;
-  let field_children = value.iter().map(|value| get_view_for_jsxelement_child(value)).collect();
+  let field_children = value.iter().map(|value| get_view_for_jsxelement_child(value, bump)).collect();
   let value = &ref_node.closing;
   let field_closing = match value {
-    Some(value) => Some(get_view_for_jsxclosing_element(value)),
+    Some(value) => Some(get_view_for_jsxclosing_element(value, bump)),
     None => None,
   };
-  let mut node = JSXElement {
+  let node = bump.alloc(JSXElement {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     opening: field_opening,
     children: field_children,
     closing: field_closing,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&JSXElement, &'a JSXElement>(&node) };
-  let parent = Node::JSXElement(child_parent_ref);
-  node.opening.parent = parent.to::<JSXElement>();
-  for node in node.children.iter_mut() {
+  });
+  let parent = Node::JSXElement(node);
+  unsafe { *node.opening.inner_parent.get() = Some(parent.to::<JSXElement>()); }
+  for node in node.children.iter() {
     set_parent_for_jsxelement_child(node, parent.clone());
   }
-  if let Some(node) = node.closing.as_mut() {
-    node.parent = parent.to::<JSXElement>();
+  if let Some(child) = node.closing {
+    unsafe { *child.inner_parent.get() = Some(parent.to::<JSXElement>()); }
   }
   node
 }
 
 pub struct ClassDecl<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::ClassDecl,
-  pub ident: Ident<'a>,
-  pub class: Class<'a>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::ClassDecl,
+  pub ident: &'a Ident<'a>,
+  pub class: &'a Class<'a>,
 }
 
 impl<'a> ClassDecl<'a> {
@@ -14332,25 +14883,27 @@ impl<'a> Spanned for ClassDecl<'a> {
   }
 }
 
-impl<'a> From<&ClassDecl<'a>> for Node<'a> {
-  fn from(node: &ClassDecl) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ClassDecl, &'a ClassDecl>(&node) };
-    Node::ClassDecl(static_ref)
+impl<'a> From<&'a ClassDecl<'a>> for Node<'a> {
+  fn from(node: &'a ClassDecl<'a>) -> Node<'a> {
+    Node::ClassDecl(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ClassDecl<'a> {
+impl<'a> NodeTrait<'a> for &'a ClassDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(2);
-    children.push((&self.ident).into());
-    children.push((&self.class).into());
+    children.push(self.ident.into());
+    children.push(self.class.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ClassDecl<'a> {
@@ -14361,32 +14914,30 @@ impl<'a> CastableNode<'a> for ClassDecl<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_class_decl<'a>(ref_node: &'a swc_ecma_ast::ClassDecl) -> ClassDecl<'a> {
+fn get_view_for_class_decl<'a>(ref_node: &'a swc_ast::ClassDecl, bump: &'a Bump) -> &'a ClassDecl<'a> {
   let value = &ref_node.ident;
-  let field_ident = get_view_for_ident(value);
+  let field_ident = get_view_for_ident(value, bump);
   let value = &ref_node.class;
-  let field_class = get_view_for_class(value);
-  let mut node = ClassDecl {
+  let field_class = get_view_for_class(value, bump);
+  let node = bump.alloc(ClassDecl {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     ident: field_ident,
     class: field_class,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ClassDecl, &'a ClassDecl>(&node) };
-  let parent = Node::ClassDecl(child_parent_ref);
-  node.ident.parent = parent.clone();
-  node.class.parent = parent;
+  });
+  let parent = Node::ClassDecl(node);
+  unsafe { *node.ident.inner_parent.get() = Some(parent.clone()); }
+  unsafe { *node.class.inner_parent.get() = Some(parent); }
   node
 }
 
 pub struct ArrayPat<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::ArrayPat,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::ArrayPat,
   pub elems: Vec<Option<Pat<'a>>>,
-  pub type_ann: Option<TsTypeAnn<'a>>,
+  pub type_ann: Option<&'a TsTypeAnn<'a>>,
 }
 
 impl<'a> ArrayPat<'a> {
@@ -14402,31 +14953,33 @@ impl<'a> Spanned for ArrayPat<'a> {
   }
 }
 
-impl<'a> From<&ArrayPat<'a>> for Node<'a> {
-  fn from(node: &ArrayPat) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ArrayPat, &'a ArrayPat>(&node) };
-    Node::ArrayPat(static_ref)
+impl<'a> From<&'a ArrayPat<'a>> for Node<'a> {
+  fn from(node: &'a ArrayPat<'a>) -> Node<'a> {
+    Node::ArrayPat(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ArrayPat<'a> {
+impl<'a> NodeTrait<'a> for &'a ArrayPat<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(self.elems.len() + match &self.type_ann { Some(_value) => 1, None => 0, });
     for child in self.elems.iter() {
-      if let Some(child) = &child {
+      if let Some(child) = child.as_ref() {
         children.push(child.into());
       }
     }
-    if let Some(child) = &self.type_ann {
+    if let Some(child) = self.type_ann {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ArrayPat<'a> {
@@ -14437,44 +14990,42 @@ impl<'a> CastableNode<'a> for ArrayPat<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_array_pat<'a>(ref_node: &'a swc_ecma_ast::ArrayPat) -> ArrayPat<'a> {
+fn get_view_for_array_pat<'a>(ref_node: &'a swc_ast::ArrayPat, bump: &'a Bump) -> &'a ArrayPat<'a> {
   let value = &ref_node.elems;
   let field_elems = value.iter().map(|value| match value {
-    Some(value) => Some(get_view_for_pat(value)),
+    Some(value) => Some(get_view_for_pat(value, bump)),
     None => None,
   }).collect();
   let value = &ref_node.type_ann;
   let field_type_ann = match value {
-    Some(value) => Some(get_view_for_ts_type_ann(value)),
+    Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
     None => None,
   };
-  let mut node = ArrayPat {
+  let node = bump.alloc(ArrayPat {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     elems: field_elems,
     type_ann: field_type_ann,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ArrayPat, &'a ArrayPat>(&node) };
-  let parent = Node::ArrayPat(child_parent_ref);
-  for node in node.elems.iter_mut() {
-    if let Some(node) = node.as_mut() {
-      set_parent_for_pat(node, parent.clone());
+  });
+  let parent = Node::ArrayPat(node);
+  for node in node.elems.iter() {
+    if let Some(child) = node.as_ref() {
+      set_parent_for_pat(child, parent.clone());
     }
   }
-  if let Some(node) = node.type_ann.as_mut() {
-    node.parent = parent;
+  if let Some(child) = node.type_ann {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 pub struct DoWhileStmt<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::DoWhileStmt,
-  pub test: Box<Expr<'a>>,
-  pub body: Box<Stmt<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::DoWhileStmt,
+  pub test: Expr<'a>,
+  pub body: Stmt<'a>,
 }
 
 impl<'a> Spanned for DoWhileStmt<'a> {
@@ -14483,16 +15034,15 @@ impl<'a> Spanned for DoWhileStmt<'a> {
   }
 }
 
-impl<'a> From<&DoWhileStmt<'a>> for Node<'a> {
-  fn from(node: &DoWhileStmt) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&DoWhileStmt, &'a DoWhileStmt>(&node) };
-    Node::DoWhileStmt(static_ref)
+impl<'a> From<&'a DoWhileStmt<'a>> for Node<'a> {
+  fn from(node: &'a DoWhileStmt<'a>) -> Node<'a> {
+    Node::DoWhileStmt(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for DoWhileStmt<'a> {
+impl<'a> NodeTrait<'a> for &'a DoWhileStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -14502,6 +15052,9 @@ impl<'a> NodeTrait<'a> for DoWhileStmt<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for DoWhileStmt<'a> {
@@ -14512,30 +15065,28 @@ impl<'a> CastableNode<'a> for DoWhileStmt<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_do_while_stmt<'a>(ref_node: &'a swc_ecma_ast::DoWhileStmt) -> DoWhileStmt<'a> {
+fn get_view_for_do_while_stmt<'a>(ref_node: &'a swc_ast::DoWhileStmt, bump: &'a Bump) -> &'a DoWhileStmt<'a> {
   let value = &ref_node.test;
-  let field_test = Box::new(get_view_for_expr(value));
+  let field_test = get_view_for_expr(value, bump);
   let value = &ref_node.body;
-  let field_body = Box::new(get_view_for_stmt(value));
-  let mut node = DoWhileStmt {
+  let field_body = get_view_for_stmt(value, bump);
+  let node = bump.alloc(DoWhileStmt {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     test: field_test,
     body: field_body,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&DoWhileStmt, &'a DoWhileStmt>(&node) };
-  let parent = Node::DoWhileStmt(child_parent_ref);
-  set_parent_for_expr(&mut node.test, parent.clone());
-  set_parent_for_stmt(&mut node.body, parent);
+  });
+  let parent = Node::DoWhileStmt(node);
+  set_parent_for_expr(&node.test, parent.clone());
+  set_parent_for_stmt(&node.body, parent);
   node
 }
 
 pub struct JSXText<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::JSXText,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::JSXText,
 }
 
 impl<'a> JSXText<'a> {
@@ -14554,22 +15105,24 @@ impl<'a> Spanned for JSXText<'a> {
   }
 }
 
-impl<'a> From<&JSXText<'a>> for Node<'a> {
-  fn from(node: &JSXText) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&JSXText, &'a JSXText>(&node) };
-    Node::JSXText(static_ref)
+impl<'a> From<&'a JSXText<'a>> for Node<'a> {
+  fn from(node: &'a JSXText<'a>) -> Node<'a> {
+    Node::JSXText(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for JSXText<'a> {
+impl<'a> NodeTrait<'a> for &'a JSXText<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     Vec::with_capacity(0)
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for JSXText<'a> {
@@ -14580,21 +15133,20 @@ impl<'a> CastableNode<'a> for JSXText<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_jsxtext<'a>(ref_node: &'a swc_ecma_ast::JSXText) -> JSXText<'a> {
-  let node = JSXText {
+fn get_view_for_jsxtext<'a>(ref_node: &'a swc_ast::JSXText, bump: &'a Bump) -> &'a JSXText<'a> {
+  let node = bump.alloc(JSXText {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
-  };
+    inner_parent: UnsafeCell::new(None),
+  });
   node
 }
 
 pub struct VarDecl<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::VarDecl,
-  pub decls: Vec<VarDeclarator<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::VarDecl,
+  pub decls: Vec<&'a VarDeclarator<'a>>,
 }
 
 impl<'a> VarDecl<'a> {
@@ -14613,26 +15165,28 @@ impl<'a> Spanned for VarDecl<'a> {
   }
 }
 
-impl<'a> From<&VarDecl<'a>> for Node<'a> {
-  fn from(node: &VarDecl) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&VarDecl, &'a VarDecl>(&node) };
-    Node::VarDecl(static_ref)
+impl<'a> From<&'a VarDecl<'a>> for Node<'a> {
+  fn from(node: &'a VarDecl<'a>) -> Node<'a> {
+    Node::VarDecl(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for VarDecl<'a> {
+impl<'a> NodeTrait<'a> for &'a VarDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(self.decls.len());
     for child in self.decls.iter() {
-      children.push(child.into());
+      children.push((*child).into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for VarDecl<'a> {
@@ -14643,29 +15197,27 @@ impl<'a> CastableNode<'a> for VarDecl<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_var_decl<'a>(ref_node: &'a swc_ecma_ast::VarDecl) -> VarDecl<'a> {
+fn get_view_for_var_decl<'a>(ref_node: &'a swc_ast::VarDecl, bump: &'a Bump) -> &'a VarDecl<'a> {
   let value = &ref_node.decls;
-  let field_decls = value.iter().map(|value| get_view_for_var_declarator(value)).collect();
-  let mut node = VarDecl {
+  let field_decls = value.iter().map(|value| get_view_for_var_declarator(value, bump)).collect();
+  let node = bump.alloc(VarDecl {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     decls: field_decls,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&VarDecl, &'a VarDecl>(&node) };
-  let parent = Node::VarDecl(child_parent_ref);
-  for node in node.decls.iter_mut() {
-    node.parent = parent.to::<VarDecl>();
+  });
+  let parent = Node::VarDecl(node);
+  for node in node.decls.iter() {
+    unsafe { *node.inner_parent.get() = Some(parent.to::<VarDecl>()); }
   }
   node
 }
 
 pub struct PrivateName<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::PrivateName,
-  pub id: Ident<'a>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::PrivateName,
+  pub id: &'a Ident<'a>,
 }
 
 impl<'a> Spanned for PrivateName<'a> {
@@ -14674,24 +15226,26 @@ impl<'a> Spanned for PrivateName<'a> {
   }
 }
 
-impl<'a> From<&PrivateName<'a>> for Node<'a> {
-  fn from(node: &PrivateName) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&PrivateName, &'a PrivateName>(&node) };
-    Node::PrivateName(static_ref)
+impl<'a> From<&'a PrivateName<'a>> for Node<'a> {
+  fn from(node: &'a PrivateName<'a>) -> Node<'a> {
+    Node::PrivateName(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for PrivateName<'a> {
+impl<'a> NodeTrait<'a> for &'a PrivateName<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1);
-    children.push((&self.id).into());
+    children.push(self.id.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for PrivateName<'a> {
@@ -14702,29 +15256,27 @@ impl<'a> CastableNode<'a> for PrivateName<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_private_name<'a>(ref_node: &'a swc_ecma_ast::PrivateName) -> PrivateName<'a> {
+fn get_view_for_private_name<'a>(ref_node: &'a swc_ast::PrivateName, bump: &'a Bump) -> &'a PrivateName<'a> {
   let value = &ref_node.id;
-  let field_id = get_view_for_ident(value);
-  let mut node = PrivateName {
+  let field_id = get_view_for_ident(value, bump);
+  let node = bump.alloc(PrivateName {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     id: field_id,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&PrivateName, &'a PrivateName>(&node) };
-  let parent = Node::PrivateName(child_parent_ref);
-  node.id.parent = parent;
+  });
+  let parent = Node::PrivateName(node);
+  unsafe { *node.id.inner_parent.get() = Some(parent); }
   node
 }
 
 /// XML-based namespace syntax:
 pub struct JSXNamespacedName<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::JSXNamespacedName,
-  pub ns: Ident<'a>,
-  pub name: Ident<'a>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::JSXNamespacedName,
+  pub ns: &'a Ident<'a>,
+  pub name: &'a Ident<'a>,
 }
 
 impl<'a> Spanned for JSXNamespacedName<'a> {
@@ -14733,25 +15285,27 @@ impl<'a> Spanned for JSXNamespacedName<'a> {
   }
 }
 
-impl<'a> From<&JSXNamespacedName<'a>> for Node<'a> {
-  fn from(node: &JSXNamespacedName) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&JSXNamespacedName, &'a JSXNamespacedName>(&node) };
-    Node::JSXNamespacedName(static_ref)
+impl<'a> From<&'a JSXNamespacedName<'a>> for Node<'a> {
+  fn from(node: &'a JSXNamespacedName<'a>) -> Node<'a> {
+    Node::JSXNamespacedName(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for JSXNamespacedName<'a> {
+impl<'a> NodeTrait<'a> for &'a JSXNamespacedName<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(2);
-    children.push((&self.ns).into());
-    children.push((&self.name).into());
+    children.push(self.ns.into());
+    children.push(self.name.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for JSXNamespacedName<'a> {
@@ -14762,35 +15316,33 @@ impl<'a> CastableNode<'a> for JSXNamespacedName<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_jsxnamespaced_name<'a>(ref_node: &'a swc_ecma_ast::JSXNamespacedName) -> JSXNamespacedName<'a> {
+fn get_view_for_jsxnamespaced_name<'a>(ref_node: &'a swc_ast::JSXNamespacedName, bump: &'a Bump) -> &'a JSXNamespacedName<'a> {
   let value = &ref_node.ns;
-  let field_ns = get_view_for_ident(value);
+  let field_ns = get_view_for_ident(value, bump);
   let value = &ref_node.name;
-  let field_name = get_view_for_ident(value);
-  let mut node = JSXNamespacedName {
+  let field_name = get_view_for_ident(value, bump);
+  let node = bump.alloc(JSXNamespacedName {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     ns: field_ns,
     name: field_name,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&JSXNamespacedName, &'a JSXNamespacedName>(&node) };
-  let parent = Node::JSXNamespacedName(child_parent_ref);
-  node.ns.parent = parent.clone();
-  node.name.parent = parent;
+  });
+  let parent = Node::JSXNamespacedName(node);
+  unsafe { *node.ns.inner_parent.get() = Some(parent.clone()); }
+  unsafe { *node.name.inner_parent.get() = Some(parent); }
   node
 }
 
 pub struct JSXOpeningElement<'a> {
-  pub parent: &'a JSXElement<'a>,
-  pub inner: &'a swc_ecma_ast::JSXOpeningElement,
+  inner_parent: UnsafeCell<Option<&'a JSXElement<'a>>>,
+  pub inner: &'a swc_ast::JSXOpeningElement,
   pub name: JSXElementName<'a>,
   pub attrs: Vec<JSXAttrOrSpread<'a>>,
   /// Note: This field's name is differrent from one from babel because it is
   /// misleading
-  pub type_args: Option<TsTypeParamInstantiation<'a>>,
+  pub type_args: Option<&'a TsTypeParamInstantiation<'a>>,
 }
 
 impl<'a> JSXOpeningElement<'a> {
@@ -14805,16 +15357,15 @@ impl<'a> Spanned for JSXOpeningElement<'a> {
   }
 }
 
-impl<'a> From<&JSXOpeningElement<'a>> for Node<'a> {
-  fn from(node: &JSXOpeningElement) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&JSXOpeningElement, &'a JSXOpeningElement>(&node) };
-    Node::JSXOpeningElement(static_ref)
+impl<'a> From<&'a JSXOpeningElement<'a>> for Node<'a> {
+  fn from(node: &'a JSXOpeningElement<'a>) -> Node<'a> {
+    Node::JSXOpeningElement(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for JSXOpeningElement<'a> {
+impl<'a> NodeTrait<'a> for &'a JSXOpeningElement<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -14823,12 +15374,15 @@ impl<'a> NodeTrait<'a> for JSXOpeningElement<'a> {
     for child in self.attrs.iter() {
       children.push(child.into());
     }
-    if let Some(child) = &self.type_args {
+    if let Some(child) = self.type_args {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for JSXOpeningElement<'a> {
@@ -14839,42 +15393,40 @@ impl<'a> CastableNode<'a> for JSXOpeningElement<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_jsxopening_element<'a>(ref_node: &'a swc_ecma_ast::JSXOpeningElement) -> JSXOpeningElement<'a> {
+fn get_view_for_jsxopening_element<'a>(ref_node: &'a swc_ast::JSXOpeningElement, bump: &'a Bump) -> &'a JSXOpeningElement<'a> {
   let value = &ref_node.name;
-  let field_name = get_view_for_jsxelement_name(value);
+  let field_name = get_view_for_jsxelement_name(value, bump);
   let value = &ref_node.attrs;
-  let field_attrs = value.iter().map(|value| get_view_for_jsxattr_or_spread(value)).collect();
+  let field_attrs = value.iter().map(|value| get_view_for_jsxattr_or_spread(value, bump)).collect();
   let value = &ref_node.type_args;
   let field_type_args = match value {
-    Some(value) => Some(get_view_for_ts_type_param_instantiation(value)),
+    Some(value) => Some(get_view_for_ts_type_param_instantiation(value, bump)),
     None => None,
   };
-  let mut node = JSXOpeningElement {
+  let node = bump.alloc(JSXOpeningElement {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     name: field_name,
     attrs: field_attrs,
     type_args: field_type_args,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&JSXOpeningElement, &'a JSXOpeningElement>(&node) };
-  let parent = Node::JSXOpeningElement(child_parent_ref);
-  set_parent_for_jsxelement_name(&mut node.name, parent.clone());
-  for node in node.attrs.iter_mut() {
+  });
+  let parent = Node::JSXOpeningElement(node);
+  set_parent_for_jsxelement_name(&node.name, parent.clone());
+  for node in node.attrs.iter() {
     set_parent_for_jsxattr_or_spread(node, parent.clone());
   }
-  if let Some(node) = node.type_args.as_mut() {
-    node.parent = parent;
+  if let Some(child) = node.type_args {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 pub struct SpreadElement<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::SpreadElement,
-  pub expr: Box<Expr<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::SpreadElement,
+  pub expr: Expr<'a>,
 }
 
 impl<'a> SpreadElement<'a> {
@@ -14889,16 +15441,15 @@ impl<'a> Spanned for SpreadElement<'a> {
   }
 }
 
-impl<'a> From<&SpreadElement<'a>> for Node<'a> {
-  fn from(node: &SpreadElement) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&SpreadElement, &'a SpreadElement>(&node) };
-    Node::SpreadElement(static_ref)
+impl<'a> From<&'a SpreadElement<'a>> for Node<'a> {
+  fn from(node: &'a SpreadElement<'a>) -> Node<'a> {
+    Node::SpreadElement(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for SpreadElement<'a> {
+impl<'a> NodeTrait<'a> for &'a SpreadElement<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -14907,6 +15458,9 @@ impl<'a> NodeTrait<'a> for SpreadElement<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for SpreadElement<'a> {
@@ -14917,26 +15471,24 @@ impl<'a> CastableNode<'a> for SpreadElement<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_spread_element<'a>(ref_node: &'a swc_ecma_ast::SpreadElement) -> SpreadElement<'a> {
+fn get_view_for_spread_element<'a>(ref_node: &'a swc_ast::SpreadElement, bump: &'a Bump) -> &'a SpreadElement<'a> {
   let value = &ref_node.expr;
-  let field_expr = Box::new(get_view_for_expr(value));
-  let mut node = SpreadElement {
+  let field_expr = get_view_for_expr(value, bump);
+  let node = bump.alloc(SpreadElement {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     expr: field_expr,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&SpreadElement, &'a SpreadElement>(&node) };
-  let parent = Node::SpreadElement(child_parent_ref);
-  set_parent_for_expr(&mut node.expr, parent);
+  });
+  let parent = Node::SpreadElement(node);
+  set_parent_for_expr(&node.expr, parent);
   node
 }
 
 pub struct ExportDefaultDecl<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::ExportDefaultDecl,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::ExportDefaultDecl,
   pub decl: DefaultDecl<'a>,
 }
 
@@ -14946,16 +15498,15 @@ impl<'a> Spanned for ExportDefaultDecl<'a> {
   }
 }
 
-impl<'a> From<&ExportDefaultDecl<'a>> for Node<'a> {
-  fn from(node: &ExportDefaultDecl) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ExportDefaultDecl, &'a ExportDefaultDecl>(&node) };
-    Node::ExportDefaultDecl(static_ref)
+impl<'a> From<&'a ExportDefaultDecl<'a>> for Node<'a> {
+  fn from(node: &'a ExportDefaultDecl<'a>) -> Node<'a> {
+    Node::ExportDefaultDecl(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ExportDefaultDecl<'a> {
+impl<'a> NodeTrait<'a> for &'a ExportDefaultDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -14964,6 +15515,9 @@ impl<'a> NodeTrait<'a> for ExportDefaultDecl<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ExportDefaultDecl<'a> {
@@ -14974,30 +15528,28 @@ impl<'a> CastableNode<'a> for ExportDefaultDecl<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_export_default_decl<'a>(ref_node: &'a swc_ecma_ast::ExportDefaultDecl) -> ExportDefaultDecl<'a> {
+fn get_view_for_export_default_decl<'a>(ref_node: &'a swc_ast::ExportDefaultDecl, bump: &'a Bump) -> &'a ExportDefaultDecl<'a> {
   let value = &ref_node.decl;
-  let field_decl = get_view_for_default_decl(value);
-  let mut node = ExportDefaultDecl {
+  let field_decl = get_view_for_default_decl(value, bump);
+  let node = bump.alloc(ExportDefaultDecl {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     decl: field_decl,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ExportDefaultDecl, &'a ExportDefaultDecl>(&node) };
-  let parent = Node::ExportDefaultDecl(child_parent_ref);
-  set_parent_for_default_decl(&mut node.decl, parent);
+  });
+  let parent = Node::ExportDefaultDecl(node);
+  set_parent_for_default_decl(&node.decl, parent);
   node
 }
 
 pub struct ArrowExpr<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::ArrowExpr,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::ArrowExpr,
   pub params: Vec<Pat<'a>>,
   pub body: BlockStmtOrExpr<'a>,
-  pub type_params: Option<TsTypeParamDecl<'a>>,
-  pub return_type: Option<TsTypeAnn<'a>>,
+  pub type_params: Option<&'a TsTypeParamDecl<'a>>,
+  pub return_type: Option<&'a TsTypeAnn<'a>>,
 }
 
 impl<'a> ArrowExpr<'a> {
@@ -15016,16 +15568,15 @@ impl<'a> Spanned for ArrowExpr<'a> {
   }
 }
 
-impl<'a> From<&ArrowExpr<'a>> for Node<'a> {
-  fn from(node: &ArrowExpr) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ArrowExpr, &'a ArrowExpr>(&node) };
-    Node::ArrowExpr(static_ref)
+impl<'a> From<&'a ArrowExpr<'a>> for Node<'a> {
+  fn from(node: &'a ArrowExpr<'a>) -> Node<'a> {
+    Node::ArrowExpr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ArrowExpr<'a> {
+impl<'a> NodeTrait<'a> for &'a ArrowExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -15034,15 +15585,18 @@ impl<'a> NodeTrait<'a> for ArrowExpr<'a> {
       children.push(child.into());
     }
     children.push((&self.body).into());
-    if let Some(child) = &self.type_params {
+    if let Some(child) = self.type_params {
       children.push(child.into());
     }
-    if let Some(child) = &self.return_type {
+    if let Some(child) = self.return_type {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ArrowExpr<'a> {
@@ -15053,52 +15607,50 @@ impl<'a> CastableNode<'a> for ArrowExpr<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_arrow_expr<'a>(ref_node: &'a swc_ecma_ast::ArrowExpr) -> ArrowExpr<'a> {
+fn get_view_for_arrow_expr<'a>(ref_node: &'a swc_ast::ArrowExpr, bump: &'a Bump) -> &'a ArrowExpr<'a> {
   let value = &ref_node.params;
-  let field_params = value.iter().map(|value| get_view_for_pat(value)).collect();
+  let field_params = value.iter().map(|value| get_view_for_pat(value, bump)).collect();
   let value = &ref_node.body;
-  let field_body = get_view_for_block_stmt_or_expr(value);
+  let field_body = get_view_for_block_stmt_or_expr(value, bump);
   let value = &ref_node.type_params;
   let field_type_params = match value {
-    Some(value) => Some(get_view_for_ts_type_param_decl(value)),
+    Some(value) => Some(get_view_for_ts_type_param_decl(value, bump)),
     None => None,
   };
   let value = &ref_node.return_type;
   let field_return_type = match value {
-    Some(value) => Some(get_view_for_ts_type_ann(value)),
+    Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
     None => None,
   };
-  let mut node = ArrowExpr {
+  let node = bump.alloc(ArrowExpr {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     params: field_params,
     body: field_body,
     type_params: field_type_params,
     return_type: field_return_type,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ArrowExpr, &'a ArrowExpr>(&node) };
-  let parent = Node::ArrowExpr(child_parent_ref);
-  for node in node.params.iter_mut() {
+  });
+  let parent = Node::ArrowExpr(node);
+  for node in node.params.iter() {
     set_parent_for_pat(node, parent.clone());
   }
-  set_parent_for_block_stmt_or_expr(&mut node.body, parent.clone());
-  if let Some(node) = node.type_params.as_mut() {
-    node.parent = parent.clone();
+  set_parent_for_block_stmt_or_expr(&node.body, parent.clone());
+  if let Some(child) = node.type_params {
+    unsafe { *child.inner_parent.get() = Some(parent.clone()); }
   }
-  if let Some(node) = node.return_type.as_mut() {
-    node.parent = parent;
+  if let Some(child) = node.return_type {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 pub struct TsAsExpr<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsAsExpr,
-  pub expr: Box<Expr<'a>>,
-  pub type_ann: Box<TsType<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsAsExpr,
+  pub expr: Expr<'a>,
+  pub type_ann: TsType<'a>,
 }
 
 impl<'a> Spanned for TsAsExpr<'a> {
@@ -15107,16 +15659,15 @@ impl<'a> Spanned for TsAsExpr<'a> {
   }
 }
 
-impl<'a> From<&TsAsExpr<'a>> for Node<'a> {
-  fn from(node: &TsAsExpr) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsAsExpr, &'a TsAsExpr>(&node) };
-    Node::TsAsExpr(static_ref)
+impl<'a> From<&'a TsAsExpr<'a>> for Node<'a> {
+  fn from(node: &'a TsAsExpr<'a>) -> Node<'a> {
+    Node::TsAsExpr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsAsExpr<'a> {
+impl<'a> NodeTrait<'a> for &'a TsAsExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -15126,6 +15677,9 @@ impl<'a> NodeTrait<'a> for TsAsExpr<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsAsExpr<'a> {
@@ -15136,33 +15690,31 @@ impl<'a> CastableNode<'a> for TsAsExpr<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_as_expr<'a>(ref_node: &'a swc_ecma_ast::TsAsExpr) -> TsAsExpr<'a> {
+fn get_view_for_ts_as_expr<'a>(ref_node: &'a swc_ast::TsAsExpr, bump: &'a Bump) -> &'a TsAsExpr<'a> {
   let value = &ref_node.expr;
-  let field_expr = Box::new(get_view_for_expr(value));
+  let field_expr = get_view_for_expr(value, bump);
   let value = &ref_node.type_ann;
-  let field_type_ann = Box::new(get_view_for_ts_type(value));
-  let mut node = TsAsExpr {
+  let field_type_ann = get_view_for_ts_type(value, bump);
+  let node = bump.alloc(TsAsExpr {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     expr: field_expr,
     type_ann: field_type_ann,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsAsExpr, &'a TsAsExpr>(&node) };
-  let parent = Node::TsAsExpr(child_parent_ref);
-  set_parent_for_expr(&mut node.expr, parent.clone());
-  set_parent_for_ts_type(&mut node.type_ann, parent);
+  });
+  let parent = Node::TsAsExpr(node);
+  set_parent_for_expr(&node.expr, parent.clone());
+  set_parent_for_ts_type(&node.type_ann, parent);
   node
 }
 
 /// `{key: value}`
 pub struct KeyValuePatProp<'a> {
-  pub parent: &'a ObjectPat<'a>,
-  pub inner: &'a swc_ecma_ast::KeyValuePatProp,
+  inner_parent: UnsafeCell<Option<&'a ObjectPat<'a>>>,
+  pub inner: &'a swc_ast::KeyValuePatProp,
   pub key: PropName<'a>,
-  pub value: Box<Pat<'a>>,
+  pub value: Pat<'a>,
 }
 
 impl<'a> Spanned for KeyValuePatProp<'a> {
@@ -15171,16 +15723,15 @@ impl<'a> Spanned for KeyValuePatProp<'a> {
   }
 }
 
-impl<'a> From<&KeyValuePatProp<'a>> for Node<'a> {
-  fn from(node: &KeyValuePatProp) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&KeyValuePatProp, &'a KeyValuePatProp>(&node) };
-    Node::KeyValuePatProp(static_ref)
+impl<'a> From<&'a KeyValuePatProp<'a>> for Node<'a> {
+  fn from(node: &'a KeyValuePatProp<'a>) -> Node<'a> {
+    Node::KeyValuePatProp(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for KeyValuePatProp<'a> {
+impl<'a> NodeTrait<'a> for &'a KeyValuePatProp<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -15190,6 +15741,9 @@ impl<'a> NodeTrait<'a> for KeyValuePatProp<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for KeyValuePatProp<'a> {
@@ -15200,30 +15754,28 @@ impl<'a> CastableNode<'a> for KeyValuePatProp<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_key_value_pat_prop<'a>(ref_node: &'a swc_ecma_ast::KeyValuePatProp) -> KeyValuePatProp<'a> {
+fn get_view_for_key_value_pat_prop<'a>(ref_node: &'a swc_ast::KeyValuePatProp, bump: &'a Bump) -> &'a KeyValuePatProp<'a> {
   let value = &ref_node.key;
-  let field_key = get_view_for_prop_name(value);
+  let field_key = get_view_for_prop_name(value, bump);
   let value = &ref_node.value;
-  let field_value = Box::new(get_view_for_pat(value));
-  let mut node = KeyValuePatProp {
+  let field_value = get_view_for_pat(value, bump);
+  let node = bump.alloc(KeyValuePatProp {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     key: field_key,
     value: field_value,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&KeyValuePatProp, &'a KeyValuePatProp>(&node) };
-  let parent = Node::KeyValuePatProp(child_parent_ref);
-  set_parent_for_prop_name(&mut node.key, parent.clone());
-  set_parent_for_pat(&mut node.value, parent);
+  });
+  let parent = Node::KeyValuePatProp(node);
+  set_parent_for_prop_name(&node.key, parent.clone());
+  set_parent_for_pat(&node.value, parent);
   node
 }
 
 pub struct TsLitType<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::TsLitType,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::TsLitType,
   pub lit: TsLit<'a>,
 }
 
@@ -15233,16 +15785,15 @@ impl<'a> Spanned for TsLitType<'a> {
   }
 }
 
-impl<'a> From<&TsLitType<'a>> for Node<'a> {
-  fn from(node: &TsLitType) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&TsLitType, &'a TsLitType>(&node) };
-    Node::TsLitType(static_ref)
+impl<'a> From<&'a TsLitType<'a>> for Node<'a> {
+  fn from(node: &'a TsLitType<'a>) -> Node<'a> {
+    Node::TsLitType(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsLitType<'a> {
+impl<'a> NodeTrait<'a> for &'a TsLitType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -15251,6 +15802,9 @@ impl<'a> NodeTrait<'a> for TsLitType<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for TsLitType<'a> {
@@ -15261,28 +15815,26 @@ impl<'a> CastableNode<'a> for TsLitType<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ts_lit_type<'a>(ref_node: &'a swc_ecma_ast::TsLitType) -> TsLitType<'a> {
+fn get_view_for_ts_lit_type<'a>(ref_node: &'a swc_ast::TsLitType, bump: &'a Bump) -> &'a TsLitType<'a> {
   let value = &ref_node.lit;
-  let field_lit = get_view_for_ts_lit(value);
-  let mut node = TsLitType {
+  let field_lit = get_view_for_ts_lit(value, bump);
+  let node = bump.alloc(TsLitType {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     lit: field_lit,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&TsLitType, &'a TsLitType>(&node) };
-  let parent = Node::TsLitType(child_parent_ref);
-  set_parent_for_ts_lit(&mut node.lit, parent);
+  });
+  let parent = Node::TsLitType(node);
+  set_parent_for_ts_lit(&node.lit, parent);
   node
 }
 
 pub struct AssignExpr<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::AssignExpr,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::AssignExpr,
   pub left: PatOrExpr<'a>,
-  pub right: Box<Expr<'a>>,
+  pub right: Expr<'a>,
 }
 
 impl<'a> AssignExpr<'a> {
@@ -15297,16 +15849,15 @@ impl<'a> Spanned for AssignExpr<'a> {
   }
 }
 
-impl<'a> From<&AssignExpr<'a>> for Node<'a> {
-  fn from(node: &AssignExpr) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&AssignExpr, &'a AssignExpr>(&node) };
-    Node::AssignExpr(static_ref)
+impl<'a> From<&'a AssignExpr<'a>> for Node<'a> {
+  fn from(node: &'a AssignExpr<'a>) -> Node<'a> {
+    Node::AssignExpr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for AssignExpr<'a> {
+impl<'a> NodeTrait<'a> for &'a AssignExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -15316,6 +15867,9 @@ impl<'a> NodeTrait<'a> for AssignExpr<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for AssignExpr<'a> {
@@ -15326,32 +15880,30 @@ impl<'a> CastableNode<'a> for AssignExpr<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_assign_expr<'a>(ref_node: &'a swc_ecma_ast::AssignExpr) -> AssignExpr<'a> {
+fn get_view_for_assign_expr<'a>(ref_node: &'a swc_ast::AssignExpr, bump: &'a Bump) -> &'a AssignExpr<'a> {
   let value = &ref_node.left;
-  let field_left = get_view_for_pat_or_expr(value);
+  let field_left = get_view_for_pat_or_expr(value, bump);
   let value = &ref_node.right;
-  let field_right = Box::new(get_view_for_expr(value));
-  let mut node = AssignExpr {
+  let field_right = get_view_for_expr(value, bump);
+  let node = bump.alloc(AssignExpr {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     left: field_left,
     right: field_right,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&AssignExpr, &'a AssignExpr>(&node) };
-  let parent = Node::AssignExpr(child_parent_ref);
-  set_parent_for_pat_or_expr(&mut node.left, parent.clone());
-  set_parent_for_expr(&mut node.right, parent);
+  });
+  let parent = Node::AssignExpr(node);
+  set_parent_for_pat_or_expr(&node.left, parent.clone());
+  set_parent_for_expr(&node.right, parent);
   node
 }
 
 /// Array literal.
 pub struct ArrayLit<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::ArrayLit,
-  pub elems: Vec<Option<ExprOrSpread<'a>>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::ArrayLit,
+  pub elems: Vec<Option<&'a ExprOrSpread<'a>>>,
 }
 
 impl<'a> Spanned for ArrayLit<'a> {
@@ -15360,28 +15912,30 @@ impl<'a> Spanned for ArrayLit<'a> {
   }
 }
 
-impl<'a> From<&ArrayLit<'a>> for Node<'a> {
-  fn from(node: &ArrayLit) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&ArrayLit, &'a ArrayLit>(&node) };
-    Node::ArrayLit(static_ref)
+impl<'a> From<&'a ArrayLit<'a>> for Node<'a> {
+  fn from(node: &'a ArrayLit<'a>) -> Node<'a> {
+    Node::ArrayLit(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for ArrayLit<'a> {
+impl<'a> NodeTrait<'a> for &'a ArrayLit<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(self.elems.len());
     for child in self.elems.iter() {
-      if let Some(child) = &child {
-        children.push(child.into());
+      if let Some(child) = child {
+        children.push((*child).into());
       }
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for ArrayLit<'a> {
@@ -15392,34 +15946,32 @@ impl<'a> CastableNode<'a> for ArrayLit<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_array_lit<'a>(ref_node: &'a swc_ecma_ast::ArrayLit) -> ArrayLit<'a> {
+fn get_view_for_array_lit<'a>(ref_node: &'a swc_ast::ArrayLit, bump: &'a Bump) -> &'a ArrayLit<'a> {
   let value = &ref_node.elems;
   let field_elems = value.iter().map(|value| match value {
-    Some(value) => Some(get_view_for_expr_or_spread(value)),
+    Some(value) => Some(get_view_for_expr_or_spread(value, bump)),
     None => None,
   }).collect();
-  let mut node = ArrayLit {
+  let node = bump.alloc(ArrayLit {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     elems: field_elems,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&ArrayLit, &'a ArrayLit>(&node) };
-  let parent = Node::ArrayLit(child_parent_ref);
-  for node in node.elems.iter_mut() {
-    if let Some(node) = node.as_mut() {
-      node.parent = parent.clone();
+  });
+  let parent = Node::ArrayLit(node);
+  for node in node.elems.iter() {
+    if let Some(child) = node {
+      unsafe { *child.inner_parent.get() = Some(parent.clone()); }
     }
   }
   node
 }
 
 pub struct Decorator<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::Decorator,
-  pub expr: Box<Expr<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::Decorator,
+  pub expr: Expr<'a>,
 }
 
 impl<'a> Spanned for Decorator<'a> {
@@ -15428,16 +15980,15 @@ impl<'a> Spanned for Decorator<'a> {
   }
 }
 
-impl<'a> From<&Decorator<'a>> for Node<'a> {
-  fn from(node: &Decorator) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&Decorator, &'a Decorator>(&node) };
-    Node::Decorator(static_ref)
+impl<'a> From<&'a Decorator<'a>> for Node<'a> {
+  fn from(node: &'a Decorator<'a>) -> Node<'a> {
+    Node::Decorator(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for Decorator<'a> {
+impl<'a> NodeTrait<'a> for &'a Decorator<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -15446,6 +15997,9 @@ impl<'a> NodeTrait<'a> for Decorator<'a> {
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for Decorator<'a> {
@@ -15456,28 +16010,26 @@ impl<'a> CastableNode<'a> for Decorator<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_decorator<'a>(ref_node: &'a swc_ecma_ast::Decorator) -> Decorator<'a> {
+fn get_view_for_decorator<'a>(ref_node: &'a swc_ast::Decorator, bump: &'a Bump) -> &'a Decorator<'a> {
   let value = &ref_node.expr;
-  let field_expr = Box::new(get_view_for_expr(value));
-  let mut node = Decorator {
+  let field_expr = get_view_for_expr(value, bump);
+  let node = bump.alloc(Decorator {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     expr: field_expr,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&Decorator, &'a Decorator>(&node) };
-  let parent = Node::Decorator(child_parent_ref);
-  set_parent_for_expr(&mut node.expr, parent);
+  });
+  let parent = Node::Decorator(node);
+  set_parent_for_expr(&node.expr, parent);
   node
 }
 
 /// Ident with span.
 pub struct Ident<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ecma_ast::Ident,
-  pub type_ann: Option<TsTypeAnn<'a>>,
+  inner_parent: UnsafeCell<Option<Node<'a>>>,
+  pub inner: &'a swc_ast::Ident,
+  pub type_ann: Option<&'a TsTypeAnn<'a>>,
 }
 
 impl<'a> Ident<'a> {
@@ -15497,26 +16049,28 @@ impl<'a> Spanned for Ident<'a> {
   }
 }
 
-impl<'a> From<&Ident<'a>> for Node<'a> {
-  fn from(node: &Ident) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&Ident, &'a Ident>(&node) };
-    Node::Ident(static_ref)
+impl<'a> From<&'a Ident<'a>> for Node<'a> {
+  fn from(node: &'a Ident<'a>) -> Node<'a> {
+    Node::Ident(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for Ident<'a> {
+impl<'a> NodeTrait<'a> for &'a Ident<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
+    Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(match &self.type_ann { Some(_value) => 1, None => 0, });
-    if let Some(child) = &self.type_ann {
+    if let Some(child) = self.type_ann {
       children.push(child.into());
     }
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for Ident<'a> {
@@ -15527,33 +16081,31 @@ impl<'a> CastableNode<'a> for Ident<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_ident<'a>(ref_node: &'a swc_ecma_ast::Ident) -> Ident<'a> {
+fn get_view_for_ident<'a>(ref_node: &'a swc_ast::Ident, bump: &'a Bump) -> &'a Ident<'a> {
   let value = &ref_node.type_ann;
   let field_type_ann = match value {
-    Some(value) => Some(get_view_for_ts_type_ann(value)),
+    Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
     None => None,
   };
-  let mut node = Ident {
+  let node = bump.alloc(Ident {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     type_ann: field_type_ann,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&Ident, &'a Ident>(&node) };
-  let parent = Node::Ident(child_parent_ref);
-  if let Some(node) = node.type_ann.as_mut() {
-    node.parent = parent;
+  });
+  let parent = Node::Ident(node);
+  if let Some(child) = node.type_ann {
+    unsafe { *child.inner_parent.get() = Some(parent); }
   }
   node
 }
 
 pub struct MethodProp<'a> {
-  pub parent: &'a ObjectLit<'a>,
-  pub inner: &'a swc_ecma_ast::MethodProp,
+  inner_parent: UnsafeCell<Option<&'a ObjectLit<'a>>>,
+  pub inner: &'a swc_ast::MethodProp,
   pub key: PropName<'a>,
-  pub function: Function<'a>,
+  pub function: &'a Function<'a>,
 }
 
 impl<'a> Spanned for MethodProp<'a> {
@@ -15562,25 +16114,27 @@ impl<'a> Spanned for MethodProp<'a> {
   }
 }
 
-impl<'a> From<&MethodProp<'a>> for Node<'a> {
-  fn from(node: &MethodProp) -> Node<'a> {
-    let static_ref = unsafe { mem::transmute::<&MethodProp, &'a MethodProp>(&node) };
-    Node::MethodProp(static_ref)
+impl<'a> From<&'a MethodProp<'a>> for Node<'a> {
+  fn from(node: &'a MethodProp<'a>) -> Node<'a> {
+    Node::MethodProp(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for MethodProp<'a> {
+impl<'a> NodeTrait<'a> for &'a MethodProp<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.into())
+    Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })
   }
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(2);
     children.push((&self.key).into());
-    children.push((&self.function).into());
+    children.push(self.function.into());
     children
   }
 
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
 }
 
 impl<'a> CastableNode<'a> for MethodProp<'a> {
@@ -15591,23 +16145,21 @@ impl<'a> CastableNode<'a> for MethodProp<'a> {
       None
     }
   }
-
 }
 
-fn get_view_for_method_prop<'a>(ref_node: &'a swc_ecma_ast::MethodProp) -> MethodProp<'a> {
+fn get_view_for_method_prop<'a>(ref_node: &'a swc_ast::MethodProp, bump: &'a Bump) -> &'a MethodProp<'a> {
   let value = &ref_node.key;
-  let field_key = get_view_for_prop_name(value);
+  let field_key = get_view_for_prop_name(value, bump);
   let value = &ref_node.function;
-  let field_function = get_view_for_function(value);
-  let mut node = MethodProp {
+  let field_function = get_view_for_function(value, bump);
+  let node = bump.alloc(MethodProp {
     inner: ref_node,
-    parent: unsafe { MaybeUninit::uninit().assume_init() },
+    inner_parent: UnsafeCell::new(None),
     key: field_key,
     function: field_function,
-  };
-  let child_parent_ref = unsafe { mem::transmute::<&MethodProp, &'a MethodProp>(&node) };
-  let parent = Node::MethodProp(child_parent_ref);
-  set_parent_for_prop_name(&mut node.key, parent.clone());
-  node.function.parent = parent;
+  });
+  let parent = Node::MethodProp(node);
+  set_parent_for_prop_name(&node.key, parent.clone());
+  unsafe { *node.function.inner_parent.get() = Some(parent); }
   node
 }
