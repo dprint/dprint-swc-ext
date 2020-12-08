@@ -854,7 +854,335 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::MethodProp(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      Node::SwitchCase(node) => node.kind(),
+      Node::ThrowStmt(node) => node.kind(),
+      Node::JSXClosingFragment(node) => node.kind(),
+      Node::BigInt(node) => node.kind(),
+      Node::ExportDefaultSpecifier(node) => node.kind(),
+      Node::TsTypeParam(node) => node.kind(),
+      Node::WithStmt(node) => node.kind(),
+      Node::Regex(node) => node.kind(),
+      Node::TsMethodSignature(node) => node.kind(),
+      Node::UpdateExpr(node) => node.kind(),
+      Node::SetterProp(node) => node.kind(),
+      Node::TaggedTpl(node) => node.kind(),
+      Node::ExportAll(node) => node.kind(),
+      Node::TsModuleBlock(node) => node.kind(),
+      Node::SwitchStmt(node) => node.kind(),
+      Node::TsEnumMember(node) => node.kind(),
+      Node::TsIndexedAccessType(node) => node.kind(),
+      Node::TsRestType(node) => node.kind(),
+      Node::ExprStmt(node) => node.kind(),
+      Node::TsOptionalType(node) => node.kind(),
+      Node::Tpl(node) => node.kind(),
+      Node::Invalid(node) => node.kind(),
+      Node::ComputedPropName(node) => node.kind(),
+      Node::TsFnType(node) => node.kind(),
+      Node::BlockStmt(node) => node.kind(),
+      Node::TsTypeAliasDecl(node) => node.kind(),
+      Node::MemberExpr(node) => node.kind(),
+      Node::Function(node) => node.kind(),
+      Node::ImportDecl(node) => node.kind(),
+      Node::TsTypePredicate(node) => node.kind(),
+      Node::YieldExpr(node) => node.kind(),
+      Node::KeyValueProp(node) => node.kind(),
+      Node::Param(node) => node.kind(),
+      Node::JSXFragment(node) => node.kind(),
+      Node::ImportDefaultSpecifier(node) => node.kind(),
+      Node::Number(node) => node.kind(),
+      Node::JSXAttr(node) => node.kind(),
+      Node::ParenExpr(node) => node.kind(),
+      Node::Super(node) => node.kind(),
+      Node::TsConstructorType(node) => node.kind(),
+      Node::Class(node) => node.kind(),
+      Node::RestPat(node) => node.kind(),
+      Node::TsNamespaceExportDecl(node) => node.kind(),
+      Node::JSXOpeningFragment(node) => node.kind(),
+      Node::NewExpr(node) => node.kind(),
+      Node::FnExpr(node) => node.kind(),
+      Node::IfStmt(node) => node.kind(),
+      Node::TsParenthesizedType(node) => node.kind(),
+      Node::AssignPatProp(node) => node.kind(),
+      Node::TsImportType(node) => node.kind(),
+      Node::Bool(node) => node.kind(),
+      Node::TsImportEqualsDecl(node) => node.kind(),
+      Node::AssignProp(node) => node.kind(),
+      Node::TsInterfaceDecl(node) => node.kind(),
+      Node::JSXEmptyExpr(node) => node.kind(),
+      Node::TsQualifiedName(node) => node.kind(),
+      Node::ExportDecl(node) => node.kind(),
+      Node::CatchClause(node) => node.kind(),
+      Node::LabeledStmt(node) => node.kind(),
+      Node::ContinueStmt(node) => node.kind(),
+      Node::TsConstructSignatureDecl(node) => node.kind(),
+      Node::TsEnumDecl(node) => node.kind(),
+      Node::OptChainExpr(node) => node.kind(),
+      Node::TsNamespaceDecl(node) => node.kind(),
+      Node::SeqExpr(node) => node.kind(),
+      Node::TsExternalModuleRef(node) => node.kind(),
+      Node::TsTypeParamInstantiation(node) => node.kind(),
+      Node::ReturnStmt(node) => node.kind(),
+      Node::TsTplLitType(node) => node.kind(),
+      Node::ExportDefaultExpr(node) => node.kind(),
+      Node::TsCallSignatureDecl(node) => node.kind(),
+      Node::AwaitExpr(node) => node.kind(),
+      Node::ClassMethod(node) => node.kind(),
+      Node::TsParamProp(node) => node.kind(),
+      Node::ClassProp(node) => node.kind(),
+      Node::TsTypeAnn(node) => node.kind(),
+      Node::ForStmt(node) => node.kind(),
+      Node::ObjectPat(node) => node.kind(),
+      Node::TsTypeQuery(node) => node.kind(),
+      Node::ThisExpr(node) => node.kind(),
+      Node::DebuggerStmt(node) => node.kind(),
+      Node::TsTypeParamDecl(node) => node.kind(),
+      Node::TsTypeAssertion(node) => node.kind(),
+      Node::TplElement(node) => node.kind(),
+      Node::TsKeywordType(node) => node.kind(),
+      Node::JSXSpreadChild(node) => node.kind(),
+      Node::TsIntersectionType(node) => node.kind(),
+      Node::MetaPropExpr(node) => node.kind(),
+      Node::ExprOrSpread(node) => node.kind(),
+      Node::TsArrayType(node) => node.kind(),
+      Node::TsTypeRef(node) => node.kind(),
+      Node::TsThisType(node) => node.kind(),
+      Node::TryStmt(node) => node.kind(),
+      Node::CallExpr(node) => node.kind(),
+      Node::TsMappedType(node) => node.kind(),
+      Node::JSXExprContainer(node) => node.kind(),
+      Node::PrivateProp(node) => node.kind(),
+      Node::TsExportAssignment(node) => node.kind(),
+      Node::TsInterfaceBody(node) => node.kind(),
+      Node::TsTupleElement(node) => node.kind(),
+      Node::VarDeclarator(node) => node.kind(),
+      Node::JSXMemberExpr(node) => node.kind(),
+      Node::TsConstAssertion(node) => node.kind(),
+      Node::ExportNamespaceSpecifier(node) => node.kind(),
+      Node::ObjectLit(node) => node.kind(),
+      Node::Module(node) => node.kind(),
+      Node::TsIndexSignature(node) => node.kind(),
+      Node::TsTypeCastExpr(node) => node.kind(),
+      Node::TsTupleType(node) => node.kind(),
+      Node::Null(node) => node.kind(),
+      Node::TsTypeOperator(node) => node.kind(),
+      Node::JSXClosingElement(node) => node.kind(),
+      Node::BinExpr(node) => node.kind(),
+      Node::UnaryExpr(node) => node.kind(),
+      Node::TsPropertySignature(node) => node.kind(),
+      Node::Constructor(node) => node.kind(),
+      Node::FnDecl(node) => node.kind(),
+      Node::TsNonNullExpr(node) => node.kind(),
+      Node::ClassExpr(node) => node.kind(),
+      Node::ForInStmt(node) => node.kind(),
+      Node::EmptyStmt(node) => node.kind(),
+      Node::WhileStmt(node) => node.kind(),
+      Node::Str(node) => node.kind(),
+      Node::TsExprWithTypeArgs(node) => node.kind(),
+      Node::AssignPat(node) => node.kind(),
+      Node::ExportNamedSpecifier(node) => node.kind(),
+      Node::TsConditionalType(node) => node.kind(),
+      Node::TsTypeLit(node) => node.kind(),
+      Node::BreakStmt(node) => node.kind(),
+      Node::ImportStarAsSpecifier(node) => node.kind(),
+      Node::TsInferType(node) => node.kind(),
+      Node::PrivateMethod(node) => node.kind(),
+      Node::ForOfStmt(node) => node.kind(),
+      Node::TsUnionType(node) => node.kind(),
+      Node::TsModuleDecl(node) => node.kind(),
+      Node::GetterProp(node) => node.kind(),
+      Node::CondExpr(node) => node.kind(),
+      Node::ImportNamedSpecifier(node) => node.kind(),
+      Node::NamedExport(node) => node.kind(),
+      Node::JSXElement(node) => node.kind(),
+      Node::ClassDecl(node) => node.kind(),
+      Node::ArrayPat(node) => node.kind(),
+      Node::DoWhileStmt(node) => node.kind(),
+      Node::JSXText(node) => node.kind(),
+      Node::VarDecl(node) => node.kind(),
+      Node::PrivateName(node) => node.kind(),
+      Node::JSXNamespacedName(node) => node.kind(),
+      Node::JSXOpeningElement(node) => node.kind(),
+      Node::SpreadElement(node) => node.kind(),
+      Node::ExportDefaultDecl(node) => node.kind(),
+      Node::ArrowExpr(node) => node.kind(),
+      Node::TsAsExpr(node) => node.kind(),
+      Node::KeyValuePatProp(node) => node.kind(),
+      Node::TsLitType(node) => node.kind(),
+      Node::AssignExpr(node) => node.kind(),
+      Node::ArrayLit(node) => node.kind(),
+      Node::Decorator(node) => node.kind(),
+      Node::Ident(node) => node.kind(),
+      Node::MethodProp(node) => node.kind(),
+    }
+  }
 }
+
+#[derive(Clone, PartialEq, Debug)]
+pub enum NodeKind {
+  SwitchCase,
+  ThrowStmt,
+  JSXClosingFragment,
+  BigInt,
+  ExportDefaultSpecifier,
+  TsTypeParam,
+  WithStmt,
+  Regex,
+  TsMethodSignature,
+  UpdateExpr,
+  SetterProp,
+  TaggedTpl,
+  ExportAll,
+  TsModuleBlock,
+  SwitchStmt,
+  TsEnumMember,
+  TsIndexedAccessType,
+  TsRestType,
+  ExprStmt,
+  TsOptionalType,
+  Tpl,
+  Invalid,
+  ComputedPropName,
+  TsFnType,
+  BlockStmt,
+  TsTypeAliasDecl,
+  MemberExpr,
+  Function,
+  ImportDecl,
+  TsTypePredicate,
+  YieldExpr,
+  KeyValueProp,
+  Param,
+  JSXFragment,
+  ImportDefaultSpecifier,
+  Number,
+  JSXAttr,
+  ParenExpr,
+  Super,
+  TsConstructorType,
+  Class,
+  RestPat,
+  TsNamespaceExportDecl,
+  JSXOpeningFragment,
+  NewExpr,
+  FnExpr,
+  IfStmt,
+  TsParenthesizedType,
+  AssignPatProp,
+  TsImportType,
+  Bool,
+  TsImportEqualsDecl,
+  AssignProp,
+  TsInterfaceDecl,
+  JSXEmptyExpr,
+  TsQualifiedName,
+  ExportDecl,
+  CatchClause,
+  LabeledStmt,
+  ContinueStmt,
+  TsConstructSignatureDecl,
+  TsEnumDecl,
+  OptChainExpr,
+  TsNamespaceDecl,
+  SeqExpr,
+  TsExternalModuleRef,
+  TsTypeParamInstantiation,
+  ReturnStmt,
+  TsTplLitType,
+  ExportDefaultExpr,
+  TsCallSignatureDecl,
+  AwaitExpr,
+  ClassMethod,
+  TsParamProp,
+  ClassProp,
+  TsTypeAnn,
+  ForStmt,
+  ObjectPat,
+  TsTypeQuery,
+  ThisExpr,
+  DebuggerStmt,
+  TsTypeParamDecl,
+  TsTypeAssertion,
+  TplElement,
+  TsKeywordType,
+  JSXSpreadChild,
+  TsIntersectionType,
+  MetaPropExpr,
+  ExprOrSpread,
+  TsArrayType,
+  TsTypeRef,
+  TsThisType,
+  TryStmt,
+  CallExpr,
+  TsMappedType,
+  JSXExprContainer,
+  PrivateProp,
+  TsExportAssignment,
+  TsInterfaceBody,
+  TsTupleElement,
+  VarDeclarator,
+  JSXMemberExpr,
+  TsConstAssertion,
+  ExportNamespaceSpecifier,
+  ObjectLit,
+  Module,
+  TsIndexSignature,
+  TsTypeCastExpr,
+  TsTupleType,
+  Null,
+  TsTypeOperator,
+  JSXClosingElement,
+  BinExpr,
+  UnaryExpr,
+  TsPropertySignature,
+  Constructor,
+  FnDecl,
+  TsNonNullExpr,
+  ClassExpr,
+  ForInStmt,
+  EmptyStmt,
+  WhileStmt,
+  Str,
+  TsExprWithTypeArgs,
+  AssignPat,
+  ExportNamedSpecifier,
+  TsConditionalType,
+  TsTypeLit,
+  BreakStmt,
+  ImportStarAsSpecifier,
+  TsInferType,
+  PrivateMethod,
+  ForOfStmt,
+  TsUnionType,
+  TsModuleDecl,
+  GetterProp,
+  CondExpr,
+  ImportNamedSpecifier,
+  NamedExport,
+  JSXElement,
+  ClassDecl,
+  ArrayPat,
+  DoWhileStmt,
+  JSXText,
+  VarDecl,
+  PrivateName,
+  JSXNamespacedName,
+  JSXOpeningElement,
+  SpreadElement,
+  ExportDefaultDecl,
+  ArrowExpr,
+  TsAsExpr,
+  KeyValuePatProp,
+  TsLitType,
+  AssignExpr,
+  ArrayLit,
+  Decorator,
+  Ident,
+  MethodProp,
+}
+
 
 pub enum JSXAttrValue<'a> {
   Lit(Lit<'a>),
@@ -909,6 +1237,15 @@ impl<'a> NodeTrait<'a> for JSXAttrValue<'a> {
       JSXAttrValue::JSXExprContainer(node) => node.into_node(),
       JSXAttrValue::JSXElement(node) => node.into_node(),
       JSXAttrValue::JSXFragment(node) => node.into_node(),
+    }
+  }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      JSXAttrValue::Lit(node) => node.kind(),
+      JSXAttrValue::JSXExprContainer(node) => node.kind(),
+      JSXAttrValue::JSXElement(node) => node.kind(),
+      JSXAttrValue::JSXFragment(node) => node.kind(),
     }
   }
 }
@@ -979,6 +1316,13 @@ impl<'a> NodeTrait<'a> for PropOrSpread<'a> {
       PropOrSpread::Prop(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      PropOrSpread::Spread(node) => node.kind(),
+      PropOrSpread::Prop(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&PropOrSpread<'a>> for Node<'a> {
   fn from(node: &PropOrSpread<'a>) -> Node<'a> {
@@ -1042,6 +1386,13 @@ impl<'a> NodeTrait<'a> for VarDeclOrExpr<'a> {
       VarDeclOrExpr::Expr(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      VarDeclOrExpr::VarDecl(node) => node.kind(),
+      VarDeclOrExpr::Expr(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&VarDeclOrExpr<'a>> for Node<'a> {
   fn from(node: &VarDeclOrExpr<'a>) -> Node<'a> {
@@ -1103,6 +1454,13 @@ impl<'a> NodeTrait<'a> for TsThisTypeOrIdent<'a> {
     match self {
       TsThisTypeOrIdent::TsThisType(node) => node.into_node(),
       TsThisTypeOrIdent::Ident(node) => node.into_node(),
+    }
+  }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      TsThisTypeOrIdent::TsThisType(node) => node.kind(),
+      TsThisTypeOrIdent::Ident(node) => node.kind(),
     }
   }
 }
@@ -1191,6 +1549,17 @@ impl<'a> NodeTrait<'a> for Prop<'a> {
       Prop::Method(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      Prop::Shorthand(node) => node.kind(),
+      Prop::KeyValue(node) => node.kind(),
+      Prop::Assign(node) => node.kind(),
+      Prop::Getter(node) => node.kind(),
+      Prop::Setter(node) => node.kind(),
+      Prop::Method(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&Prop<'a>> for Node<'a> {
   fn from(node: &Prop<'a>) -> Node<'a> {
@@ -1262,6 +1631,13 @@ impl<'a> NodeTrait<'a> for TsTypeQueryExpr<'a> {
       TsTypeQueryExpr::Import(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      TsTypeQueryExpr::TsEntityName(node) => node.kind(),
+      TsTypeQueryExpr::Import(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&TsTypeQueryExpr<'a>> for Node<'a> {
   fn from(node: &TsTypeQueryExpr<'a>) -> Node<'a> {
@@ -1325,6 +1701,13 @@ impl<'a> NodeTrait<'a> for TsNamespaceBody<'a> {
     match self {
       TsNamespaceBody::TsModuleBlock(node) => node.into_node(),
       TsNamespaceBody::TsNamespaceDecl(node) => node.into_node(),
+    }
+  }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      TsNamespaceBody::TsModuleBlock(node) => node.kind(),
+      TsNamespaceBody::TsNamespaceDecl(node) => node.kind(),
     }
   }
 }
@@ -1415,6 +1798,18 @@ impl<'a> NodeTrait<'a> for Lit<'a> {
       Lit::JSXText(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      Lit::Str(node) => node.kind(),
+      Lit::Bool(node) => node.kind(),
+      Lit::Null(node) => node.kind(),
+      Lit::Num(node) => node.kind(),
+      Lit::BigInt(node) => node.kind(),
+      Lit::Regex(node) => node.kind(),
+      Lit::JSXText(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&Lit<'a>> for Node<'a> {
   fn from(node: &Lit<'a>) -> Node<'a> {
@@ -1493,6 +1888,14 @@ impl<'a> NodeTrait<'a> for ImportSpecifier<'a> {
       ImportSpecifier::Namespace(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      ImportSpecifier::Named(node) => node.kind(),
+      ImportSpecifier::Default(node) => node.kind(),
+      ImportSpecifier::Namespace(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&ImportSpecifier<'a>> for Node<'a> {
   fn from(node: &ImportSpecifier<'a>) -> Node<'a> {
@@ -1561,6 +1964,14 @@ impl<'a> NodeTrait<'a> for ExportSpecifier<'a> {
       ExportSpecifier::Namespace(node) => node.into_node(),
       ExportSpecifier::Default(node) => node.into_node(),
       ExportSpecifier::Named(node) => node.into_node(),
+    }
+  }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      ExportSpecifier::Namespace(node) => node.kind(),
+      ExportSpecifier::Default(node) => node.kind(),
+      ExportSpecifier::Named(node) => node.kind(),
     }
   }
 }
@@ -1714,6 +2125,30 @@ impl<'a> NodeTrait<'a> for Stmt<'a> {
       Stmt::Expr(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      Stmt::Block(node) => node.kind(),
+      Stmt::Empty(node) => node.kind(),
+      Stmt::Debugger(node) => node.kind(),
+      Stmt::With(node) => node.kind(),
+      Stmt::Return(node) => node.kind(),
+      Stmt::Labeled(node) => node.kind(),
+      Stmt::Break(node) => node.kind(),
+      Stmt::Continue(node) => node.kind(),
+      Stmt::If(node) => node.kind(),
+      Stmt::Switch(node) => node.kind(),
+      Stmt::Throw(node) => node.kind(),
+      Stmt::Try(node) => node.kind(),
+      Stmt::While(node) => node.kind(),
+      Stmt::DoWhile(node) => node.kind(),
+      Stmt::For(node) => node.kind(),
+      Stmt::ForIn(node) => node.kind(),
+      Stmt::ForOf(node) => node.kind(),
+      Stmt::Decl(node) => node.kind(),
+      Stmt::Expr(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&Stmt<'a>> for Node<'a> {
   fn from(node: &Stmt<'a>) -> Node<'a> {
@@ -1837,6 +2272,18 @@ impl<'a> NodeTrait<'a> for Pat<'a> {
       Pat::Expr(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      Pat::Ident(node) => node.kind(),
+      Pat::Array(node) => node.kind(),
+      Pat::Rest(node) => node.kind(),
+      Pat::Object(node) => node.kind(),
+      Pat::Assign(node) => node.kind(),
+      Pat::Invalid(node) => node.kind(),
+      Pat::Expr(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&Pat<'a>> for Node<'a> {
   fn from(node: &Pat<'a>) -> Node<'a> {
@@ -1910,6 +2357,13 @@ impl<'a> NodeTrait<'a> for TsModuleName<'a> {
       TsModuleName::Str(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      TsModuleName::Ident(node) => node.kind(),
+      TsModuleName::Str(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&TsModuleName<'a>> for Node<'a> {
   fn from(node: &TsModuleName<'a>) -> Node<'a> {
@@ -1981,6 +2435,15 @@ impl<'a> NodeTrait<'a> for TsFnParam<'a> {
       TsFnParam::Array(node) => node.into_node(),
       TsFnParam::Rest(node) => node.into_node(),
       TsFnParam::Object(node) => node.into_node(),
+    }
+  }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      TsFnParam::Ident(node) => node.kind(),
+      TsFnParam::Array(node) => node.kind(),
+      TsFnParam::Rest(node) => node.kind(),
+      TsFnParam::Object(node) => node.kind(),
     }
   }
 }
@@ -2077,6 +2540,18 @@ impl<'a> NodeTrait<'a> for ClassMember<'a> {
       ClassMember::Empty(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      ClassMember::Constructor(node) => node.kind(),
+      ClassMember::Method(node) => node.kind(),
+      ClassMember::PrivateMethod(node) => node.kind(),
+      ClassMember::ClassProp(node) => node.kind(),
+      ClassMember::PrivateProp(node) => node.kind(),
+      ClassMember::TsIndexSignature(node) => node.kind(),
+      ClassMember::Empty(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&ClassMember<'a>> for Node<'a> {
   fn from(node: &ClassMember<'a>) -> Node<'a> {
@@ -2150,6 +2625,13 @@ impl<'a> NodeTrait<'a> for VarDeclOrPat<'a> {
       VarDeclOrPat::Pat(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      VarDeclOrPat::VarDecl(node) => node.kind(),
+      VarDeclOrPat::Pat(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&VarDeclOrPat<'a>> for Node<'a> {
   fn from(node: &VarDeclOrPat<'a>) -> Node<'a> {
@@ -2211,6 +2693,13 @@ impl<'a> NodeTrait<'a> for TsModuleRef<'a> {
     match self {
       TsModuleRef::TsEntityName(node) => node.into_node(),
       TsModuleRef::TsExternalModuleRef(node) => node.into_node(),
+    }
+  }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      TsModuleRef::TsEntityName(node) => node.kind(),
+      TsModuleRef::TsExternalModuleRef(node) => node.kind(),
     }
   }
 }
@@ -2276,6 +2765,13 @@ impl<'a> NodeTrait<'a> for JSXAttrOrSpread<'a> {
       JSXAttrOrSpread::SpreadElement(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      JSXAttrOrSpread::JSXAttr(node) => node.kind(),
+      JSXAttrOrSpread::SpreadElement(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&JSXAttrOrSpread<'a>> for Node<'a> {
   fn from(node: &JSXAttrOrSpread<'a>) -> Node<'a> {
@@ -2339,6 +2835,13 @@ impl<'a> NodeTrait<'a> for ParamOrTsParamProp<'a> {
       ParamOrTsParamProp::Param(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      ParamOrTsParamProp::TsParamProp(node) => node.kind(),
+      ParamOrTsParamProp::Param(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&ParamOrTsParamProp<'a>> for Node<'a> {
   fn from(node: &ParamOrTsParamProp<'a>) -> Node<'a> {
@@ -2400,6 +2903,13 @@ impl<'a> NodeTrait<'a> for ExprOrSuper<'a> {
     match self {
       ExprOrSuper::Super(node) => node.into_node(),
       ExprOrSuper::Expr(node) => node.into_node(),
+    }
+  }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      ExprOrSuper::Super(node) => node.kind(),
+      ExprOrSuper::Expr(node) => node.kind(),
     }
   }
 }
@@ -2480,6 +2990,16 @@ impl<'a> NodeTrait<'a> for TsTypeElement<'a> {
       TsTypeElement::TsIndexSignature(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      TsTypeElement::TsCallSignatureDecl(node) => node.kind(),
+      TsTypeElement::TsConstructSignatureDecl(node) => node.kind(),
+      TsTypeElement::TsPropertySignature(node) => node.kind(),
+      TsTypeElement::TsMethodSignature(node) => node.kind(),
+      TsTypeElement::TsIndexSignature(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&TsTypeElement<'a>> for Node<'a> {
   fn from(node: &TsTypeElement<'a>) -> Node<'a> {
@@ -2549,6 +3069,13 @@ impl<'a> NodeTrait<'a> for BlockStmtOrExpr<'a> {
       BlockStmtOrExpr::Expr(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      BlockStmtOrExpr::BlockStmt(node) => node.kind(),
+      BlockStmtOrExpr::Expr(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&BlockStmtOrExpr<'a>> for Node<'a> {
   fn from(node: &BlockStmtOrExpr<'a>) -> Node<'a> {
@@ -2610,6 +3137,13 @@ impl<'a> NodeTrait<'a> for TsUnionOrIntersectionType<'a> {
     match self {
       TsUnionOrIntersectionType::TsUnionType(node) => node.into_node(),
       TsUnionOrIntersectionType::TsIntersectionType(node) => node.into_node(),
+    }
+  }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      TsUnionOrIntersectionType::TsUnionType(node) => node.kind(),
+      TsUnionOrIntersectionType::TsIntersectionType(node) => node.kind(),
     }
   }
 }
@@ -2680,6 +3214,14 @@ impl<'a> NodeTrait<'a> for DefaultDecl<'a> {
       DefaultDecl::TsInterfaceDecl(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      DefaultDecl::Class(node) => node.kind(),
+      DefaultDecl::Fn(node) => node.kind(),
+      DefaultDecl::TsInterfaceDecl(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&DefaultDecl<'a>> for Node<'a> {
   fn from(node: &DefaultDecl<'a>) -> Node<'a> {
@@ -2747,6 +3289,13 @@ impl<'a> NodeTrait<'a> for TsEnumMemberId<'a> {
       TsEnumMemberId::Str(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      TsEnumMemberId::Ident(node) => node.kind(),
+      TsEnumMemberId::Str(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&TsEnumMemberId<'a>> for Node<'a> {
   fn from(node: &TsEnumMemberId<'a>) -> Node<'a> {
@@ -2808,6 +3357,13 @@ impl<'a> NodeTrait<'a> for TsParamPropParam<'a> {
     match self {
       TsParamPropParam::Ident(node) => node.into_node(),
       TsParamPropParam::Assign(node) => node.into_node(),
+    }
+  }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      TsParamPropParam::Ident(node) => node.kind(),
+      TsParamPropParam::Assign(node) => node.kind(),
     }
   }
 }
@@ -2888,6 +3444,16 @@ impl<'a> NodeTrait<'a> for JSXElementChild<'a> {
       JSXElementChild::JSXFragment(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      JSXElementChild::JSXText(node) => node.kind(),
+      JSXElementChild::JSXExprContainer(node) => node.kind(),
+      JSXElementChild::JSXSpreadChild(node) => node.kind(),
+      JSXElementChild::JSXElement(node) => node.kind(),
+      JSXElementChild::JSXFragment(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&JSXElementChild<'a>> for Node<'a> {
   fn from(node: &JSXElementChild<'a>) -> Node<'a> {
@@ -2955,6 +3521,13 @@ impl<'a> NodeTrait<'a> for ModuleItem<'a> {
     match self {
       ModuleItem::ModuleDecl(node) => node.into_node(),
       ModuleItem::Stmt(node) => node.into_node(),
+    }
+  }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      ModuleItem::ModuleDecl(node) => node.kind(),
+      ModuleItem::Stmt(node) => node.kind(),
     }
   }
 }
@@ -3037,6 +3610,16 @@ impl<'a> NodeTrait<'a> for PropName<'a> {
       PropName::BigInt(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      PropName::Ident(node) => node.kind(),
+      PropName::Str(node) => node.kind(),
+      PropName::Num(node) => node.kind(),
+      PropName::Computed(node) => node.kind(),
+      PropName::BigInt(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&PropName<'a>> for Node<'a> {
   fn from(node: &PropName<'a>) -> Node<'a> {
@@ -3104,6 +3687,13 @@ impl<'a> NodeTrait<'a> for JSXAttrName<'a> {
     match self {
       JSXAttrName::Ident(node) => node.into_node(),
       JSXAttrName::JSXNamespacedName(node) => node.into_node(),
+    }
+  }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      JSXAttrName::Ident(node) => node.kind(),
+      JSXAttrName::JSXNamespacedName(node) => node.kind(),
     }
   }
 }
@@ -3194,6 +3784,18 @@ impl<'a> NodeTrait<'a> for Decl<'a> {
       Decl::TsModule(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      Decl::Class(node) => node.kind(),
+      Decl::Fn(node) => node.kind(),
+      Decl::Var(node) => node.kind(),
+      Decl::TsInterface(node) => node.kind(),
+      Decl::TsTypeAlias(node) => node.kind(),
+      Decl::TsEnum(node) => node.kind(),
+      Decl::TsModule(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&Decl<'a>> for Node<'a> {
   fn from(node: &Decl<'a>) -> Node<'a> {
@@ -3282,6 +3884,16 @@ impl<'a> NodeTrait<'a> for TsLit<'a> {
       TsLit::Tpl(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      TsLit::Number(node) => node.kind(),
+      TsLit::Str(node) => node.kind(),
+      TsLit::Bool(node) => node.kind(),
+      TsLit::BigInt(node) => node.kind(),
+      TsLit::Tpl(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&TsLit<'a>> for Node<'a> {
   fn from(node: &TsLit<'a>) -> Node<'a> {
@@ -3349,6 +3961,13 @@ impl<'a> NodeTrait<'a> for TsEntityName<'a> {
     match self {
       TsEntityName::TsQualifiedName(node) => node.into_node(),
       TsEntityName::Ident(node) => node.into_node(),
+    }
+  }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      TsEntityName::TsQualifiedName(node) => node.kind(),
+      TsEntityName::Ident(node) => node.kind(),
     }
   }
 }
@@ -3591,6 +4210,47 @@ impl<'a> NodeTrait<'a> for Expr<'a> {
       Expr::Invalid(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      Expr::This(node) => node.kind(),
+      Expr::Array(node) => node.kind(),
+      Expr::Object(node) => node.kind(),
+      Expr::Fn(node) => node.kind(),
+      Expr::Unary(node) => node.kind(),
+      Expr::Update(node) => node.kind(),
+      Expr::Bin(node) => node.kind(),
+      Expr::Assign(node) => node.kind(),
+      Expr::Member(node) => node.kind(),
+      Expr::Cond(node) => node.kind(),
+      Expr::Call(node) => node.kind(),
+      Expr::New(node) => node.kind(),
+      Expr::Seq(node) => node.kind(),
+      Expr::Ident(node) => node.kind(),
+      Expr::Lit(node) => node.kind(),
+      Expr::Tpl(node) => node.kind(),
+      Expr::TaggedTpl(node) => node.kind(),
+      Expr::Arrow(node) => node.kind(),
+      Expr::Class(node) => node.kind(),
+      Expr::Yield(node) => node.kind(),
+      Expr::MetaProp(node) => node.kind(),
+      Expr::Await(node) => node.kind(),
+      Expr::Paren(node) => node.kind(),
+      Expr::JSXMember(node) => node.kind(),
+      Expr::JSXNamespacedName(node) => node.kind(),
+      Expr::JSXEmpty(node) => node.kind(),
+      Expr::JSXElement(node) => node.kind(),
+      Expr::JSXFragment(node) => node.kind(),
+      Expr::TsTypeAssertion(node) => node.kind(),
+      Expr::TsConstAssertion(node) => node.kind(),
+      Expr::TsNonNull(node) => node.kind(),
+      Expr::TsTypeCast(node) => node.kind(),
+      Expr::TsAs(node) => node.kind(),
+      Expr::PrivateName(node) => node.kind(),
+      Expr::OptChain(node) => node.kind(),
+      Expr::Invalid(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&Expr<'a>> for Node<'a> {
   fn from(node: &Expr<'a>) -> Node<'a> {
@@ -3723,6 +4383,13 @@ impl<'a> NodeTrait<'a> for JSXObject<'a> {
       JSXObject::Ident(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      JSXObject::JSXMemberExpr(node) => node.kind(),
+      JSXObject::Ident(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&JSXObject<'a>> for Node<'a> {
   fn from(node: &JSXObject<'a>) -> Node<'a> {
@@ -3784,6 +4451,13 @@ impl<'a> NodeTrait<'a> for PatOrExpr<'a> {
     match self {
       PatOrExpr::Expr(node) => node.into_node(),
       PatOrExpr::Pat(node) => node.into_node(),
+    }
+  }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      PatOrExpr::Expr(node) => node.kind(),
+      PatOrExpr::Pat(node) => node.kind(),
     }
   }
 }
@@ -3884,6 +4558,20 @@ impl<'a> NodeTrait<'a> for ModuleDecl<'a> {
       ModuleDecl::TsNamespaceExport(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      ModuleDecl::Import(node) => node.kind(),
+      ModuleDecl::ExportDecl(node) => node.kind(),
+      ModuleDecl::ExportNamed(node) => node.kind(),
+      ModuleDecl::ExportDefaultDecl(node) => node.kind(),
+      ModuleDecl::ExportDefaultExpr(node) => node.kind(),
+      ModuleDecl::ExportAll(node) => node.kind(),
+      ModuleDecl::TsImportEquals(node) => node.kind(),
+      ModuleDecl::TsExportAssignment(node) => node.kind(),
+      ModuleDecl::TsNamespaceExport(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&ModuleDecl<'a>> for Node<'a> {
   fn from(node: &ModuleDecl<'a>) -> Node<'a> {
@@ -3966,6 +4654,14 @@ impl<'a> NodeTrait<'a> for JSXElementName<'a> {
       JSXElementName::JSXNamespacedName(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      JSXElementName::Ident(node) => node.kind(),
+      JSXElementName::JSXMemberExpr(node) => node.kind(),
+      JSXElementName::JSXNamespacedName(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&JSXElementName<'a>> for Node<'a> {
   fn from(node: &JSXElementName<'a>) -> Node<'a> {
@@ -4029,6 +4725,13 @@ impl<'a> NodeTrait<'a> for JSXExpr<'a> {
     match self {
       JSXExpr::JSXEmptyExpr(node) => node.into_node(),
       JSXExpr::Expr(node) => node.into_node(),
+    }
+  }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      JSXExpr::JSXEmptyExpr(node) => node.kind(),
+      JSXExpr::Expr(node) => node.kind(),
     }
   }
 }
@@ -4184,6 +4887,31 @@ impl<'a> NodeTrait<'a> for TsType<'a> {
       TsType::TsImportType(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      TsType::TsKeywordType(node) => node.kind(),
+      TsType::TsThisType(node) => node.kind(),
+      TsType::TsFnOrConstructorType(node) => node.kind(),
+      TsType::TsTypeRef(node) => node.kind(),
+      TsType::TsTypeQuery(node) => node.kind(),
+      TsType::TsTypeLit(node) => node.kind(),
+      TsType::TsArrayType(node) => node.kind(),
+      TsType::TsTupleType(node) => node.kind(),
+      TsType::TsOptionalType(node) => node.kind(),
+      TsType::TsRestType(node) => node.kind(),
+      TsType::TsUnionOrIntersectionType(node) => node.kind(),
+      TsType::TsConditionalType(node) => node.kind(),
+      TsType::TsInferType(node) => node.kind(),
+      TsType::TsParenthesizedType(node) => node.kind(),
+      TsType::TsTypeOperator(node) => node.kind(),
+      TsType::TsIndexedAccessType(node) => node.kind(),
+      TsType::TsMappedType(node) => node.kind(),
+      TsType::TsLitType(node) => node.kind(),
+      TsType::TsTypePredicate(node) => node.kind(),
+      TsType::TsImportType(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&TsType<'a>> for Node<'a> {
   fn from(node: &TsType<'a>) -> Node<'a> {
@@ -4288,6 +5016,14 @@ impl<'a> NodeTrait<'a> for ObjectPatProp<'a> {
       ObjectPatProp::Rest(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      ObjectPatProp::KeyValue(node) => node.kind(),
+      ObjectPatProp::Assign(node) => node.kind(),
+      ObjectPatProp::Rest(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&ObjectPatProp<'a>> for Node<'a> {
   fn from(node: &ObjectPatProp<'a>) -> Node<'a> {
@@ -4353,6 +5089,13 @@ impl<'a> NodeTrait<'a> for TsFnOrConstructorType<'a> {
       TsFnOrConstructorType::TsConstructorType(node) => node.into_node(),
     }
   }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      TsFnOrConstructorType::TsFnType(node) => node.kind(),
+      TsFnOrConstructorType::TsConstructorType(node) => node.kind(),
+    }
+  }
 }
 impl<'a> From<&TsFnOrConstructorType<'a>> for Node<'a> {
   fn from(node: &TsFnOrConstructorType<'a>) -> Node<'a> {
@@ -4410,6 +5153,10 @@ impl<'a> NodeTrait<'a> for &'a SwitchCase<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::SwitchCase
   }
 }
 
@@ -4472,6 +5219,10 @@ impl<'a> NodeTrait<'a> for &'a ThrowStmt<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ThrowStmt
+  }
 }
 
 impl<'a> CastableNode<'a> for ThrowStmt<'a> {
@@ -4524,6 +5275,10 @@ impl<'a> NodeTrait<'a> for &'a JSXClosingFragment<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::JSXClosingFragment
   }
 }
 
@@ -4581,6 +5336,10 @@ impl<'a> NodeTrait<'a> for &'a BigInt<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::BigInt
+  }
 }
 
 impl<'a> CastableNode<'a> for BigInt<'a> {
@@ -4633,6 +5392,10 @@ impl<'a> NodeTrait<'a> for &'a ExportDefaultSpecifier<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ExportDefaultSpecifier
   }
 }
 
@@ -4697,6 +5460,10 @@ impl<'a> NodeTrait<'a> for &'a TsTypeParam<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsTypeParam
   }
 }
 
@@ -4766,6 +5533,10 @@ impl<'a> NodeTrait<'a> for &'a WithStmt<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::WithStmt
+  }
 }
 
 impl<'a> CastableNode<'a> for WithStmt<'a> {
@@ -4830,6 +5601,10 @@ impl<'a> NodeTrait<'a> for &'a Regex<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::Regex
   }
 }
 
@@ -4910,6 +5685,10 @@ impl<'a> NodeTrait<'a> for &'a TsMethodSignature<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsMethodSignature
+  }
 }
 
 impl<'a> CastableNode<'a> for TsMethodSignature<'a> {
@@ -4988,6 +5767,10 @@ impl<'a> NodeTrait<'a> for &'a UpdateExpr<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::UpdateExpr
+  }
 }
 
 impl<'a> CastableNode<'a> for UpdateExpr<'a> {
@@ -5049,6 +5832,10 @@ impl<'a> NodeTrait<'a> for &'a SetterProp<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::SetterProp
   }
 }
 
@@ -5125,6 +5912,10 @@ impl<'a> NodeTrait<'a> for &'a TaggedTpl<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TaggedTpl
+  }
 }
 
 impl<'a> CastableNode<'a> for TaggedTpl<'a> {
@@ -5191,6 +5982,10 @@ impl<'a> NodeTrait<'a> for &'a ExportAll<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ExportAll
+  }
 }
 
 impl<'a> CastableNode<'a> for ExportAll<'a> {
@@ -5248,6 +6043,10 @@ impl<'a> NodeTrait<'a> for &'a TsModuleBlock<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsModuleBlock
   }
 }
 
@@ -5308,6 +6107,10 @@ impl<'a> NodeTrait<'a> for &'a SwitchStmt<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::SwitchStmt
   }
 }
 
@@ -5370,6 +6173,10 @@ impl<'a> NodeTrait<'a> for &'a TsEnumMember<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsEnumMember
   }
 }
 
@@ -5440,6 +6247,10 @@ impl<'a> NodeTrait<'a> for &'a TsIndexedAccessType<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsIndexedAccessType
+  }
 }
 
 impl<'a> CastableNode<'a> for TsIndexedAccessType<'a> {
@@ -5498,6 +6309,10 @@ impl<'a> NodeTrait<'a> for &'a TsRestType<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsRestType
+  }
 }
 
 impl<'a> CastableNode<'a> for TsRestType<'a> {
@@ -5554,6 +6369,10 @@ impl<'a> NodeTrait<'a> for &'a ExprStmt<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ExprStmt
+  }
 }
 
 impl<'a> CastableNode<'a> for ExprStmt<'a> {
@@ -5609,6 +6428,10 @@ impl<'a> NodeTrait<'a> for &'a TsOptionalType<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsOptionalType
   }
 }
 
@@ -5672,6 +6495,10 @@ impl<'a> NodeTrait<'a> for &'a Tpl<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::Tpl
+  }
 }
 
 impl<'a> CastableNode<'a> for Tpl<'a> {
@@ -5728,6 +6555,10 @@ impl<'a> NodeTrait<'a> for &'a Invalid<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::Invalid
+  }
 }
 
 impl<'a> CastableNode<'a> for Invalid<'a> {
@@ -5780,6 +6611,10 @@ impl<'a> NodeTrait<'a> for &'a ComputedPropName<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ComputedPropName
   }
 }
 
@@ -5844,6 +6679,10 @@ impl<'a> NodeTrait<'a> for &'a TsFnType<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsFnType
   }
 }
 
@@ -5910,6 +6749,10 @@ impl<'a> NodeTrait<'a> for &'a BlockStmt<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::BlockStmt
   }
 }
 
@@ -5978,6 +6821,10 @@ impl<'a> NodeTrait<'a> for &'a TsTypeAliasDecl<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsTypeAliasDecl
   }
 }
 
@@ -6049,6 +6896,10 @@ impl<'a> NodeTrait<'a> for &'a MemberExpr<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::MemberExpr
   }
 }
 
@@ -6139,6 +6990,10 @@ impl<'a> NodeTrait<'a> for &'a Function<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::Function
+  }
 }
 
 impl<'a> CastableNode<'a> for Function<'a> {
@@ -6226,6 +7081,10 @@ impl<'a> NodeTrait<'a> for &'a ImportDecl<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ImportDecl
+  }
 }
 
 impl<'a> CastableNode<'a> for ImportDecl<'a> {
@@ -6299,6 +7158,10 @@ impl<'a> NodeTrait<'a> for &'a TsTypePredicate<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsTypePredicate
+  }
 }
 
 impl<'a> CastableNode<'a> for TsTypePredicate<'a> {
@@ -6368,6 +7231,10 @@ impl<'a> NodeTrait<'a> for &'a YieldExpr<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::YieldExpr
+  }
 }
 
 impl<'a> CastableNode<'a> for YieldExpr<'a> {
@@ -6428,6 +7295,10 @@ impl<'a> NodeTrait<'a> for &'a KeyValueProp<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::KeyValueProp
   }
 }
 
@@ -6490,6 +7361,10 @@ impl<'a> NodeTrait<'a> for &'a Param<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::Param
   }
 }
 
@@ -6555,6 +7430,10 @@ impl<'a> NodeTrait<'a> for &'a JSXFragment<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::JSXFragment
+  }
 }
 
 impl<'a> CastableNode<'a> for JSXFragment<'a> {
@@ -6615,6 +7494,10 @@ impl<'a> NodeTrait<'a> for &'a ImportDefaultSpecifier<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ImportDefaultSpecifier
   }
 }
 
@@ -6678,6 +7561,10 @@ impl<'a> NodeTrait<'a> for &'a Number<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::Number
+  }
 }
 
 impl<'a> CastableNode<'a> for Number<'a> {
@@ -6735,6 +7622,10 @@ impl<'a> NodeTrait<'a> for &'a JSXAttr<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::JSXAttr
   }
 }
 
@@ -6797,6 +7688,10 @@ impl<'a> NodeTrait<'a> for &'a ParenExpr<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ParenExpr
+  }
 }
 
 impl<'a> CastableNode<'a> for ParenExpr<'a> {
@@ -6849,6 +7744,10 @@ impl<'a> NodeTrait<'a> for &'a Super<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::Super
   }
 }
 
@@ -6910,6 +7809,10 @@ impl<'a> NodeTrait<'a> for &'a TsConstructorType<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsConstructorType
   }
 }
 
@@ -7003,6 +7906,10 @@ impl<'a> NodeTrait<'a> for &'a Class<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::Class
+  }
 }
 
 impl<'a> CastableNode<'a> for Class<'a> {
@@ -7089,6 +7996,10 @@ impl<'a> NodeTrait<'a> for &'a RestPat<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::RestPat
+  }
 }
 
 impl<'a> CastableNode<'a> for RestPat<'a> {
@@ -7150,6 +8061,10 @@ impl<'a> NodeTrait<'a> for &'a TsNamespaceExportDecl<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsNamespaceExportDecl
+  }
 }
 
 impl<'a> CastableNode<'a> for TsNamespaceExportDecl<'a> {
@@ -7202,6 +8117,10 @@ impl<'a> NodeTrait<'a> for &'a JSXOpeningFragment<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::JSXOpeningFragment
   }
 }
 
@@ -7265,6 +8184,10 @@ impl<'a> NodeTrait<'a> for &'a NewExpr<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::NewExpr
   }
 }
 
@@ -7337,6 +8260,10 @@ impl<'a> NodeTrait<'a> for &'a FnExpr<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::FnExpr
+  }
 }
 
 impl<'a> CastableNode<'a> for FnExpr<'a> {
@@ -7404,6 +8331,10 @@ impl<'a> NodeTrait<'a> for &'a IfStmt<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::IfStmt
+  }
 }
 
 impl<'a> CastableNode<'a> for IfStmt<'a> {
@@ -7467,6 +8398,10 @@ impl<'a> NodeTrait<'a> for &'a TsParenthesizedType<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsParenthesizedType
+  }
 }
 
 impl<'a> CastableNode<'a> for TsParenthesizedType<'a> {
@@ -7527,6 +8462,10 @@ impl<'a> NodeTrait<'a> for &'a AssignPatProp<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::AssignPatProp
   }
 }
 
@@ -7597,6 +8536,10 @@ impl<'a> NodeTrait<'a> for &'a TsImportType<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsImportType
+  }
 }
 
 impl<'a> CastableNode<'a> for TsImportType<'a> {
@@ -7666,6 +8609,10 @@ impl<'a> NodeTrait<'a> for &'a Bool<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::Bool
+  }
 }
 
 impl<'a> CastableNode<'a> for Bool<'a> {
@@ -7731,6 +8678,10 @@ impl<'a> NodeTrait<'a> for &'a TsImportEqualsDecl<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsImportEqualsDecl
+  }
 }
 
 impl<'a> CastableNode<'a> for TsImportEqualsDecl<'a> {
@@ -7790,6 +8741,10 @@ impl<'a> NodeTrait<'a> for &'a AssignProp<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::AssignProp
   }
 }
 
@@ -7865,6 +8820,10 @@ impl<'a> NodeTrait<'a> for &'a TsInterfaceDecl<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsInterfaceDecl
+  }
 }
 
 impl<'a> CastableNode<'a> for TsInterfaceDecl<'a> {
@@ -7927,6 +8886,10 @@ impl<'a> NodeTrait<'a> for &'a JSXEmptyExpr<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::JSXEmptyExpr
+  }
 }
 
 impl<'a> CastableNode<'a> for JSXEmptyExpr<'a> {
@@ -7981,6 +8944,10 @@ impl<'a> NodeTrait<'a> for &'a TsQualifiedName<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsQualifiedName
   }
 }
 
@@ -8039,6 +9006,10 @@ impl<'a> NodeTrait<'a> for &'a ExportDecl<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ExportDecl
   }
 }
 
@@ -8104,6 +9075,10 @@ impl<'a> NodeTrait<'a> for &'a CatchClause<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::CatchClause
+  }
 }
 
 impl<'a> CastableNode<'a> for CatchClause<'a> {
@@ -8167,6 +9142,10 @@ impl<'a> NodeTrait<'a> for &'a LabeledStmt<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::LabeledStmt
+  }
 }
 
 impl<'a> CastableNode<'a> for LabeledStmt<'a> {
@@ -8226,6 +9205,10 @@ impl<'a> NodeTrait<'a> for &'a ContinueStmt<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ContinueStmt
   }
 }
 
@@ -8295,6 +9278,10 @@ impl<'a> NodeTrait<'a> for &'a TsConstructSignatureDecl<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsConstructSignatureDecl
   }
 }
 
@@ -8376,6 +9363,10 @@ impl<'a> NodeTrait<'a> for &'a TsEnumDecl<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsEnumDecl
+  }
 }
 
 impl<'a> CastableNode<'a> for TsEnumDecl<'a> {
@@ -8439,6 +9430,10 @@ impl<'a> NodeTrait<'a> for &'a OptChainExpr<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::OptChainExpr
   }
 }
 
@@ -8509,6 +9504,10 @@ impl<'a> NodeTrait<'a> for &'a TsNamespaceDecl<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsNamespaceDecl
+  }
 }
 
 impl<'a> CastableNode<'a> for TsNamespaceDecl<'a> {
@@ -8569,6 +9568,10 @@ impl<'a> NodeTrait<'a> for &'a SeqExpr<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::SeqExpr
+  }
 }
 
 impl<'a> CastableNode<'a> for SeqExpr<'a> {
@@ -8624,6 +9627,10 @@ impl<'a> NodeTrait<'a> for &'a TsExternalModuleRef<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsExternalModuleRef
   }
 }
 
@@ -8683,6 +9690,10 @@ impl<'a> NodeTrait<'a> for &'a TsTypeParamInstantiation<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsTypeParamInstantiation
+  }
 }
 
 impl<'a> CastableNode<'a> for TsTypeParamInstantiation<'a> {
@@ -8740,6 +9751,10 @@ impl<'a> NodeTrait<'a> for &'a ReturnStmt<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ReturnStmt
   }
 }
 
@@ -8806,6 +9821,10 @@ impl<'a> NodeTrait<'a> for &'a TsTplLitType<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsTplLitType
+  }
 }
 
 impl<'a> CastableNode<'a> for TsTplLitType<'a> {
@@ -8863,6 +9882,10 @@ impl<'a> NodeTrait<'a> for &'a ExportDefaultExpr<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ExportDefaultExpr
   }
 }
 
@@ -8930,6 +9953,10 @@ impl<'a> NodeTrait<'a> for &'a TsCallSignatureDecl<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsCallSignatureDecl
+  }
 }
 
 impl<'a> CastableNode<'a> for TsCallSignatureDecl<'a> {
@@ -8995,6 +10022,10 @@ impl<'a> NodeTrait<'a> for &'a AwaitExpr<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::AwaitExpr
   }
 }
 
@@ -9078,6 +10109,10 @@ impl<'a> NodeTrait<'a> for &'a ClassMethod<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ClassMethod
+  }
 }
 
 impl<'a> CastableNode<'a> for ClassMethod<'a> {
@@ -9150,6 +10185,10 @@ impl<'a> NodeTrait<'a> for &'a TsParamProp<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsParamProp
   }
 }
 
@@ -9257,6 +10296,10 @@ impl<'a> NodeTrait<'a> for &'a ClassProp<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ClassProp
+  }
 }
 
 impl<'a> CastableNode<'a> for ClassProp<'a> {
@@ -9325,6 +10368,10 @@ impl<'a> NodeTrait<'a> for &'a TsTypeAnn<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsTypeAnn
+  }
 }
 
 impl<'a> CastableNode<'a> for TsTypeAnn<'a> {
@@ -9392,6 +10439,10 @@ impl<'a> NodeTrait<'a> for &'a ForStmt<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ForStmt
   }
 }
 
@@ -9477,6 +10528,10 @@ impl<'a> NodeTrait<'a> for &'a ObjectPat<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ObjectPat
+  }
 }
 
 impl<'a> CastableNode<'a> for ObjectPat<'a> {
@@ -9539,6 +10594,10 @@ impl<'a> NodeTrait<'a> for &'a TsTypeQuery<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsTypeQuery
+  }
 }
 
 impl<'a> CastableNode<'a> for TsTypeQuery<'a> {
@@ -9592,6 +10651,10 @@ impl<'a> NodeTrait<'a> for &'a ThisExpr<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ThisExpr
+  }
 }
 
 impl<'a> CastableNode<'a> for ThisExpr<'a> {
@@ -9641,6 +10704,10 @@ impl<'a> NodeTrait<'a> for &'a DebuggerStmt<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::DebuggerStmt
   }
 }
 
@@ -9696,6 +10763,10 @@ impl<'a> NodeTrait<'a> for &'a TsTypeParamDecl<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsTypeParamDecl
   }
 }
 
@@ -9754,6 +10825,10 @@ impl<'a> NodeTrait<'a> for &'a TsTypeAssertion<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsTypeAssertion
   }
 }
 
@@ -9823,6 +10898,10 @@ impl<'a> NodeTrait<'a> for &'a TplElement<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TplElement
+  }
 }
 
 impl<'a> CastableNode<'a> for TplElement<'a> {
@@ -9887,6 +10966,10 @@ impl<'a> NodeTrait<'a> for &'a TsKeywordType<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsKeywordType
+  }
 }
 
 impl<'a> CastableNode<'a> for TsKeywordType<'a> {
@@ -9939,6 +11022,10 @@ impl<'a> NodeTrait<'a> for &'a JSXSpreadChild<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::JSXSpreadChild
   }
 }
 
@@ -9998,6 +11085,10 @@ impl<'a> NodeTrait<'a> for &'a TsIntersectionType<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsIntersectionType
+  }
 }
 
 impl<'a> CastableNode<'a> for TsIntersectionType<'a> {
@@ -10055,6 +11146,10 @@ impl<'a> NodeTrait<'a> for &'a MetaPropExpr<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::MetaPropExpr
   }
 }
 
@@ -10120,6 +11215,10 @@ impl<'a> NodeTrait<'a> for &'a ExprOrSpread<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ExprOrSpread
+  }
 }
 
 impl<'a> CastableNode<'a> for ExprOrSpread<'a> {
@@ -10175,6 +11274,10 @@ impl<'a> NodeTrait<'a> for &'a TsArrayType<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsArrayType
   }
 }
 
@@ -10236,6 +11339,10 @@ impl<'a> NodeTrait<'a> for &'a TsTypeRef<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsTypeRef
+  }
 }
 
 impl<'a> CastableNode<'a> for TsTypeRef<'a> {
@@ -10293,6 +11400,10 @@ impl<'a> NodeTrait<'a> for &'a TsThisType<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsThisType
   }
 }
 
@@ -10354,6 +11465,10 @@ impl<'a> NodeTrait<'a> for &'a TryStmt<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TryStmt
   }
 }
 
@@ -10428,6 +11543,10 @@ impl<'a> NodeTrait<'a> for &'a CallExpr<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::CallExpr
   }
 }
 
@@ -10510,6 +11629,10 @@ impl<'a> NodeTrait<'a> for &'a TsMappedType<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsMappedType
+  }
 }
 
 impl<'a> CastableNode<'a> for TsMappedType<'a> {
@@ -10575,6 +11698,10 @@ impl<'a> NodeTrait<'a> for &'a JSXExprContainer<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::JSXExprContainer
   }
 }
 
@@ -10676,6 +11803,10 @@ impl<'a> NodeTrait<'a> for &'a PrivateProp<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::PrivateProp
+  }
 }
 
 impl<'a> CastableNode<'a> for PrivateProp<'a> {
@@ -10747,6 +11878,10 @@ impl<'a> NodeTrait<'a> for &'a TsExportAssignment<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsExportAssignment
+  }
 }
 
 impl<'a> CastableNode<'a> for TsExportAssignment<'a> {
@@ -10804,6 +11939,10 @@ impl<'a> NodeTrait<'a> for &'a TsInterfaceBody<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsInterfaceBody
   }
 }
 
@@ -10865,6 +12004,10 @@ impl<'a> NodeTrait<'a> for &'a TsTupleElement<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsTupleElement
   }
 }
 
@@ -10939,6 +12082,10 @@ impl<'a> NodeTrait<'a> for &'a VarDeclarator<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::VarDeclarator
+  }
 }
 
 impl<'a> CastableNode<'a> for VarDeclarator<'a> {
@@ -11002,6 +12149,10 @@ impl<'a> NodeTrait<'a> for &'a JSXMemberExpr<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::JSXMemberExpr
+  }
 }
 
 impl<'a> CastableNode<'a> for JSXMemberExpr<'a> {
@@ -11060,6 +12211,10 @@ impl<'a> NodeTrait<'a> for &'a TsConstAssertion<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsConstAssertion
+  }
 }
 
 impl<'a> CastableNode<'a> for TsConstAssertion<'a> {
@@ -11116,6 +12271,10 @@ impl<'a> NodeTrait<'a> for &'a ExportNamespaceSpecifier<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ExportNamespaceSpecifier
   }
 }
 
@@ -11175,6 +12334,10 @@ impl<'a> NodeTrait<'a> for &'a ObjectLit<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ObjectLit
   }
 }
 
@@ -11240,6 +12403,10 @@ impl<'a> NodeTrait<'a> for &'a Module<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::Module
   }
 }
 
@@ -11311,6 +12478,10 @@ impl<'a> NodeTrait<'a> for &'a TsIndexSignature<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsIndexSignature
+  }
 }
 
 impl<'a> CastableNode<'a> for TsIndexSignature<'a> {
@@ -11374,6 +12545,10 @@ impl<'a> NodeTrait<'a> for &'a TsTypeCastExpr<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsTypeCastExpr
+  }
 }
 
 impl<'a> CastableNode<'a> for TsTypeCastExpr<'a> {
@@ -11434,6 +12609,10 @@ impl<'a> NodeTrait<'a> for &'a TsTupleType<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsTupleType
+  }
 }
 
 impl<'a> CastableNode<'a> for TsTupleType<'a> {
@@ -11486,6 +12665,10 @@ impl<'a> NodeTrait<'a> for &'a Null<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::Null
   }
 }
 
@@ -11546,6 +12729,10 @@ impl<'a> NodeTrait<'a> for &'a TsTypeOperator<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsTypeOperator
+  }
 }
 
 impl<'a> CastableNode<'a> for TsTypeOperator<'a> {
@@ -11601,6 +12788,10 @@ impl<'a> NodeTrait<'a> for &'a JSXClosingElement<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::JSXClosingElement
   }
 }
 
@@ -11666,6 +12857,10 @@ impl<'a> NodeTrait<'a> for &'a BinExpr<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::BinExpr
+  }
 }
 
 impl<'a> CastableNode<'a> for BinExpr<'a> {
@@ -11729,6 +12924,10 @@ impl<'a> NodeTrait<'a> for &'a UnaryExpr<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::UnaryExpr
   }
 }
 
@@ -11815,6 +13014,10 @@ impl<'a> NodeTrait<'a> for &'a TsPropertySignature<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsPropertySignature
   }
 }
 
@@ -11907,6 +13110,10 @@ impl<'a> NodeTrait<'a> for &'a Constructor<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::Constructor
+  }
 }
 
 impl<'a> CastableNode<'a> for Constructor<'a> {
@@ -11978,6 +13185,10 @@ impl<'a> NodeTrait<'a> for &'a FnDecl<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::FnDecl
+  }
 }
 
 impl<'a> CastableNode<'a> for FnDecl<'a> {
@@ -12035,6 +13246,10 @@ impl<'a> NodeTrait<'a> for &'a TsNonNullExpr<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsNonNullExpr
   }
 }
 
@@ -12096,6 +13311,10 @@ impl<'a> NodeTrait<'a> for &'a ClassExpr<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ClassExpr
   }
 }
 
@@ -12162,6 +13381,10 @@ impl<'a> NodeTrait<'a> for &'a ForInStmt<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ForInStmt
+  }
 }
 
 impl<'a> CastableNode<'a> for ForInStmt<'a> {
@@ -12219,6 +13442,10 @@ impl<'a> NodeTrait<'a> for &'a EmptyStmt<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::EmptyStmt
+  }
 }
 
 impl<'a> CastableNode<'a> for EmptyStmt<'a> {
@@ -12273,6 +13500,10 @@ impl<'a> NodeTrait<'a> for &'a WhileStmt<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::WhileStmt
   }
 }
 
@@ -12340,6 +13571,10 @@ impl<'a> NodeTrait<'a> for &'a Str<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::Str
+  }
 }
 
 impl<'a> CastableNode<'a> for Str<'a> {
@@ -12396,6 +13631,10 @@ impl<'a> NodeTrait<'a> for &'a TsExprWithTypeArgs<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsExprWithTypeArgs
   }
 }
 
@@ -12463,6 +13702,10 @@ impl<'a> NodeTrait<'a> for &'a AssignPat<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::AssignPat
   }
 }
 
@@ -12533,6 +13776,10 @@ impl<'a> NodeTrait<'a> for &'a ExportNamedSpecifier<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ExportNamedSpecifier
+  }
 }
 
 impl<'a> CastableNode<'a> for ExportNamedSpecifier<'a> {
@@ -12600,6 +13847,10 @@ impl<'a> NodeTrait<'a> for &'a TsConditionalType<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsConditionalType
+  }
 }
 
 impl<'a> CastableNode<'a> for TsConditionalType<'a> {
@@ -12664,6 +13915,10 @@ impl<'a> NodeTrait<'a> for &'a TsTypeLit<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsTypeLit
+  }
 }
 
 impl<'a> CastableNode<'a> for TsTypeLit<'a> {
@@ -12721,6 +13976,10 @@ impl<'a> NodeTrait<'a> for &'a BreakStmt<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::BreakStmt
   }
 }
 
@@ -12782,6 +14041,10 @@ impl<'a> NodeTrait<'a> for &'a ImportStarAsSpecifier<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ImportStarAsSpecifier
+  }
 }
 
 impl<'a> CastableNode<'a> for ImportStarAsSpecifier<'a> {
@@ -12837,6 +14100,10 @@ impl<'a> NodeTrait<'a> for &'a TsInferType<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsInferType
   }
 }
 
@@ -12920,6 +14187,10 @@ impl<'a> NodeTrait<'a> for &'a PrivateMethod<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::PrivateMethod
+  }
 }
 
 impl<'a> CastableNode<'a> for PrivateMethod<'a> {
@@ -12993,6 +14264,10 @@ impl<'a> NodeTrait<'a> for &'a ForOfStmt<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ForOfStmt
+  }
 }
 
 impl<'a> CastableNode<'a> for ForOfStmt<'a> {
@@ -13054,6 +14329,10 @@ impl<'a> NodeTrait<'a> for &'a TsUnionType<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsUnionType
   }
 }
 
@@ -13126,6 +14405,10 @@ impl<'a> NodeTrait<'a> for &'a TsModuleDecl<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsModuleDecl
+  }
 }
 
 impl<'a> CastableNode<'a> for TsModuleDecl<'a> {
@@ -13194,6 +14477,10 @@ impl<'a> NodeTrait<'a> for &'a GetterProp<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::GetterProp
   }
 }
 
@@ -13265,6 +14552,10 @@ impl<'a> NodeTrait<'a> for &'a CondExpr<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::CondExpr
+  }
 }
 
 impl<'a> CastableNode<'a> for CondExpr<'a> {
@@ -13331,6 +14622,10 @@ impl<'a> NodeTrait<'a> for &'a ImportNamedSpecifier<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ImportNamedSpecifier
   }
 }
 
@@ -13407,6 +14702,10 @@ impl<'a> NodeTrait<'a> for &'a NamedExport<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::NamedExport
+  }
 }
 
 impl<'a> CastableNode<'a> for NamedExport<'a> {
@@ -13475,6 +14774,10 @@ impl<'a> NodeTrait<'a> for &'a JSXElement<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::JSXElement
   }
 }
 
@@ -13546,6 +14849,10 @@ impl<'a> NodeTrait<'a> for &'a ClassDecl<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ClassDecl
   }
 }
 
@@ -13620,6 +14927,10 @@ impl<'a> NodeTrait<'a> for &'a ArrayPat<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ArrayPat
+  }
 }
 
 impl<'a> CastableNode<'a> for ArrayPat<'a> {
@@ -13686,6 +14997,10 @@ impl<'a> NodeTrait<'a> for &'a DoWhileStmt<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::DoWhileStmt
+  }
 }
 
 impl<'a> CastableNode<'a> for DoWhileStmt<'a> {
@@ -13750,6 +15065,10 @@ impl<'a> NodeTrait<'a> for &'a JSXText<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::JSXText
   }
 }
 
@@ -13816,6 +15135,10 @@ impl<'a> NodeTrait<'a> for &'a VarDecl<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::VarDecl
+  }
 }
 
 impl<'a> CastableNode<'a> for VarDecl<'a> {
@@ -13871,6 +15194,10 @@ impl<'a> NodeTrait<'a> for &'a PrivateName<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::PrivateName
   }
 }
 
@@ -13930,6 +15257,10 @@ impl<'a> NodeTrait<'a> for &'a JSXNamespacedName<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::JSXNamespacedName
   }
 }
 
@@ -14005,6 +15336,10 @@ impl<'a> NodeTrait<'a> for &'a JSXOpeningElement<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::JSXOpeningElement
+  }
 }
 
 impl<'a> CastableNode<'a> for JSXOpeningElement<'a> {
@@ -14074,6 +15409,10 @@ impl<'a> NodeTrait<'a> for &'a SpreadElement<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::SpreadElement
+  }
 }
 
 impl<'a> CastableNode<'a> for SpreadElement<'a> {
@@ -14129,6 +15468,10 @@ impl<'a> NodeTrait<'a> for &'a ExportDefaultDecl<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ExportDefaultDecl
   }
 }
 
@@ -14208,6 +15551,10 @@ impl<'a> NodeTrait<'a> for &'a ArrowExpr<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ArrowExpr
+  }
 }
 
 impl<'a> CastableNode<'a> for ArrowExpr<'a> {
@@ -14278,6 +15625,10 @@ impl<'a> NodeTrait<'a> for &'a TsAsExpr<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsAsExpr
+  }
 }
 
 impl<'a> CastableNode<'a> for TsAsExpr<'a> {
@@ -14339,6 +15690,10 @@ impl<'a> NodeTrait<'a> for &'a KeyValuePatProp<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::KeyValuePatProp
+  }
 }
 
 impl<'a> CastableNode<'a> for KeyValuePatProp<'a> {
@@ -14396,6 +15751,10 @@ impl<'a> NodeTrait<'a> for &'a TsLitType<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsLitType
   }
 }
 
@@ -14461,6 +15820,10 @@ impl<'a> NodeTrait<'a> for &'a AssignExpr<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::AssignExpr
+  }
 }
 
 impl<'a> CastableNode<'a> for AssignExpr<'a> {
@@ -14524,6 +15887,10 @@ impl<'a> NodeTrait<'a> for &'a ArrayLit<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ArrayLit
+  }
 }
 
 impl<'a> CastableNode<'a> for ArrayLit<'a> {
@@ -14582,6 +15949,10 @@ impl<'a> NodeTrait<'a> for &'a Decorator<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::Decorator
   }
 }
 
@@ -14653,6 +16024,10 @@ impl<'a> NodeTrait<'a> for &'a Ident<'a> {
   fn into_node(&self) -> Node<'a> {
     (*self).into()
   }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::Ident
+  }
 }
 
 impl<'a> CastableNode<'a> for Ident<'a> {
@@ -14713,6 +16088,10 @@ impl<'a> NodeTrait<'a> for &'a MethodProp<'a> {
 
   fn into_node(&self) -> Node<'a> {
     (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::MethodProp
   }
 }
 

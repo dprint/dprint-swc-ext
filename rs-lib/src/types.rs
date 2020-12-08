@@ -12,6 +12,7 @@ pub trait NodeTrait<'a>: Spanned {
   fn parent(&self) -> Option<Node<'a>>;
   fn children(&self) -> Vec<Node<'a>>;
   fn into_node(&self) -> Node<'a>;
+  fn kind(&self) -> NodeKind;
 
   fn child_index(&self) -> usize {
     if let Some(parent) = self.parent() {

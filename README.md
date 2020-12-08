@@ -25,6 +25,7 @@ All:
 - `.children_with_tokens_fast(&token_container) -> Vec<NodeOrToken<'a>>`
 - `.module() -> &'a Module` - Gets the root node.
 - `.token_container() -> &'a TokenContainer` - Gets the token container that was passed into the view.
+- `.kind() -> NodeKind` - Gets the "node kind" enum associated with the node.
 
 Node/enum node specific helpers:
 
@@ -33,6 +34,7 @@ Node/enum node specific helpers:
 
 ## TODO
 
+- `.lo()`, `.hi()`, `.lo_line()`, `.hi_line()`, `.lo_column()`, `.hi_column()`, `.leading_comments()`, `.trailing_comments()`
 - Right now this only works if analyzing one file at a time. It would be good to improve the API to accept a large
   collection of source files (should be easy).
 

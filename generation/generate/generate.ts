@@ -106,7 +106,19 @@ export function generate(analysisResult: AnalysisResult) {
             implementTraitMethod("children", "Vec<Node<'a>>");
             writer.newLine();
             implementTraitMethod("into_node", "Node<'a>");
+            writer.newLine();
+            implementTraitMethod("kind", "NodeKind");
         });
+        writer.newLine();
+
+        writer.writeLine("#[derive(Clone, PartialEq, Debug)]");
+        writer.writeLine("pub enum NodeKind {");
+        writer.indent(() => {
+            for (const struct of analysisResult.structs) {
+                writer.writeLine(`${struct.name},`);
+            }
+        });
+        writer.writeLine("}").newLine();
 
         function implementTraitMethod(methodName: string, returnType: string, hasLifetime = false) {
             writer.write(`fn ${methodName}`);
@@ -181,6 +193,8 @@ export function generate(analysisResult: AnalysisResult) {
                 implementTraitMethod("children", "Vec<Node<'a>>", false);
                 writer.newLine();
                 implementTraitMethod("into_node", "Node<'a>", false);
+                writer.newLine();
+                implementTraitMethod("kind", "NodeKind", false);
             });
 
             writeTrait(`From<&${enumDef.name}<'a>>`, "Node<'a>", () => {
@@ -363,6 +377,12 @@ export function generate(analysisResult: AnalysisResult) {
                 writer.writeLine("fn into_node(&self) -> Node<'a> {");
                 writer.indent(() => {
                     writer.writeLine("(*self).into()");
+                }).write("}").newLine();
+                writer.newLine();
+
+                writer.writeLine("fn kind(&self) -> NodeKind {");
+                writer.indent(() => {
+                    writer.writeLine(`NodeKind::${struct.name}`);
                 }).write("}").newLine();
             });
 
