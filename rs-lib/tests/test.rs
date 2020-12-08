@@ -1,6 +1,6 @@
 extern crate dprint_swc_ecma_ast_view;
 use dprint_swc_ecma_ast_view::{
-  CastableNode, ClassDecl, Decl, ModuleItem, Node, NodeTrait, SourceFileInfo,
+  CastableNode, ClassDecl, Decl, ModuleItem, Node, NodeTrait, SourceFileInfo, TokenContainer,
 };
 use std::path::{Path, PathBuf};
 use swc_common::{
@@ -17,10 +17,11 @@ use swc_ecmascript::parser::{
 fn test_creating_reference() {
   let file_text = "class MyClass { prop: string; myMethod() {}}";
   let (module, tokens) = get_swc_ast(&PathBuf::from("file.ts"), file_text);
+  let token_container = TokenContainer::new(&tokens);
   let info = SourceFileInfo {
     module: &module,
     file_text: Some(file_text),
-    tokens: Some(&tokens),
+    tokens: Some(&token_container),
   };
   dprint_swc_ecma_ast_view::with_ast_view(info, |ast_view| {
     println!("Test {:?}", ast_view.text());
@@ -38,6 +39,9 @@ fn test_creating_reference() {
       }
       if let Some(next_sibling) = child.next_sibling() {
         println!("Next sibling: {:?}", next_sibling.text());
+      }
+      for token in child.tokens() {
+        println!("Token: {:?}", token);
       }
     }
   });

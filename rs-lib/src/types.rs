@@ -1,5 +1,7 @@
 use crate::generated::*;
+use crate::tokens::*;
 use swc_common::Spanned;
+use swc_ecmascript::parser::token::TokenAndSpan;
 
 pub trait NodeTrait<'a>: Spanned {
   fn parent(&self) -> Option<Node<'a>>;
@@ -61,6 +63,25 @@ pub trait NodeTrait<'a>: Spanned {
     &source_file_text[(span.lo.0 as usize)..(span.hi.0 as usize)]
   }
 
+  fn tokens(&self) -> &'a [TokenAndSpan] {
+    let token_container = self.token_container();
+    let span = self.span();
+    token_container.get_tokens_in_range(span.lo, span.hi)
+  }
+
+  fn tokens_fast(&self, token_container: &'a TokenContainer<'a>) -> &'a [TokenAndSpan] {
+    let span = self.span();
+    token_container.get_tokens_in_range(span.lo, span.hi)
+  }
+
+  fn token_container(&self) -> &'a TokenContainer<'a> {
+    let module = self.module();
+    module
+      .tokens
+      .as_ref()
+      .expect("The tokens must be provided to `with_view` in order to use this method.")
+  }
+
   fn module(&self) -> &Module<'a> {
     let mut current: Node<'a> = self.into_node();
     while let Some(parent) = current.parent() {
@@ -79,5 +100,5 @@ pub trait CastableNode<'a> {
 pub struct SourceFileInfo<'a> {
   pub module: &'a swc_ecmascript::ast::Module,
   pub file_text: Option<&'a str>,
-  pub tokens: Option<&'a Vec<swc_ecmascript::parser::token::TokenAndSpan>>,
+  pub tokens: Option<&'a TokenContainer<'a>>,
 }

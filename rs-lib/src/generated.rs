@@ -5,13 +5,22 @@ use bumpalo::Bump;
 use swc_common::{Span, Spanned};
 use swc_ecmascript::ast::{self as swc_ast, VarDeclKind, TsTypeOperatorOp, TsKeywordTypeKind, BinaryOp, AssignOp, UpdateOp, Accessibility, MethodKind, UnaryOp, TruePlusMinus};
 use crate::types::*;
+use crate::tokens::*;
+
+thread_local! {
+  static LOCAL_BUMP_ALLOCATOR: std::cell::RefCell<Bump> = std::cell::RefCell::new(Bump::new());
+}
 
 pub fn with_ast_view<'a, T>(source_file_info: SourceFileInfo, with_view: impl FnOnce(&'a Module<'a>) -> T) -> T {
-  let bump = Bump::new();
-  let bump_ref = unsafe { mem::transmute::<&Bump, &'a Bump>(&bump) };
-  let info_ref = unsafe { mem::transmute::<&SourceFileInfo, &'a SourceFileInfo<'a>>(&source_file_info) };
-  let ast_view = get_view_for_module(info_ref, bump_ref);
-  with_view(ast_view)
+  LOCAL_BUMP_ALLOCATOR.with(|bump_cell| {
+    let mut bump_borrow = bump_cell.borrow_mut();
+    let bump_ref = unsafe { mem::transmute::<&Bump, &'a Bump>(&bump_borrow) };
+    let info_ref = unsafe { mem::transmute::<&SourceFileInfo, &'a SourceFileInfo<'a>>(&source_file_info) };
+    let ast_view = get_view_for_module(info_ref, bump_ref);
+    let result = with_view(ast_view);
+    bump_borrow.reset();
+    result
+  })
 }
 
 #[derive(Clone)]
@@ -11192,7 +11201,7 @@ fn get_view_for_object_lit<'a>(inner: &'a swc_ast::ObjectLit, parent: Node<'a>, 
 
 pub struct Module<'a> {
   pub text: Option<&'a str>,
-  pub tokens: Option<&'a Vec<swc_ecmascript::parser::token::TokenAndSpan>>,
+  pub tokens: Option<&'a TokenContainer<'a>>,
   pub inner: &'a swc_ast::Module,
   pub body: Vec<ModuleItem<'a>>,
 }

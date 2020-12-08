@@ -14,6 +14,7 @@ export function generate(analysisResult: AnalysisResult) {
 
     writeHeader();
     writeUseDeclarations();
+    writeBumpAllocator();
     writePublicFunction();
     writeNode();
 
@@ -42,18 +43,32 @@ export function generate(analysisResult: AnalysisResult) {
         writer.write(analysisResult.enums.filter(e => e.isPlain).map(e => e.name).join(", "));
         writer.write("};").newLine();
         writer.writeLine("use crate::types::*;");
+        writer.writeLine("use crate::tokens::*;");
         writer.newLine();
+    }
+
+    function writeBumpAllocator() {
+        // todo: probably do something else... how would this work across many files on different threads?
+        writer.writeLine("thread_local! {");
+        writer.indent(() => {
+            writer.writeLine("static LOCAL_BUMP_ALLOCATOR: std::cell::RefCell<Bump> = std::cell::RefCell::new(Bump::new());");
+        }).write("}").newLine().newLine();
     }
 
     function writePublicFunction() {
         writer.writeLine("pub fn with_ast_view<'a, T>(source_file_info: SourceFileInfo, with_view: impl FnOnce(&'a Module<'a>) -> T) -> T {");
         writer.indent(() => {
-            writer.writeLine("let bump = Bump::new();");
-            // hack to avoid yet another lifetime
-            writer.writeLine("let bump_ref = unsafe { mem::transmute::<&Bump, &'a Bump>(&bump) };");
-            writer.writeLine("let info_ref = unsafe { mem::transmute::<&SourceFileInfo, &'a SourceFileInfo<'a>>(&source_file_info) };");
-            writer.writeLine(`let ast_view = ${getViewForFunctionName("Module")}(info_ref, bump_ref);`);
-            writer.writeLine(`with_view(ast_view)`);
+            writer.writeLine("LOCAL_BUMP_ALLOCATOR.with(|bump_cell| {");
+            writer.indent(() => {
+                writer.writeLine("let mut bump_borrow = bump_cell.borrow_mut();");
+                // hack to avoid yet another lifetime
+                writer.writeLine("let bump_ref = unsafe { mem::transmute::<&Bump, &'a Bump>(&bump_borrow) };");
+                writer.writeLine("let info_ref = unsafe { mem::transmute::<&SourceFileInfo, &'a SourceFileInfo<'a>>(&source_file_info) };");
+                writer.writeLine(`let ast_view = ${getViewForFunctionName("Module")}(info_ref, bump_ref);`);
+                writer.writeLine(`let result = with_view(ast_view);`);
+                writer.writeLine("bump_borrow.reset();");
+                writer.writeLine("result");
+            }).write("})").newLine();
         }).write("}").newLine().newLine();
     }
 
@@ -257,7 +272,7 @@ export function generate(analysisResult: AnalysisResult) {
                 }
                 if (struct.name === "Module") {
                     writer.writeLine("pub text: Option<&'a str>,");
-                    writer.writeLine("pub tokens: Option<&'a Vec<swc_ecmascript::parser::token::TokenAndSpan>>,");
+                    writer.writeLine("pub tokens: Option<&'a TokenContainer<'a>>,");
                 }
                 writer.writeLine(`pub inner: &'a swc_ast::${struct.name},`);
 
@@ -661,9 +676,5 @@ export function generate(analysisResult: AnalysisResult) {
 
     function getViewForFunctionName(name: string) {
         return `get_view_for_${nameToSnakeCase(name)}`;
-    }
-
-    function getSetParentForFunctionName(name: string) {
-        return `set_parent_for_${nameToSnakeCase(name)}`;
     }
 }
