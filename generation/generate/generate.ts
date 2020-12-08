@@ -35,8 +35,7 @@ export function generate(analysisResult: AnalysisResult) {
     }
 
     function writeUseDeclarations() {
-        writer.writeLine("use std::cell::UnsafeCell;");
-        writer.writeLine("use std::mem;");
+        writer.writeLine("use std::mem::{self, MaybeUninit};");
         writer.writeLine("use bumpalo::Bump;");
         writer.writeLine("use swc_common::{Span, Spanned};");
         writer.write("use swc_ecmascript::ast::{self as swc_ast, ");
@@ -212,11 +211,15 @@ export function generate(analysisResult: AnalysisResult) {
         }
 
         function writeEnumFunctions() {
-            writer.write(`fn ${getViewForFunctionName(enumDef.name)}<'a>(ref_node: &'a swc_ast::${enumDef.name}, bump: &'a Bump) -> ${enumDef.name}<'a> {`)
+            writer.write(
+                `fn ${
+                    getViewForFunctionName(enumDef.name)
+                }<'a>(inner: &'a swc_ast::${enumDef.name}, parent: Node<'a>, bump: &'a Bump) -> ${enumDef.name}<'a> {`,
+            )
                 .newLine();
             writer.indent(() => {
                 // writer.writeLine(`println!("Entered ${enumDef.name}");`);
-                writer.writeLine("match ref_node {");
+                writer.writeLine("match inner {");
                 writer.indent(() => {
                     for (const variant of enumDef.variants) {
                         const fullName = `${enumDef.name}::${variant.name}`;
@@ -224,31 +227,12 @@ export function generate(analysisResult: AnalysisResult) {
                         if (variant.tuple_args?.length !== 1) {
                             throw new Error("Unhandled scenario where the variant's tuple args were not equal to 1.");
                         }
-                        writeGetViewTypeExpression(variant.tuple_args[0]);
+                        writeGetViewTypeExpression(variant.tuple_args[0], false, "value");
                         writer.write("),");
                         writer.newLine();
                     }
                 }).write("}").newLine();
             }).write("}").newLine().newLine();
-
-            writer.writeLine(`fn ${getSetParentForFunctionName(enumDef.name)}<'a>(node: &${enumDef.name}<'a>, parent: Node<'a>) {`);
-            writer.indent(() => {
-                writer.write("match node {");
-                writer.indent(() => {
-                    for (const variant of enumDef.variants) {
-                        const fullName = `${enumDef.name}::${variant.name}`;
-                        writer.newLine();
-                        writer.writeLine(`${fullName}(node) => {`);
-                        writer.indent(() => {
-                            if (variant.tuple_args?.length !== 1) {
-                                throw new Error("Unhandled scenario where the variant's tuple args were not equal to 1.");
-                            }
-                            writeSetParentStatement(variant.tuple_args[0], "node", false);
-                        });
-                        writer.write("},");
-                    }
-                }).newLine().write("}").newLine();
-            }).write("}").newLine();
         }
     }
 
@@ -266,9 +250,9 @@ export function generate(analysisResult: AnalysisResult) {
             writer.indent(() => {
                 if (struct.parents.length > 0) {
                     if (struct.parents.length === 1) {
-                        writer.writeLine(`inner_parent: UnsafeCell<Option<&'a ${struct.parents[0].name}<'a>>>,`);
+                        writer.writeLine(`pub parent: &'a ${struct.parents[0].name}<'a>,`);
                     } else {
-                        writer.writeLine(`inner_parent: UnsafeCell<Option<Node<'a>>>,`);
+                        writer.writeLine(`pub parent: Node<'a>,`);
                     }
                 }
                 if (struct.name === "Module") {
@@ -337,9 +321,9 @@ export function generate(analysisResult: AnalysisResult) {
                         writer.write("None");
                     } else {
                         if (struct.parents.length === 1) {
-                            writer.write("Some(unsafe { (*(*self.inner_parent.get()).as_ref().unwrap()).into() })");
+                            writer.write("Some(self.parent.into())");
                         } else {
-                            writer.write("Some(unsafe { (*self.inner_parent.get()).as_ref().unwrap().clone() })");
+                            writer.write("Some(self.parent.clone())");
                         }
                     }
                     writer.newLine();
@@ -471,42 +455,59 @@ export function generate(analysisResult: AnalysisResult) {
             if (struct.name === "Module") {
                 writer.write(`source_file_info: &'a SourceFileInfo<'a>`);
             } else {
-                writer.write(`ref_node: &'a swc_ast::${struct.name}`);
+                writer.write(`inner: &'a swc_ast::${struct.name}, `);
+                writer.write(`parent: Node<'a>`);
             }
             writer.write(", bump: &'a Bump");
             writer.write(`) -> &'a ${struct.name}<'a> {`).newLine();
             writer.indent(() => {
                 if (struct.name === "Module") {
-                    writer.writeLine("let ref_node = source_file_info.module;");
+                    writer.writeLine("let inner = source_file_info.module;");
                 }
                 // writer.writeLine(`println!("Entered ${struct.name}");`);
-                for (const field of structFields) {
-                    writer.writeLine(`let value = &ref_node.${field.name};`);
-                    writer.write(`let field_${field.name} = `);
-                    writeGetViewTypeExpression(field.type);
-                    writer.write(";").newLine();
-                }
 
                 writer.write(`let node = bump.alloc(${struct.name} {`).newLine();
                 writer.indent(() => {
-                    writer.write("inner: ref_node,").newLine();
+                    writer.write("inner,").newLine();
                     if (struct.parents.length > 0) {
-                        writer.write("inner_parent: UnsafeCell::new(None),").newLine();
+                        if (struct.parents.length === 1) {
+                            writer.write(`parent: parent.to::<${struct.parents[0].name}>()`);
+                        } else {
+                            writer.write("parent");
+                        }
+                        writer.write(",").newLine();
                     }
                     if (struct.name === "Module") {
                         writer.write("text: source_file_info.file_text,").newLine();
                         writer.write("tokens: source_file_info.tokens,").newLine();
                     }
                     for (const field of structFields) {
-                        writer.writeLine(`${field.name}: field_${field.name},`);
+                        if (isVecType(field.type)) {
+                            writer.writeLine(`${field.name}: Vec::with_capacity(inner.${field.name}.len()),`);
+                        } else if (isOptionType(field.type)) {
+                            writer.writeLine(`${field.name}: None,`);
+                        } else {
+                            writer.writeLine(`${field.name}: unsafe { MaybeUninit::uninit().assume_init() },`);
+                        }
                     }
                 }).write("});").newLine();
                 if (structFields.length > 0) {
-                    writer.writeLine(`let parent = Node::${struct.name}(node);`);
+                    // hack to get it to avoid the borrow checker (because `.into()` will do a transmute)
+                    writer.writeLine(`let parent: Node<'a> = (&*node).into();`);
+                    // writer.writeLine(`let parent = Node::${struct.name}(node);`);
 
                     for (const [i, field] of structFields.entries()) {
-                        const shouldClone = i < structFields.length - 1;
-                        writeSetParentStatement(field.type, `node.${field.name}`, shouldClone);
+                        const shouldCloneParent = i < structFields.length - 1;
+                        if (isVecType(field.type)) {
+                            writer.write(`node.${field.name}.extend(`);
+                        } else {
+                            writer.write(`node.${field.name} = `);
+                        }
+                        writeGetViewTypeExpression(field.type, shouldCloneParent, `&inner.${field.name}`);
+                        if (isVecType(field.type)) {
+                            writer.write(")");
+                        }
+                        writer.write(";").newLine();
                     }
                 }
 
@@ -527,23 +528,26 @@ export function generate(analysisResult: AnalysisResult) {
         }).write("}").newLine();
     }
 
-    function writeGetViewTypeExpression(type: TypeDefinition) {
+    function writeGetViewTypeExpression(type: TypeDefinition, shouldCloneParent: boolean, name: string) {
         if (type.kind === "primitive") {
             throw new Error("Primitive types not handled here.");
         }
 
         if (type.name === "Option") {
-            writer.writeLine(`match value {`);
+            writer.writeLine(`match ${name} {`);
             writer.indent(() => {
                 writer.write("Some(value) => Some(");
-                writeGetViewTypeExpression(type.generic_args[0]);
+                writeGetViewTypeExpression(type.generic_args[0], shouldCloneParent, "value");
+                if (isVecType(type.generic_args[0])) {
+                    writer.write(".collect()");
+                }
                 writer.write("),").newLine();
                 writer.writeLine("None => None,");
             }).write("}");
         } else if (type.name === "Vec") {
-            writer.write("value.iter().map(|value| ");
-            writeGetViewTypeExpression(type.generic_args[0]);
-            writer.write(").collect()");
+            writer.write(`${name.replace(/^&/, "")}.iter().map(|value| `);
+            writeGetViewTypeExpression(type.generic_args[0], true, "value");
+            writer.write(")");
             /*writer.write("{").newLine();
             writer.indent(() => {
                 writer.writeLine("let mut vec = BumpVec::with_capacity_in(value.len(), bump);");
@@ -556,53 +560,11 @@ export function generate(analysisResult: AnalysisResult) {
                 writer.writeLine("vec");
             }).write("}");*/
         } else {
-            writer.write(`${getViewForFunctionName(type.name)}(value, bump)`);
-        }
-    }
-
-    function writeSetParentStatement(type: TypeDefinition, name: string, shouldClone: boolean) {
-        if (type.kind === "primitive") {
-            throw new Error("Primitive types not handled here.");
-        }
-
-        if (type.name === "Option") {
-            writer.write(`if let Some(child) = ${name}`);
-            if (isSwcNodeEnumType(type.generic_args[0]) || isVecType(type.generic_args[0])) {
-                writer.write(".as_ref()");
-            }
-            writer.write(" {").newLine();
-            writer.indent(() => {
-                writeSetParentStatement(type.generic_args[0], "child", shouldClone);
-            }).write("}").newLine();
-        } else if (type.name === "Vec") {
-            writer.writeLine(`for node in ${name}.iter() {`);
-            writer.indent(() => {
-                writeSetParentStatement(type.generic_args[0], "node", true);
-            });
-            writer.writeLine("}");
-        } else if (isSwcNodeEnumType(type)) {
-            writer.write(`${getSetParentForFunctionName(type.name)}(`);
-            if (name.includes(".")) {
-                writer.write("&");
-            }
-            writer.write(`${name}, parent`);
-            if (shouldClone) {
+            writer.write(`${getViewForFunctionName(type.name)}(${name}, parent`);
+            if (shouldCloneParent) {
                 writer.write(".clone()");
             }
-            writer.write(");").newLine();
-        } else {
-            writer.write("unsafe { ");
-            writer.write(`*${name}.inner_parent.get() = Some(`);
-            const structOfType = analysisResult.structs.find(s => s.name === type.name);
-            if (structOfType != null && structOfType.parents.length === 1) {
-                writer.write(`parent.to::<${structOfType.parents[0].name}>()`);
-            } else {
-                writer.write(`parent`);
-                if (shouldClone) {
-                    writer.write(".clone()");
-                }
-            }
-            writer.write("); }").newLine();
+            writer.write(`, bump)`);
         }
     }
 
@@ -655,6 +617,10 @@ export function generate(analysisResult: AnalysisResult) {
 
     function isVecType(type: TypeDefinition | undefined): boolean {
         return type != null && type.kind === "reference" && type.name === "Vec";
+    }
+
+    function isOptionType(type: TypeDefinition | undefined): boolean {
+        return type != null && type.kind === "reference" && type.name === "Option";
     }
 
     function getIsForImpl(type: TypeDefinition): boolean {
