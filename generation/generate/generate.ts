@@ -36,6 +36,7 @@ export function generate(analysisResult: AnalysisResult) {
 
     function writeUseDeclarations() {
         writer.writeLine("use std::cell::UnsafeCell;");
+        writer.writeLine("use std::mem;");
         writer.writeLine("use bumpalo::Bump;");
         writer.writeLine("use swc_common::{Span, Spanned};");
         writer.write("use swc_ecmascript::ast::{self as swc_ast, ");
@@ -50,8 +51,8 @@ export function generate(analysisResult: AnalysisResult) {
         writer.indent(() => {
             writer.writeLine("let bump = Bump::new();");
             // hack to avoid yet another lifetime
-            writer.writeLine("let bump_ref = unsafe { std::mem::transmute::<&Bump, &'a Bump>(&bump) };");
-            writer.writeLine("let info_ref = unsafe { std::mem::transmute::<&SourceFileInfo, &'a SourceFileInfo<'a>>(&source_file_info) };");
+            writer.writeLine("let bump_ref = unsafe { mem::transmute::<&Bump, &'a Bump>(&bump) };");
+            writer.writeLine("let info_ref = unsafe { mem::transmute::<&SourceFileInfo, &'a SourceFileInfo<'a>>(&source_file_info) };");
             writer.writeLine(`let ast_view = ${getViewForFunctionName("Module")}(info_ref, bump_ref);`);
             writer.writeLine(`with_view(ast_view)`);
         }).write("}").newLine().newLine();
@@ -319,9 +320,11 @@ export function generate(analysisResult: AnalysisResult) {
             });
 
             writer.newLine();
-            writeTrait(`From<&'a ${struct.name}<'a>>`, "Node<'a>", () => {
-                writer.writeLine(`fn from(node: &'a ${struct.name}<'a>) -> Node<'a> {`);
+            writeTrait(`From<&${struct.name}<'a>>`, "Node<'a>", () => {
+                writer.writeLine(`fn from(node: &${struct.name}<'a>) -> Node<'a> {`);
                 writer.indent(() => {
+                    // hack to not require people having to specify the lifetime twice
+                    writer.writeLine(`let node = unsafe { mem::transmute::<&${struct.name}<'a>, &'a ${struct.name}<'a>>(node) };`);
                     writer.writeLine(`Node::${struct.name}(node)`);
                 }).write("}").newLine();
             });

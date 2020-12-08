@@ -1,6 +1,6 @@
 extern crate dprint_swc_ecma_ast_view;
 use dprint_swc_ecma_ast_view::{
-  CastableNode, ClassDecl, Decl, ModuleItem, NodeTrait, SourceFileInfo,
+  CastableNode, ClassDecl, Decl, ModuleItem, Node, NodeTrait, SourceFileInfo,
 };
 use std::path::{Path, PathBuf};
 use swc_common::{
@@ -26,7 +26,7 @@ fn test_creating_reference() {
     println!("Test {:?}", ast_view.text());
     println!("Test 2 {:?}", ast_view.body[0].text());
     println!("Test 3 {:?}", ast_view.body[0].children()[0].text());
-    let class = &ast_view.body[0].to::<ClassDecl>().class;
+    let class = ast_view.body[0].to::<ClassDecl>().class;
     println!("{:?}", class.text());
 
     for child in class.children() {

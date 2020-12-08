@@ -1,6 +1,7 @@
 // This code is code generated.
 // Run `deno run -A generation/main.ts` from the root directory to regenerate it.
 use std::cell::UnsafeCell;
+use std::mem;
 use bumpalo::Bump;
 use swc_common::{Span, Spanned};
 use swc_ecmascript::ast::{self as swc_ast, VarDeclKind, TsTypeOperatorOp, TsKeywordTypeKind, BinaryOp, AssignOp, UpdateOp, Accessibility, MethodKind, UnaryOp, TruePlusMinus};
@@ -8,8 +9,8 @@ use crate::types::*;
 
 pub fn with_ast_view<'a, T>(source_file_info: SourceFileInfo, with_view: impl FnOnce(&'a Module<'a>) -> T) -> T {
   let bump = Bump::new();
-  let bump_ref = unsafe { std::mem::transmute::<&Bump, &'a Bump>(&bump) };
-  let info_ref = unsafe { std::mem::transmute::<&SourceFileInfo, &'a SourceFileInfo<'a>>(&source_file_info) };
+  let bump_ref = unsafe { mem::transmute::<&Bump, &'a Bump>(&bump) };
+  let info_ref = unsafe { mem::transmute::<&SourceFileInfo, &'a SourceFileInfo<'a>>(&source_file_info) };
   let ast_view = get_view_for_module(info_ref, bump_ref);
   with_view(ast_view)
 }
@@ -5159,8 +5160,9 @@ impl<'a> Spanned for SwitchCase<'a> {
   }
 }
 
-impl<'a> From<&'a SwitchCase<'a>> for Node<'a> {
-  fn from(node: &'a SwitchCase<'a>) -> Node<'a> {
+impl<'a> From<&SwitchCase<'a>> for Node<'a> {
+  fn from(node: &SwitchCase<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&SwitchCase<'a>, &'a SwitchCase<'a>>(node) };
     Node::SwitchCase(node)
   }
 }
@@ -5232,8 +5234,9 @@ impl<'a> Spanned for ThrowStmt<'a> {
   }
 }
 
-impl<'a> From<&'a ThrowStmt<'a>> for Node<'a> {
-  fn from(node: &'a ThrowStmt<'a>) -> Node<'a> {
+impl<'a> From<&ThrowStmt<'a>> for Node<'a> {
+  fn from(node: &ThrowStmt<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ThrowStmt<'a>, &'a ThrowStmt<'a>>(node) };
     Node::ThrowStmt(node)
   }
 }
@@ -5288,8 +5291,9 @@ impl<'a> Spanned for JSXClosingFragment<'a> {
   }
 }
 
-impl<'a> From<&'a JSXClosingFragment<'a>> for Node<'a> {
-  fn from(node: &'a JSXClosingFragment<'a>) -> Node<'a> {
+impl<'a> From<&JSXClosingFragment<'a>> for Node<'a> {
+  fn from(node: &JSXClosingFragment<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&JSXClosingFragment<'a>, &'a JSXClosingFragment<'a>>(node) };
     Node::JSXClosingFragment(node)
   }
 }
@@ -5343,8 +5347,9 @@ impl<'a> Spanned for BigInt<'a> {
   }
 }
 
-impl<'a> From<&'a BigInt<'a>> for Node<'a> {
-  fn from(node: &'a BigInt<'a>) -> Node<'a> {
+impl<'a> From<&BigInt<'a>> for Node<'a> {
+  fn from(node: &BigInt<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&BigInt<'a>, &'a BigInt<'a>>(node) };
     Node::BigInt(node)
   }
 }
@@ -5393,8 +5398,9 @@ impl<'a> Spanned for ExportDefaultSpecifier<'a> {
   }
 }
 
-impl<'a> From<&'a ExportDefaultSpecifier<'a>> for Node<'a> {
-  fn from(node: &'a ExportDefaultSpecifier<'a>) -> Node<'a> {
+impl<'a> From<&ExportDefaultSpecifier<'a>> for Node<'a> {
+  fn from(node: &ExportDefaultSpecifier<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ExportDefaultSpecifier<'a>, &'a ExportDefaultSpecifier<'a>>(node) };
     Node::ExportDefaultSpecifier(node)
   }
 }
@@ -5452,8 +5458,9 @@ impl<'a> Spanned for TsTypeParam<'a> {
   }
 }
 
-impl<'a> From<&'a TsTypeParam<'a>> for Node<'a> {
-  fn from(node: &'a TsTypeParam<'a>) -> Node<'a> {
+impl<'a> From<&TsTypeParam<'a>> for Node<'a> {
+  fn from(node: &TsTypeParam<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsTypeParam<'a>, &'a TsTypeParam<'a>>(node) };
     Node::TsTypeParam(node)
   }
 }
@@ -5534,8 +5541,9 @@ impl<'a> Spanned for WithStmt<'a> {
   }
 }
 
-impl<'a> From<&'a WithStmt<'a>> for Node<'a> {
-  fn from(node: &'a WithStmt<'a>) -> Node<'a> {
+impl<'a> From<&WithStmt<'a>> for Node<'a> {
+  fn from(node: &WithStmt<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&WithStmt<'a>, &'a WithStmt<'a>>(node) };
     Node::WithStmt(node)
   }
 }
@@ -5605,8 +5613,9 @@ impl<'a> Spanned for Regex<'a> {
   }
 }
 
-impl<'a> From<&'a Regex<'a>> for Node<'a> {
-  fn from(node: &'a Regex<'a>) -> Node<'a> {
+impl<'a> From<&Regex<'a>> for Node<'a> {
+  fn from(node: &Regex<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&Regex<'a>, &'a Regex<'a>>(node) };
     Node::Regex(node)
   }
 }
@@ -5672,8 +5681,9 @@ impl<'a> Spanned for TsMethodSignature<'a> {
   }
 }
 
-impl<'a> From<&'a TsMethodSignature<'a>> for Node<'a> {
-  fn from(node: &'a TsMethodSignature<'a>) -> Node<'a> {
+impl<'a> From<&TsMethodSignature<'a>> for Node<'a> {
+  fn from(node: &TsMethodSignature<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsMethodSignature<'a>, &'a TsMethodSignature<'a>>(node) };
     Node::TsMethodSignature(node)
   }
 }
@@ -5772,8 +5782,9 @@ impl<'a> Spanned for UpdateExpr<'a> {
   }
 }
 
-impl<'a> From<&'a UpdateExpr<'a>> for Node<'a> {
-  fn from(node: &'a UpdateExpr<'a>) -> Node<'a> {
+impl<'a> From<&UpdateExpr<'a>> for Node<'a> {
+  fn from(node: &UpdateExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&UpdateExpr<'a>, &'a UpdateExpr<'a>>(node) };
     Node::UpdateExpr(node)
   }
 }
@@ -5831,8 +5842,9 @@ impl<'a> Spanned for SetterProp<'a> {
   }
 }
 
-impl<'a> From<&'a SetterProp<'a>> for Node<'a> {
-  fn from(node: &'a SetterProp<'a>) -> Node<'a> {
+impl<'a> From<&SetterProp<'a>> for Node<'a> {
+  fn from(node: &SetterProp<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&SetterProp<'a>, &'a SetterProp<'a>>(node) };
     Node::SetterProp(node)
   }
 }
@@ -5908,8 +5920,9 @@ impl<'a> Spanned for TaggedTpl<'a> {
   }
 }
 
-impl<'a> From<&'a TaggedTpl<'a>> for Node<'a> {
-  fn from(node: &'a TaggedTpl<'a>) -> Node<'a> {
+impl<'a> From<&TaggedTpl<'a>> for Node<'a> {
+  fn from(node: &TaggedTpl<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TaggedTpl<'a>, &'a TaggedTpl<'a>>(node) };
     Node::TaggedTpl(node)
   }
 }
@@ -5996,8 +6009,9 @@ impl<'a> Spanned for ExportAll<'a> {
   }
 }
 
-impl<'a> From<&'a ExportAll<'a>> for Node<'a> {
-  fn from(node: &'a ExportAll<'a>) -> Node<'a> {
+impl<'a> From<&ExportAll<'a>> for Node<'a> {
+  fn from(node: &ExportAll<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ExportAll<'a>, &'a ExportAll<'a>>(node) };
     Node::ExportAll(node)
   }
 }
@@ -6053,8 +6067,9 @@ impl<'a> Spanned for TsModuleBlock<'a> {
   }
 }
 
-impl<'a> From<&'a TsModuleBlock<'a>> for Node<'a> {
-  fn from(node: &'a TsModuleBlock<'a>) -> Node<'a> {
+impl<'a> From<&TsModuleBlock<'a>> for Node<'a> {
+  fn from(node: &TsModuleBlock<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsModuleBlock<'a>, &'a TsModuleBlock<'a>>(node) };
     Node::TsModuleBlock(node)
   }
 }
@@ -6115,8 +6130,9 @@ impl<'a> Spanned for SwitchStmt<'a> {
   }
 }
 
-impl<'a> From<&'a SwitchStmt<'a>> for Node<'a> {
-  fn from(node: &'a SwitchStmt<'a>) -> Node<'a> {
+impl<'a> From<&SwitchStmt<'a>> for Node<'a> {
+  fn from(node: &SwitchStmt<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&SwitchStmt<'a>, &'a SwitchStmt<'a>>(node) };
     Node::SwitchStmt(node)
   }
 }
@@ -6182,8 +6198,9 @@ impl<'a> Spanned for TsEnumMember<'a> {
   }
 }
 
-impl<'a> From<&'a TsEnumMember<'a>> for Node<'a> {
-  fn from(node: &'a TsEnumMember<'a>) -> Node<'a> {
+impl<'a> From<&TsEnumMember<'a>> for Node<'a> {
+  fn from(node: &TsEnumMember<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsEnumMember<'a>, &'a TsEnumMember<'a>>(node) };
     Node::TsEnumMember(node)
   }
 }
@@ -6258,8 +6275,9 @@ impl<'a> Spanned for TsIndexedAccessType<'a> {
   }
 }
 
-impl<'a> From<&'a TsIndexedAccessType<'a>> for Node<'a> {
-  fn from(node: &'a TsIndexedAccessType<'a>) -> Node<'a> {
+impl<'a> From<&TsIndexedAccessType<'a>> for Node<'a> {
+  fn from(node: &TsIndexedAccessType<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsIndexedAccessType<'a>, &'a TsIndexedAccessType<'a>>(node) };
     Node::TsIndexedAccessType(node)
   }
 }
@@ -6320,8 +6338,9 @@ impl<'a> Spanned for TsRestType<'a> {
   }
 }
 
-impl<'a> From<&'a TsRestType<'a>> for Node<'a> {
-  fn from(node: &'a TsRestType<'a>) -> Node<'a> {
+impl<'a> From<&TsRestType<'a>> for Node<'a> {
+  fn from(node: &TsRestType<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsRestType<'a>, &'a TsRestType<'a>>(node) };
     Node::TsRestType(node)
   }
 }
@@ -6377,8 +6396,9 @@ impl<'a> Spanned for ExprStmt<'a> {
   }
 }
 
-impl<'a> From<&'a ExprStmt<'a>> for Node<'a> {
-  fn from(node: &'a ExprStmt<'a>) -> Node<'a> {
+impl<'a> From<&ExprStmt<'a>> for Node<'a> {
+  fn from(node: &ExprStmt<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ExprStmt<'a>, &'a ExprStmt<'a>>(node) };
     Node::ExprStmt(node)
   }
 }
@@ -6434,8 +6454,9 @@ impl<'a> Spanned for TsOptionalType<'a> {
   }
 }
 
-impl<'a> From<&'a TsOptionalType<'a>> for Node<'a> {
-  fn from(node: &'a TsOptionalType<'a>) -> Node<'a> {
+impl<'a> From<&TsOptionalType<'a>> for Node<'a> {
+  fn from(node: &TsOptionalType<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsOptionalType<'a>, &'a TsOptionalType<'a>>(node) };
     Node::TsOptionalType(node)
   }
 }
@@ -6492,8 +6513,9 @@ impl<'a> Spanned for Tpl<'a> {
   }
 }
 
-impl<'a> From<&'a Tpl<'a>> for Node<'a> {
-  fn from(node: &'a Tpl<'a>) -> Node<'a> {
+impl<'a> From<&Tpl<'a>> for Node<'a> {
+  fn from(node: &Tpl<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&Tpl<'a>, &'a Tpl<'a>>(node) };
     Node::Tpl(node)
   }
 }
@@ -6562,8 +6584,9 @@ impl<'a> Spanned for Invalid<'a> {
   }
 }
 
-impl<'a> From<&'a Invalid<'a>> for Node<'a> {
-  fn from(node: &'a Invalid<'a>) -> Node<'a> {
+impl<'a> From<&Invalid<'a>> for Node<'a> {
+  fn from(node: &Invalid<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&Invalid<'a>, &'a Invalid<'a>>(node) };
     Node::Invalid(node)
   }
 }
@@ -6612,8 +6635,9 @@ impl<'a> Spanned for ComputedPropName<'a> {
   }
 }
 
-impl<'a> From<&'a ComputedPropName<'a>> for Node<'a> {
-  fn from(node: &'a ComputedPropName<'a>) -> Node<'a> {
+impl<'a> From<&ComputedPropName<'a>> for Node<'a> {
+  fn from(node: &ComputedPropName<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ComputedPropName<'a>, &'a ComputedPropName<'a>>(node) };
     Node::ComputedPropName(node)
   }
 }
@@ -6671,8 +6695,9 @@ impl<'a> Spanned for TsFnType<'a> {
   }
 }
 
-impl<'a> From<&'a TsFnType<'a>> for Node<'a> {
-  fn from(node: &'a TsFnType<'a>) -> Node<'a> {
+impl<'a> From<&TsFnType<'a>> for Node<'a> {
+  fn from(node: &TsFnType<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsFnType<'a>, &'a TsFnType<'a>>(node) };
     Node::TsFnType(node)
   }
 }
@@ -6750,8 +6775,9 @@ impl<'a> Spanned for BlockStmt<'a> {
   }
 }
 
-impl<'a> From<&'a BlockStmt<'a>> for Node<'a> {
-  fn from(node: &'a BlockStmt<'a>) -> Node<'a> {
+impl<'a> From<&BlockStmt<'a>> for Node<'a> {
+  fn from(node: &BlockStmt<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&BlockStmt<'a>, &'a BlockStmt<'a>>(node) };
     Node::BlockStmt(node)
   }
 }
@@ -6819,8 +6845,9 @@ impl<'a> Spanned for TsTypeAliasDecl<'a> {
   }
 }
 
-impl<'a> From<&'a TsTypeAliasDecl<'a>> for Node<'a> {
-  fn from(node: &'a TsTypeAliasDecl<'a>) -> Node<'a> {
+impl<'a> From<&TsTypeAliasDecl<'a>> for Node<'a> {
+  fn from(node: &TsTypeAliasDecl<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsTypeAliasDecl<'a>, &'a TsTypeAliasDecl<'a>>(node) };
     Node::TsTypeAliasDecl(node)
   }
 }
@@ -6900,8 +6927,9 @@ impl<'a> Spanned for MemberExpr<'a> {
   }
 }
 
-impl<'a> From<&'a MemberExpr<'a>> for Node<'a> {
-  fn from(node: &'a MemberExpr<'a>) -> Node<'a> {
+impl<'a> From<&MemberExpr<'a>> for Node<'a> {
+  fn from(node: &MemberExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&MemberExpr<'a>, &'a MemberExpr<'a>>(node) };
     Node::MemberExpr(node)
   }
 }
@@ -6979,8 +7007,9 @@ impl<'a> Spanned for Function<'a> {
   }
 }
 
-impl<'a> From<&'a Function<'a>> for Node<'a> {
-  fn from(node: &'a Function<'a>) -> Node<'a> {
+impl<'a> From<&Function<'a>> for Node<'a> {
+  fn from(node: &Function<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&Function<'a>, &'a Function<'a>>(node) };
     Node::Function(node)
   }
 }
@@ -7093,8 +7122,9 @@ impl<'a> Spanned for ImportDecl<'a> {
   }
 }
 
-impl<'a> From<&'a ImportDecl<'a>> for Node<'a> {
-  fn from(node: &'a ImportDecl<'a>) -> Node<'a> {
+impl<'a> From<&ImportDecl<'a>> for Node<'a> {
+  fn from(node: &ImportDecl<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ImportDecl<'a>, &'a ImportDecl<'a>>(node) };
     Node::ImportDecl(node)
   }
 }
@@ -7178,8 +7208,9 @@ impl<'a> Spanned for TsTypePredicate<'a> {
   }
 }
 
-impl<'a> From<&'a TsTypePredicate<'a>> for Node<'a> {
-  fn from(node: &'a TsTypePredicate<'a>) -> Node<'a> {
+impl<'a> From<&TsTypePredicate<'a>> for Node<'a> {
+  fn from(node: &TsTypePredicate<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsTypePredicate<'a>, &'a TsTypePredicate<'a>>(node) };
     Node::TsTypePredicate(node)
   }
 }
@@ -7253,8 +7284,9 @@ impl<'a> Spanned for YieldExpr<'a> {
   }
 }
 
-impl<'a> From<&'a YieldExpr<'a>> for Node<'a> {
-  fn from(node: &'a YieldExpr<'a>) -> Node<'a> {
+impl<'a> From<&YieldExpr<'a>> for Node<'a> {
+  fn from(node: &YieldExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&YieldExpr<'a>, &'a YieldExpr<'a>>(node) };
     Node::YieldExpr(node)
   }
 }
@@ -7318,8 +7350,9 @@ impl<'a> Spanned for KeyValueProp<'a> {
   }
 }
 
-impl<'a> From<&'a KeyValueProp<'a>> for Node<'a> {
-  fn from(node: &'a KeyValueProp<'a>) -> Node<'a> {
+impl<'a> From<&KeyValueProp<'a>> for Node<'a> {
+  fn from(node: &KeyValueProp<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&KeyValueProp<'a>, &'a KeyValueProp<'a>>(node) };
     Node::KeyValueProp(node)
   }
 }
@@ -7381,8 +7414,9 @@ impl<'a> Spanned for Param<'a> {
   }
 }
 
-impl<'a> From<&'a Param<'a>> for Node<'a> {
-  fn from(node: &'a Param<'a>) -> Node<'a> {
+impl<'a> From<&Param<'a>> for Node<'a> {
+  fn from(node: &Param<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&Param<'a>, &'a Param<'a>>(node) };
     Node::Param(node)
   }
 }
@@ -7449,8 +7483,9 @@ impl<'a> Spanned for JSXFragment<'a> {
   }
 }
 
-impl<'a> From<&'a JSXFragment<'a>> for Node<'a> {
-  fn from(node: &'a JSXFragment<'a>) -> Node<'a> {
+impl<'a> From<&JSXFragment<'a>> for Node<'a> {
+  fn from(node: &JSXFragment<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&JSXFragment<'a>, &'a JSXFragment<'a>>(node) };
     Node::JSXFragment(node)
   }
 }
@@ -7521,8 +7556,9 @@ impl<'a> Spanned for ImportDefaultSpecifier<'a> {
   }
 }
 
-impl<'a> From<&'a ImportDefaultSpecifier<'a>> for Node<'a> {
-  fn from(node: &'a ImportDefaultSpecifier<'a>) -> Node<'a> {
+impl<'a> From<&ImportDefaultSpecifier<'a>> for Node<'a> {
+  fn from(node: &ImportDefaultSpecifier<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ImportDefaultSpecifier<'a>, &'a ImportDefaultSpecifier<'a>>(node) };
     Node::ImportDefaultSpecifier(node)
   }
 }
@@ -7586,8 +7622,9 @@ impl<'a> Spanned for Number<'a> {
   }
 }
 
-impl<'a> From<&'a Number<'a>> for Node<'a> {
-  fn from(node: &'a Number<'a>) -> Node<'a> {
+impl<'a> From<&Number<'a>> for Node<'a> {
+  fn from(node: &Number<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&Number<'a>, &'a Number<'a>>(node) };
     Node::Number(node)
   }
 }
@@ -7638,8 +7675,9 @@ impl<'a> Spanned for JSXAttr<'a> {
   }
 }
 
-impl<'a> From<&'a JSXAttr<'a>> for Node<'a> {
-  fn from(node: &'a JSXAttr<'a>) -> Node<'a> {
+impl<'a> From<&JSXAttr<'a>> for Node<'a> {
+  fn from(node: &JSXAttr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&JSXAttr<'a>, &'a JSXAttr<'a>>(node) };
     Node::JSXAttr(node)
   }
 }
@@ -7707,8 +7745,9 @@ impl<'a> Spanned for ParenExpr<'a> {
   }
 }
 
-impl<'a> From<&'a ParenExpr<'a>> for Node<'a> {
-  fn from(node: &'a ParenExpr<'a>) -> Node<'a> {
+impl<'a> From<&ParenExpr<'a>> for Node<'a> {
+  fn from(node: &ParenExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ParenExpr<'a>, &'a ParenExpr<'a>>(node) };
     Node::ParenExpr(node)
   }
 }
@@ -7763,8 +7802,9 @@ impl<'a> Spanned for Super<'a> {
   }
 }
 
-impl<'a> From<&'a Super<'a>> for Node<'a> {
-  fn from(node: &'a Super<'a>) -> Node<'a> {
+impl<'a> From<&Super<'a>> for Node<'a> {
+  fn from(node: &Super<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&Super<'a>, &'a Super<'a>>(node) };
     Node::Super(node)
   }
 }
@@ -7815,8 +7855,9 @@ impl<'a> Spanned for TsConstructorType<'a> {
   }
 }
 
-impl<'a> From<&'a TsConstructorType<'a>> for Node<'a> {
-  fn from(node: &'a TsConstructorType<'a>) -> Node<'a> {
+impl<'a> From<&TsConstructorType<'a>> for Node<'a> {
+  fn from(node: &TsConstructorType<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsConstructorType<'a>, &'a TsConstructorType<'a>>(node) };
     Node::TsConstructorType(node)
   }
 }
@@ -7905,8 +7946,9 @@ impl<'a> Spanned for Class<'a> {
   }
 }
 
-impl<'a> From<&'a Class<'a>> for Node<'a> {
-  fn from(node: &'a Class<'a>) -> Node<'a> {
+impl<'a> From<&Class<'a>> for Node<'a> {
+  fn from(node: &Class<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&Class<'a>, &'a Class<'a>>(node) };
     Node::Class(node)
   }
 }
@@ -8028,8 +8070,9 @@ impl<'a> Spanned for RestPat<'a> {
   }
 }
 
-impl<'a> From<&'a RestPat<'a>> for Node<'a> {
-  fn from(node: &'a RestPat<'a>) -> Node<'a> {
+impl<'a> From<&RestPat<'a>> for Node<'a> {
+  fn from(node: &RestPat<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&RestPat<'a>, &'a RestPat<'a>>(node) };
     Node::RestPat(node)
   }
 }
@@ -8097,8 +8140,9 @@ impl<'a> Spanned for TsNamespaceExportDecl<'a> {
   }
 }
 
-impl<'a> From<&'a TsNamespaceExportDecl<'a>> for Node<'a> {
-  fn from(node: &'a TsNamespaceExportDecl<'a>) -> Node<'a> {
+impl<'a> From<&TsNamespaceExportDecl<'a>> for Node<'a> {
+  fn from(node: &TsNamespaceExportDecl<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsNamespaceExportDecl<'a>, &'a TsNamespaceExportDecl<'a>>(node) };
     Node::TsNamespaceExportDecl(node)
   }
 }
@@ -8153,8 +8197,9 @@ impl<'a> Spanned for JSXOpeningFragment<'a> {
   }
 }
 
-impl<'a> From<&'a JSXOpeningFragment<'a>> for Node<'a> {
-  fn from(node: &'a JSXOpeningFragment<'a>) -> Node<'a> {
+impl<'a> From<&JSXOpeningFragment<'a>> for Node<'a> {
+  fn from(node: &JSXOpeningFragment<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&JSXOpeningFragment<'a>, &'a JSXOpeningFragment<'a>>(node) };
     Node::JSXOpeningFragment(node)
   }
 }
@@ -8205,8 +8250,9 @@ impl<'a> Spanned for NewExpr<'a> {
   }
 }
 
-impl<'a> From<&'a NewExpr<'a>> for Node<'a> {
-  fn from(node: &'a NewExpr<'a>) -> Node<'a> {
+impl<'a> From<&NewExpr<'a>> for Node<'a> {
+  fn from(node: &NewExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&NewExpr<'a>, &'a NewExpr<'a>>(node) };
     Node::NewExpr(node)
   }
 }
@@ -8292,8 +8338,9 @@ impl<'a> Spanned for FnExpr<'a> {
   }
 }
 
-impl<'a> From<&'a FnExpr<'a>> for Node<'a> {
-  fn from(node: &'a FnExpr<'a>) -> Node<'a> {
+impl<'a> From<&FnExpr<'a>> for Node<'a> {
+  fn from(node: &FnExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&FnExpr<'a>, &'a FnExpr<'a>>(node) };
     Node::FnExpr(node)
   }
 }
@@ -8363,8 +8410,9 @@ impl<'a> Spanned for IfStmt<'a> {
   }
 }
 
-impl<'a> From<&'a IfStmt<'a>> for Node<'a> {
-  fn from(node: &'a IfStmt<'a>) -> Node<'a> {
+impl<'a> From<&IfStmt<'a>> for Node<'a> {
+  fn from(node: &IfStmt<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&IfStmt<'a>, &'a IfStmt<'a>>(node) };
     Node::IfStmt(node)
   }
 }
@@ -8437,8 +8485,9 @@ impl<'a> Spanned for TsParenthesizedType<'a> {
   }
 }
 
-impl<'a> From<&'a TsParenthesizedType<'a>> for Node<'a> {
-  fn from(node: &'a TsParenthesizedType<'a>) -> Node<'a> {
+impl<'a> From<&TsParenthesizedType<'a>> for Node<'a> {
+  fn from(node: &TsParenthesizedType<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsParenthesizedType<'a>, &'a TsParenthesizedType<'a>>(node) };
     Node::TsParenthesizedType(node)
   }
 }
@@ -8496,8 +8545,9 @@ impl<'a> Spanned for AssignPatProp<'a> {
   }
 }
 
-impl<'a> From<&'a AssignPatProp<'a>> for Node<'a> {
-  fn from(node: &'a AssignPatProp<'a>) -> Node<'a> {
+impl<'a> From<&AssignPatProp<'a>> for Node<'a> {
+  fn from(node: &AssignPatProp<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&AssignPatProp<'a>, &'a AssignPatProp<'a>>(node) };
     Node::AssignPatProp(node)
   }
 }
@@ -8567,8 +8617,9 @@ impl<'a> Spanned for TsImportType<'a> {
   }
 }
 
-impl<'a> From<&'a TsImportType<'a>> for Node<'a> {
-  fn from(node: &'a TsImportType<'a>) -> Node<'a> {
+impl<'a> From<&TsImportType<'a>> for Node<'a> {
+  fn from(node: &TsImportType<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsImportType<'a>, &'a TsImportType<'a>>(node) };
     Node::TsImportType(node)
   }
 }
@@ -8653,8 +8704,9 @@ impl<'a> Spanned for Bool<'a> {
   }
 }
 
-impl<'a> From<&'a Bool<'a>> for Node<'a> {
-  fn from(node: &'a Bool<'a>) -> Node<'a> {
+impl<'a> From<&Bool<'a>> for Node<'a> {
+  fn from(node: &Bool<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&Bool<'a>, &'a Bool<'a>>(node) };
     Node::Bool(node)
   }
 }
@@ -8714,8 +8766,9 @@ impl<'a> Spanned for TsImportEqualsDecl<'a> {
   }
 }
 
-impl<'a> From<&'a TsImportEqualsDecl<'a>> for Node<'a> {
-  fn from(node: &'a TsImportEqualsDecl<'a>) -> Node<'a> {
+impl<'a> From<&TsImportEqualsDecl<'a>> for Node<'a> {
+  fn from(node: &TsImportEqualsDecl<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsImportEqualsDecl<'a>, &'a TsImportEqualsDecl<'a>>(node) };
     Node::TsImportEqualsDecl(node)
   }
 }
@@ -8777,8 +8830,9 @@ impl<'a> Spanned for AssignProp<'a> {
   }
 }
 
-impl<'a> From<&'a AssignProp<'a>> for Node<'a> {
-  fn from(node: &'a AssignProp<'a>) -> Node<'a> {
+impl<'a> From<&AssignProp<'a>> for Node<'a> {
+  fn from(node: &AssignProp<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&AssignProp<'a>, &'a AssignProp<'a>>(node) };
     Node::AssignProp(node)
   }
 }
@@ -8848,8 +8902,9 @@ impl<'a> Spanned for TsInterfaceDecl<'a> {
   }
 }
 
-impl<'a> From<&'a TsInterfaceDecl<'a>> for Node<'a> {
-  fn from(node: &'a TsInterfaceDecl<'a>) -> Node<'a> {
+impl<'a> From<&TsInterfaceDecl<'a>> for Node<'a> {
+  fn from(node: &TsInterfaceDecl<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsInterfaceDecl<'a>, &'a TsInterfaceDecl<'a>>(node) };
     Node::TsInterfaceDecl(node)
   }
 }
@@ -8930,8 +8985,9 @@ impl<'a> Spanned for JSXEmptyExpr<'a> {
   }
 }
 
-impl<'a> From<&'a JSXEmptyExpr<'a>> for Node<'a> {
-  fn from(node: &'a JSXEmptyExpr<'a>) -> Node<'a> {
+impl<'a> From<&JSXEmptyExpr<'a>> for Node<'a> {
+  fn from(node: &JSXEmptyExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&JSXEmptyExpr<'a>, &'a JSXEmptyExpr<'a>>(node) };
     Node::JSXEmptyExpr(node)
   }
 }
@@ -8981,8 +9037,9 @@ impl<'a> Spanned for TsQualifiedName<'a> {
   }
 }
 
-impl<'a> From<&'a TsQualifiedName<'a>> for Node<'a> {
-  fn from(node: &'a TsQualifiedName<'a>) -> Node<'a> {
+impl<'a> From<&TsQualifiedName<'a>> for Node<'a> {
+  fn from(node: &TsQualifiedName<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsQualifiedName<'a>, &'a TsQualifiedName<'a>>(node) };
     Node::TsQualifiedName(node)
   }
 }
@@ -9043,8 +9100,9 @@ impl<'a> Spanned for ExportDecl<'a> {
   }
 }
 
-impl<'a> From<&'a ExportDecl<'a>> for Node<'a> {
-  fn from(node: &'a ExportDecl<'a>) -> Node<'a> {
+impl<'a> From<&ExportDecl<'a>> for Node<'a> {
+  fn from(node: &ExportDecl<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ExportDecl<'a>, &'a ExportDecl<'a>>(node) };
     Node::ExportDecl(node)
   }
 }
@@ -9105,8 +9163,9 @@ impl<'a> Spanned for CatchClause<'a> {
   }
 }
 
-impl<'a> From<&'a CatchClause<'a>> for Node<'a> {
-  fn from(node: &'a CatchClause<'a>) -> Node<'a> {
+impl<'a> From<&CatchClause<'a>> for Node<'a> {
+  fn from(node: &CatchClause<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&CatchClause<'a>, &'a CatchClause<'a>>(node) };
     Node::CatchClause(node)
   }
 }
@@ -9175,8 +9234,9 @@ impl<'a> Spanned for LabeledStmt<'a> {
   }
 }
 
-impl<'a> From<&'a LabeledStmt<'a>> for Node<'a> {
-  fn from(node: &'a LabeledStmt<'a>) -> Node<'a> {
+impl<'a> From<&LabeledStmt<'a>> for Node<'a> {
+  fn from(node: &LabeledStmt<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&LabeledStmt<'a>, &'a LabeledStmt<'a>>(node) };
     Node::LabeledStmt(node)
   }
 }
@@ -9237,8 +9297,9 @@ impl<'a> Spanned for ContinueStmt<'a> {
   }
 }
 
-impl<'a> From<&'a ContinueStmt<'a>> for Node<'a> {
-  fn from(node: &'a ContinueStmt<'a>) -> Node<'a> {
+impl<'a> From<&ContinueStmt<'a>> for Node<'a> {
+  fn from(node: &ContinueStmt<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ContinueStmt<'a>, &'a ContinueStmt<'a>>(node) };
     Node::ContinueStmt(node)
   }
 }
@@ -9303,8 +9364,9 @@ impl<'a> Spanned for TsConstructSignatureDecl<'a> {
   }
 }
 
-impl<'a> From<&'a TsConstructSignatureDecl<'a>> for Node<'a> {
-  fn from(node: &'a TsConstructSignatureDecl<'a>) -> Node<'a> {
+impl<'a> From<&TsConstructSignatureDecl<'a>> for Node<'a> {
+  fn from(node: &TsConstructSignatureDecl<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsConstructSignatureDecl<'a>, &'a TsConstructSignatureDecl<'a>>(node) };
     Node::TsConstructSignatureDecl(node)
   }
 }
@@ -9399,8 +9461,9 @@ impl<'a> Spanned for TsEnumDecl<'a> {
   }
 }
 
-impl<'a> From<&'a TsEnumDecl<'a>> for Node<'a> {
-  fn from(node: &'a TsEnumDecl<'a>) -> Node<'a> {
+impl<'a> From<&TsEnumDecl<'a>> for Node<'a> {
+  fn from(node: &TsEnumDecl<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsEnumDecl<'a>, &'a TsEnumDecl<'a>>(node) };
     Node::TsEnumDecl(node)
   }
 }
@@ -9471,8 +9534,9 @@ impl<'a> Spanned for OptChainExpr<'a> {
   }
 }
 
-impl<'a> From<&'a OptChainExpr<'a>> for Node<'a> {
-  fn from(node: &'a OptChainExpr<'a>) -> Node<'a> {
+impl<'a> From<&OptChainExpr<'a>> for Node<'a> {
+  fn from(node: &OptChainExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&OptChainExpr<'a>, &'a OptChainExpr<'a>>(node) };
     Node::OptChainExpr(node)
   }
 }
@@ -9540,8 +9604,9 @@ impl<'a> Spanned for TsNamespaceDecl<'a> {
   }
 }
 
-impl<'a> From<&'a TsNamespaceDecl<'a>> for Node<'a> {
-  fn from(node: &'a TsNamespaceDecl<'a>) -> Node<'a> {
+impl<'a> From<&TsNamespaceDecl<'a>> for Node<'a> {
+  fn from(node: &TsNamespaceDecl<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsNamespaceDecl<'a>, &'a TsNamespaceDecl<'a>>(node) };
     Node::TsNamespaceDecl(node)
   }
 }
@@ -9602,8 +9667,9 @@ impl<'a> Spanned for SeqExpr<'a> {
   }
 }
 
-impl<'a> From<&'a SeqExpr<'a>> for Node<'a> {
-  fn from(node: &'a SeqExpr<'a>) -> Node<'a> {
+impl<'a> From<&SeqExpr<'a>> for Node<'a> {
+  fn from(node: &SeqExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&SeqExpr<'a>, &'a SeqExpr<'a>>(node) };
     Node::SeqExpr(node)
   }
 }
@@ -9663,8 +9729,9 @@ impl<'a> Spanned for TsExternalModuleRef<'a> {
   }
 }
 
-impl<'a> From<&'a TsExternalModuleRef<'a>> for Node<'a> {
-  fn from(node: &'a TsExternalModuleRef<'a>) -> Node<'a> {
+impl<'a> From<&TsExternalModuleRef<'a>> for Node<'a> {
+  fn from(node: &TsExternalModuleRef<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsExternalModuleRef<'a>, &'a TsExternalModuleRef<'a>>(node) };
     Node::TsExternalModuleRef(node)
   }
 }
@@ -9720,8 +9787,9 @@ impl<'a> Spanned for TsTypeParamInstantiation<'a> {
   }
 }
 
-impl<'a> From<&'a TsTypeParamInstantiation<'a>> for Node<'a> {
-  fn from(node: &'a TsTypeParamInstantiation<'a>) -> Node<'a> {
+impl<'a> From<&TsTypeParamInstantiation<'a>> for Node<'a> {
+  fn from(node: &TsTypeParamInstantiation<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsTypeParamInstantiation<'a>, &'a TsTypeParamInstantiation<'a>>(node) };
     Node::TsTypeParamInstantiation(node)
   }
 }
@@ -9781,8 +9849,9 @@ impl<'a> Spanned for ReturnStmt<'a> {
   }
 }
 
-impl<'a> From<&'a ReturnStmt<'a>> for Node<'a> {
-  fn from(node: &'a ReturnStmt<'a>) -> Node<'a> {
+impl<'a> From<&ReturnStmt<'a>> for Node<'a> {
+  fn from(node: &ReturnStmt<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ReturnStmt<'a>, &'a ReturnStmt<'a>>(node) };
     Node::ReturnStmt(node)
   }
 }
@@ -9846,8 +9915,9 @@ impl<'a> Spanned for TsTplLitType<'a> {
   }
 }
 
-impl<'a> From<&'a TsTplLitType<'a>> for Node<'a> {
-  fn from(node: &'a TsTplLitType<'a>) -> Node<'a> {
+impl<'a> From<&TsTplLitType<'a>> for Node<'a> {
+  fn from(node: &TsTplLitType<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsTplLitType<'a>, &'a TsTplLitType<'a>>(node) };
     Node::TsTplLitType(node)
   }
 }
@@ -9916,8 +9986,9 @@ impl<'a> Spanned for ExportDefaultExpr<'a> {
   }
 }
 
-impl<'a> From<&'a ExportDefaultExpr<'a>> for Node<'a> {
-  fn from(node: &'a ExportDefaultExpr<'a>) -> Node<'a> {
+impl<'a> From<&ExportDefaultExpr<'a>> for Node<'a> {
+  fn from(node: &ExportDefaultExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ExportDefaultExpr<'a>, &'a ExportDefaultExpr<'a>>(node) };
     Node::ExportDefaultExpr(node)
   }
 }
@@ -9975,8 +10046,9 @@ impl<'a> Spanned for TsCallSignatureDecl<'a> {
   }
 }
 
-impl<'a> From<&'a TsCallSignatureDecl<'a>> for Node<'a> {
-  fn from(node: &'a TsCallSignatureDecl<'a>) -> Node<'a> {
+impl<'a> From<&TsCallSignatureDecl<'a>> for Node<'a> {
+  fn from(node: &TsCallSignatureDecl<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsCallSignatureDecl<'a>, &'a TsCallSignatureDecl<'a>>(node) };
     Node::TsCallSignatureDecl(node)
   }
 }
@@ -10060,8 +10132,9 @@ impl<'a> Spanned for AwaitExpr<'a> {
   }
 }
 
-impl<'a> From<&'a AwaitExpr<'a>> for Node<'a> {
-  fn from(node: &'a AwaitExpr<'a>) -> Node<'a> {
+impl<'a> From<&AwaitExpr<'a>> for Node<'a> {
+  fn from(node: &AwaitExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&AwaitExpr<'a>, &'a AwaitExpr<'a>>(node) };
     Node::AwaitExpr(node)
   }
 }
@@ -10142,8 +10215,9 @@ impl<'a> Spanned for ClassMethod<'a> {
   }
 }
 
-impl<'a> From<&'a ClassMethod<'a>> for Node<'a> {
-  fn from(node: &'a ClassMethod<'a>) -> Node<'a> {
+impl<'a> From<&ClassMethod<'a>> for Node<'a> {
+  fn from(node: &ClassMethod<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ClassMethod<'a>, &'a ClassMethod<'a>>(node) };
     Node::ClassMethod(node)
   }
 }
@@ -10216,8 +10290,9 @@ impl<'a> Spanned for TsParamProp<'a> {
   }
 }
 
-impl<'a> From<&'a TsParamProp<'a>> for Node<'a> {
-  fn from(node: &'a TsParamProp<'a>) -> Node<'a> {
+impl<'a> From<&TsParamProp<'a>> for Node<'a> {
+  fn from(node: &TsParamProp<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsParamProp<'a>, &'a TsParamProp<'a>>(node) };
     Node::TsParamProp(node)
   }
 }
@@ -10321,8 +10396,9 @@ impl<'a> Spanned for ClassProp<'a> {
   }
 }
 
-impl<'a> From<&'a ClassProp<'a>> for Node<'a> {
-  fn from(node: &'a ClassProp<'a>) -> Node<'a> {
+impl<'a> From<&ClassProp<'a>> for Node<'a> {
+  fn from(node: &ClassProp<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ClassProp<'a>, &'a ClassProp<'a>>(node) };
     Node::ClassProp(node)
   }
 }
@@ -10411,8 +10487,9 @@ impl<'a> Spanned for TsTypeAnn<'a> {
   }
 }
 
-impl<'a> From<&'a TsTypeAnn<'a>> for Node<'a> {
-  fn from(node: &'a TsTypeAnn<'a>) -> Node<'a> {
+impl<'a> From<&TsTypeAnn<'a>> for Node<'a> {
+  fn from(node: &TsTypeAnn<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsTypeAnn<'a>, &'a TsTypeAnn<'a>>(node) };
     Node::TsTypeAnn(node)
   }
 }
@@ -10471,8 +10548,9 @@ impl<'a> Spanned for ForStmt<'a> {
   }
 }
 
-impl<'a> From<&'a ForStmt<'a>> for Node<'a> {
-  fn from(node: &'a ForStmt<'a>) -> Node<'a> {
+impl<'a> From<&ForStmt<'a>> for Node<'a> {
+  fn from(node: &ForStmt<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ForStmt<'a>, &'a ForStmt<'a>>(node) };
     Node::ForStmt(node)
   }
 }
@@ -10572,8 +10650,9 @@ impl<'a> Spanned for ObjectPat<'a> {
   }
 }
 
-impl<'a> From<&'a ObjectPat<'a>> for Node<'a> {
-  fn from(node: &'a ObjectPat<'a>) -> Node<'a> {
+impl<'a> From<&ObjectPat<'a>> for Node<'a> {
+  fn from(node: &ObjectPat<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ObjectPat<'a>, &'a ObjectPat<'a>>(node) };
     Node::ObjectPat(node)
   }
 }
@@ -10646,8 +10725,9 @@ impl<'a> Spanned for TsTypeQuery<'a> {
   }
 }
 
-impl<'a> From<&'a TsTypeQuery<'a>> for Node<'a> {
-  fn from(node: &'a TsTypeQuery<'a>) -> Node<'a> {
+impl<'a> From<&TsTypeQuery<'a>> for Node<'a> {
+  fn from(node: &TsTypeQuery<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsTypeQuery<'a>, &'a TsTypeQuery<'a>>(node) };
     Node::TsTypeQuery(node)
   }
 }
@@ -10702,8 +10782,9 @@ impl<'a> Spanned for ThisExpr<'a> {
   }
 }
 
-impl<'a> From<&'a ThisExpr<'a>> for Node<'a> {
-  fn from(node: &'a ThisExpr<'a>) -> Node<'a> {
+impl<'a> From<&ThisExpr<'a>> for Node<'a> {
+  fn from(node: &ThisExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ThisExpr<'a>, &'a ThisExpr<'a>>(node) };
     Node::ThisExpr(node)
   }
 }
@@ -10751,8 +10832,9 @@ impl<'a> Spanned for DebuggerStmt<'a> {
   }
 }
 
-impl<'a> From<&'a DebuggerStmt<'a>> for Node<'a> {
-  fn from(node: &'a DebuggerStmt<'a>) -> Node<'a> {
+impl<'a> From<&DebuggerStmt<'a>> for Node<'a> {
+  fn from(node: &DebuggerStmt<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&DebuggerStmt<'a>, &'a DebuggerStmt<'a>>(node) };
     Node::DebuggerStmt(node)
   }
 }
@@ -10801,8 +10883,9 @@ impl<'a> Spanned for TsTypeParamDecl<'a> {
   }
 }
 
-impl<'a> From<&'a TsTypeParamDecl<'a>> for Node<'a> {
-  fn from(node: &'a TsTypeParamDecl<'a>) -> Node<'a> {
+impl<'a> From<&TsTypeParamDecl<'a>> for Node<'a> {
+  fn from(node: &TsTypeParamDecl<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsTypeParamDecl<'a>, &'a TsTypeParamDecl<'a>>(node) };
     Node::TsTypeParamDecl(node)
   }
 }
@@ -10863,8 +10946,9 @@ impl<'a> Spanned for TsTypeAssertion<'a> {
   }
 }
 
-impl<'a> From<&'a TsTypeAssertion<'a>> for Node<'a> {
-  fn from(node: &'a TsTypeAssertion<'a>) -> Node<'a> {
+impl<'a> From<&TsTypeAssertion<'a>> for Node<'a> {
+  fn from(node: &TsTypeAssertion<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsTypeAssertion<'a>, &'a TsTypeAssertion<'a>>(node) };
     Node::TsTypeAssertion(node)
   }
 }
@@ -10932,8 +11016,9 @@ impl<'a> Spanned for TplElement<'a> {
   }
 }
 
-impl<'a> From<&'a TplElement<'a>> for Node<'a> {
-  fn from(node: &'a TplElement<'a>) -> Node<'a> {
+impl<'a> From<&TplElement<'a>> for Node<'a> {
+  fn from(node: &TplElement<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TplElement<'a>, &'a TplElement<'a>>(node) };
     Node::TplElement(node)
   }
 }
@@ -11006,8 +11091,9 @@ impl<'a> Spanned for TsKeywordType<'a> {
   }
 }
 
-impl<'a> From<&'a TsKeywordType<'a>> for Node<'a> {
-  fn from(node: &'a TsKeywordType<'a>) -> Node<'a> {
+impl<'a> From<&TsKeywordType<'a>> for Node<'a> {
+  fn from(node: &TsKeywordType<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsKeywordType<'a>, &'a TsKeywordType<'a>>(node) };
     Node::TsKeywordType(node)
   }
 }
@@ -11056,8 +11142,9 @@ impl<'a> Spanned for JSXSpreadChild<'a> {
   }
 }
 
-impl<'a> From<&'a JSXSpreadChild<'a>> for Node<'a> {
-  fn from(node: &'a JSXSpreadChild<'a>) -> Node<'a> {
+impl<'a> From<&JSXSpreadChild<'a>> for Node<'a> {
+  fn from(node: &JSXSpreadChild<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&JSXSpreadChild<'a>, &'a JSXSpreadChild<'a>>(node) };
     Node::JSXSpreadChild(node)
   }
 }
@@ -11113,8 +11200,9 @@ impl<'a> Spanned for TsIntersectionType<'a> {
   }
 }
 
-impl<'a> From<&'a TsIntersectionType<'a>> for Node<'a> {
-  fn from(node: &'a TsIntersectionType<'a>) -> Node<'a> {
+impl<'a> From<&TsIntersectionType<'a>> for Node<'a> {
+  fn from(node: &TsIntersectionType<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsIntersectionType<'a>, &'a TsIntersectionType<'a>>(node) };
     Node::TsIntersectionType(node)
   }
 }
@@ -11175,8 +11263,9 @@ impl<'a> Spanned for MetaPropExpr<'a> {
   }
 }
 
-impl<'a> From<&'a MetaPropExpr<'a>> for Node<'a> {
-  fn from(node: &'a MetaPropExpr<'a>) -> Node<'a> {
+impl<'a> From<&MetaPropExpr<'a>> for Node<'a> {
+  fn from(node: &MetaPropExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&MetaPropExpr<'a>, &'a MetaPropExpr<'a>>(node) };
     Node::MetaPropExpr(node)
   }
 }
@@ -11243,8 +11332,9 @@ impl<'a> Spanned for ExprOrSpread<'a> {
   }
 }
 
-impl<'a> From<&'a ExprOrSpread<'a>> for Node<'a> {
-  fn from(node: &'a ExprOrSpread<'a>) -> Node<'a> {
+impl<'a> From<&ExprOrSpread<'a>> for Node<'a> {
+  fn from(node: &ExprOrSpread<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ExprOrSpread<'a>, &'a ExprOrSpread<'a>>(node) };
     Node::ExprOrSpread(node)
   }
 }
@@ -11300,8 +11390,9 @@ impl<'a> Spanned for TsArrayType<'a> {
   }
 }
 
-impl<'a> From<&'a TsArrayType<'a>> for Node<'a> {
-  fn from(node: &'a TsArrayType<'a>) -> Node<'a> {
+impl<'a> From<&TsArrayType<'a>> for Node<'a> {
+  fn from(node: &TsArrayType<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsArrayType<'a>, &'a TsArrayType<'a>>(node) };
     Node::TsArrayType(node)
   }
 }
@@ -11358,8 +11449,9 @@ impl<'a> Spanned for TsTypeRef<'a> {
   }
 }
 
-impl<'a> From<&'a TsTypeRef<'a>> for Node<'a> {
-  fn from(node: &'a TsTypeRef<'a>) -> Node<'a> {
+impl<'a> From<&TsTypeRef<'a>> for Node<'a> {
+  fn from(node: &TsTypeRef<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsTypeRef<'a>, &'a TsTypeRef<'a>>(node) };
     Node::TsTypeRef(node)
   }
 }
@@ -11426,8 +11518,9 @@ impl<'a> Spanned for TsThisType<'a> {
   }
 }
 
-impl<'a> From<&'a TsThisType<'a>> for Node<'a> {
-  fn from(node: &'a TsThisType<'a>) -> Node<'a> {
+impl<'a> From<&TsThisType<'a>> for Node<'a> {
+  fn from(node: &TsThisType<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsThisType<'a>, &'a TsThisType<'a>>(node) };
     Node::TsThisType(node)
   }
 }
@@ -11478,8 +11571,9 @@ impl<'a> Spanned for TryStmt<'a> {
   }
 }
 
-impl<'a> From<&'a TryStmt<'a>> for Node<'a> {
-  fn from(node: &'a TryStmt<'a>) -> Node<'a> {
+impl<'a> From<&TryStmt<'a>> for Node<'a> {
+  fn from(node: &TryStmt<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TryStmt<'a>, &'a TryStmt<'a>>(node) };
     Node::TryStmt(node)
   }
 }
@@ -11561,8 +11655,9 @@ impl<'a> Spanned for CallExpr<'a> {
   }
 }
 
-impl<'a> From<&'a CallExpr<'a>> for Node<'a> {
-  fn from(node: &'a CallExpr<'a>) -> Node<'a> {
+impl<'a> From<&CallExpr<'a>> for Node<'a> {
+  fn from(node: &CallExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&CallExpr<'a>, &'a CallExpr<'a>>(node) };
     Node::CallExpr(node)
   }
 }
@@ -11651,8 +11746,9 @@ impl<'a> Spanned for TsMappedType<'a> {
   }
 }
 
-impl<'a> From<&'a TsMappedType<'a>> for Node<'a> {
-  fn from(node: &'a TsMappedType<'a>) -> Node<'a> {
+impl<'a> From<&TsMappedType<'a>> for Node<'a> {
+  fn from(node: &TsMappedType<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsMappedType<'a>, &'a TsMappedType<'a>>(node) };
     Node::TsMappedType(node)
   }
 }
@@ -11732,8 +11828,9 @@ impl<'a> Spanned for JSXExprContainer<'a> {
   }
 }
 
-impl<'a> From<&'a JSXExprContainer<'a>> for Node<'a> {
-  fn from(node: &'a JSXExprContainer<'a>) -> Node<'a> {
+impl<'a> From<&JSXExprContainer<'a>> for Node<'a> {
+  fn from(node: &JSXExprContainer<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&JSXExprContainer<'a>, &'a JSXExprContainer<'a>>(node) };
     Node::JSXExprContainer(node)
   }
 }
@@ -11824,8 +11921,9 @@ impl<'a> Spanned for PrivateProp<'a> {
   }
 }
 
-impl<'a> From<&'a PrivateProp<'a>> for Node<'a> {
-  fn from(node: &'a PrivateProp<'a>) -> Node<'a> {
+impl<'a> From<&PrivateProp<'a>> for Node<'a> {
+  fn from(node: &PrivateProp<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&PrivateProp<'a>, &'a PrivateProp<'a>>(node) };
     Node::PrivateProp(node)
   }
 }
@@ -11917,8 +12015,9 @@ impl<'a> Spanned for TsExportAssignment<'a> {
   }
 }
 
-impl<'a> From<&'a TsExportAssignment<'a>> for Node<'a> {
-  fn from(node: &'a TsExportAssignment<'a>) -> Node<'a> {
+impl<'a> From<&TsExportAssignment<'a>> for Node<'a> {
+  fn from(node: &TsExportAssignment<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsExportAssignment<'a>, &'a TsExportAssignment<'a>>(node) };
     Node::TsExportAssignment(node)
   }
 }
@@ -11974,8 +12073,9 @@ impl<'a> Spanned for TsInterfaceBody<'a> {
   }
 }
 
-impl<'a> From<&'a TsInterfaceBody<'a>> for Node<'a> {
-  fn from(node: &'a TsInterfaceBody<'a>) -> Node<'a> {
+impl<'a> From<&TsInterfaceBody<'a>> for Node<'a> {
+  fn from(node: &TsInterfaceBody<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsInterfaceBody<'a>, &'a TsInterfaceBody<'a>>(node) };
     Node::TsInterfaceBody(node)
   }
 }
@@ -12037,8 +12137,9 @@ impl<'a> Spanned for TsTupleElement<'a> {
   }
 }
 
-impl<'a> From<&'a TsTupleElement<'a>> for Node<'a> {
-  fn from(node: &'a TsTupleElement<'a>) -> Node<'a> {
+impl<'a> From<&TsTupleElement<'a>> for Node<'a> {
+  fn from(node: &TsTupleElement<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsTupleElement<'a>, &'a TsTupleElement<'a>>(node) };
     Node::TsTupleElement(node)
   }
 }
@@ -12115,8 +12216,9 @@ impl<'a> Spanned for VarDeclarator<'a> {
   }
 }
 
-impl<'a> From<&'a VarDeclarator<'a>> for Node<'a> {
-  fn from(node: &'a VarDeclarator<'a>) -> Node<'a> {
+impl<'a> From<&VarDeclarator<'a>> for Node<'a> {
+  fn from(node: &VarDeclarator<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&VarDeclarator<'a>, &'a VarDeclarator<'a>>(node) };
     Node::VarDeclarator(node)
   }
 }
@@ -12185,8 +12287,9 @@ impl<'a> Spanned for JSXMemberExpr<'a> {
   }
 }
 
-impl<'a> From<&'a JSXMemberExpr<'a>> for Node<'a> {
-  fn from(node: &'a JSXMemberExpr<'a>) -> Node<'a> {
+impl<'a> From<&JSXMemberExpr<'a>> for Node<'a> {
+  fn from(node: &JSXMemberExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&JSXMemberExpr<'a>, &'a JSXMemberExpr<'a>>(node) };
     Node::JSXMemberExpr(node)
   }
 }
@@ -12247,8 +12350,9 @@ impl<'a> Spanned for TsConstAssertion<'a> {
   }
 }
 
-impl<'a> From<&'a TsConstAssertion<'a>> for Node<'a> {
-  fn from(node: &'a TsConstAssertion<'a>) -> Node<'a> {
+impl<'a> From<&TsConstAssertion<'a>> for Node<'a> {
+  fn from(node: &TsConstAssertion<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsConstAssertion<'a>, &'a TsConstAssertion<'a>>(node) };
     Node::TsConstAssertion(node)
   }
 }
@@ -12305,8 +12409,9 @@ impl<'a> Spanned for ExportNamespaceSpecifier<'a> {
   }
 }
 
-impl<'a> From<&'a ExportNamespaceSpecifier<'a>> for Node<'a> {
-  fn from(node: &'a ExportNamespaceSpecifier<'a>) -> Node<'a> {
+impl<'a> From<&ExportNamespaceSpecifier<'a>> for Node<'a> {
+  fn from(node: &ExportNamespaceSpecifier<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ExportNamespaceSpecifier<'a>, &'a ExportNamespaceSpecifier<'a>>(node) };
     Node::ExportNamespaceSpecifier(node)
   }
 }
@@ -12363,8 +12468,9 @@ impl<'a> Spanned for ObjectLit<'a> {
   }
 }
 
-impl<'a> From<&'a ObjectLit<'a>> for Node<'a> {
-  fn from(node: &'a ObjectLit<'a>) -> Node<'a> {
+impl<'a> From<&ObjectLit<'a>> for Node<'a> {
+  fn from(node: &ObjectLit<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ObjectLit<'a>, &'a ObjectLit<'a>>(node) };
     Node::ObjectLit(node)
   }
 }
@@ -12431,8 +12537,9 @@ impl<'a> Spanned for Module<'a> {
   }
 }
 
-impl<'a> From<&'a Module<'a>> for Node<'a> {
-  fn from(node: &'a Module<'a>) -> Node<'a> {
+impl<'a> From<&Module<'a>> for Node<'a> {
+  fn from(node: &Module<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&Module<'a>, &'a Module<'a>>(node) };
     Node::Module(node)
   }
 }
@@ -12501,8 +12608,9 @@ impl<'a> Spanned for TsIndexSignature<'a> {
   }
 }
 
-impl<'a> From<&'a TsIndexSignature<'a>> for Node<'a> {
-  fn from(node: &'a TsIndexSignature<'a>) -> Node<'a> {
+impl<'a> From<&TsIndexSignature<'a>> for Node<'a> {
+  fn from(node: &TsIndexSignature<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsIndexSignature<'a>, &'a TsIndexSignature<'a>>(node) };
     Node::TsIndexSignature(node)
   }
 }
@@ -12575,8 +12683,9 @@ impl<'a> Spanned for TsTypeCastExpr<'a> {
   }
 }
 
-impl<'a> From<&'a TsTypeCastExpr<'a>> for Node<'a> {
-  fn from(node: &'a TsTypeCastExpr<'a>) -> Node<'a> {
+impl<'a> From<&TsTypeCastExpr<'a>> for Node<'a> {
+  fn from(node: &TsTypeCastExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsTypeCastExpr<'a>, &'a TsTypeCastExpr<'a>>(node) };
     Node::TsTypeCastExpr(node)
   }
 }
@@ -12637,8 +12746,9 @@ impl<'a> Spanned for TsTupleType<'a> {
   }
 }
 
-impl<'a> From<&'a TsTupleType<'a>> for Node<'a> {
-  fn from(node: &'a TsTupleType<'a>) -> Node<'a> {
+impl<'a> From<&TsTupleType<'a>> for Node<'a> {
+  fn from(node: &TsTupleType<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsTupleType<'a>, &'a TsTupleType<'a>>(node) };
     Node::TsTupleType(node)
   }
 }
@@ -12697,8 +12807,9 @@ impl<'a> Spanned for Null<'a> {
   }
 }
 
-impl<'a> From<&'a Null<'a>> for Node<'a> {
-  fn from(node: &'a Null<'a>) -> Node<'a> {
+impl<'a> From<&Null<'a>> for Node<'a> {
+  fn from(node: &Null<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&Null<'a>, &'a Null<'a>>(node) };
     Node::Null(node)
   }
 }
@@ -12753,8 +12864,9 @@ impl<'a> Spanned for TsTypeOperator<'a> {
   }
 }
 
-impl<'a> From<&'a TsTypeOperator<'a>> for Node<'a> {
-  fn from(node: &'a TsTypeOperator<'a>) -> Node<'a> {
+impl<'a> From<&TsTypeOperator<'a>> for Node<'a> {
+  fn from(node: &TsTypeOperator<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsTypeOperator<'a>, &'a TsTypeOperator<'a>>(node) };
     Node::TsTypeOperator(node)
   }
 }
@@ -12810,8 +12922,9 @@ impl<'a> Spanned for JSXClosingElement<'a> {
   }
 }
 
-impl<'a> From<&'a JSXClosingElement<'a>> for Node<'a> {
-  fn from(node: &'a JSXClosingElement<'a>) -> Node<'a> {
+impl<'a> From<&JSXClosingElement<'a>> for Node<'a> {
+  fn from(node: &JSXClosingElement<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&JSXClosingElement<'a>, &'a JSXClosingElement<'a>>(node) };
     Node::JSXClosingElement(node)
   }
 }
@@ -12874,8 +12987,9 @@ impl<'a> Spanned for BinExpr<'a> {
   }
 }
 
-impl<'a> From<&'a BinExpr<'a>> for Node<'a> {
-  fn from(node: &'a BinExpr<'a>) -> Node<'a> {
+impl<'a> From<&BinExpr<'a>> for Node<'a> {
+  fn from(node: &BinExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&BinExpr<'a>, &'a BinExpr<'a>>(node) };
     Node::BinExpr(node)
   }
 }
@@ -12942,8 +13056,9 @@ impl<'a> Spanned for UnaryExpr<'a> {
   }
 }
 
-impl<'a> From<&'a UnaryExpr<'a>> for Node<'a> {
-  fn from(node: &'a UnaryExpr<'a>) -> Node<'a> {
+impl<'a> From<&UnaryExpr<'a>> for Node<'a> {
+  fn from(node: &UnaryExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&UnaryExpr<'a>, &'a UnaryExpr<'a>>(node) };
     Node::UnaryExpr(node)
   }
 }
@@ -13017,8 +13132,9 @@ impl<'a> Spanned for TsPropertySignature<'a> {
   }
 }
 
-impl<'a> From<&'a TsPropertySignature<'a>> for Node<'a> {
-  fn from(node: &'a TsPropertySignature<'a>) -> Node<'a> {
+impl<'a> From<&TsPropertySignature<'a>> for Node<'a> {
+  fn from(node: &TsPropertySignature<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsPropertySignature<'a>, &'a TsPropertySignature<'a>>(node) };
     Node::TsPropertySignature(node)
   }
 }
@@ -13131,8 +13247,9 @@ impl<'a> Spanned for Constructor<'a> {
   }
 }
 
-impl<'a> From<&'a Constructor<'a>> for Node<'a> {
-  fn from(node: &'a Constructor<'a>) -> Node<'a> {
+impl<'a> From<&Constructor<'a>> for Node<'a> {
+  fn from(node: &Constructor<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&Constructor<'a>, &'a Constructor<'a>>(node) };
     Node::Constructor(node)
   }
 }
@@ -13216,8 +13333,9 @@ impl<'a> Spanned for FnDecl<'a> {
   }
 }
 
-impl<'a> From<&'a FnDecl<'a>> for Node<'a> {
-  fn from(node: &'a FnDecl<'a>) -> Node<'a> {
+impl<'a> From<&FnDecl<'a>> for Node<'a> {
+  fn from(node: &FnDecl<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&FnDecl<'a>, &'a FnDecl<'a>>(node) };
     Node::FnDecl(node)
   }
 }
@@ -13278,8 +13396,9 @@ impl<'a> Spanned for TsNonNullExpr<'a> {
   }
 }
 
-impl<'a> From<&'a TsNonNullExpr<'a>> for Node<'a> {
-  fn from(node: &'a TsNonNullExpr<'a>) -> Node<'a> {
+impl<'a> From<&TsNonNullExpr<'a>> for Node<'a> {
+  fn from(node: &TsNonNullExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsNonNullExpr<'a>, &'a TsNonNullExpr<'a>>(node) };
     Node::TsNonNullExpr(node)
   }
 }
@@ -13337,8 +13456,9 @@ impl<'a> Spanned for ClassExpr<'a> {
   }
 }
 
-impl<'a> From<&'a ClassExpr<'a>> for Node<'a> {
-  fn from(node: &'a ClassExpr<'a>) -> Node<'a> {
+impl<'a> From<&ClassExpr<'a>> for Node<'a> {
+  fn from(node: &ClassExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ClassExpr<'a>, &'a ClassExpr<'a>>(node) };
     Node::ClassExpr(node)
   }
 }
@@ -13408,8 +13528,9 @@ impl<'a> Spanned for ForInStmt<'a> {
   }
 }
 
-impl<'a> From<&'a ForInStmt<'a>> for Node<'a> {
-  fn from(node: &'a ForInStmt<'a>) -> Node<'a> {
+impl<'a> From<&ForInStmt<'a>> for Node<'a> {
+  fn from(node: &ForInStmt<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ForInStmt<'a>, &'a ForInStmt<'a>>(node) };
     Node::ForInStmt(node)
   }
 }
@@ -13474,8 +13595,9 @@ impl<'a> Spanned for EmptyStmt<'a> {
   }
 }
 
-impl<'a> From<&'a EmptyStmt<'a>> for Node<'a> {
-  fn from(node: &'a EmptyStmt<'a>) -> Node<'a> {
+impl<'a> From<&EmptyStmt<'a>> for Node<'a> {
+  fn from(node: &EmptyStmt<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&EmptyStmt<'a>, &'a EmptyStmt<'a>>(node) };
     Node::EmptyStmt(node)
   }
 }
@@ -13525,8 +13647,9 @@ impl<'a> Spanned for WhileStmt<'a> {
   }
 }
 
-impl<'a> From<&'a WhileStmt<'a>> for Node<'a> {
-  fn from(node: &'a WhileStmt<'a>) -> Node<'a> {
+impl<'a> From<&WhileStmt<'a>> for Node<'a> {
+  fn from(node: &WhileStmt<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&WhileStmt<'a>, &'a WhileStmt<'a>>(node) };
     Node::WhileStmt(node)
   }
 }
@@ -13597,8 +13720,9 @@ impl<'a> Spanned for Str<'a> {
   }
 }
 
-impl<'a> From<&'a Str<'a>> for Node<'a> {
-  fn from(node: &'a Str<'a>) -> Node<'a> {
+impl<'a> From<&Str<'a>> for Node<'a> {
+  fn from(node: &Str<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&Str<'a>, &'a Str<'a>>(node) };
     Node::Str(node)
   }
 }
@@ -13648,8 +13772,9 @@ impl<'a> Spanned for TsExprWithTypeArgs<'a> {
   }
 }
 
-impl<'a> From<&'a TsExprWithTypeArgs<'a>> for Node<'a> {
-  fn from(node: &'a TsExprWithTypeArgs<'a>) -> Node<'a> {
+impl<'a> From<&TsExprWithTypeArgs<'a>> for Node<'a> {
+  fn from(node: &TsExprWithTypeArgs<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsExprWithTypeArgs<'a>, &'a TsExprWithTypeArgs<'a>>(node) };
     Node::TsExprWithTypeArgs(node)
   }
 }
@@ -13719,8 +13844,9 @@ impl<'a> Spanned for AssignPat<'a> {
   }
 }
 
-impl<'a> From<&'a AssignPat<'a>> for Node<'a> {
-  fn from(node: &'a AssignPat<'a>) -> Node<'a> {
+impl<'a> From<&AssignPat<'a>> for Node<'a> {
+  fn from(node: &AssignPat<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&AssignPat<'a>, &'a AssignPat<'a>>(node) };
     Node::AssignPat(node)
   }
 }
@@ -13796,8 +13922,9 @@ impl<'a> Spanned for ExportNamedSpecifier<'a> {
   }
 }
 
-impl<'a> From<&'a ExportNamedSpecifier<'a>> for Node<'a> {
-  fn from(node: &'a ExportNamedSpecifier<'a>) -> Node<'a> {
+impl<'a> From<&ExportNamedSpecifier<'a>> for Node<'a> {
+  fn from(node: &ExportNamedSpecifier<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ExportNamedSpecifier<'a>, &'a ExportNamedSpecifier<'a>>(node) };
     Node::ExportNamedSpecifier(node)
   }
 }
@@ -13868,8 +13995,9 @@ impl<'a> Spanned for TsConditionalType<'a> {
   }
 }
 
-impl<'a> From<&'a TsConditionalType<'a>> for Node<'a> {
-  fn from(node: &'a TsConditionalType<'a>) -> Node<'a> {
+impl<'a> From<&TsConditionalType<'a>> for Node<'a> {
+  fn from(node: &TsConditionalType<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsConditionalType<'a>, &'a TsConditionalType<'a>>(node) };
     Node::TsConditionalType(node)
   }
 }
@@ -13940,8 +14068,9 @@ impl<'a> Spanned for TsTypeLit<'a> {
   }
 }
 
-impl<'a> From<&'a TsTypeLit<'a>> for Node<'a> {
-  fn from(node: &'a TsTypeLit<'a>) -> Node<'a> {
+impl<'a> From<&TsTypeLit<'a>> for Node<'a> {
+  fn from(node: &TsTypeLit<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsTypeLit<'a>, &'a TsTypeLit<'a>>(node) };
     Node::TsTypeLit(node)
   }
 }
@@ -14001,8 +14130,9 @@ impl<'a> Spanned for BreakStmt<'a> {
   }
 }
 
-impl<'a> From<&'a BreakStmt<'a>> for Node<'a> {
-  fn from(node: &'a BreakStmt<'a>) -> Node<'a> {
+impl<'a> From<&BreakStmt<'a>> for Node<'a> {
+  fn from(node: &BreakStmt<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&BreakStmt<'a>, &'a BreakStmt<'a>>(node) };
     Node::BreakStmt(node)
   }
 }
@@ -14066,8 +14196,9 @@ impl<'a> Spanned for ImportStarAsSpecifier<'a> {
   }
 }
 
-impl<'a> From<&'a ImportStarAsSpecifier<'a>> for Node<'a> {
-  fn from(node: &'a ImportStarAsSpecifier<'a>) -> Node<'a> {
+impl<'a> From<&ImportStarAsSpecifier<'a>> for Node<'a> {
+  fn from(node: &ImportStarAsSpecifier<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ImportStarAsSpecifier<'a>, &'a ImportStarAsSpecifier<'a>>(node) };
     Node::ImportStarAsSpecifier(node)
   }
 }
@@ -14123,8 +14254,9 @@ impl<'a> Spanned for TsInferType<'a> {
   }
 }
 
-impl<'a> From<&'a TsInferType<'a>> for Node<'a> {
-  fn from(node: &'a TsInferType<'a>) -> Node<'a> {
+impl<'a> From<&TsInferType<'a>> for Node<'a> {
+  fn from(node: &TsInferType<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsInferType<'a>, &'a TsInferType<'a>>(node) };
     Node::TsInferType(node)
   }
 }
@@ -14205,8 +14337,9 @@ impl<'a> Spanned for PrivateMethod<'a> {
   }
 }
 
-impl<'a> From<&'a PrivateMethod<'a>> for Node<'a> {
-  fn from(node: &'a PrivateMethod<'a>) -> Node<'a> {
+impl<'a> From<&PrivateMethod<'a>> for Node<'a> {
+  fn from(node: &PrivateMethod<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&PrivateMethod<'a>, &'a PrivateMethod<'a>>(node) };
     Node::PrivateMethod(node)
   }
 }
@@ -14280,8 +14413,9 @@ impl<'a> Spanned for ForOfStmt<'a> {
   }
 }
 
-impl<'a> From<&'a ForOfStmt<'a>> for Node<'a> {
-  fn from(node: &'a ForOfStmt<'a>) -> Node<'a> {
+impl<'a> From<&ForOfStmt<'a>> for Node<'a> {
+  fn from(node: &ForOfStmt<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ForOfStmt<'a>, &'a ForOfStmt<'a>>(node) };
     Node::ForOfStmt(node)
   }
 }
@@ -14347,8 +14481,9 @@ impl<'a> Spanned for TsUnionType<'a> {
   }
 }
 
-impl<'a> From<&'a TsUnionType<'a>> for Node<'a> {
-  fn from(node: &'a TsUnionType<'a>) -> Node<'a> {
+impl<'a> From<&TsUnionType<'a>> for Node<'a> {
+  fn from(node: &TsUnionType<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsUnionType<'a>, &'a TsUnionType<'a>>(node) };
     Node::TsUnionType(node)
   }
 }
@@ -14420,8 +14555,9 @@ impl<'a> Spanned for TsModuleDecl<'a> {
   }
 }
 
-impl<'a> From<&'a TsModuleDecl<'a>> for Node<'a> {
-  fn from(node: &'a TsModuleDecl<'a>) -> Node<'a> {
+impl<'a> From<&TsModuleDecl<'a>> for Node<'a> {
+  fn from(node: &TsModuleDecl<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsModuleDecl<'a>, &'a TsModuleDecl<'a>>(node) };
     Node::TsModuleDecl(node)
   }
 }
@@ -14491,8 +14627,9 @@ impl<'a> Spanned for GetterProp<'a> {
   }
 }
 
-impl<'a> From<&'a GetterProp<'a>> for Node<'a> {
-  fn from(node: &'a GetterProp<'a>) -> Node<'a> {
+impl<'a> From<&GetterProp<'a>> for Node<'a> {
+  fn from(node: &GetterProp<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&GetterProp<'a>, &'a GetterProp<'a>>(node) };
     Node::GetterProp(node)
   }
 }
@@ -14574,8 +14711,9 @@ impl<'a> Spanned for CondExpr<'a> {
   }
 }
 
-impl<'a> From<&'a CondExpr<'a>> for Node<'a> {
-  fn from(node: &'a CondExpr<'a>) -> Node<'a> {
+impl<'a> From<&CondExpr<'a>> for Node<'a> {
+  fn from(node: &CondExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&CondExpr<'a>, &'a CondExpr<'a>>(node) };
     Node::CondExpr(node)
   }
 }
@@ -14645,8 +14783,9 @@ impl<'a> Spanned for ImportNamedSpecifier<'a> {
   }
 }
 
-impl<'a> From<&'a ImportNamedSpecifier<'a>> for Node<'a> {
-  fn from(node: &'a ImportNamedSpecifier<'a>) -> Node<'a> {
+impl<'a> From<&ImportNamedSpecifier<'a>> for Node<'a> {
+  fn from(node: &ImportNamedSpecifier<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ImportNamedSpecifier<'a>, &'a ImportNamedSpecifier<'a>>(node) };
     Node::ImportNamedSpecifier(node)
   }
 }
@@ -14723,8 +14862,9 @@ impl<'a> Spanned for NamedExport<'a> {
   }
 }
 
-impl<'a> From<&'a NamedExport<'a>> for Node<'a> {
-  fn from(node: &'a NamedExport<'a>) -> Node<'a> {
+impl<'a> From<&NamedExport<'a>> for Node<'a> {
+  fn from(node: &NamedExport<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&NamedExport<'a>, &'a NamedExport<'a>>(node) };
     Node::NamedExport(node)
   }
 }
@@ -14798,8 +14938,9 @@ impl<'a> Spanned for JSXElement<'a> {
   }
 }
 
-impl<'a> From<&'a JSXElement<'a>> for Node<'a> {
-  fn from(node: &'a JSXElement<'a>) -> Node<'a> {
+impl<'a> From<&JSXElement<'a>> for Node<'a> {
+  fn from(node: &JSXElement<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&JSXElement<'a>, &'a JSXElement<'a>>(node) };
     Node::JSXElement(node)
   }
 }
@@ -14883,8 +15024,9 @@ impl<'a> Spanned for ClassDecl<'a> {
   }
 }
 
-impl<'a> From<&'a ClassDecl<'a>> for Node<'a> {
-  fn from(node: &'a ClassDecl<'a>) -> Node<'a> {
+impl<'a> From<&ClassDecl<'a>> for Node<'a> {
+  fn from(node: &ClassDecl<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ClassDecl<'a>, &'a ClassDecl<'a>>(node) };
     Node::ClassDecl(node)
   }
 }
@@ -14953,8 +15095,9 @@ impl<'a> Spanned for ArrayPat<'a> {
   }
 }
 
-impl<'a> From<&'a ArrayPat<'a>> for Node<'a> {
-  fn from(node: &'a ArrayPat<'a>) -> Node<'a> {
+impl<'a> From<&ArrayPat<'a>> for Node<'a> {
+  fn from(node: &ArrayPat<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ArrayPat<'a>, &'a ArrayPat<'a>>(node) };
     Node::ArrayPat(node)
   }
 }
@@ -15034,8 +15177,9 @@ impl<'a> Spanned for DoWhileStmt<'a> {
   }
 }
 
-impl<'a> From<&'a DoWhileStmt<'a>> for Node<'a> {
-  fn from(node: &'a DoWhileStmt<'a>) -> Node<'a> {
+impl<'a> From<&DoWhileStmt<'a>> for Node<'a> {
+  fn from(node: &DoWhileStmt<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&DoWhileStmt<'a>, &'a DoWhileStmt<'a>>(node) };
     Node::DoWhileStmt(node)
   }
 }
@@ -15105,8 +15249,9 @@ impl<'a> Spanned for JSXText<'a> {
   }
 }
 
-impl<'a> From<&'a JSXText<'a>> for Node<'a> {
-  fn from(node: &'a JSXText<'a>) -> Node<'a> {
+impl<'a> From<&JSXText<'a>> for Node<'a> {
+  fn from(node: &JSXText<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&JSXText<'a>, &'a JSXText<'a>>(node) };
     Node::JSXText(node)
   }
 }
@@ -15165,8 +15310,9 @@ impl<'a> Spanned for VarDecl<'a> {
   }
 }
 
-impl<'a> From<&'a VarDecl<'a>> for Node<'a> {
-  fn from(node: &'a VarDecl<'a>) -> Node<'a> {
+impl<'a> From<&VarDecl<'a>> for Node<'a> {
+  fn from(node: &VarDecl<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&VarDecl<'a>, &'a VarDecl<'a>>(node) };
     Node::VarDecl(node)
   }
 }
@@ -15226,8 +15372,9 @@ impl<'a> Spanned for PrivateName<'a> {
   }
 }
 
-impl<'a> From<&'a PrivateName<'a>> for Node<'a> {
-  fn from(node: &'a PrivateName<'a>) -> Node<'a> {
+impl<'a> From<&PrivateName<'a>> for Node<'a> {
+  fn from(node: &PrivateName<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&PrivateName<'a>, &'a PrivateName<'a>>(node) };
     Node::PrivateName(node)
   }
 }
@@ -15285,8 +15432,9 @@ impl<'a> Spanned for JSXNamespacedName<'a> {
   }
 }
 
-impl<'a> From<&'a JSXNamespacedName<'a>> for Node<'a> {
-  fn from(node: &'a JSXNamespacedName<'a>) -> Node<'a> {
+impl<'a> From<&JSXNamespacedName<'a>> for Node<'a> {
+  fn from(node: &JSXNamespacedName<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&JSXNamespacedName<'a>, &'a JSXNamespacedName<'a>>(node) };
     Node::JSXNamespacedName(node)
   }
 }
@@ -15357,8 +15505,9 @@ impl<'a> Spanned for JSXOpeningElement<'a> {
   }
 }
 
-impl<'a> From<&'a JSXOpeningElement<'a>> for Node<'a> {
-  fn from(node: &'a JSXOpeningElement<'a>) -> Node<'a> {
+impl<'a> From<&JSXOpeningElement<'a>> for Node<'a> {
+  fn from(node: &JSXOpeningElement<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&JSXOpeningElement<'a>, &'a JSXOpeningElement<'a>>(node) };
     Node::JSXOpeningElement(node)
   }
 }
@@ -15441,8 +15590,9 @@ impl<'a> Spanned for SpreadElement<'a> {
   }
 }
 
-impl<'a> From<&'a SpreadElement<'a>> for Node<'a> {
-  fn from(node: &'a SpreadElement<'a>) -> Node<'a> {
+impl<'a> From<&SpreadElement<'a>> for Node<'a> {
+  fn from(node: &SpreadElement<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&SpreadElement<'a>, &'a SpreadElement<'a>>(node) };
     Node::SpreadElement(node)
   }
 }
@@ -15498,8 +15648,9 @@ impl<'a> Spanned for ExportDefaultDecl<'a> {
   }
 }
 
-impl<'a> From<&'a ExportDefaultDecl<'a>> for Node<'a> {
-  fn from(node: &'a ExportDefaultDecl<'a>) -> Node<'a> {
+impl<'a> From<&ExportDefaultDecl<'a>> for Node<'a> {
+  fn from(node: &ExportDefaultDecl<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ExportDefaultDecl<'a>, &'a ExportDefaultDecl<'a>>(node) };
     Node::ExportDefaultDecl(node)
   }
 }
@@ -15568,8 +15719,9 @@ impl<'a> Spanned for ArrowExpr<'a> {
   }
 }
 
-impl<'a> From<&'a ArrowExpr<'a>> for Node<'a> {
-  fn from(node: &'a ArrowExpr<'a>) -> Node<'a> {
+impl<'a> From<&ArrowExpr<'a>> for Node<'a> {
+  fn from(node: &ArrowExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ArrowExpr<'a>, &'a ArrowExpr<'a>>(node) };
     Node::ArrowExpr(node)
   }
 }
@@ -15659,8 +15811,9 @@ impl<'a> Spanned for TsAsExpr<'a> {
   }
 }
 
-impl<'a> From<&'a TsAsExpr<'a>> for Node<'a> {
-  fn from(node: &'a TsAsExpr<'a>) -> Node<'a> {
+impl<'a> From<&TsAsExpr<'a>> for Node<'a> {
+  fn from(node: &TsAsExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsAsExpr<'a>, &'a TsAsExpr<'a>>(node) };
     Node::TsAsExpr(node)
   }
 }
@@ -15723,8 +15876,9 @@ impl<'a> Spanned for KeyValuePatProp<'a> {
   }
 }
 
-impl<'a> From<&'a KeyValuePatProp<'a>> for Node<'a> {
-  fn from(node: &'a KeyValuePatProp<'a>) -> Node<'a> {
+impl<'a> From<&KeyValuePatProp<'a>> for Node<'a> {
+  fn from(node: &KeyValuePatProp<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&KeyValuePatProp<'a>, &'a KeyValuePatProp<'a>>(node) };
     Node::KeyValuePatProp(node)
   }
 }
@@ -15785,8 +15939,9 @@ impl<'a> Spanned for TsLitType<'a> {
   }
 }
 
-impl<'a> From<&'a TsLitType<'a>> for Node<'a> {
-  fn from(node: &'a TsLitType<'a>) -> Node<'a> {
+impl<'a> From<&TsLitType<'a>> for Node<'a> {
+  fn from(node: &TsLitType<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsLitType<'a>, &'a TsLitType<'a>>(node) };
     Node::TsLitType(node)
   }
 }
@@ -15849,8 +16004,9 @@ impl<'a> Spanned for AssignExpr<'a> {
   }
 }
 
-impl<'a> From<&'a AssignExpr<'a>> for Node<'a> {
-  fn from(node: &'a AssignExpr<'a>) -> Node<'a> {
+impl<'a> From<&AssignExpr<'a>> for Node<'a> {
+  fn from(node: &AssignExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&AssignExpr<'a>, &'a AssignExpr<'a>>(node) };
     Node::AssignExpr(node)
   }
 }
@@ -15912,8 +16068,9 @@ impl<'a> Spanned for ArrayLit<'a> {
   }
 }
 
-impl<'a> From<&'a ArrayLit<'a>> for Node<'a> {
-  fn from(node: &'a ArrayLit<'a>) -> Node<'a> {
+impl<'a> From<&ArrayLit<'a>> for Node<'a> {
+  fn from(node: &ArrayLit<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ArrayLit<'a>, &'a ArrayLit<'a>>(node) };
     Node::ArrayLit(node)
   }
 }
@@ -15980,8 +16137,9 @@ impl<'a> Spanned for Decorator<'a> {
   }
 }
 
-impl<'a> From<&'a Decorator<'a>> for Node<'a> {
-  fn from(node: &'a Decorator<'a>) -> Node<'a> {
+impl<'a> From<&Decorator<'a>> for Node<'a> {
+  fn from(node: &Decorator<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&Decorator<'a>, &'a Decorator<'a>>(node) };
     Node::Decorator(node)
   }
 }
@@ -16049,8 +16207,9 @@ impl<'a> Spanned for Ident<'a> {
   }
 }
 
-impl<'a> From<&'a Ident<'a>> for Node<'a> {
-  fn from(node: &'a Ident<'a>) -> Node<'a> {
+impl<'a> From<&Ident<'a>> for Node<'a> {
+  fn from(node: &Ident<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&Ident<'a>, &'a Ident<'a>>(node) };
     Node::Ident(node)
   }
 }
@@ -16114,8 +16273,9 @@ impl<'a> Spanned for MethodProp<'a> {
   }
 }
 
-impl<'a> From<&'a MethodProp<'a>> for Node<'a> {
-  fn from(node: &'a MethodProp<'a>) -> Node<'a> {
+impl<'a> From<&MethodProp<'a>> for Node<'a> {
+  fn from(node: &MethodProp<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&MethodProp<'a>, &'a MethodProp<'a>>(node) };
     Node::MethodProp(node)
   }
 }

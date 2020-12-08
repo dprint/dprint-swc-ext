@@ -18,7 +18,7 @@ All:
 - `.prev_sibling() -> Option<Node<'a>>`
 - `.next_sibling() -> Option<Node<'a>>`
 - `.text() -> &str`
-- `.text_fast(file_text: &str) -> &str` -- Doesn't require traversing the ancestors
+- `.text_fast(file_text: &str) -> &str` -- Doesn't require going up the tree to the root node
 
 Node/enum node specific helpers:
 
@@ -54,7 +54,7 @@ let source_file_info = SourceFileInfo {
 }
 
 dprint_swc_ecma_ast_view::with_ast_view(source_file_info, |ast_view| {
-  let class = &ast_view.body[0].to::<ClassDecl>().class;
+  let class = ast_view.body[0].to::<ClassDecl>().class;
   println!("{:?}", class.text(file_text));
 
   for child in class.children() {
