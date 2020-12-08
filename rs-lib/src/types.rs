@@ -1,6 +1,6 @@
 use crate::generated::*;
 use crate::tokens::*;
-use swc_common::Spanned;
+use swc_common::{BytePos, Spanned};
 use swc_ecmascript::parser::token::TokenAndSpan;
 
 pub enum NodeOrToken<'a> {
@@ -13,6 +13,14 @@ pub trait NodeTrait<'a>: Spanned {
   fn children(&self) -> Vec<Node<'a>>;
   fn into_node(&self) -> Node<'a>;
   fn kind(&self) -> NodeKind;
+
+  fn lo(&self) -> BytePos {
+    self.span().lo
+  }
+
+  fn hi(&self) -> BytePos {
+    self.span().hi
+  }
 
   fn child_index(&self) -> usize {
     if let Some(parent) = self.parent() {

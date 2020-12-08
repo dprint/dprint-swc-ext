@@ -19,13 +19,15 @@ All:
 - `.next_sibling() -> Option<Node<'a>>`
 - `.text() -> &str`
 - `.text_fast(file_text: &str) -> &str` -- Doesn't require going up the tree to the root node
+- `.lo() -> BytePos`
+- `.hi() -> BytePos`
 - `.tokens() -> &[TokenAndSpan]` - All the descendant tokens within the span of the node.
 - `.tokens_fast(&token_container) -> &[TokenAndSpan]`
 - `.children_with_tokens() -> Vec<NodeOrToken<'a>>` - Gets the children with the tokens found between the children
 - `.children_with_tokens_fast(&token_container) -> Vec<NodeOrToken<'a>>`
 - `.module() -> &'a Module` - Gets the root node.
 - `.token_container() -> &'a TokenContainer` - Gets the token container that was passed into the view.
-- `.kind() -> NodeKind` - Gets the "node kind" enum associated with the node.
+- `.kind() -> NodeKind` - Gets the "node kind" enum variant associated with the node (ex. `NodeKind::ClassDecl`).
 
 Node/enum node specific helpers:
 
@@ -34,7 +36,7 @@ Node/enum node specific helpers:
 
 ## TODO
 
-- `.lo()`, `.hi()`, `.lo_line()`, `.hi_line()`, `.lo_column()`, `.hi_column()`, `.leading_comments()`, `.trailing_comments()`
+- `.lo_line()`, `.hi_line()`, `.lo_column()`, `.hi_column()`, `.leading_comments()`, `.trailing_comments()`
 - Right now this only works if analyzing one file at a time. It would be good to improve the API to accept a large
   collection of source files (should be easy).
 
