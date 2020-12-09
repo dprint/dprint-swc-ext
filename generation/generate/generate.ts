@@ -500,6 +500,8 @@ export function generate(analysisResult: AnalysisResult) {
             writer.indent(() => {
                 if (struct.name === "Module") {
                     writer.writeLine("let inner = source_file_info.module;");
+                    writer.writeLine("let comments = source_file_info.comments.map(|c| &*bump.alloc(CommentContainer::new(c)));");
+                    writer.writeLine("let tokens = source_file_info.tokens.map(|t| &*bump.alloc(TokenContainer::new(t)));");
                 }
                 // writer.writeLine(`println!("Entered ${struct.name}");`);
 
@@ -516,8 +518,8 @@ export function generate(analysisResult: AnalysisResult) {
                     }
                     if (struct.name === "Module") {
                         writer.write("source_file: source_file_info.source_file,").newLine();
-                        writer.write("tokens: source_file_info.tokens,").newLine();
-                        writer.write("comments: source_file_info.comments,").newLine();
+                        writer.write("tokens,").newLine();
+                        writer.write("comments,").newLine();
                     }
                     for (const field of structFields) {
                         if (isVecType(field.type)) {

@@ -22,10 +22,8 @@ All:
 - `.lo() -> BytePos`
 - `.hi() -> BytePos`
 - `.lo_line() -> usize`
-- `.lo_line_display() -> usize` -- 1-indexed line number
 - `.lo_line_fast(&source_file) -> usize`
 - `.hi_line() -> usize`
-- `.hi_line_display() -> usize` -- 1-indexed line number
 - `.hi_line_fast(&source_file) -> usize`
 - `.tokens() -> &[TokenAndSpan]` - All the descendant tokens within the span of the node.
 - `.tokens_fast(&token_container) -> &[TokenAndSpan]`
@@ -66,16 +64,14 @@ let comments: swc_common::comments::SingleThreadedComments = ...;
 let tokens: Vec<swc_ecmascript::parser::token::TokenAndSpan> = ...;
 
 // setup for creating a view
-let comment_container = CommentContainer::new(&comments);
-let token_container = TokenContainer::new(&tokens);
 let source_file_info = SourceFileInfo {
   module: &module,
-  // optionally provide the SourceFile for using text related methods
+  // optionally provide the swc_common::SourceFile for using text related methods
   source_file: Some(&source_file),
   // optionally provide the comments for comment related methods (doesn't do anything yet...)
-  comments: Some(&comment_container)
+  comments: Some(&comments)
   // optionally provide the tokens for token related methods
-  tokens: Some(&token_container),
+  tokens: Some(&tokens),
 }
 
 // now create and use the view

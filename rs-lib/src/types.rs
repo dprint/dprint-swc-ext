@@ -1,7 +1,6 @@
-use crate::comments::*;
 use crate::generated::*;
 use crate::tokens::*;
-use swc_common::{BytePos, Spanned};
+use swc_common::{comments::SingleThreadedComments, BytePos, Spanned};
 use swc_ecmascript::parser::token::TokenAndSpan;
 
 pub enum NodeOrToken<'a> {
@@ -27,20 +26,12 @@ pub trait NodeTrait<'a>: Spanned {
     self.lo_line_fast(self.source_file())
   }
 
-  fn lo_line_display(&self) -> usize {
-    self.lo_line() + 1
-  }
-
   fn lo_line_fast(&self, source_file: &swc_common::SourceFile) -> usize {
     source_file.lookup_line(self.lo()).unwrap_or(0)
   }
 
   fn hi_line(&self) -> usize {
     self.hi_line_fast(self.source_file())
-  }
-
-  fn hi_line_display(&self) -> usize {
-    self.hi_line() + 1
   }
 
   fn hi_line_fast(&self, source_file: &swc_common::SourceFile) -> usize {
@@ -188,6 +179,6 @@ pub trait CastableNode<'a> {
 pub struct SourceFileInfo<'a> {
   pub module: &'a swc_ecmascript::ast::Module,
   pub source_file: Option<&'a swc_common::SourceFile>,
-  pub tokens: Option<&'a TokenContainer<'a>>,
-  pub comments: Option<&'a CommentContainer<'a>>,
+  pub tokens: Option<&'a Vec<TokenAndSpan>>,
+  pub comments: Option<&'a SingleThreadedComments>,
 }
