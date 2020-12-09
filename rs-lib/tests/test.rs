@@ -3,6 +3,7 @@ use dprint_swc_ecma_ast_view::{
   CastableNode, ClassDecl, Decl, ModuleItem, Node, NodeOrToken, NodeTrait, SourceFileInfo,
   TokenContainer,
 };
+use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use swc_common::{
   comments::{Comment, SingleThreadedComments, SingleThreadedCommentsMap},
@@ -17,12 +18,13 @@ use swc_ecmascript::parser::{
 #[test]
 fn test_creating_reference() {
   let file_text = "class MyClass { prop: string; myMethod() {}}";
-  let (module, tokens) = get_swc_ast(&PathBuf::from("file.ts"), file_text);
+  let (module, tokens, source_file, comments) = get_swc_ast(&PathBuf::from("file.ts"), file_text);
   let token_container = TokenContainer::new(&tokens);
   let info = SourceFileInfo {
     module: &module,
-    file_text: Some(file_text),
+    source_file: Some(&source_file),
     tokens: Some(&token_container),
+    comments: Some(&comments),
   };
   dprint_swc_ecma_ast_view::with_ast_view(info, |ast_view| {
     println!("Test {:?}", ast_view.text());
@@ -55,7 +57,15 @@ fn test_creating_reference() {
   println!("SUCCESS");
 }
 
-fn get_swc_ast(file_path: &Path, file_text: &str) -> (Module, Vec<TokenAndSpan>) {
+fn get_swc_ast(
+  file_path: &Path,
+  file_text: &str,
+) -> (
+  Module,
+  Vec<TokenAndSpan>,
+  SourceFile,
+  SingleThreadedComments,
+) {
   // lifted from dprint-plugin-typescript
   let handler = Handler::with_emitter(false, false, Box::new(EmptyEmitter {}));
   let file_bytes = file_text.as_bytes();
@@ -92,7 +102,7 @@ fn get_swc_ast(file_path: &Path, file_text: &str) -> (Module, Vec<TokenAndSpan>)
         // return the formatted diagnostic string
         Err(diagnostic.message())
       }
-      Ok(module) => Ok((module, tokens)),
+      Ok(module) => Ok((module, tokens, source_file, comments)),
     }
   }
   .unwrap();

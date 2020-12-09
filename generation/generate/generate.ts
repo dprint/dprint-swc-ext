@@ -285,7 +285,7 @@ export function generate(analysisResult: AnalysisResult) {
                     }
                 }
                 if (struct.name === "Module") {
-                    writer.writeLine("pub text: Option<&'a str>,");
+                    writer.writeLine("pub source_file: Option<&'a swc_common::SourceFile>,");
                     writer.writeLine("pub tokens: Option<&'a TokenContainer<'a>>,");
                 }
                 writer.writeLine(`pub inner: &'a swc_ast::${struct.name},`);
@@ -513,7 +513,7 @@ export function generate(analysisResult: AnalysisResult) {
                         writer.write(",").newLine();
                     }
                     if (struct.name === "Module") {
-                        writer.write("text: source_file_info.file_text,").newLine();
+                        writer.write("source_file: source_file_info.source_file,").newLine();
                         writer.write("tokens: source_file_info.tokens,").newLine();
                     }
                     for (const field of structFields) {

@@ -21,11 +21,18 @@ All:
 - `.text_fast(file_text: &str) -> &str` -- Doesn't require going up the tree to the root node
 - `.lo() -> BytePos`
 - `.hi() -> BytePos`
+- `.lo_line() -> usize`
+- `.lo_line_display() -> usize` -- 1-indexed line number
+- `.lo_line_fast(&source_file) -> usize`
+- `.hi_line() -> usize`
+- `.hi_line_display() -> usize` -- 1-indexed line number
+- `.hi_line_fast(&source_file) -> usize`
 - `.tokens() -> &[TokenAndSpan]` - All the descendant tokens within the span of the node.
 - `.tokens_fast(&token_container) -> &[TokenAndSpan]`
 - `.children_with_tokens() -> Vec<NodeOrToken<'a>>` - Gets the children with the tokens found between the children
 - `.children_with_tokens_fast(&token_container) -> Vec<NodeOrToken<'a>>`
 - `.module() -> &'a Module` - Gets the root node.
+- `.source_file() -> &'a swc_common::SourceFile` - Gets the swc source file
 - `.token_container() -> &'a TokenContainer` - Gets the token container that was passed into the view.
 - `.kind() -> NodeKind` - Gets the "node kind" enum variant associated with the node (ex. `NodeKind::ClassDecl`).
 
@@ -36,7 +43,7 @@ Node/enum node specific helpers:
 
 ## TODO
 
-- `.lo_line()`, `.hi_line()`, `.lo_column()`, `.hi_column()`, `.leading_comments()`, `.trailing_comments()`
+- `.lo_column()`, `.hi_column()`, `.leading_comments()`, `.trailing_comments()`
 - Right now this only works if analyzing one file at a time. It would be good to improve the API to accept a large
   collection of source files (should be easy).
 
@@ -52,16 +59,22 @@ class MyClass { prop: string; myMethod() {}}
 Code can be written like so:
 
 ```rust
-let file_text: String = ...;
+// setup... parse using swc
+let source_file: swc_common::SourceFile = ...;
 let module: swc_ecmascript::ast::Module = ...;
 let tokens: Vec<swc_ecmascript::parser::token::TokenAndSpan> = ...;
+let comments: swc_common::comments::SingleThreadedComments = ...;
+
+// now create a view
 let token_container = TokenContainer::new(tokens);
 let source_file_info = SourceFileInfo {
   module: &module,
-  // optionally provide the file text for using the `.text()` method
-  file_text: Some(&file_text),
-  // optionally provide the tokens for `.tokens()`
+  // optionally provide the SourceFile for using text related methods
+  source_file: Some(&source_file),
+  // optionally provide the tokens for token related methods
   tokens: Some(&token_container),
+  // optionally provide the comments for comment related methods (doesn't do anything yet...)
+  comments: Some(&comments)
 }
 
 dprint_swc_ecma_ast_view::with_ast_view(source_file_info, |ast_view| {

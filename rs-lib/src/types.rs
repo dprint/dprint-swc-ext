@@ -22,6 +22,30 @@ pub trait NodeTrait<'a>: Spanned {
     self.span().hi
   }
 
+  fn lo_line(&self) -> usize {
+    self.lo_line_fast(self.source_file())
+  }
+
+  fn lo_line_display(&self) -> usize {
+    self.lo_line() + 1
+  }
+
+  fn lo_line_fast(&self, source_file: &swc_common::SourceFile) -> usize {
+    source_file.lookup_line(self.lo()).unwrap_or(0)
+  }
+
+  fn hi_line(&self) -> usize {
+    self.hi_line_fast(self.source_file())
+  }
+
+  fn hi_line_display(&self) -> usize {
+    self.hi_line() + 1
+  }
+
+  fn hi_line_fast(&self, source_file: &swc_common::SourceFile) -> usize {
+    source_file.lookup_line(self.hi()).unwrap_or(0)
+  }
+
   fn child_index(&self) -> usize {
     if let Some(parent) = self.parent() {
       let lo = self.span().lo;
@@ -64,12 +88,7 @@ pub trait NodeTrait<'a>: Spanned {
   }
 
   fn text(&self) -> &'a str {
-    let module = self.module();
-    let source_file_text: &str = module
-      .text
-      .as_ref()
-      .expect("The source file text must be provided to `with_view` in order to use this method.");
-    self.text_fast(source_file_text)
+    self.text_fast(&self.source_file().src)
   }
 
   fn text_fast<'b>(&self, source_file_text: &'b str) -> &'b str {
@@ -143,6 +162,13 @@ pub trait NodeTrait<'a>: Spanned {
       .expect("The tokens must be provided to `with_view` in order to use this method.")
   }
 
+  fn source_file(&self) -> &'a swc_common::SourceFile {
+    self
+      .module()
+      .source_file
+      .expect("The source file must be provided to `with_view` in order to use this method.")
+  }
+
   fn module(&self) -> &Module<'a> {
     let mut current: Node<'a> = self.into_node();
     while let Some(parent) = current.parent() {
@@ -160,6 +186,7 @@ pub trait CastableNode<'a> {
 
 pub struct SourceFileInfo<'a> {
   pub module: &'a swc_ecmascript::ast::Module,
-  pub file_text: Option<&'a str>,
+  pub source_file: Option<&'a swc_common::SourceFile>,
   pub tokens: Option<&'a TokenContainer<'a>>,
+  pub comments: Option<&'a swc_common::comments::SingleThreadedComments>,
 }
