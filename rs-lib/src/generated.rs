@@ -12424,8 +12424,12 @@ impl<'a> CastableNode<'a> for Module<'a> {
 
 fn get_view_for_module<'a>(source_file_info: &'a SourceFileInfo<'a>, bump: &'a Bump) -> &'a Module<'a> {
   let inner = source_file_info.module;
-  let comments = source_file_info.comments.map(|c| &*bump.alloc(CommentContainer::new(c)));
   let tokens = source_file_info.tokens.map(|t| &*bump.alloc(TokenContainer::new(t)));
+  let comments = source_file_info.comments.map(|c| &*bump.alloc(CommentContainer::new(
+    c,
+    tokens.expect("Tokens must be provided when using comments."),
+    source_file_info.source_file.expect("Source file must be provided when using comments"),
+  )));
   let node = bump.alloc(Module {
     inner,
     source_file: source_file_info.source_file,

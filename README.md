@@ -12,8 +12,8 @@ Creates a wrapper AST around [swc](https://github.com/swc-project/swc)'s AST tha
 
 All:
 
-- `.parent() -> Option<Node<'a>>`
 - `.module() -> &'a Module` - Gets the root node.
+- `.parent() -> Option<Node<'a>>`
 - `.children() -> Vec<Node<'a>>`
 - `.child_index() -> usize`
 - `.prev_sibling() -> Option<Node<'a>>`
@@ -30,6 +30,10 @@ All:
 - `.tokens_fast(module: &Module) -> &[TokenAndSpan]`
 - `.children_with_tokens() -> Vec<NodeOrToken<'a>>` - Gets the children with the tokens found between the children
 - `.children_with_tokens_fast(module: &Module) -> Vec<NodeOrToken<'a>>`
+- `.leading_comments() -> Vec<&'a Comment>`
+- `.leading_comments_fast(module: &Module) -> Vec<&'a Comment>`
+- `.trailing_comments() -> Vec<&'a Comment>`
+- `.trailing_comments_fast(module: &Module) -> Vec<&'a Comment>`
 - `.kind() -> NodeKind` - Gets the "node kind" enum variant associated with the node (ex. `NodeKind::ClassDecl`).
 
 Node/enum node specific helpers:
@@ -39,9 +43,10 @@ Node/enum node specific helpers:
 
 ## TODO
 
-- `.lo_column()`, `.hi_column()`, `.leading_comments()`, `.trailing_comments()`
+- `.lo_column()`, `.hi_column()`
 - Right now this only works if analyzing one file at a time. It would be good to improve the API to accept a large
   collection of source files (should be easy).
+- More descriptive errors when using `.to::<NodeType>()` (show NodeKind)
 
 ## Example
 

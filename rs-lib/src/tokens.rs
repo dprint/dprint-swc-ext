@@ -32,6 +32,20 @@ impl<'a> TokenContainer<'a> {
     return &self.tokens[start_index..end_index];
   }
 
+  pub fn get_previous_token_hi(&self, lo: BytePos) -> Option<BytePos> {
+    let index = self.get_index_at_lo(lo);
+    if index == 0 {
+      None
+    } else {
+      Some(self.tokens[index - 1].span.hi)
+    }
+  }
+
+  pub fn get_next_token_lo(&self, hi: BytePos) -> Option<BytePos> {
+    let index = self.get_index_at_hi(hi);
+    self.tokens.get(index + 1).map(|t| t.span.lo)
+  }
+
   fn get_index_at_lo(&self, lo: BytePos) -> usize {
     if let Some(index) = self.lo_to_index.get(&lo) {
       *index

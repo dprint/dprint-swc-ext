@@ -500,8 +500,16 @@ export function generate(analysisResult: AnalysisResult) {
             writer.indent(() => {
                 if (struct.name === "Module") {
                     writer.writeLine("let inner = source_file_info.module;");
-                    writer.writeLine("let comments = source_file_info.comments.map(|c| &*bump.alloc(CommentContainer::new(c)));");
                     writer.writeLine("let tokens = source_file_info.tokens.map(|t| &*bump.alloc(TokenContainer::new(t)));");
+                    writer.writeLine(
+                        `let comments = source_file_info.comments.map(|c| &*bump.alloc(CommentContainer::new(`,
+                    );
+                    writer.indent(() => {
+                        writer.writeLine("c,");
+                        writer.writeLine(`tokens.expect("Tokens must be provided when using comments."),`);
+                        writer.writeLine(`source_file_info.source_file.expect("Source file must be provided when using comments"),`);
+                    });
+                    writer.writeLine(")));");
                 }
                 // writer.writeLine(`println!("Entered ${struct.name}");`);
 

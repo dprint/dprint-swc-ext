@@ -1,6 +1,10 @@
+use crate::comments::*;
 use crate::generated::*;
 use crate::tokens::*;
-use swc_common::{comments::SingleThreadedComments, BytePos, Spanned};
+use swc_common::{
+  comments::{Comment, SingleThreadedComments},
+  BytePos, Spanned,
+};
 use swc_ecmascript::parser::token::TokenAndSpan;
 
 pub enum NodeOrToken<'a> {
@@ -147,6 +151,22 @@ pub trait NodeTrait<'a>: Spanned {
     result
   }
 
+  fn leading_comments(&self) -> Vec<&'a Comment> {
+    self.leading_comments_fast(self.module())
+  }
+
+  fn leading_comments_fast(&self, module: &Module<'a>) -> Vec<&'a Comment> {
+    module_to_comment_container(module).leading_comments(self.lo())
+  }
+
+  fn trailing_comments(&self) -> Vec<&'a Comment> {
+    self.trailing_comments_fast(self.module())
+  }
+
+  fn trailing_comments_fast(&self, module: &Module<'a>) -> Vec<&'a Comment> {
+    module_to_comment_container(module).trailing_comments(self.hi())
+  }
+
   fn module(&self) -> &Module<'a> {
     let mut current: Node<'a> = self.into_node();
     while let Some(parent) = current.parent() {
@@ -169,6 +189,13 @@ fn module_to_token_container<'a>(module: &Module<'a>) -> &'a TokenContainer<'a> 
     .tokens
     .as_ref()
     .expect("The tokens must be provided to `with_view` in order to use this method.")
+}
+
+fn module_to_comment_container<'a>(module: &Module<'a>) -> &'a CommentContainer<'a> {
+  module
+    .comments
+    .as_ref()
+    .expect("The comments must be provided to `with_view` in order to use this method.")
 }
 
 pub trait CastableNode<'a> {
