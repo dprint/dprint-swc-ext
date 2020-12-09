@@ -1,3 +1,4 @@
+use crate::comments::*;
 use crate::generated::*;
 use crate::tokens::*;
 use swc_common::{BytePos, Spanned};
@@ -188,5 +189,5 @@ pub struct SourceFileInfo<'a> {
   pub module: &'a swc_ecmascript::ast::Module,
   pub source_file: Option<&'a swc_common::SourceFile>,
   pub tokens: Option<&'a TokenContainer<'a>>,
-  pub comments: Option<&'a swc_common::comments::SingleThreadedComments>,
+  pub comments: Option<&'a CommentContainer<'a>>,
 }

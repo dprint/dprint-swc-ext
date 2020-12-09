@@ -42,8 +42,9 @@ export function generate(analysisResult: AnalysisResult) {
         writer.write("use swc_ecmascript::ast::{self as swc_ast, ");
         writer.write(analysisResult.enums.filter(e => e.isPlain).map(e => e.name).join(", "));
         writer.write("};").newLine();
-        writer.writeLine("use crate::types::*;");
+        writer.writeLine("use crate::comments::*;");
         writer.writeLine("use crate::tokens::*;");
+        writer.writeLine("use crate::types::*;");
         writer.newLine();
     }
 
@@ -287,6 +288,7 @@ export function generate(analysisResult: AnalysisResult) {
                 if (struct.name === "Module") {
                     writer.writeLine("pub source_file: Option<&'a swc_common::SourceFile>,");
                     writer.writeLine("pub tokens: Option<&'a TokenContainer<'a>>,");
+                    writer.writeLine("pub comments: Option<&'a CommentContainer<'a>>,");
                 }
                 writer.writeLine(`pub inner: &'a swc_ast::${struct.name},`);
 
@@ -515,6 +517,7 @@ export function generate(analysisResult: AnalysisResult) {
                     if (struct.name === "Module") {
                         writer.write("source_file: source_file_info.source_file,").newLine();
                         writer.write("tokens: source_file_info.tokens,").newLine();
+                        writer.write("comments: source_file_info.comments,").newLine();
                     }
                     for (const field of structFields) {
                         if (isVecType(field.type)) {

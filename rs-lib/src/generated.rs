@@ -4,8 +4,9 @@ use std::mem::{self, MaybeUninit};
 use bumpalo::Bump;
 use swc_common::{Span, Spanned};
 use swc_ecmascript::ast::{self as swc_ast, VarDeclKind, TsTypeOperatorOp, TsKeywordTypeKind, BinaryOp, AssignOp, UpdateOp, Accessibility, MethodKind, UnaryOp, TruePlusMinus};
-use crate::types::*;
+use crate::comments::*;
 use crate::tokens::*;
+use crate::types::*;
 
 thread_local! {
   static LOCAL_BUMP_ALLOCATOR: std::cell::RefCell<Bump> = std::cell::RefCell::new(Bump::new());
@@ -3242,7 +3243,7 @@ fn get_view_for_default_decl<'a>(inner: &'a swc_ast::DefaultDecl, parent: Node<'
 }
 
 
-///
+/// 
 /// - Invalid: [Ident] with empty symbol.
 pub enum TsEnumMemberId<'a> {
   Ident(&'a Ident<'a>),
@@ -7529,7 +7530,7 @@ pub struct Number<'a> {
 
 impl<'a> Number<'a> {
   /// **Note**: This should not be `NaN`. Use [crate::Ident] to represent NaN.
-  ///
+  /// 
   /// If you store `NaN` in this field, a hash map will behave strangely.
   pub fn value(&self) -> f64 {
     self.inner.value
@@ -9038,7 +9039,7 @@ pub struct CatchClause<'a> {
   pub parent: &'a TryStmt<'a>,
   pub inner: &'a swc_ast::CatchClause,
   /// es2019
-  ///
+  /// 
   /// The param is null if the catch binding is omitted. E.g., try { foo() }
   /// catch { bar() }
   pub param: Option<Pat<'a>>,
@@ -12365,6 +12366,7 @@ fn get_view_for_object_lit<'a>(inner: &'a swc_ast::ObjectLit, parent: Node<'a>, 
 pub struct Module<'a> {
   pub source_file: Option<&'a swc_common::SourceFile>,
   pub tokens: Option<&'a TokenContainer<'a>>,
+  pub comments: Option<&'a CommentContainer<'a>>,
   pub inner: &'a swc_ast::Module,
   pub body: Vec<ModuleItem<'a>>,
 }
@@ -12426,6 +12428,7 @@ fn get_view_for_module<'a>(source_file_info: &'a SourceFileInfo<'a>, bump: &'a B
     inner,
     source_file: source_file_info.source_file,
     tokens: source_file_info.tokens,
+    comments: source_file_info.comments,
     body: Vec::with_capacity(inner.body.len()),
   });
   let parent: Node<'a> = (&*node).into();
@@ -14226,9 +14229,9 @@ pub struct ForOfStmt<'a> {
 
 impl<'a> ForOfStmt<'a> {
   /// Span of the await token.
-  ///
+  /// 
   /// es2018
-  ///
+  /// 
   /// for-await-of statements, e.g., `for await (const x of xs) {`
   pub fn await_token(&self) -> &Option<swc_common::Span> {
     &self.inner.await_token

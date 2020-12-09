@@ -1,7 +1,7 @@
 extern crate dprint_swc_ecma_ast_view;
 use dprint_swc_ecma_ast_view::{
-  CastableNode, ClassDecl, Decl, ModuleItem, Node, NodeOrToken, NodeTrait, SourceFileInfo,
-  TokenContainer,
+  CastableNode, ClassDecl, CommentContainer, Decl, ModuleItem, Node, NodeOrToken, NodeTrait,
+  SourceFileInfo, TokenContainer,
 };
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
@@ -20,11 +20,12 @@ fn test_creating_reference() {
   let file_text = "class MyClass { prop: string; myMethod() {}}";
   let (module, tokens, source_file, comments) = get_swc_ast(&PathBuf::from("file.ts"), file_text);
   let token_container = TokenContainer::new(&tokens);
+  let comment_container = CommentContainer::new(&comments);
   let info = SourceFileInfo {
     module: &module,
     source_file: Some(&source_file),
     tokens: Some(&token_container),
-    comments: Some(&comments),
+    comments: Some(&comment_container),
   };
   dprint_swc_ecma_ast_view::with_ast_view(info, |ast_view| {
     println!("Test {:?}", ast_view.text());

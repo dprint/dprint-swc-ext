@@ -59,24 +59,26 @@ class MyClass { prop: string; myMethod() {}}
 Code can be written like so:
 
 ```rust
-// setup... parse using swc
+// setup swc (parse an AST and optionally get the comments and tokens)
 let source_file: swc_common::SourceFile = ...;
 let module: swc_ecmascript::ast::Module = ...;
-let tokens: Vec<swc_ecmascript::parser::token::TokenAndSpan> = ...;
 let comments: swc_common::comments::SingleThreadedComments = ...;
+let tokens: Vec<swc_ecmascript::parser::token::TokenAndSpan> = ...;
 
-// now create a view
-let token_container = TokenContainer::new(tokens);
+// setup for creating a view
+let comment_container = CommentContainer::new(&comments);
+let token_container = TokenContainer::new(&tokens);
 let source_file_info = SourceFileInfo {
   module: &module,
   // optionally provide the SourceFile for using text related methods
   source_file: Some(&source_file),
+  // optionally provide the comments for comment related methods (doesn't do anything yet...)
+  comments: Some(&comment_container)
   // optionally provide the tokens for token related methods
   tokens: Some(&token_container),
-  // optionally provide the comments for comment related methods (doesn't do anything yet...)
-  comments: Some(&comments)
 }
 
+// now create and use the view
 dprint_swc_ecma_ast_view::with_ast_view(source_file_info, |ast_view| {
   let class = ast_view.body[0].to::<ClassDecl>().class;
   println!("{:?}", class.text());
