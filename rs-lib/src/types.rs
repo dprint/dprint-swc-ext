@@ -151,19 +151,19 @@ pub trait NodeTrait<'a>: Spanned {
     result
   }
 
-  fn leading_comments(&self) -> Vec<&'a Comment> {
+  fn leading_comments(&self) -> CommentsIterator<'a> {
     self.leading_comments_fast(self.module())
   }
 
-  fn leading_comments_fast(&self, module: &Module<'a>) -> Vec<&'a Comment> {
+  fn leading_comments_fast(&self, module: &Module<'a>) -> CommentsIterator<'a> {
     module_to_comment_container(module).leading_comments(self.lo())
   }
 
-  fn trailing_comments(&self) -> Vec<&'a Comment> {
+  fn trailing_comments(&self) -> CommentsIterator<'a> {
     self.trailing_comments_fast(self.module())
   }
 
-  fn trailing_comments_fast(&self, module: &Module<'a>) -> Vec<&'a Comment> {
+  fn trailing_comments_fast(&self, module: &Module<'a>) -> CommentsIterator<'a> {
     module_to_comment_container(module).trailing_comments(self.hi())
   }
 

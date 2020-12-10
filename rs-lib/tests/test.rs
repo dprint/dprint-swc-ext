@@ -16,7 +16,7 @@ use swc_ecmascript::parser::{
 
 #[test]
 fn test_creating_reference() {
-  let file_text = "class MyClass { prop: string; myMethod() {}}";
+  let file_text = "// test\nclass MyClass { prop: string; myMethod() {}}";
   let (module, tokens, source_file, comments) = get_swc_ast(&PathBuf::from("file.ts"), file_text);
   let info = SourceFileInfo {
     module: &module,
@@ -27,6 +27,10 @@ fn test_creating_reference() {
   dprint_swc_ecma_ast_view::with_ast_view(info, |ast_view| {
     println!("Test {:?}", ast_view.text());
     println!("Test 2 {:?}", ast_view.body[0].text());
+    println!(
+      "Leading comments {:?}",
+      ast_view.body[0].leading_comments().collect::<Vec<_>>()
+    );
     println!("Test 3 {:?}", ast_view.body[0].children()[0].text());
     let class = ast_view.body[0].to::<ClassDecl>().class;
     println!("{:?}", class.text());

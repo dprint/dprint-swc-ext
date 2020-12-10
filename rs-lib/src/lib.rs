@@ -4,5 +4,6 @@ mod generated;
 mod tokens;
 mod types;
 
+pub use comments::CommentsIterator;
 pub use generated::*;
 pub use types::*;

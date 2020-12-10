@@ -30,10 +30,10 @@ All:
 - `.tokens_fast(module: &Module) -> &[TokenAndSpan]`
 - `.children_with_tokens() -> Vec<NodeOrToken<'a>>` - Gets the children with the tokens found between the children
 - `.children_with_tokens_fast(module: &Module) -> Vec<NodeOrToken<'a>>`
-- `.leading_comments() -> Vec<&'a Comment>`
-- `.leading_comments_fast(module: &Module) -> Vec<&'a Comment>`
-- `.trailing_comments() -> Vec<&'a Comment>`
-- `.trailing_comments_fast(module: &Module) -> Vec<&'a Comment>`
+- `.leading_comments() -> CommentsIterator<'a>`
+- `.leading_comments_fast(module: &Module) -> CommentsIterator<'a>`
+- `.trailing_comments() -> CommentsIterator<'a>`
+- `.trailing_comments_fast(module: &Module) -> CommentsIterator<'a>`
 - `.kind() -> NodeKind` - Gets the "node kind" enum variant associated with the node (ex. `NodeKind::ClassDecl`).
 
 Node/enum node specific helpers:
