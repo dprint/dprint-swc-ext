@@ -562,7 +562,7 @@ export function generate(analysisResult: AnalysisResult) {
                     writer.write("inner,").newLine();
                     if (struct.parents.length > 0) {
                         if (struct.parents.length === 1) {
-                            writer.write(`parent: parent.to::<${struct.parents[0].name}>()`);
+                            writer.write(`parent: parent.expect::<${struct.parents[0].name}>()`);
                         } else {
                             writer.write("parent");
                         }

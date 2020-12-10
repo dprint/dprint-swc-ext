@@ -187,7 +187,7 @@ pub trait NodeTrait<'a>: Spanned {
     }
 
     // the top-most node will always be a module
-    current.to::<Module<'a>>()
+    current.expect::<Module<'a>>()
   }
 }
 

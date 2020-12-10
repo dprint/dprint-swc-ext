@@ -87,7 +87,7 @@ fn get_swc_ast(
 
   let comments: SingleThreadedComments = Default::default();
   return {
-    let mut ts_config: swc_ecma_parser::TsConfig = Default::default();
+    let mut ts_config: swc_ecmascript::parser::TsConfig = Default::default();
     ts_config.tsx = should_parse_as_jsx(file_path);
     ts_config.dynamic_import = true;
     ts_config.decorators = true;

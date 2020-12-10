@@ -5729,7 +5729,7 @@ impl<'a> CastableNode<'a> for SwitchCase<'a> {
 fn get_view_for_switch_case<'a>(inner: &'a swc_ast::SwitchCase, parent: Node<'a>, bump: &'a Bump) -> &'a SwitchCase<'a> {
   let node = bump.alloc(SwitchCase {
     inner,
-    parent: parent.to::<SwitchStmt>(),
+    parent: parent.expect::<SwitchStmt>(),
     test: None,
     cons: Vec::with_capacity(inner.cons.len()),
   });
@@ -5857,7 +5857,7 @@ impl<'a> CastableNode<'a> for JSXClosingFragment<'a> {
 fn get_view_for_jsxclosing_fragment<'a>(inner: &'a swc_ast::JSXClosingFragment, parent: Node<'a>, bump: &'a Bump) -> &'a JSXClosingFragment<'a> {
   let node = bump.alloc(JSXClosingFragment {
     inner,
-    parent: parent.to::<JSXFragment>(),
+    parent: parent.expect::<JSXFragment>(),
   });
   node
 }
@@ -5980,7 +5980,7 @@ impl<'a> CastableNode<'a> for ExportDefaultSpecifier<'a> {
 fn get_view_for_export_default_specifier<'a>(inner: &'a swc_ast::ExportDefaultSpecifier, parent: Node<'a>, bump: &'a Bump) -> &'a ExportDefaultSpecifier<'a> {
   let node = bump.alloc(ExportDefaultSpecifier {
     inner,
-    parent: parent.to::<NamedExport>(),
+    parent: parent.expect::<NamedExport>(),
     exported: unsafe { MaybeUninit::uninit().assume_init() },
   });
   let parent: Node<'a> = (&*node).into();
@@ -6438,7 +6438,7 @@ impl<'a> CastableNode<'a> for SetterProp<'a> {
 fn get_view_for_setter_prop<'a>(inner: &'a swc_ast::SetterProp, parent: Node<'a>, bump: &'a Bump) -> &'a SetterProp<'a> {
   let node = bump.alloc(SetterProp {
     inner,
-    parent: parent.to::<ObjectLit>(),
+    parent: parent.expect::<ObjectLit>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     param: unsafe { MaybeUninit::uninit().assume_init() },
     body: None,
@@ -6794,7 +6794,7 @@ impl<'a> CastableNode<'a> for TsEnumMember<'a> {
 fn get_view_for_ts_enum_member<'a>(inner: &'a swc_ast::TsEnumMember, parent: Node<'a>, bump: &'a Bump) -> &'a TsEnumMember<'a> {
   let node = bump.alloc(TsEnumMember {
     inner,
-    parent: parent.to::<TsEnumDecl>(),
+    parent: parent.expect::<TsEnumDecl>(),
     id: unsafe { MaybeUninit::uninit().assume_init() },
     init: None,
   });
@@ -7964,7 +7964,7 @@ impl<'a> CastableNode<'a> for KeyValueProp<'a> {
 fn get_view_for_key_value_prop<'a>(inner: &'a swc_ast::KeyValueProp, parent: Node<'a>, bump: &'a Bump) -> &'a KeyValueProp<'a> {
   let node = bump.alloc(KeyValueProp {
     inner,
-    parent: parent.to::<ObjectLit>(),
+    parent: parent.expect::<ObjectLit>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     value: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -8172,7 +8172,7 @@ impl<'a> CastableNode<'a> for ImportDefaultSpecifier<'a> {
 fn get_view_for_import_default_specifier<'a>(inner: &'a swc_ast::ImportDefaultSpecifier, parent: Node<'a>, bump: &'a Bump) -> &'a ImportDefaultSpecifier<'a> {
   let node = bump.alloc(ImportDefaultSpecifier {
     inner,
-    parent: parent.to::<ImportDecl>(),
+    parent: parent.expect::<ImportDecl>(),
     local: unsafe { MaybeUninit::uninit().assume_init() },
   });
   let parent: Node<'a> = (&*node).into();
@@ -8306,7 +8306,7 @@ impl<'a> CastableNode<'a> for JSXAttr<'a> {
 fn get_view_for_jsxattr<'a>(inner: &'a swc_ast::JSXAttr, parent: Node<'a>, bump: &'a Bump) -> &'a JSXAttr<'a> {
   let node = bump.alloc(JSXAttr {
     inner,
-    parent: parent.to::<JSXOpeningElement>(),
+    parent: parent.expect::<JSXOpeningElement>(),
     name: unsafe { MaybeUninit::uninit().assume_init() },
     value: None,
   });
@@ -8822,7 +8822,7 @@ impl<'a> CastableNode<'a> for JSXOpeningFragment<'a> {
 fn get_view_for_jsxopening_fragment<'a>(inner: &'a swc_ast::JSXOpeningFragment, parent: Node<'a>, bump: &'a Bump) -> &'a JSXOpeningFragment<'a> {
   let node = bump.alloc(JSXOpeningFragment {
     inner,
-    parent: parent.to::<JSXFragment>(),
+    parent: parent.expect::<JSXFragment>(),
   });
   node
 }
@@ -9182,7 +9182,7 @@ impl<'a> CastableNode<'a> for AssignPatProp<'a> {
 fn get_view_for_assign_pat_prop<'a>(inner: &'a swc_ast::AssignPatProp, parent: Node<'a>, bump: &'a Bump) -> &'a AssignPatProp<'a> {
   let node = bump.alloc(AssignPatProp {
     inner,
-    parent: parent.to::<ObjectPat>(),
+    parent: parent.expect::<ObjectPat>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     value: None,
   });
@@ -9473,7 +9473,7 @@ impl<'a> CastableNode<'a> for AssignProp<'a> {
 fn get_view_for_assign_prop<'a>(inner: &'a swc_ast::AssignProp, parent: Node<'a>, bump: &'a Bump) -> &'a AssignProp<'a> {
   let node = bump.alloc(AssignProp {
     inner,
-    parent: parent.to::<ObjectLit>(),
+    parent: parent.expect::<ObjectLit>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     value: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -9821,7 +9821,7 @@ impl<'a> CastableNode<'a> for CatchClause<'a> {
 fn get_view_for_catch_clause<'a>(inner: &'a swc_ast::CatchClause, parent: Node<'a>, bump: &'a Bump) -> &'a CatchClause<'a> {
   let node = bump.alloc(CatchClause {
     inner,
-    parent: parent.to::<TryStmt>(),
+    parent: parent.expect::<TryStmt>(),
     param: None,
     body: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -10398,7 +10398,7 @@ impl<'a> CastableNode<'a> for TsExternalModuleRef<'a> {
 fn get_view_for_ts_external_module_ref<'a>(inner: &'a swc_ast::TsExternalModuleRef, parent: Node<'a>, bump: &'a Bump) -> &'a TsExternalModuleRef<'a> {
   let node = bump.alloc(TsExternalModuleRef {
     inner,
-    parent: parent.to::<TsImportEqualsDecl>(),
+    parent: parent.expect::<TsImportEqualsDecl>(),
     expr: unsafe { MaybeUninit::uninit().assume_init() },
   });
   let parent: Node<'a> = (&*node).into();
@@ -10600,7 +10600,7 @@ impl<'a> CastableNode<'a> for TsTplLitType<'a> {
 fn get_view_for_ts_tpl_lit_type<'a>(inner: &'a swc_ast::TsTplLitType, parent: Node<'a>, bump: &'a Bump) -> &'a TsTplLitType<'a> {
   let node = bump.alloc(TsTplLitType {
     inner,
-    parent: parent.to::<TsLitType>(),
+    parent: parent.expect::<TsLitType>(),
     types: Vec::with_capacity(inner.types.len()),
     quasis: Vec::with_capacity(inner.quasis.len()),
   });
@@ -10900,7 +10900,7 @@ impl<'a> CastableNode<'a> for ClassMethod<'a> {
 fn get_view_for_class_method<'a>(inner: &'a swc_ast::ClassMethod, parent: Node<'a>, bump: &'a Bump) -> &'a ClassMethod<'a> {
   let node = bump.alloc(ClassMethod {
     inner,
-    parent: parent.to::<Class>(),
+    parent: parent.expect::<Class>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     function: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -10980,7 +10980,7 @@ impl<'a> CastableNode<'a> for TsParamProp<'a> {
 fn get_view_for_ts_param_prop<'a>(inner: &'a swc_ast::TsParamProp, parent: Node<'a>, bump: &'a Bump) -> &'a TsParamProp<'a> {
   let node = bump.alloc(TsParamProp {
     inner,
-    parent: parent.to::<Constructor>(),
+    parent: parent.expect::<Constructor>(),
     decorators: Vec::with_capacity(inner.decorators.len()),
     param: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -11093,7 +11093,7 @@ impl<'a> CastableNode<'a> for ClassProp<'a> {
 fn get_view_for_class_prop<'a>(inner: &'a swc_ast::ClassProp, parent: Node<'a>, bump: &'a Bump) -> &'a ClassProp<'a> {
   let node = bump.alloc(ClassProp {
     inner,
-    parent: parent.to::<Class>(),
+    parent: parent.expect::<Class>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     value: None,
     type_ann: None,
@@ -12666,7 +12666,7 @@ impl<'a> CastableNode<'a> for PrivateProp<'a> {
 fn get_view_for_private_prop<'a>(inner: &'a swc_ast::PrivateProp, parent: Node<'a>, bump: &'a Bump) -> &'a PrivateProp<'a> {
   let node = bump.alloc(PrivateProp {
     inner,
-    parent: parent.to::<Class>(),
+    parent: parent.expect::<Class>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     value: None,
     type_ann: None,
@@ -12809,7 +12809,7 @@ impl<'a> CastableNode<'a> for TsInterfaceBody<'a> {
 fn get_view_for_ts_interface_body<'a>(inner: &'a swc_ast::TsInterfaceBody, parent: Node<'a>, bump: &'a Bump) -> &'a TsInterfaceBody<'a> {
   let node = bump.alloc(TsInterfaceBody {
     inner,
-    parent: parent.to::<TsInterfaceDecl>(),
+    parent: parent.expect::<TsInterfaceDecl>(),
     body: Vec::with_capacity(inner.body.len()),
   });
   let parent: Node<'a> = (&*node).into();
@@ -12877,7 +12877,7 @@ impl<'a> CastableNode<'a> for TsTupleElement<'a> {
 fn get_view_for_ts_tuple_element<'a>(inner: &'a swc_ast::TsTupleElement, parent: Node<'a>, bump: &'a Bump) -> &'a TsTupleElement<'a> {
   let node = bump.alloc(TsTupleElement {
     inner,
-    parent: parent.to::<TsTupleType>(),
+    parent: parent.expect::<TsTupleType>(),
     label: None,
     ty: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -12957,7 +12957,7 @@ impl<'a> CastableNode<'a> for VarDeclarator<'a> {
 fn get_view_for_var_declarator<'a>(inner: &'a swc_ast::VarDeclarator, parent: Node<'a>, bump: &'a Bump) -> &'a VarDeclarator<'a> {
   let node = bump.alloc(VarDeclarator {
     inner,
-    parent: parent.to::<VarDecl>(),
+    parent: parent.expect::<VarDecl>(),
     name: unsafe { MaybeUninit::uninit().assume_init() },
     init: None,
   });
@@ -13156,7 +13156,7 @@ impl<'a> CastableNode<'a> for ExportNamespaceSpecifier<'a> {
 fn get_view_for_export_namespace_specifier<'a>(inner: &'a swc_ast::ExportNamespaceSpecifier, parent: Node<'a>, bump: &'a Bump) -> &'a ExportNamespaceSpecifier<'a> {
   let node = bump.alloc(ExportNamespaceSpecifier {
     inner,
-    parent: parent.to::<NamedExport>(),
+    parent: parent.expect::<NamedExport>(),
     name: unsafe { MaybeUninit::uninit().assume_init() },
   });
   let parent: Node<'a> = (&*node).into();
@@ -13705,7 +13705,7 @@ impl<'a> CastableNode<'a> for JSXClosingElement<'a> {
 fn get_view_for_jsxclosing_element<'a>(inner: &'a swc_ast::JSXClosingElement, parent: Node<'a>, bump: &'a Bump) -> &'a JSXClosingElement<'a> {
   let node = bump.alloc(JSXClosingElement {
     inner,
-    parent: parent.to::<JSXElement>(),
+    parent: parent.expect::<JSXElement>(),
     name: unsafe { MaybeUninit::uninit().assume_init() },
   });
   let parent: Node<'a> = (&*node).into();
@@ -14038,7 +14038,7 @@ impl<'a> CastableNode<'a> for Constructor<'a> {
 fn get_view_for_constructor<'a>(inner: &'a swc_ast::Constructor, parent: Node<'a>, bump: &'a Bump) -> &'a Constructor<'a> {
   let node = bump.alloc(Constructor {
     inner,
-    parent: parent.to::<Class>(),
+    parent: parent.expect::<Class>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     params: Vec::with_capacity(inner.params.len()),
     body: None,
@@ -14734,7 +14734,7 @@ impl<'a> CastableNode<'a> for ExportNamedSpecifier<'a> {
 fn get_view_for_export_named_specifier<'a>(inner: &'a swc_ast::ExportNamedSpecifier, parent: Node<'a>, bump: &'a Bump) -> &'a ExportNamedSpecifier<'a> {
   let node = bump.alloc(ExportNamedSpecifier {
     inner,
-    parent: parent.to::<NamedExport>(),
+    parent: parent.expect::<NamedExport>(),
     orig: unsafe { MaybeUninit::uninit().assume_init() },
     exported: None,
   });
@@ -15011,7 +15011,7 @@ impl<'a> CastableNode<'a> for ImportStarAsSpecifier<'a> {
 fn get_view_for_import_star_as_specifier<'a>(inner: &'a swc_ast::ImportStarAsSpecifier, parent: Node<'a>, bump: &'a Bump) -> &'a ImportStarAsSpecifier<'a> {
   let node = bump.alloc(ImportStarAsSpecifier {
     inner,
-    parent: parent.to::<ImportDecl>(),
+    parent: parent.expect::<ImportDecl>(),
     local: unsafe { MaybeUninit::uninit().assume_init() },
   });
   let parent: Node<'a> = (&*node).into();
@@ -15163,7 +15163,7 @@ impl<'a> CastableNode<'a> for PrivateMethod<'a> {
 fn get_view_for_private_method<'a>(inner: &'a swc_ast::PrivateMethod, parent: Node<'a>, bump: &'a Bump) -> &'a PrivateMethod<'a> {
   let node = bump.alloc(PrivateMethod {
     inner,
-    parent: parent.to::<Class>(),
+    parent: parent.expect::<Class>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     function: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -15466,7 +15466,7 @@ impl<'a> CastableNode<'a> for GetterProp<'a> {
 fn get_view_for_getter_prop<'a>(inner: &'a swc_ast::GetterProp, parent: Node<'a>, bump: &'a Bump) -> &'a GetterProp<'a> {
   let node = bump.alloc(GetterProp {
     inner,
-    parent: parent.to::<ObjectLit>(),
+    parent: parent.expect::<ObjectLit>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     type_ann: None,
     body: None,
@@ -15617,7 +15617,7 @@ impl<'a> CastableNode<'a> for ImportNamedSpecifier<'a> {
 fn get_view_for_import_named_specifier<'a>(inner: &'a swc_ast::ImportNamedSpecifier, parent: Node<'a>, bump: &'a Bump) -> &'a ImportNamedSpecifier<'a> {
   let node = bump.alloc(ImportNamedSpecifier {
     inner,
-    parent: parent.to::<ImportDecl>(),
+    parent: parent.expect::<ImportDecl>(),
     local: unsafe { MaybeUninit::uninit().assume_init() },
     imported: None,
   });
@@ -16360,7 +16360,7 @@ impl<'a> CastableNode<'a> for JSXOpeningElement<'a> {
 fn get_view_for_jsxopening_element<'a>(inner: &'a swc_ast::JSXOpeningElement, parent: Node<'a>, bump: &'a Bump) -> &'a JSXOpeningElement<'a> {
   let node = bump.alloc(JSXOpeningElement {
     inner,
-    parent: parent.to::<JSXElement>(),
+    parent: parent.expect::<JSXElement>(),
     name: unsafe { MaybeUninit::uninit().assume_init() },
     attrs: Vec::with_capacity(inner.attrs.len()),
     type_args: None,
@@ -16729,7 +16729,7 @@ impl<'a> CastableNode<'a> for KeyValuePatProp<'a> {
 fn get_view_for_key_value_pat_prop<'a>(inner: &'a swc_ast::KeyValuePatProp, parent: Node<'a>, bump: &'a Bump) -> &'a KeyValuePatProp<'a> {
   let node = bump.alloc(KeyValuePatProp {
     inner,
-    parent: parent.to::<ObjectPat>(),
+    parent: parent.expect::<ObjectPat>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     value: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -17146,7 +17146,7 @@ impl<'a> CastableNode<'a> for MethodProp<'a> {
 fn get_view_for_method_prop<'a>(inner: &'a swc_ast::MethodProp, parent: Node<'a>, bump: &'a Bump) -> &'a MethodProp<'a> {
   let node = bump.alloc(MethodProp {
     inner,
-    parent: parent.to::<ObjectLit>(),
+    parent: parent.expect::<ObjectLit>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     function: unsafe { MaybeUninit::uninit().assume_init() },
   });
