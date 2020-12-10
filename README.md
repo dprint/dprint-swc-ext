@@ -26,6 +26,10 @@ All:
 - `.lo_line_fast(module: &Module) -> usize`
 - `.hi_line() -> usize`
 - `.hi_line_fast(module: &Module) -> usize`
+- `.lo_column() -> usize`
+- `.lo_column_fast(module: &Module) -> usize`
+- `.hi_column() -> usize`
+- `.hi_column_fast(module: &Module) -> usize`
 - `.tokens() -> &[TokenAndSpan]` - All the descendant tokens within the span of the node.
 - `.tokens_fast(module: &Module) -> &[TokenAndSpan]`
 - `.children_with_tokens() -> Vec<NodeOrToken<'a>>` - Gets the children with the tokens found between the children
@@ -43,10 +47,8 @@ Node/enum node specific helpers:
 
 ## TODO
 
-- `.lo_column()`, `.hi_column()`
 - Right now this only works if analyzing one file at a time. It would be good to improve the API to accept a large
   collection of source files (should be easy).
-- More descriptive errors when using `.to::<NodeType>()` (show NodeKind)
 
 ## Example
 

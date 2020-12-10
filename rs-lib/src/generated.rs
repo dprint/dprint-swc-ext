@@ -193,7 +193,11 @@ impl<'a> Node<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(self).expect("Tried to cast node to incorrect type.")
+    if let Some(result) = T::try_cast(self) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", self.kind(), T::kind())
+    }
   }
 }
 
@@ -1184,6 +1188,172 @@ pub enum NodeKind {
   MethodProp,
 }
 
+impl std::fmt::Display for NodeKind {
+  fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    write!(f, "{}", match self {
+      NodeKind::SwitchCase => "SwitchCase",
+      NodeKind::ThrowStmt => "ThrowStmt",
+      NodeKind::JSXClosingFragment => "JSXClosingFragment",
+      NodeKind::BigInt => "BigInt",
+      NodeKind::ExportDefaultSpecifier => "ExportDefaultSpecifier",
+      NodeKind::TsTypeParam => "TsTypeParam",
+      NodeKind::WithStmt => "WithStmt",
+      NodeKind::Regex => "Regex",
+      NodeKind::TsMethodSignature => "TsMethodSignature",
+      NodeKind::UpdateExpr => "UpdateExpr",
+      NodeKind::SetterProp => "SetterProp",
+      NodeKind::TaggedTpl => "TaggedTpl",
+      NodeKind::ExportAll => "ExportAll",
+      NodeKind::TsModuleBlock => "TsModuleBlock",
+      NodeKind::SwitchStmt => "SwitchStmt",
+      NodeKind::TsEnumMember => "TsEnumMember",
+      NodeKind::TsIndexedAccessType => "TsIndexedAccessType",
+      NodeKind::TsRestType => "TsRestType",
+      NodeKind::ExprStmt => "ExprStmt",
+      NodeKind::TsOptionalType => "TsOptionalType",
+      NodeKind::Tpl => "Tpl",
+      NodeKind::Invalid => "Invalid",
+      NodeKind::ComputedPropName => "ComputedPropName",
+      NodeKind::TsFnType => "TsFnType",
+      NodeKind::BlockStmt => "BlockStmt",
+      NodeKind::TsTypeAliasDecl => "TsTypeAliasDecl",
+      NodeKind::MemberExpr => "MemberExpr",
+      NodeKind::Function => "Function",
+      NodeKind::ImportDecl => "ImportDecl",
+      NodeKind::TsTypePredicate => "TsTypePredicate",
+      NodeKind::YieldExpr => "YieldExpr",
+      NodeKind::KeyValueProp => "KeyValueProp",
+      NodeKind::Param => "Param",
+      NodeKind::JSXFragment => "JSXFragment",
+      NodeKind::ImportDefaultSpecifier => "ImportDefaultSpecifier",
+      NodeKind::Number => "Number",
+      NodeKind::JSXAttr => "JSXAttr",
+      NodeKind::ParenExpr => "ParenExpr",
+      NodeKind::Super => "Super",
+      NodeKind::TsConstructorType => "TsConstructorType",
+      NodeKind::Class => "Class",
+      NodeKind::RestPat => "RestPat",
+      NodeKind::TsNamespaceExportDecl => "TsNamespaceExportDecl",
+      NodeKind::JSXOpeningFragment => "JSXOpeningFragment",
+      NodeKind::NewExpr => "NewExpr",
+      NodeKind::FnExpr => "FnExpr",
+      NodeKind::IfStmt => "IfStmt",
+      NodeKind::TsParenthesizedType => "TsParenthesizedType",
+      NodeKind::AssignPatProp => "AssignPatProp",
+      NodeKind::TsImportType => "TsImportType",
+      NodeKind::Bool => "Bool",
+      NodeKind::TsImportEqualsDecl => "TsImportEqualsDecl",
+      NodeKind::AssignProp => "AssignProp",
+      NodeKind::TsInterfaceDecl => "TsInterfaceDecl",
+      NodeKind::JSXEmptyExpr => "JSXEmptyExpr",
+      NodeKind::TsQualifiedName => "TsQualifiedName",
+      NodeKind::ExportDecl => "ExportDecl",
+      NodeKind::CatchClause => "CatchClause",
+      NodeKind::LabeledStmt => "LabeledStmt",
+      NodeKind::ContinueStmt => "ContinueStmt",
+      NodeKind::TsConstructSignatureDecl => "TsConstructSignatureDecl",
+      NodeKind::TsEnumDecl => "TsEnumDecl",
+      NodeKind::OptChainExpr => "OptChainExpr",
+      NodeKind::TsNamespaceDecl => "TsNamespaceDecl",
+      NodeKind::SeqExpr => "SeqExpr",
+      NodeKind::TsExternalModuleRef => "TsExternalModuleRef",
+      NodeKind::TsTypeParamInstantiation => "TsTypeParamInstantiation",
+      NodeKind::ReturnStmt => "ReturnStmt",
+      NodeKind::TsTplLitType => "TsTplLitType",
+      NodeKind::ExportDefaultExpr => "ExportDefaultExpr",
+      NodeKind::TsCallSignatureDecl => "TsCallSignatureDecl",
+      NodeKind::AwaitExpr => "AwaitExpr",
+      NodeKind::ClassMethod => "ClassMethod",
+      NodeKind::TsParamProp => "TsParamProp",
+      NodeKind::ClassProp => "ClassProp",
+      NodeKind::TsTypeAnn => "TsTypeAnn",
+      NodeKind::ForStmt => "ForStmt",
+      NodeKind::ObjectPat => "ObjectPat",
+      NodeKind::TsTypeQuery => "TsTypeQuery",
+      NodeKind::ThisExpr => "ThisExpr",
+      NodeKind::DebuggerStmt => "DebuggerStmt",
+      NodeKind::TsTypeParamDecl => "TsTypeParamDecl",
+      NodeKind::TsTypeAssertion => "TsTypeAssertion",
+      NodeKind::TplElement => "TplElement",
+      NodeKind::TsKeywordType => "TsKeywordType",
+      NodeKind::JSXSpreadChild => "JSXSpreadChild",
+      NodeKind::TsIntersectionType => "TsIntersectionType",
+      NodeKind::MetaPropExpr => "MetaPropExpr",
+      NodeKind::ExprOrSpread => "ExprOrSpread",
+      NodeKind::TsArrayType => "TsArrayType",
+      NodeKind::TsTypeRef => "TsTypeRef",
+      NodeKind::TsThisType => "TsThisType",
+      NodeKind::TryStmt => "TryStmt",
+      NodeKind::CallExpr => "CallExpr",
+      NodeKind::TsMappedType => "TsMappedType",
+      NodeKind::JSXExprContainer => "JSXExprContainer",
+      NodeKind::PrivateProp => "PrivateProp",
+      NodeKind::TsExportAssignment => "TsExportAssignment",
+      NodeKind::TsInterfaceBody => "TsInterfaceBody",
+      NodeKind::TsTupleElement => "TsTupleElement",
+      NodeKind::VarDeclarator => "VarDeclarator",
+      NodeKind::JSXMemberExpr => "JSXMemberExpr",
+      NodeKind::TsConstAssertion => "TsConstAssertion",
+      NodeKind::ExportNamespaceSpecifier => "ExportNamespaceSpecifier",
+      NodeKind::ObjectLit => "ObjectLit",
+      NodeKind::Module => "Module",
+      NodeKind::TsIndexSignature => "TsIndexSignature",
+      NodeKind::TsTypeCastExpr => "TsTypeCastExpr",
+      NodeKind::TsTupleType => "TsTupleType",
+      NodeKind::Null => "Null",
+      NodeKind::TsTypeOperator => "TsTypeOperator",
+      NodeKind::JSXClosingElement => "JSXClosingElement",
+      NodeKind::BinExpr => "BinExpr",
+      NodeKind::UnaryExpr => "UnaryExpr",
+      NodeKind::TsPropertySignature => "TsPropertySignature",
+      NodeKind::Constructor => "Constructor",
+      NodeKind::FnDecl => "FnDecl",
+      NodeKind::TsNonNullExpr => "TsNonNullExpr",
+      NodeKind::ClassExpr => "ClassExpr",
+      NodeKind::ForInStmt => "ForInStmt",
+      NodeKind::EmptyStmt => "EmptyStmt",
+      NodeKind::WhileStmt => "WhileStmt",
+      NodeKind::Str => "Str",
+      NodeKind::TsExprWithTypeArgs => "TsExprWithTypeArgs",
+      NodeKind::AssignPat => "AssignPat",
+      NodeKind::ExportNamedSpecifier => "ExportNamedSpecifier",
+      NodeKind::TsConditionalType => "TsConditionalType",
+      NodeKind::TsTypeLit => "TsTypeLit",
+      NodeKind::BreakStmt => "BreakStmt",
+      NodeKind::ImportStarAsSpecifier => "ImportStarAsSpecifier",
+      NodeKind::TsInferType => "TsInferType",
+      NodeKind::PrivateMethod => "PrivateMethod",
+      NodeKind::ForOfStmt => "ForOfStmt",
+      NodeKind::TsUnionType => "TsUnionType",
+      NodeKind::TsModuleDecl => "TsModuleDecl",
+      NodeKind::GetterProp => "GetterProp",
+      NodeKind::CondExpr => "CondExpr",
+      NodeKind::ImportNamedSpecifier => "ImportNamedSpecifier",
+      NodeKind::NamedExport => "NamedExport",
+      NodeKind::JSXElement => "JSXElement",
+      NodeKind::ClassDecl => "ClassDecl",
+      NodeKind::ArrayPat => "ArrayPat",
+      NodeKind::DoWhileStmt => "DoWhileStmt",
+      NodeKind::JSXText => "JSXText",
+      NodeKind::VarDecl => "VarDecl",
+      NodeKind::PrivateName => "PrivateName",
+      NodeKind::JSXNamespacedName => "JSXNamespacedName",
+      NodeKind::JSXOpeningElement => "JSXOpeningElement",
+      NodeKind::SpreadElement => "SpreadElement",
+      NodeKind::ExportDefaultDecl => "ExportDefaultDecl",
+      NodeKind::ArrowExpr => "ArrowExpr",
+      NodeKind::TsAsExpr => "TsAsExpr",
+      NodeKind::KeyValuePatProp => "KeyValuePatProp",
+      NodeKind::TsLitType => "TsLitType",
+      NodeKind::AssignExpr => "AssignExpr",
+      NodeKind::ArrayLit => "ArrayLit",
+      NodeKind::Decorator => "Decorator",
+      NodeKind::Ident => "Ident",
+      NodeKind::MethodProp => "MethodProp",
+    })
+  }
+}
+
 
 pub enum JSXAttrValue<'a> {
   Lit(Lit<'a>),
@@ -1198,7 +1368,12 @@ impl<'a> JSXAttrValue<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -1283,7 +1458,12 @@ impl<'a> PropOrSpread<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -1353,7 +1533,12 @@ impl<'a> VarDeclOrExpr<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -1423,7 +1608,12 @@ impl<'a> TsThisTypeOrIdent<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -1500,7 +1690,12 @@ impl<'a> Prop<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -1598,7 +1793,12 @@ impl<'a> TsTypeQueryExpr<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -1670,7 +1870,12 @@ impl<'a> TsNamespaceBody<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -1745,7 +1950,12 @@ impl<'a> Lit<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -1851,7 +2061,12 @@ impl<'a> ImportSpecifier<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -1929,7 +2144,12 @@ impl<'a> ExportSpecifier<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -2024,7 +2244,12 @@ impl<'a> Stmt<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -2219,7 +2444,12 @@ impl<'a> Pat<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -2324,7 +2554,12 @@ impl<'a> TsModuleName<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -2396,7 +2631,12 @@ impl<'a> TsFnParam<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -2487,7 +2727,12 @@ impl<'a> ClassMember<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -2592,7 +2837,12 @@ impl<'a> VarDeclOrPat<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -2662,7 +2912,12 @@ impl<'a> TsModuleRef<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -2732,7 +2987,12 @@ impl<'a> JSXAttrOrSpread<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -2802,7 +3062,12 @@ impl<'a> ParamOrTsParamProp<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -2872,7 +3137,12 @@ impl<'a> ExprOrSuper<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -2945,7 +3215,12 @@ impl<'a> TsTypeElement<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -3036,7 +3311,12 @@ impl<'a> BlockStmtOrExpr<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -3106,7 +3386,12 @@ impl<'a> TsUnionOrIntersectionType<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -3177,7 +3462,12 @@ impl<'a> DefaultDecl<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -3256,7 +3546,12 @@ impl<'a> TsEnumMemberId<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -3326,7 +3621,12 @@ impl<'a> TsParamPropParam<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -3399,7 +3699,12 @@ impl<'a> JSXElementChild<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -3490,7 +3795,12 @@ impl<'a> ModuleItem<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -3565,7 +3875,12 @@ impl<'a> PropName<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -3656,7 +3971,12 @@ impl<'a> JSXAttrName<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -3731,7 +4051,12 @@ impl<'a> Decl<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -3839,7 +4164,12 @@ impl<'a> TsLit<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -3930,7 +4260,12 @@ impl<'a> TsEntityName<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -4041,7 +4376,12 @@ impl<'a> Expr<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -4350,7 +4690,12 @@ impl<'a> JSXObject<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -4420,7 +4765,12 @@ impl<'a> PatOrExpr<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -4497,7 +4847,12 @@ impl<'a> ModuleDecl<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -4617,7 +4972,12 @@ impl<'a> JSXElementName<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -4694,7 +5054,12 @@ impl<'a> JSXExpr<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -4782,7 +5147,12 @@ impl<'a> TsType<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -4979,7 +5349,12 @@ impl<'a> ObjectPatProp<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -5056,7 +5431,12 @@ impl<'a> TsFnOrConstructorType<'a> {
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::try_cast(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
   }
 }
 
@@ -5169,6 +5549,9 @@ impl<'a> CastableNode<'a> for SwitchCase<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::SwitchCase
+  }
 }
 
 fn get_view_for_switch_case<'a>(inner: &'a swc_ast::SwitchCase, parent: Node<'a>, bump: &'a Bump) -> &'a SwitchCase<'a> {
@@ -5234,6 +5617,9 @@ impl<'a> CastableNode<'a> for ThrowStmt<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::ThrowStmt
+  }
 }
 
 fn get_view_for_throw_stmt<'a>(inner: &'a swc_ast::ThrowStmt, parent: Node<'a>, bump: &'a Bump) -> &'a ThrowStmt<'a> {
@@ -5290,6 +5676,9 @@ impl<'a> CastableNode<'a> for JSXClosingFragment<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::JSXClosingFragment
   }
 }
 
@@ -5351,6 +5740,9 @@ impl<'a> CastableNode<'a> for BigInt<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::BigInt
+  }
 }
 
 fn get_view_for_big_int<'a>(inner: &'a swc_ast::BigInt, parent: Node<'a>, bump: &'a Bump) -> &'a BigInt<'a> {
@@ -5407,6 +5799,9 @@ impl<'a> CastableNode<'a> for ExportDefaultSpecifier<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::ExportDefaultSpecifier
   }
 }
 
@@ -5475,6 +5870,9 @@ impl<'a> CastableNode<'a> for TsTypeParam<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::TsTypeParam
   }
 }
 
@@ -5548,6 +5946,9 @@ impl<'a> CastableNode<'a> for WithStmt<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::WithStmt
+  }
 }
 
 fn get_view_for_with_stmt<'a>(inner: &'a swc_ast::WithStmt, parent: Node<'a>, bump: &'a Bump) -> &'a WithStmt<'a> {
@@ -5616,6 +6017,9 @@ impl<'a> CastableNode<'a> for Regex<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::Regex
   }
 }
 
@@ -5700,6 +6104,9 @@ impl<'a> CastableNode<'a> for TsMethodSignature<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsMethodSignature
+  }
 }
 
 fn get_view_for_ts_method_signature<'a>(inner: &'a swc_ast::TsMethodSignature, parent: Node<'a>, bump: &'a Bump) -> &'a TsMethodSignature<'a> {
@@ -5782,6 +6189,9 @@ impl<'a> CastableNode<'a> for UpdateExpr<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::UpdateExpr
+  }
 }
 
 fn get_view_for_update_expr<'a>(inner: &'a swc_ast::UpdateExpr, parent: Node<'a>, bump: &'a Bump) -> &'a UpdateExpr<'a> {
@@ -5847,6 +6257,9 @@ impl<'a> CastableNode<'a> for SetterProp<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::SetterProp
   }
 }
 
@@ -5927,6 +6340,9 @@ impl<'a> CastableNode<'a> for TaggedTpl<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TaggedTpl
+  }
 }
 
 fn get_view_for_tagged_tpl<'a>(inner: &'a swc_ast::TaggedTpl, parent: Node<'a>, bump: &'a Bump) -> &'a TaggedTpl<'a> {
@@ -5997,6 +6413,9 @@ impl<'a> CastableNode<'a> for ExportAll<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::ExportAll
+  }
 }
 
 fn get_view_for_export_all<'a>(inner: &'a swc_ast::ExportAll, parent: Node<'a>, bump: &'a Bump) -> &'a ExportAll<'a> {
@@ -6058,6 +6477,9 @@ impl<'a> CastableNode<'a> for TsModuleBlock<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::TsModuleBlock
   }
 }
 
@@ -6122,6 +6544,9 @@ impl<'a> CastableNode<'a> for SwitchStmt<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::SwitchStmt
   }
 }
 
@@ -6188,6 +6613,9 @@ impl<'a> CastableNode<'a> for TsEnumMember<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::TsEnumMember
   }
 }
 
@@ -6262,6 +6690,9 @@ impl<'a> CastableNode<'a> for TsIndexedAccessType<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsIndexedAccessType
+  }
 }
 
 fn get_view_for_ts_indexed_access_type<'a>(inner: &'a swc_ast::TsIndexedAccessType, parent: Node<'a>, bump: &'a Bump) -> &'a TsIndexedAccessType<'a> {
@@ -6324,6 +6755,9 @@ impl<'a> CastableNode<'a> for TsRestType<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsRestType
+  }
 }
 
 fn get_view_for_ts_rest_type<'a>(inner: &'a swc_ast::TsRestType, parent: Node<'a>, bump: &'a Bump) -> &'a TsRestType<'a> {
@@ -6384,6 +6818,9 @@ impl<'a> CastableNode<'a> for ExprStmt<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::ExprStmt
+  }
 }
 
 fn get_view_for_expr_stmt<'a>(inner: &'a swc_ast::ExprStmt, parent: Node<'a>, bump: &'a Bump) -> &'a ExprStmt<'a> {
@@ -6443,6 +6880,9 @@ impl<'a> CastableNode<'a> for TsOptionalType<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::TsOptionalType
   }
 }
 
@@ -6510,6 +6950,9 @@ impl<'a> CastableNode<'a> for Tpl<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::Tpl
+  }
 }
 
 fn get_view_for_tpl<'a>(inner: &'a swc_ast::Tpl, parent: Node<'a>, bump: &'a Bump) -> &'a Tpl<'a> {
@@ -6570,6 +7013,9 @@ impl<'a> CastableNode<'a> for Invalid<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::Invalid
+  }
 }
 
 fn get_view_for_invalid<'a>(inner: &'a swc_ast::Invalid, parent: Node<'a>, bump: &'a Bump) -> &'a Invalid<'a> {
@@ -6626,6 +7072,9 @@ impl<'a> CastableNode<'a> for ComputedPropName<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::ComputedPropName
   }
 }
 
@@ -6694,6 +7143,9 @@ impl<'a> CastableNode<'a> for TsFnType<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::TsFnType
   }
 }
 
@@ -6764,6 +7216,9 @@ impl<'a> CastableNode<'a> for BlockStmt<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::BlockStmt
   }
 }
 
@@ -6836,6 +7291,9 @@ impl<'a> CastableNode<'a> for TsTypeAliasDecl<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::TsTypeAliasDecl
   }
 }
 
@@ -6911,6 +7369,9 @@ impl<'a> CastableNode<'a> for MemberExpr<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::MemberExpr
   }
 }
 
@@ -7005,6 +7466,9 @@ impl<'a> CastableNode<'a> for Function<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::Function
+  }
 }
 
 fn get_view_for_function<'a>(inner: &'a swc_ast::Function, parent: Node<'a>, bump: &'a Bump) -> &'a Function<'a> {
@@ -7096,6 +7560,9 @@ impl<'a> CastableNode<'a> for ImportDecl<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::ImportDecl
+  }
 }
 
 fn get_view_for_import_decl<'a>(inner: &'a swc_ast::ImportDecl, parent: Node<'a>, bump: &'a Bump) -> &'a ImportDecl<'a> {
@@ -7173,6 +7640,9 @@ impl<'a> CastableNode<'a> for TsTypePredicate<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsTypePredicate
+  }
 }
 
 fn get_view_for_ts_type_predicate<'a>(inner: &'a swc_ast::TsTypePredicate, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypePredicate<'a> {
@@ -7246,6 +7716,9 @@ impl<'a> CastableNode<'a> for YieldExpr<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::YieldExpr
+  }
 }
 
 fn get_view_for_yield_expr<'a>(inner: &'a swc_ast::YieldExpr, parent: Node<'a>, bump: &'a Bump) -> &'a YieldExpr<'a> {
@@ -7310,6 +7783,9 @@ impl<'a> CastableNode<'a> for KeyValueProp<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::KeyValueProp
   }
 }
 
@@ -7376,6 +7852,9 @@ impl<'a> CastableNode<'a> for Param<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::Param
   }
 }
 
@@ -7445,6 +7924,9 @@ impl<'a> CastableNode<'a> for JSXFragment<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::JSXFragment
+  }
 }
 
 fn get_view_for_jsxfragment<'a>(inner: &'a swc_ast::JSXFragment, parent: Node<'a>, bump: &'a Bump) -> &'a JSXFragment<'a> {
@@ -7509,6 +7991,9 @@ impl<'a> CastableNode<'a> for ImportDefaultSpecifier<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::ImportDefaultSpecifier
   }
 }
 
@@ -7576,6 +8061,9 @@ impl<'a> CastableNode<'a> for Number<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::Number
+  }
 }
 
 fn get_view_for_number<'a>(inner: &'a swc_ast::Number, parent: Node<'a>, bump: &'a Bump) -> &'a Number<'a> {
@@ -7637,6 +8125,9 @@ impl<'a> CastableNode<'a> for JSXAttr<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::JSXAttr
   }
 }
 
@@ -7703,6 +8194,9 @@ impl<'a> CastableNode<'a> for ParenExpr<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::ParenExpr
+  }
 }
 
 fn get_view_for_paren_expr<'a>(inner: &'a swc_ast::ParenExpr, parent: Node<'a>, bump: &'a Bump) -> &'a ParenExpr<'a> {
@@ -7759,6 +8253,9 @@ impl<'a> CastableNode<'a> for Super<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::Super
   }
 }
 
@@ -7824,6 +8321,9 @@ impl<'a> CastableNode<'a> for TsConstructorType<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::TsConstructorType
   }
 }
 
@@ -7921,6 +8421,9 @@ impl<'a> CastableNode<'a> for Class<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::Class
+  }
 }
 
 fn get_view_for_class<'a>(inner: &'a swc_ast::Class, parent: Node<'a>, bump: &'a Bump) -> &'a Class<'a> {
@@ -8011,6 +8514,9 @@ impl<'a> CastableNode<'a> for RestPat<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::RestPat
+  }
 }
 
 fn get_view_for_rest_pat<'a>(inner: &'a swc_ast::RestPat, parent: Node<'a>, bump: &'a Bump) -> &'a RestPat<'a> {
@@ -8076,6 +8582,9 @@ impl<'a> CastableNode<'a> for TsNamespaceExportDecl<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsNamespaceExportDecl
+  }
 }
 
 fn get_view_for_ts_namespace_export_decl<'a>(inner: &'a swc_ast::TsNamespaceExportDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsNamespaceExportDecl<'a> {
@@ -8132,6 +8641,9 @@ impl<'a> CastableNode<'a> for JSXOpeningFragment<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::JSXOpeningFragment
   }
 }
 
@@ -8199,6 +8711,9 @@ impl<'a> CastableNode<'a> for NewExpr<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::NewExpr
   }
 }
 
@@ -8275,6 +8790,9 @@ impl<'a> CastableNode<'a> for FnExpr<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::FnExpr
+  }
 }
 
 fn get_view_for_fn_expr<'a>(inner: &'a swc_ast::FnExpr, parent: Node<'a>, bump: &'a Bump) -> &'a FnExpr<'a> {
@@ -8346,6 +8864,9 @@ impl<'a> CastableNode<'a> for IfStmt<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::IfStmt
+  }
 }
 
 fn get_view_for_if_stmt<'a>(inner: &'a swc_ast::IfStmt, parent: Node<'a>, bump: &'a Bump) -> &'a IfStmt<'a> {
@@ -8413,6 +8934,9 @@ impl<'a> CastableNode<'a> for TsParenthesizedType<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsParenthesizedType
+  }
 }
 
 fn get_view_for_ts_parenthesized_type<'a>(inner: &'a swc_ast::TsParenthesizedType, parent: Node<'a>, bump: &'a Bump) -> &'a TsParenthesizedType<'a> {
@@ -8477,6 +9001,9 @@ impl<'a> CastableNode<'a> for AssignPatProp<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::AssignPatProp
   }
 }
 
@@ -8551,6 +9078,9 @@ impl<'a> CastableNode<'a> for TsImportType<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsImportType
+  }
 }
 
 fn get_view_for_ts_import_type<'a>(inner: &'a swc_ast::TsImportType, parent: Node<'a>, bump: &'a Bump) -> &'a TsImportType<'a> {
@@ -8624,6 +9154,9 @@ impl<'a> CastableNode<'a> for Bool<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::Bool
+  }
 }
 
 fn get_view_for_bool<'a>(inner: &'a swc_ast::Bool, parent: Node<'a>, bump: &'a Bump) -> &'a Bool<'a> {
@@ -8693,6 +9226,9 @@ impl<'a> CastableNode<'a> for TsImportEqualsDecl<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsImportEqualsDecl
+  }
 }
 
 fn get_view_for_ts_import_equals_decl<'a>(inner: &'a swc_ast::TsImportEqualsDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsImportEqualsDecl<'a> {
@@ -8756,6 +9292,9 @@ impl<'a> CastableNode<'a> for AssignProp<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::AssignProp
   }
 }
 
@@ -8835,6 +9374,9 @@ impl<'a> CastableNode<'a> for TsInterfaceDecl<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsInterfaceDecl
+  }
 }
 
 fn get_view_for_ts_interface_decl<'a>(inner: &'a swc_ast::TsInterfaceDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsInterfaceDecl<'a> {
@@ -8901,6 +9443,9 @@ impl<'a> CastableNode<'a> for JSXEmptyExpr<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::JSXEmptyExpr
+  }
 }
 
 fn get_view_for_jsxempty_expr<'a>(inner: &'a swc_ast::JSXEmptyExpr, parent: Node<'a>, bump: &'a Bump) -> &'a JSXEmptyExpr<'a> {
@@ -8959,6 +9504,9 @@ impl<'a> CastableNode<'a> for TsQualifiedName<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::TsQualifiedName
   }
 }
 
@@ -9021,6 +9569,9 @@ impl<'a> CastableNode<'a> for ExportDecl<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::ExportDecl
   }
 }
 
@@ -9090,6 +9641,9 @@ impl<'a> CastableNode<'a> for CatchClause<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::CatchClause
+  }
 }
 
 fn get_view_for_catch_clause<'a>(inner: &'a swc_ast::CatchClause, parent: Node<'a>, bump: &'a Bump) -> &'a CatchClause<'a> {
@@ -9157,6 +9711,9 @@ impl<'a> CastableNode<'a> for LabeledStmt<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::LabeledStmt
+  }
 }
 
 fn get_view_for_labeled_stmt<'a>(inner: &'a swc_ast::LabeledStmt, parent: Node<'a>, bump: &'a Bump) -> &'a LabeledStmt<'a> {
@@ -9220,6 +9777,9 @@ impl<'a> CastableNode<'a> for ContinueStmt<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::ContinueStmt
   }
 }
 
@@ -9293,6 +9853,9 @@ impl<'a> CastableNode<'a> for TsConstructSignatureDecl<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::TsConstructSignatureDecl
   }
 }
 
@@ -9378,6 +9941,9 @@ impl<'a> CastableNode<'a> for TsEnumDecl<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsEnumDecl
+  }
 }
 
 fn get_view_for_ts_enum_decl<'a>(inner: &'a swc_ast::TsEnumDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsEnumDecl<'a> {
@@ -9445,6 +10011,9 @@ impl<'a> CastableNode<'a> for OptChainExpr<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::OptChainExpr
   }
 }
 
@@ -9519,6 +10088,9 @@ impl<'a> CastableNode<'a> for TsNamespaceDecl<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsNamespaceDecl
+  }
 }
 
 fn get_view_for_ts_namespace_decl<'a>(inner: &'a swc_ast::TsNamespaceDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsNamespaceDecl<'a> {
@@ -9583,6 +10155,9 @@ impl<'a> CastableNode<'a> for SeqExpr<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::SeqExpr
+  }
 }
 
 fn get_view_for_seq_expr<'a>(inner: &'a swc_ast::SeqExpr, parent: Node<'a>, bump: &'a Bump) -> &'a SeqExpr<'a> {
@@ -9642,6 +10217,9 @@ impl<'a> CastableNode<'a> for TsExternalModuleRef<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::TsExternalModuleRef
   }
 }
 
@@ -9705,6 +10283,9 @@ impl<'a> CastableNode<'a> for TsTypeParamInstantiation<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsTypeParamInstantiation
+  }
 }
 
 fn get_view_for_ts_type_param_instantiation<'a>(inner: &'a swc_ast::TsTypeParamInstantiation, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeParamInstantiation<'a> {
@@ -9766,6 +10347,9 @@ impl<'a> CastableNode<'a> for ReturnStmt<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::ReturnStmt
   }
 }
 
@@ -9836,6 +10420,9 @@ impl<'a> CastableNode<'a> for TsTplLitType<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsTplLitType
+  }
 }
 
 fn get_view_for_ts_tpl_lit_type<'a>(inner: &'a swc_ast::TsTplLitType, parent: Node<'a>, bump: &'a Bump) -> &'a TsTplLitType<'a> {
@@ -9897,6 +10484,9 @@ impl<'a> CastableNode<'a> for ExportDefaultExpr<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::ExportDefaultExpr
   }
 }
 
@@ -9968,6 +10558,9 @@ impl<'a> CastableNode<'a> for TsCallSignatureDecl<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsCallSignatureDecl
+  }
 }
 
 fn get_view_for_ts_call_signature_decl<'a>(inner: &'a swc_ast::TsCallSignatureDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsCallSignatureDecl<'a> {
@@ -10037,6 +10630,9 @@ impl<'a> CastableNode<'a> for AwaitExpr<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::AwaitExpr
   }
 }
 
@@ -10124,6 +10720,9 @@ impl<'a> CastableNode<'a> for ClassMethod<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::ClassMethod
+  }
 }
 
 fn get_view_for_class_method<'a>(inner: &'a swc_ast::ClassMethod, parent: Node<'a>, bump: &'a Bump) -> &'a ClassMethod<'a> {
@@ -10200,6 +10799,9 @@ impl<'a> CastableNode<'a> for TsParamProp<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::TsParamProp
   }
 }
 
@@ -10311,6 +10913,9 @@ impl<'a> CastableNode<'a> for ClassProp<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::ClassProp
+  }
 }
 
 fn get_view_for_class_prop<'a>(inner: &'a swc_ast::ClassProp, parent: Node<'a>, bump: &'a Bump) -> &'a ClassProp<'a> {
@@ -10383,6 +10988,9 @@ impl<'a> CastableNode<'a> for TsTypeAnn<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsTypeAnn
+  }
 }
 
 fn get_view_for_ts_type_ann<'a>(inner: &'a swc_ast::TsTypeAnn, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeAnn<'a> {
@@ -10454,6 +11062,9 @@ impl<'a> CastableNode<'a> for ForStmt<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::ForStmt
   }
 }
 
@@ -10543,6 +11154,9 @@ impl<'a> CastableNode<'a> for ObjectPat<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::ObjectPat
+  }
 }
 
 fn get_view_for_object_pat<'a>(inner: &'a swc_ast::ObjectPat, parent: Node<'a>, bump: &'a Bump) -> &'a ObjectPat<'a> {
@@ -10609,6 +11223,9 @@ impl<'a> CastableNode<'a> for TsTypeQuery<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsTypeQuery
+  }
 }
 
 fn get_view_for_ts_type_query<'a>(inner: &'a swc_ast::TsTypeQuery, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeQuery<'a> {
@@ -10666,6 +11283,9 @@ impl<'a> CastableNode<'a> for ThisExpr<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::ThisExpr
+  }
 }
 
 fn get_view_for_this_expr<'a>(inner: &'a swc_ast::ThisExpr, parent: Node<'a>, bump: &'a Bump) -> &'a ThisExpr<'a> {
@@ -10719,6 +11339,9 @@ impl<'a> CastableNode<'a> for DebuggerStmt<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::DebuggerStmt
   }
 }
 
@@ -10778,6 +11401,9 @@ impl<'a> CastableNode<'a> for TsTypeParamDecl<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::TsTypeParamDecl
   }
 }
 
@@ -10840,6 +11466,9 @@ impl<'a> CastableNode<'a> for TsTypeAssertion<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::TsTypeAssertion
   }
 }
 
@@ -10913,6 +11542,9 @@ impl<'a> CastableNode<'a> for TplElement<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TplElement
+  }
 }
 
 fn get_view_for_tpl_element<'a>(inner: &'a swc_ast::TplElement, parent: Node<'a>, bump: &'a Bump) -> &'a TplElement<'a> {
@@ -10981,6 +11613,9 @@ impl<'a> CastableNode<'a> for TsKeywordType<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsKeywordType
+  }
 }
 
 fn get_view_for_ts_keyword_type<'a>(inner: &'a swc_ast::TsKeywordType, parent: Node<'a>, bump: &'a Bump) -> &'a TsKeywordType<'a> {
@@ -11037,6 +11672,9 @@ impl<'a> CastableNode<'a> for JSXSpreadChild<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::JSXSpreadChild
   }
 }
 
@@ -11100,6 +11738,9 @@ impl<'a> CastableNode<'a> for TsIntersectionType<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsIntersectionType
+  }
 }
 
 fn get_view_for_ts_intersection_type<'a>(inner: &'a swc_ast::TsIntersectionType, parent: Node<'a>, bump: &'a Bump) -> &'a TsIntersectionType<'a> {
@@ -11161,6 +11802,9 @@ impl<'a> CastableNode<'a> for MetaPropExpr<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::MetaPropExpr
   }
 }
 
@@ -11230,6 +11874,9 @@ impl<'a> CastableNode<'a> for ExprOrSpread<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::ExprOrSpread
+  }
 }
 
 fn get_view_for_expr_or_spread<'a>(inner: &'a swc_ast::ExprOrSpread, parent: Node<'a>, bump: &'a Bump) -> &'a ExprOrSpread<'a> {
@@ -11289,6 +11936,9 @@ impl<'a> CastableNode<'a> for TsArrayType<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::TsArrayType
   }
 }
 
@@ -11354,6 +12004,9 @@ impl<'a> CastableNode<'a> for TsTypeRef<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsTypeRef
+  }
 }
 
 fn get_view_for_ts_type_ref<'a>(inner: &'a swc_ast::TsTypeRef, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeRef<'a> {
@@ -11415,6 +12068,9 @@ impl<'a> CastableNode<'a> for TsThisType<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::TsThisType
   }
 }
 
@@ -11480,6 +12136,9 @@ impl<'a> CastableNode<'a> for TryStmt<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::TryStmt
   }
 }
 
@@ -11558,6 +12217,9 @@ impl<'a> CastableNode<'a> for CallExpr<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::CallExpr
   }
 }
 
@@ -11644,6 +12306,9 @@ impl<'a> CastableNode<'a> for TsMappedType<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsMappedType
+  }
 }
 
 fn get_view_for_ts_mapped_type<'a>(inner: &'a swc_ast::TsMappedType, parent: Node<'a>, bump: &'a Bump) -> &'a TsMappedType<'a> {
@@ -11713,6 +12378,9 @@ impl<'a> CastableNode<'a> for JSXExprContainer<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::JSXExprContainer
   }
 }
 
@@ -11818,6 +12486,9 @@ impl<'a> CastableNode<'a> for PrivateProp<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::PrivateProp
+  }
 }
 
 fn get_view_for_private_prop<'a>(inner: &'a swc_ast::PrivateProp, parent: Node<'a>, bump: &'a Bump) -> &'a PrivateProp<'a> {
@@ -11893,6 +12564,9 @@ impl<'a> CastableNode<'a> for TsExportAssignment<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsExportAssignment
+  }
 }
 
 fn get_view_for_ts_export_assignment<'a>(inner: &'a swc_ast::TsExportAssignment, parent: Node<'a>, bump: &'a Bump) -> &'a TsExportAssignment<'a> {
@@ -11954,6 +12628,9 @@ impl<'a> CastableNode<'a> for TsInterfaceBody<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::TsInterfaceBody
   }
 }
 
@@ -12019,6 +12696,9 @@ impl<'a> CastableNode<'a> for TsTupleElement<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::TsTupleElement
   }
 }
 
@@ -12097,6 +12777,9 @@ impl<'a> CastableNode<'a> for VarDeclarator<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::VarDeclarator
+  }
 }
 
 fn get_view_for_var_declarator<'a>(inner: &'a swc_ast::VarDeclarator, parent: Node<'a>, bump: &'a Bump) -> &'a VarDeclarator<'a> {
@@ -12164,6 +12847,9 @@ impl<'a> CastableNode<'a> for JSXMemberExpr<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::JSXMemberExpr
+  }
 }
 
 fn get_view_for_jsxmember_expr<'a>(inner: &'a swc_ast::JSXMemberExpr, parent: Node<'a>, bump: &'a Bump) -> &'a JSXMemberExpr<'a> {
@@ -12226,6 +12912,9 @@ impl<'a> CastableNode<'a> for TsConstAssertion<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsConstAssertion
+  }
 }
 
 fn get_view_for_ts_const_assertion<'a>(inner: &'a swc_ast::TsConstAssertion, parent: Node<'a>, bump: &'a Bump) -> &'a TsConstAssertion<'a> {
@@ -12286,6 +12975,9 @@ impl<'a> CastableNode<'a> for ExportNamespaceSpecifier<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::ExportNamespaceSpecifier
   }
 }
 
@@ -12349,6 +13041,9 @@ impl<'a> CastableNode<'a> for ObjectLit<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::ObjectLit
   }
 }
 
@@ -12419,6 +13114,9 @@ impl<'a> CastableNode<'a> for Module<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::Module
   }
 }
 
@@ -12501,6 +13199,9 @@ impl<'a> CastableNode<'a> for TsIndexSignature<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsIndexSignature
+  }
 }
 
 fn get_view_for_ts_index_signature<'a>(inner: &'a swc_ast::TsIndexSignature, parent: Node<'a>, bump: &'a Bump) -> &'a TsIndexSignature<'a> {
@@ -12568,6 +13269,9 @@ impl<'a> CastableNode<'a> for TsTypeCastExpr<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsTypeCastExpr
+  }
 }
 
 fn get_view_for_ts_type_cast_expr<'a>(inner: &'a swc_ast::TsTypeCastExpr, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeCastExpr<'a> {
@@ -12632,6 +13336,9 @@ impl<'a> CastableNode<'a> for TsTupleType<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsTupleType
+  }
 }
 
 fn get_view_for_ts_tuple_type<'a>(inner: &'a swc_ast::TsTupleType, parent: Node<'a>, bump: &'a Bump) -> &'a TsTupleType<'a> {
@@ -12688,6 +13395,9 @@ impl<'a> CastableNode<'a> for Null<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::Null
   }
 }
 
@@ -12752,6 +13462,9 @@ impl<'a> CastableNode<'a> for TsTypeOperator<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsTypeOperator
+  }
 }
 
 fn get_view_for_ts_type_operator<'a>(inner: &'a swc_ast::TsTypeOperator, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeOperator<'a> {
@@ -12811,6 +13524,9 @@ impl<'a> CastableNode<'a> for JSXClosingElement<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::JSXClosingElement
   }
 }
 
@@ -12880,6 +13596,9 @@ impl<'a> CastableNode<'a> for BinExpr<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::BinExpr
+  }
 }
 
 fn get_view_for_bin_expr<'a>(inner: &'a swc_ast::BinExpr, parent: Node<'a>, bump: &'a Bump) -> &'a BinExpr<'a> {
@@ -12947,6 +13666,9 @@ impl<'a> CastableNode<'a> for UnaryExpr<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::UnaryExpr
   }
 }
 
@@ -13037,6 +13759,9 @@ impl<'a> CastableNode<'a> for TsPropertySignature<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::TsPropertySignature
   }
 }
 
@@ -13133,6 +13858,9 @@ impl<'a> CastableNode<'a> for Constructor<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::Constructor
+  }
 }
 
 fn get_view_for_constructor<'a>(inner: &'a swc_ast::Constructor, parent: Node<'a>, bump: &'a Bump) -> &'a Constructor<'a> {
@@ -13208,6 +13936,9 @@ impl<'a> CastableNode<'a> for FnDecl<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::FnDecl
+  }
 }
 
 fn get_view_for_fn_decl<'a>(inner: &'a swc_ast::FnDecl, parent: Node<'a>, bump: &'a Bump) -> &'a FnDecl<'a> {
@@ -13269,6 +14000,9 @@ impl<'a> CastableNode<'a> for TsNonNullExpr<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::TsNonNullExpr
   }
 }
 
@@ -13334,6 +14068,9 @@ impl<'a> CastableNode<'a> for ClassExpr<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::ClassExpr
   }
 }
 
@@ -13404,6 +14141,9 @@ impl<'a> CastableNode<'a> for ForInStmt<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::ForInStmt
+  }
 }
 
 fn get_view_for_for_in_stmt<'a>(inner: &'a swc_ast::ForInStmt, parent: Node<'a>, bump: &'a Bump) -> &'a ForInStmt<'a> {
@@ -13465,6 +14205,9 @@ impl<'a> CastableNode<'a> for EmptyStmt<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::EmptyStmt
+  }
 }
 
 fn get_view_for_empty_stmt<'a>(inner: &'a swc_ast::EmptyStmt, parent: Node<'a>, bump: &'a Bump) -> &'a EmptyStmt<'a> {
@@ -13523,6 +14266,9 @@ impl<'a> CastableNode<'a> for WhileStmt<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::WhileStmt
   }
 }
 
@@ -13594,6 +14340,9 @@ impl<'a> CastableNode<'a> for Str<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::Str
+  }
 }
 
 fn get_view_for_str<'a>(inner: &'a swc_ast::Str, parent: Node<'a>, bump: &'a Bump) -> &'a Str<'a> {
@@ -13654,6 +14403,9 @@ impl<'a> CastableNode<'a> for TsExprWithTypeArgs<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::TsExprWithTypeArgs
   }
 }
 
@@ -13725,6 +14477,9 @@ impl<'a> CastableNode<'a> for AssignPat<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::AssignPat
   }
 }
 
@@ -13799,6 +14554,9 @@ impl<'a> CastableNode<'a> for ExportNamedSpecifier<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::ExportNamedSpecifier
+  }
 }
 
 fn get_view_for_export_named_specifier<'a>(inner: &'a swc_ast::ExportNamedSpecifier, parent: Node<'a>, bump: &'a Bump) -> &'a ExportNamedSpecifier<'a> {
@@ -13870,6 +14628,9 @@ impl<'a> CastableNode<'a> for TsConditionalType<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsConditionalType
+  }
 }
 
 fn get_view_for_ts_conditional_type<'a>(inner: &'a swc_ast::TsConditionalType, parent: Node<'a>, bump: &'a Bump) -> &'a TsConditionalType<'a> {
@@ -13938,6 +14699,9 @@ impl<'a> CastableNode<'a> for TsTypeLit<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsTypeLit
+  }
 }
 
 fn get_view_for_ts_type_lit<'a>(inner: &'a swc_ast::TsTypeLit, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeLit<'a> {
@@ -13999,6 +14763,9 @@ impl<'a> CastableNode<'a> for BreakStmt<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::BreakStmt
   }
 }
 
@@ -14064,6 +14831,9 @@ impl<'a> CastableNode<'a> for ImportStarAsSpecifier<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::ImportStarAsSpecifier
+  }
 }
 
 fn get_view_for_import_star_as_specifier<'a>(inner: &'a swc_ast::ImportStarAsSpecifier, parent: Node<'a>, bump: &'a Bump) -> &'a ImportStarAsSpecifier<'a> {
@@ -14123,6 +14893,9 @@ impl<'a> CastableNode<'a> for TsInferType<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::TsInferType
   }
 }
 
@@ -14210,6 +14983,9 @@ impl<'a> CastableNode<'a> for PrivateMethod<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::PrivateMethod
+  }
 }
 
 fn get_view_for_private_method<'a>(inner: &'a swc_ast::PrivateMethod, parent: Node<'a>, bump: &'a Bump) -> &'a PrivateMethod<'a> {
@@ -14287,6 +15063,9 @@ impl<'a> CastableNode<'a> for ForOfStmt<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::ForOfStmt
+  }
 }
 
 fn get_view_for_for_of_stmt<'a>(inner: &'a swc_ast::ForOfStmt, parent: Node<'a>, bump: &'a Bump) -> &'a ForOfStmt<'a> {
@@ -14352,6 +15131,9 @@ impl<'a> CastableNode<'a> for TsUnionType<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::TsUnionType
   }
 }
 
@@ -14428,6 +15210,9 @@ impl<'a> CastableNode<'a> for TsModuleDecl<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsModuleDecl
+  }
 }
 
 fn get_view_for_ts_module_decl<'a>(inner: &'a swc_ast::TsModuleDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsModuleDecl<'a> {
@@ -14500,6 +15285,9 @@ impl<'a> CastableNode<'a> for GetterProp<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::GetterProp
   }
 }
 
@@ -14575,6 +15363,9 @@ impl<'a> CastableNode<'a> for CondExpr<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::CondExpr
+  }
 }
 
 fn get_view_for_cond_expr<'a>(inner: &'a swc_ast::CondExpr, parent: Node<'a>, bump: &'a Bump) -> &'a CondExpr<'a> {
@@ -14645,6 +15436,9 @@ impl<'a> CastableNode<'a> for ImportNamedSpecifier<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::ImportNamedSpecifier
   }
 }
 
@@ -14725,6 +15519,9 @@ impl<'a> CastableNode<'a> for NamedExport<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::NamedExport
+  }
 }
 
 fn get_view_for_named_export<'a>(inner: &'a swc_ast::NamedExport, parent: Node<'a>, bump: &'a Bump) -> &'a NamedExport<'a> {
@@ -14797,6 +15594,9 @@ impl<'a> CastableNode<'a> for JSXElement<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::JSXElement
   }
 }
 
@@ -14872,6 +15672,9 @@ impl<'a> CastableNode<'a> for ClassDecl<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::ClassDecl
   }
 }
 
@@ -14950,6 +15753,9 @@ impl<'a> CastableNode<'a> for ArrayPat<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::ArrayPat
+  }
 }
 
 fn get_view_for_array_pat<'a>(inner: &'a swc_ast::ArrayPat, parent: Node<'a>, bump: &'a Bump) -> &'a ArrayPat<'a> {
@@ -15020,6 +15826,9 @@ impl<'a> CastableNode<'a> for DoWhileStmt<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::DoWhileStmt
+  }
 }
 
 fn get_view_for_do_while_stmt<'a>(inner: &'a swc_ast::DoWhileStmt, parent: Node<'a>, bump: &'a Bump) -> &'a DoWhileStmt<'a> {
@@ -15088,6 +15897,9 @@ impl<'a> CastableNode<'a> for JSXText<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::JSXText
   }
 }
 
@@ -15158,6 +15970,9 @@ impl<'a> CastableNode<'a> for VarDecl<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::VarDecl
+  }
 }
 
 fn get_view_for_var_decl<'a>(inner: &'a swc_ast::VarDecl, parent: Node<'a>, bump: &'a Bump) -> &'a VarDecl<'a> {
@@ -15217,6 +16032,9 @@ impl<'a> CastableNode<'a> for PrivateName<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::PrivateName
   }
 }
 
@@ -15280,6 +16098,9 @@ impl<'a> CastableNode<'a> for JSXNamespacedName<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::JSXNamespacedName
   }
 }
 
@@ -15359,6 +16180,9 @@ impl<'a> CastableNode<'a> for JSXOpeningElement<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::JSXOpeningElement
+  }
 }
 
 fn get_view_for_jsxopening_element<'a>(inner: &'a swc_ast::JSXOpeningElement, parent: Node<'a>, bump: &'a Bump) -> &'a JSXOpeningElement<'a> {
@@ -15432,6 +16256,9 @@ impl<'a> CastableNode<'a> for SpreadElement<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::SpreadElement
+  }
 }
 
 fn get_view_for_spread_element<'a>(inner: &'a swc_ast::SpreadElement, parent: Node<'a>, bump: &'a Bump) -> &'a SpreadElement<'a> {
@@ -15491,6 +16318,9 @@ impl<'a> CastableNode<'a> for ExportDefaultDecl<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::ExportDefaultDecl
   }
 }
 
@@ -15574,6 +16404,9 @@ impl<'a> CastableNode<'a> for ArrowExpr<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::ArrowExpr
+  }
 }
 
 fn get_view_for_arrow_expr<'a>(inner: &'a swc_ast::ArrowExpr, parent: Node<'a>, bump: &'a Bump) -> &'a ArrowExpr<'a> {
@@ -15648,6 +16481,9 @@ impl<'a> CastableNode<'a> for TsAsExpr<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::TsAsExpr
+  }
 }
 
 fn get_view_for_ts_as_expr<'a>(inner: &'a swc_ast::TsAsExpr, parent: Node<'a>, bump: &'a Bump) -> &'a TsAsExpr<'a> {
@@ -15713,6 +16549,9 @@ impl<'a> CastableNode<'a> for KeyValuePatProp<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::KeyValuePatProp
+  }
 }
 
 fn get_view_for_key_value_pat_prop<'a>(inner: &'a swc_ast::KeyValuePatProp, parent: Node<'a>, bump: &'a Bump) -> &'a KeyValuePatProp<'a> {
@@ -15774,6 +16613,9 @@ impl<'a> CastableNode<'a> for TsLitType<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::TsLitType
   }
 }
 
@@ -15843,6 +16685,9 @@ impl<'a> CastableNode<'a> for AssignExpr<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::AssignExpr
+  }
 }
 
 fn get_view_for_assign_expr<'a>(inner: &'a swc_ast::AssignExpr, parent: Node<'a>, bump: &'a Bump) -> &'a AssignExpr<'a> {
@@ -15910,6 +16755,9 @@ impl<'a> CastableNode<'a> for ArrayLit<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::ArrayLit
+  }
 }
 
 fn get_view_for_array_lit<'a>(inner: &'a swc_ast::ArrayLit, parent: Node<'a>, bump: &'a Bump) -> &'a ArrayLit<'a> {
@@ -15972,6 +16820,9 @@ impl<'a> CastableNode<'a> for Decorator<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::Decorator
   }
 }
 
@@ -16047,6 +16898,9 @@ impl<'a> CastableNode<'a> for Ident<'a> {
       None
     }
   }
+  fn kind() -> NodeKind {
+    NodeKind::Ident
+  }
 }
 
 fn get_view_for_ident<'a>(inner: &'a swc_ast::Ident, parent: Node<'a>, bump: &'a Bump) -> &'a Ident<'a> {
@@ -16111,6 +16965,9 @@ impl<'a> CastableNode<'a> for MethodProp<'a> {
     } else {
       None
     }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::MethodProp
   }
 }
 

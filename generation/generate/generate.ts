@@ -92,7 +92,14 @@ export function generate(analysisResult: AnalysisResult) {
 
             writer.writeLine("pub fn to<T: CastableNode<'a>>(&self) -> &'a T {");
             writer.indent(() => {
-                writer.writeLine(`T::try_cast(self).expect("Tried to cast node to incorrect type.")`);
+                writer.writeLine("if let Some(result) = T::try_cast(self) {");
+                writer.indent(() => {
+                    writer.writeLine("result");
+                }).write("} else {").newLine();
+                writer.indent(() => {
+                    writer.writeLine(`panic!("Tried to cast node of type {} to {}.", self.kind(), T::kind())`);
+                });
+                writer.write("}").newLine();
             }).write("}").newLine();
         }).write("}").newLine().newLine();
 
@@ -118,6 +125,20 @@ export function generate(analysisResult: AnalysisResult) {
             for (const struct of analysisResult.structs) {
                 writer.writeLine(`${struct.name},`);
             }
+        });
+        writer.writeLine("}").newLine();
+
+        writer.writeLine("impl std::fmt::Display for NodeKind {");
+        writer.indent(() => {
+            writer.writeLine("fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {");
+            writer.indent(() => {
+                writer.writeLine(`write!(f, "{}", match self {`);
+                writer.indent(() => {
+                    for (const struct of analysisResult.structs) {
+                        writer.writeLine(`NodeKind::${struct.name} => "${struct.name}",`);
+                    }
+                }).write("})").newLine();
+            }).write("}").newLine();
         });
         writer.writeLine("}").newLine();
 
@@ -180,7 +201,15 @@ export function generate(analysisResult: AnalysisResult) {
 
                 writer.writeLine("pub fn to<T: CastableNode<'a>>(&self) -> &'a T {");
                 writer.indent(() => {
-                    writer.writeLine(`T::try_cast(&self.into()).expect("Tried to cast node to incorrect type.")`);
+                    writer.writeLine(`let node: Node<'a> = self.into();`);
+                    writer.writeLine("if let Some(result) = T::try_cast(&node) {");
+                    writer.indent(() => {
+                        writer.writeLine("result");
+                    }).write("} else {").newLine();
+                    writer.indent(() => {
+                        writer.writeLine(`panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())`);
+                    });
+                    writer.write("}").newLine();
                 }).write("}").newLine();
             }).write("}").newLine().newLine();
 
@@ -399,6 +428,11 @@ export function generate(analysisResult: AnalysisResult) {
                     writer.indent(() => {
                         writer.writeLine("None");
                     }).write("}").newLine();
+                }).write("}").newLine();
+
+                writer.writeLine("fn kind() -> NodeKind {");
+                writer.indent(() => {
+                    writer.writeLine(`NodeKind::${struct.name}`);
                 }).write("}").newLine();
             });
 

@@ -1,6 +1,6 @@
 extern crate dprint_swc_ecma_ast_view;
 use dprint_swc_ecma_ast_view::{
-  CastableNode, ClassDecl, Decl, ModuleItem, Node, NodeOrToken, NodeTrait, SourceFileInfo,
+  CastableNode, ClassDecl, Decl, ModuleItem, Node, NodeOrToken, NodeTrait, SourceFileInfo, VarDecl,
 };
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
@@ -42,6 +42,8 @@ fn test_creating_reference() {
     for child in class.children() {
       println!("---------");
       println!("Child: {:?}", child.text());
+      println!("Lo column: {:?}", child.lo_column());
+      println!("Hi column: {:?}", child.hi_column());
       println!("Parent: {:?}", child.parent().unwrap().text());
       if let Some(prev_sibling) = child.prev_sibling() {
         println!("Previous sibling: {:?}", prev_sibling.text());

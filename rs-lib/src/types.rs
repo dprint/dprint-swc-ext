@@ -1,10 +1,7 @@
 use crate::comments::*;
 use crate::generated::*;
 use crate::tokens::*;
-use swc_common::{
-  comments::{Comment, SingleThreadedComments},
-  BytePos, Spanned,
-};
+use swc_common::{comments::SingleThreadedComments, BytePos, Spanned};
 use swc_ecmascript::parser::token::TokenAndSpan;
 
 pub enum NodeOrToken<'a> {
@@ -44,6 +41,22 @@ pub trait NodeTrait<'a>: Spanned {
     module_to_source_file(module)
       .lookup_line(self.hi())
       .unwrap_or(0)
+  }
+
+  fn lo_column(&self) -> usize {
+    self.lo_column_fast(self.module())
+  }
+
+  fn lo_column_fast(&self, module: &Module<'a>) -> usize {
+    get_column_at_pos(module, self.lo())
+  }
+
+  fn hi_column(&self) -> usize {
+    self.hi_column_fast(self.module())
+  }
+
+  fn hi_column_fast(&self, module: &Module<'a>) -> usize {
+    get_column_at_pos(module, self.hi())
   }
 
   fn child_index(&self) -> usize {
@@ -198,8 +211,24 @@ fn module_to_comment_container<'a>(module: &Module<'a>) -> &'a CommentContainer<
     .expect("The comments must be provided to `with_view` in order to use this method.")
 }
 
+fn get_column_at_pos(module: &Module, pos: BytePos) -> usize {
+  let source_file = module_to_source_file(module);
+  let text_bytes = source_file.src.as_bytes();
+  let pos = pos.0 as usize;
+  let mut line_start = 0;
+  for i in (0..pos).rev() {
+    if text_bytes[i] == '\n' as u8 {
+      line_start = i + 1;
+      break;
+    }
+  }
+  let text_slice = std::str::from_utf8(&text_bytes[line_start..pos]).unwrap();
+  text_slice.chars().count()
+}
+
 pub trait CastableNode<'a> {
   fn try_cast(node: &Node<'a>) -> Option<&'a Self>;
+  fn kind() -> NodeKind;
 }
 
 pub struct SourceFileInfo<'a> {
