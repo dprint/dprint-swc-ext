@@ -76,7 +76,7 @@ let source_file_info = SourceFileInfo {
   module: &module,
   // optionally provide the swc_common::SourceFile for using text related methods
   source_file: Some(&source_file),
-  // optionally provide the comments for comment related methods (doesn't do anything yet...)
+  // optionally provide the comments for comment related methods
   comments: Some(&comments)
   // optionally provide the tokens for token related methods
   tokens: Some(&tokens),
