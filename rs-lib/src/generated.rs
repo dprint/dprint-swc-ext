@@ -188,11 +188,11 @@ pub enum Node<'a> {
 }
 
 impl<'a> Node<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(self)
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     if let Some(result) = T::to(self) {
       result
     } else {
@@ -1367,11 +1367,11 @@ pub enum JSXAttrValue<'a> {
 }
 
 impl<'a> JSXAttrValue<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -1461,11 +1461,11 @@ pub enum PropOrSpread<'a> {
 }
 
 impl<'a> PropOrSpread<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -1540,11 +1540,11 @@ pub enum VarDeclOrExpr<'a> {
 }
 
 impl<'a> VarDeclOrExpr<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -1619,11 +1619,11 @@ pub enum TsThisTypeOrIdent<'a> {
 }
 
 impl<'a> TsThisTypeOrIdent<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -1705,11 +1705,11 @@ pub enum Prop<'a> {
 }
 
 impl<'a> Prop<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -1812,11 +1812,11 @@ pub enum TsTypeQueryExpr<'a> {
 }
 
 impl<'a> TsTypeQueryExpr<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -1893,11 +1893,11 @@ pub enum TsNamespaceBody<'a> {
 }
 
 impl<'a> TsNamespaceBody<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -1977,11 +1977,11 @@ pub enum Lit<'a> {
 }
 
 impl<'a> Lit<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -2092,11 +2092,11 @@ pub enum ImportSpecifier<'a> {
 }
 
 impl<'a> ImportSpecifier<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -2179,11 +2179,11 @@ pub enum ExportSpecifier<'a> {
 }
 
 impl<'a> ExportSpecifier<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -2283,11 +2283,11 @@ pub enum Stmt<'a> {
 }
 
 impl<'a> Stmt<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -2487,11 +2487,11 @@ pub enum Pat<'a> {
 }
 
 impl<'a> Pat<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -2601,11 +2601,11 @@ pub enum TsModuleName<'a> {
 }
 
 impl<'a> TsModuleName<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -2682,11 +2682,11 @@ pub enum TsFnParam<'a> {
 }
 
 impl<'a> TsFnParam<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -2782,11 +2782,11 @@ pub enum ClassMember<'a> {
 }
 
 impl<'a> ClassMember<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -2896,11 +2896,11 @@ pub enum VarDeclOrPat<'a> {
 }
 
 impl<'a> VarDeclOrPat<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -2975,11 +2975,11 @@ pub enum TsModuleRef<'a> {
 }
 
 impl<'a> TsModuleRef<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -3054,11 +3054,11 @@ pub enum JSXAttrOrSpread<'a> {
 }
 
 impl<'a> JSXAttrOrSpread<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -3133,11 +3133,11 @@ pub enum ParamOrTsParamProp<'a> {
 }
 
 impl<'a> ParamOrTsParamProp<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -3212,11 +3212,11 @@ pub enum ExprOrSuper<'a> {
 }
 
 impl<'a> ExprOrSuper<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -3294,11 +3294,11 @@ pub enum TsTypeElement<'a> {
 }
 
 impl<'a> TsTypeElement<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -3394,11 +3394,11 @@ pub enum BlockStmtOrExpr<'a> {
 }
 
 impl<'a> BlockStmtOrExpr<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -3473,11 +3473,11 @@ pub enum TsUnionOrIntersectionType<'a> {
 }
 
 impl<'a> TsUnionOrIntersectionType<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -3553,11 +3553,11 @@ pub enum DefaultDecl<'a> {
 }
 
 impl<'a> DefaultDecl<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -3633,7 +3633,7 @@ fn get_view_for_default_decl<'a>(inner: &'a swc_ast::DefaultDecl, parent: Node<'
 }
 
 
-///
+/// 
 /// - Invalid: [Ident] with empty symbol.
 pub enum TsEnumMemberId<'a> {
   Ident(&'a Ident<'a>),
@@ -3641,11 +3641,11 @@ pub enum TsEnumMemberId<'a> {
 }
 
 impl<'a> TsEnumMemberId<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -3720,11 +3720,11 @@ pub enum TsParamPropParam<'a> {
 }
 
 impl<'a> TsParamPropParam<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -3802,11 +3802,11 @@ pub enum JSXElementChild<'a> {
 }
 
 impl<'a> JSXElementChild<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -3902,11 +3902,11 @@ pub enum ModuleItem<'a> {
 }
 
 impl<'a> ModuleItem<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -3986,11 +3986,11 @@ pub enum PropName<'a> {
 }
 
 impl<'a> PropName<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -4086,11 +4086,11 @@ pub enum JSXAttrName<'a> {
 }
 
 impl<'a> JSXAttrName<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -4170,11 +4170,11 @@ pub enum Decl<'a> {
 }
 
 impl<'a> Decl<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -4287,11 +4287,11 @@ pub enum TsLit<'a> {
 }
 
 impl<'a> TsLit<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -4387,11 +4387,11 @@ pub enum TsEntityName<'a> {
 }
 
 impl<'a> TsEntityName<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -4507,11 +4507,11 @@ pub enum Expr<'a> {
 }
 
 impl<'a> Expr<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -4825,11 +4825,11 @@ pub enum JSXObject<'a> {
 }
 
 impl<'a> JSXObject<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -4904,11 +4904,11 @@ pub enum PatOrExpr<'a> {
 }
 
 impl<'a> PatOrExpr<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -4990,11 +4990,11 @@ pub enum ModuleDecl<'a> {
 }
 
 impl<'a> ModuleDecl<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -5119,11 +5119,11 @@ pub enum JSXElementName<'a> {
 }
 
 impl<'a> JSXElementName<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -5205,11 +5205,11 @@ pub enum JSXExpr<'a> {
 }
 
 impl<'a> JSXExpr<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -5302,11 +5302,11 @@ pub enum TsType<'a> {
 }
 
 impl<'a> TsType<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -5508,11 +5508,11 @@ pub enum ObjectPatProp<'a> {
 }
 
 impl<'a> ObjectPatProp<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -5594,11 +5594,11 @@ pub enum TsFnOrConstructorType<'a> {
 }
 
 impl<'a> TsFnOrConstructorType<'a> {
-  pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
     T::to(&self.into())
   }
 
-  pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
     if let Some(result) = T::to(&node) {
       result
@@ -8187,7 +8187,7 @@ pub struct Number<'a> {
 
 impl<'a> Number<'a> {
   /// **Note**: This should not be `NaN`. Use [crate::Ident] to represent NaN.
-  ///
+  /// 
   /// If you store `NaN` in this field, a hash map will behave strangely.
   pub fn value(&self) -> f64 {
     self.inner.value
@@ -9762,7 +9762,7 @@ pub struct CatchClause<'a> {
   pub parent: &'a TryStmt<'a>,
   pub inner: &'a swc_ast::CatchClause,
   /// es2019
-  ///
+  /// 
   /// The param is null if the catch binding is omitted. E.g., try { foo() }
   /// catch { bar() }
   pub param: Option<Pat<'a>>,
@@ -15183,9 +15183,9 @@ pub struct ForOfStmt<'a> {
 
 impl<'a> ForOfStmt<'a> {
   /// Span of the await token.
-  ///
+  /// 
   /// es2018
-  ///
+  /// 
   /// for-await-of statements, e.g., `for await (const x of xs) {`
   pub fn await_token(&self) -> &Option<swc_common::Span> {
     &self.inner.await_token
