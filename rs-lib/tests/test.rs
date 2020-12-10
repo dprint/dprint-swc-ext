@@ -36,7 +36,7 @@ fn test_creating_reference() {
       leading_comments.collect::<Vec<_>>()
     );
     println!("Test 3 {:?}", ast_view.body[0].children()[0].text());
-    let class = ast_view.body[0].to::<ClassDecl>().class;
+    let class = ast_view.body[0].expect::<ClassDecl>().class;
     println!("{:?}", class.text());
 
     for child in class.children() {

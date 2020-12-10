@@ -42,8 +42,9 @@ All:
 
 Node/enum node specific helpers:
 
-- `.to::<NodeType>() -> &NodeType`
-- `.try_to::<NodeType>() -> Option<&NodeType>` -- Copied design from rslint, but not sure about this naming because "try" usually means it returns a `Result<T>`
+- `.to::<NodeType>() -> Option<&NodeType>`
+- `.expect::<NodeType>() -> &NodeType`
+- `.is::<NodeType>() -> bool`
 
 ## TODO
 
@@ -81,7 +82,7 @@ let source_file_info = SourceFileInfo {
 
 // now create and use the view
 dprint_swc_ecma_ast_view::with_ast_view(source_file_info, |ast_view| {
-  let class = ast_view.body[0].to::<ClassDecl>().class;
+  let class = ast_view.body[0].expect::<ClassDecl>().class;
   println!("{:?}", class.text());
 
   for child in class.children() {

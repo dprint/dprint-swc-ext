@@ -189,15 +189,19 @@ pub enum Node<'a> {
 
 impl<'a> Node<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(self)
+    T::to(self)
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
-    if let Some(result) = T::try_cast(self) {
+    if let Some(result) = T::to(self) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", self.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -1364,16 +1368,20 @@ pub enum JSXAttrValue<'a> {
 
 impl<'a> JSXAttrValue<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -1454,16 +1462,20 @@ pub enum PropOrSpread<'a> {
 
 impl<'a> PropOrSpread<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -1529,16 +1541,20 @@ pub enum VarDeclOrExpr<'a> {
 
 impl<'a> VarDeclOrExpr<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -1604,16 +1620,20 @@ pub enum TsThisTypeOrIdent<'a> {
 
 impl<'a> TsThisTypeOrIdent<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -1686,16 +1706,20 @@ pub enum Prop<'a> {
 
 impl<'a> Prop<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -1789,16 +1813,20 @@ pub enum TsTypeQueryExpr<'a> {
 
 impl<'a> TsTypeQueryExpr<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -1866,16 +1894,20 @@ pub enum TsNamespaceBody<'a> {
 
 impl<'a> TsNamespaceBody<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -1946,16 +1978,20 @@ pub enum Lit<'a> {
 
 impl<'a> Lit<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -2057,16 +2093,20 @@ pub enum ImportSpecifier<'a> {
 
 impl<'a> ImportSpecifier<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -2140,16 +2180,20 @@ pub enum ExportSpecifier<'a> {
 
 impl<'a> ExportSpecifier<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -2240,16 +2284,20 @@ pub enum Stmt<'a> {
 
 impl<'a> Stmt<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -2440,16 +2488,20 @@ pub enum Pat<'a> {
 
 impl<'a> Pat<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -2550,16 +2602,20 @@ pub enum TsModuleName<'a> {
 
 impl<'a> TsModuleName<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -2627,16 +2683,20 @@ pub enum TsFnParam<'a> {
 
 impl<'a> TsFnParam<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -2723,16 +2783,20 @@ pub enum ClassMember<'a> {
 
 impl<'a> ClassMember<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -2833,16 +2897,20 @@ pub enum VarDeclOrPat<'a> {
 
 impl<'a> VarDeclOrPat<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -2908,16 +2976,20 @@ pub enum TsModuleRef<'a> {
 
 impl<'a> TsModuleRef<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -2983,16 +3055,20 @@ pub enum JSXAttrOrSpread<'a> {
 
 impl<'a> JSXAttrOrSpread<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -3058,16 +3134,20 @@ pub enum ParamOrTsParamProp<'a> {
 
 impl<'a> ParamOrTsParamProp<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -3133,16 +3213,20 @@ pub enum ExprOrSuper<'a> {
 
 impl<'a> ExprOrSuper<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -3211,16 +3295,20 @@ pub enum TsTypeElement<'a> {
 
 impl<'a> TsTypeElement<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -3307,16 +3395,20 @@ pub enum BlockStmtOrExpr<'a> {
 
 impl<'a> BlockStmtOrExpr<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -3382,16 +3474,20 @@ pub enum TsUnionOrIntersectionType<'a> {
 
 impl<'a> TsUnionOrIntersectionType<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -3458,16 +3554,20 @@ pub enum DefaultDecl<'a> {
 
 impl<'a> DefaultDecl<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -3533,7 +3633,7 @@ fn get_view_for_default_decl<'a>(inner: &'a swc_ast::DefaultDecl, parent: Node<'
 }
 
 
-/// 
+///
 /// - Invalid: [Ident] with empty symbol.
 pub enum TsEnumMemberId<'a> {
   Ident(&'a Ident<'a>),
@@ -3542,16 +3642,20 @@ pub enum TsEnumMemberId<'a> {
 
 impl<'a> TsEnumMemberId<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -3617,16 +3721,20 @@ pub enum TsParamPropParam<'a> {
 
 impl<'a> TsParamPropParam<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -3695,16 +3803,20 @@ pub enum JSXElementChild<'a> {
 
 impl<'a> JSXElementChild<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -3791,16 +3903,20 @@ pub enum ModuleItem<'a> {
 
 impl<'a> ModuleItem<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -3871,16 +3987,20 @@ pub enum PropName<'a> {
 
 impl<'a> PropName<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -3967,16 +4087,20 @@ pub enum JSXAttrName<'a> {
 
 impl<'a> JSXAttrName<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -4047,16 +4171,20 @@ pub enum Decl<'a> {
 
 impl<'a> Decl<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -4160,16 +4288,20 @@ pub enum TsLit<'a> {
 
 impl<'a> TsLit<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -4256,16 +4388,20 @@ pub enum TsEntityName<'a> {
 
 impl<'a> TsEntityName<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -4372,16 +4508,20 @@ pub enum Expr<'a> {
 
 impl<'a> Expr<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -4686,16 +4826,20 @@ pub enum JSXObject<'a> {
 
 impl<'a> JSXObject<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -4761,16 +4905,20 @@ pub enum PatOrExpr<'a> {
 
 impl<'a> PatOrExpr<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -4843,16 +4991,20 @@ pub enum ModuleDecl<'a> {
 
 impl<'a> ModuleDecl<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -4968,16 +5120,20 @@ pub enum JSXElementName<'a> {
 
 impl<'a> JSXElementName<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -5050,16 +5206,20 @@ pub enum JSXExpr<'a> {
 
 impl<'a> JSXExpr<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -5143,16 +5303,20 @@ pub enum TsType<'a> {
 
 impl<'a> TsType<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -5345,16 +5509,20 @@ pub enum ObjectPatProp<'a> {
 
 impl<'a> ObjectPatProp<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -5427,16 +5595,20 @@ pub enum TsFnOrConstructorType<'a> {
 
 impl<'a> TsFnOrConstructorType<'a> {
   pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::try_cast(&self.into())
+    T::to(&self.into())
   }
 
   pub fn to<T: CastableNode<'a>>(&self) -> &'a T {
     let node: Node<'a> = self.into();
-    if let Some(result) = T::try_cast(&node) {
+    if let Some(result) = T::to(&node) {
       result
     } else {
       panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
     }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
   }
 }
 
@@ -5542,7 +5714,7 @@ impl<'a> NodeTrait<'a> for &'a SwitchCase<'a> {
 }
 
 impl<'a> CastableNode<'a> for SwitchCase<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::SwitchCase(node) = node {
       Some(node)
     } else {
@@ -5610,7 +5782,7 @@ impl<'a> NodeTrait<'a> for &'a ThrowStmt<'a> {
 }
 
 impl<'a> CastableNode<'a> for ThrowStmt<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ThrowStmt(node) = node {
       Some(node)
     } else {
@@ -5670,7 +5842,7 @@ impl<'a> NodeTrait<'a> for &'a JSXClosingFragment<'a> {
 }
 
 impl<'a> CastableNode<'a> for JSXClosingFragment<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::JSXClosingFragment(node) = node {
       Some(node)
     } else {
@@ -5733,7 +5905,7 @@ impl<'a> NodeTrait<'a> for &'a BigInt<'a> {
 }
 
 impl<'a> CastableNode<'a> for BigInt<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::BigInt(node) = node {
       Some(node)
     } else {
@@ -5793,7 +5965,7 @@ impl<'a> NodeTrait<'a> for &'a ExportDefaultSpecifier<'a> {
 }
 
 impl<'a> CastableNode<'a> for ExportDefaultSpecifier<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ExportDefaultSpecifier(node) = node {
       Some(node)
     } else {
@@ -5864,7 +6036,7 @@ impl<'a> NodeTrait<'a> for &'a TsTypeParam<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsTypeParam<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsTypeParam(node) = node {
       Some(node)
     } else {
@@ -5939,7 +6111,7 @@ impl<'a> NodeTrait<'a> for &'a WithStmt<'a> {
 }
 
 impl<'a> CastableNode<'a> for WithStmt<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::WithStmt(node) = node {
       Some(node)
     } else {
@@ -6011,7 +6183,7 @@ impl<'a> NodeTrait<'a> for &'a Regex<'a> {
 }
 
 impl<'a> CastableNode<'a> for Regex<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::Regex(node) = node {
       Some(node)
     } else {
@@ -6097,7 +6269,7 @@ impl<'a> NodeTrait<'a> for &'a TsMethodSignature<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsMethodSignature<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsMethodSignature(node) = node {
       Some(node)
     } else {
@@ -6182,7 +6354,7 @@ impl<'a> NodeTrait<'a> for &'a UpdateExpr<'a> {
 }
 
 impl<'a> CastableNode<'a> for UpdateExpr<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::UpdateExpr(node) = node {
       Some(node)
     } else {
@@ -6251,7 +6423,7 @@ impl<'a> NodeTrait<'a> for &'a SetterProp<'a> {
 }
 
 impl<'a> CastableNode<'a> for SetterProp<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::SetterProp(node) = node {
       Some(node)
     } else {
@@ -6333,7 +6505,7 @@ impl<'a> NodeTrait<'a> for &'a TaggedTpl<'a> {
 }
 
 impl<'a> CastableNode<'a> for TaggedTpl<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TaggedTpl(node) = node {
       Some(node)
     } else {
@@ -6406,7 +6578,7 @@ impl<'a> NodeTrait<'a> for &'a ExportAll<'a> {
 }
 
 impl<'a> CastableNode<'a> for ExportAll<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ExportAll(node) = node {
       Some(node)
     } else {
@@ -6471,7 +6643,7 @@ impl<'a> NodeTrait<'a> for &'a TsModuleBlock<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsModuleBlock<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsModuleBlock(node) = node {
       Some(node)
     } else {
@@ -6538,7 +6710,7 @@ impl<'a> NodeTrait<'a> for &'a SwitchStmt<'a> {
 }
 
 impl<'a> CastableNode<'a> for SwitchStmt<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::SwitchStmt(node) = node {
       Some(node)
     } else {
@@ -6607,7 +6779,7 @@ impl<'a> NodeTrait<'a> for &'a TsEnumMember<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsEnumMember<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsEnumMember(node) = node {
       Some(node)
     } else {
@@ -6683,7 +6855,7 @@ impl<'a> NodeTrait<'a> for &'a TsIndexedAccessType<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsIndexedAccessType<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsIndexedAccessType(node) = node {
       Some(node)
     } else {
@@ -6748,7 +6920,7 @@ impl<'a> NodeTrait<'a> for &'a TsRestType<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsRestType<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsRestType(node) = node {
       Some(node)
     } else {
@@ -6811,7 +6983,7 @@ impl<'a> NodeTrait<'a> for &'a ExprStmt<'a> {
 }
 
 impl<'a> CastableNode<'a> for ExprStmt<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ExprStmt(node) = node {
       Some(node)
     } else {
@@ -6874,7 +7046,7 @@ impl<'a> NodeTrait<'a> for &'a TsOptionalType<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsOptionalType<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsOptionalType(node) = node {
       Some(node)
     } else {
@@ -6943,7 +7115,7 @@ impl<'a> NodeTrait<'a> for &'a Tpl<'a> {
 }
 
 impl<'a> CastableNode<'a> for Tpl<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::Tpl(node) = node {
       Some(node)
     } else {
@@ -7006,7 +7178,7 @@ impl<'a> NodeTrait<'a> for &'a Invalid<'a> {
 }
 
 impl<'a> CastableNode<'a> for Invalid<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::Invalid(node) = node {
       Some(node)
     } else {
@@ -7066,7 +7238,7 @@ impl<'a> NodeTrait<'a> for &'a ComputedPropName<'a> {
 }
 
 impl<'a> CastableNode<'a> for ComputedPropName<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ComputedPropName(node) = node {
       Some(node)
     } else {
@@ -7137,7 +7309,7 @@ impl<'a> NodeTrait<'a> for &'a TsFnType<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsFnType<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsFnType(node) = node {
       Some(node)
     } else {
@@ -7210,7 +7382,7 @@ impl<'a> NodeTrait<'a> for &'a BlockStmt<'a> {
 }
 
 impl<'a> CastableNode<'a> for BlockStmt<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::BlockStmt(node) = node {
       Some(node)
     } else {
@@ -7285,7 +7457,7 @@ impl<'a> NodeTrait<'a> for &'a TsTypeAliasDecl<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsTypeAliasDecl<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsTypeAliasDecl(node) = node {
       Some(node)
     } else {
@@ -7363,7 +7535,7 @@ impl<'a> NodeTrait<'a> for &'a MemberExpr<'a> {
 }
 
 impl<'a> CastableNode<'a> for MemberExpr<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::MemberExpr(node) = node {
       Some(node)
     } else {
@@ -7459,7 +7631,7 @@ impl<'a> NodeTrait<'a> for &'a Function<'a> {
 }
 
 impl<'a> CastableNode<'a> for Function<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::Function(node) = node {
       Some(node)
     } else {
@@ -7553,7 +7725,7 @@ impl<'a> NodeTrait<'a> for &'a ImportDecl<'a> {
 }
 
 impl<'a> CastableNode<'a> for ImportDecl<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ImportDecl(node) = node {
       Some(node)
     } else {
@@ -7633,7 +7805,7 @@ impl<'a> NodeTrait<'a> for &'a TsTypePredicate<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsTypePredicate<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsTypePredicate(node) = node {
       Some(node)
     } else {
@@ -7709,7 +7881,7 @@ impl<'a> NodeTrait<'a> for &'a YieldExpr<'a> {
 }
 
 impl<'a> CastableNode<'a> for YieldExpr<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::YieldExpr(node) = node {
       Some(node)
     } else {
@@ -7777,7 +7949,7 @@ impl<'a> NodeTrait<'a> for &'a KeyValueProp<'a> {
 }
 
 impl<'a> CastableNode<'a> for KeyValueProp<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::KeyValueProp(node) = node {
       Some(node)
     } else {
@@ -7846,7 +8018,7 @@ impl<'a> NodeTrait<'a> for &'a Param<'a> {
 }
 
 impl<'a> CastableNode<'a> for Param<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::Param(node) = node {
       Some(node)
     } else {
@@ -7917,7 +8089,7 @@ impl<'a> NodeTrait<'a> for &'a JSXFragment<'a> {
 }
 
 impl<'a> CastableNode<'a> for JSXFragment<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::JSXFragment(node) = node {
       Some(node)
     } else {
@@ -7985,7 +8157,7 @@ impl<'a> NodeTrait<'a> for &'a ImportDefaultSpecifier<'a> {
 }
 
 impl<'a> CastableNode<'a> for ImportDefaultSpecifier<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ImportDefaultSpecifier(node) = node {
       Some(node)
     } else {
@@ -8015,7 +8187,7 @@ pub struct Number<'a> {
 
 impl<'a> Number<'a> {
   /// **Note**: This should not be `NaN`. Use [crate::Ident] to represent NaN.
-  /// 
+  ///
   /// If you store `NaN` in this field, a hash map will behave strangely.
   pub fn value(&self) -> f64 {
     self.inner.value
@@ -8054,7 +8226,7 @@ impl<'a> NodeTrait<'a> for &'a Number<'a> {
 }
 
 impl<'a> CastableNode<'a> for Number<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::Number(node) = node {
       Some(node)
     } else {
@@ -8119,7 +8291,7 @@ impl<'a> NodeTrait<'a> for &'a JSXAttr<'a> {
 }
 
 impl<'a> CastableNode<'a> for JSXAttr<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::JSXAttr(node) = node {
       Some(node)
     } else {
@@ -8187,7 +8359,7 @@ impl<'a> NodeTrait<'a> for &'a ParenExpr<'a> {
 }
 
 impl<'a> CastableNode<'a> for ParenExpr<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ParenExpr(node) = node {
       Some(node)
     } else {
@@ -8247,7 +8419,7 @@ impl<'a> NodeTrait<'a> for &'a Super<'a> {
 }
 
 impl<'a> CastableNode<'a> for Super<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::Super(node) = node {
       Some(node)
     } else {
@@ -8315,7 +8487,7 @@ impl<'a> NodeTrait<'a> for &'a TsConstructorType<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsConstructorType<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsConstructorType(node) = node {
       Some(node)
     } else {
@@ -8414,7 +8586,7 @@ impl<'a> NodeTrait<'a> for &'a Class<'a> {
 }
 
 impl<'a> CastableNode<'a> for Class<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::Class(node) = node {
       Some(node)
     } else {
@@ -8507,7 +8679,7 @@ impl<'a> NodeTrait<'a> for &'a RestPat<'a> {
 }
 
 impl<'a> CastableNode<'a> for RestPat<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::RestPat(node) = node {
       Some(node)
     } else {
@@ -8575,7 +8747,7 @@ impl<'a> NodeTrait<'a> for &'a TsNamespaceExportDecl<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsNamespaceExportDecl<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsNamespaceExportDecl(node) = node {
       Some(node)
     } else {
@@ -8635,7 +8807,7 @@ impl<'a> NodeTrait<'a> for &'a JSXOpeningFragment<'a> {
 }
 
 impl<'a> CastableNode<'a> for JSXOpeningFragment<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::JSXOpeningFragment(node) = node {
       Some(node)
     } else {
@@ -8705,7 +8877,7 @@ impl<'a> NodeTrait<'a> for &'a NewExpr<'a> {
 }
 
 impl<'a> CastableNode<'a> for NewExpr<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::NewExpr(node) = node {
       Some(node)
     } else {
@@ -8783,7 +8955,7 @@ impl<'a> NodeTrait<'a> for &'a FnExpr<'a> {
 }
 
 impl<'a> CastableNode<'a> for FnExpr<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::FnExpr(node) = node {
       Some(node)
     } else {
@@ -8857,7 +9029,7 @@ impl<'a> NodeTrait<'a> for &'a IfStmt<'a> {
 }
 
 impl<'a> CastableNode<'a> for IfStmt<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::IfStmt(node) = node {
       Some(node)
     } else {
@@ -8927,7 +9099,7 @@ impl<'a> NodeTrait<'a> for &'a TsParenthesizedType<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsParenthesizedType<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsParenthesizedType(node) = node {
       Some(node)
     } else {
@@ -8995,7 +9167,7 @@ impl<'a> NodeTrait<'a> for &'a AssignPatProp<'a> {
 }
 
 impl<'a> CastableNode<'a> for AssignPatProp<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::AssignPatProp(node) = node {
       Some(node)
     } else {
@@ -9071,7 +9243,7 @@ impl<'a> NodeTrait<'a> for &'a TsImportType<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsImportType<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsImportType(node) = node {
       Some(node)
     } else {
@@ -9147,7 +9319,7 @@ impl<'a> NodeTrait<'a> for &'a Bool<'a> {
 }
 
 impl<'a> CastableNode<'a> for Bool<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::Bool(node) = node {
       Some(node)
     } else {
@@ -9219,7 +9391,7 @@ impl<'a> NodeTrait<'a> for &'a TsImportEqualsDecl<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsImportEqualsDecl<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsImportEqualsDecl(node) = node {
       Some(node)
     } else {
@@ -9286,7 +9458,7 @@ impl<'a> NodeTrait<'a> for &'a AssignProp<'a> {
 }
 
 impl<'a> CastableNode<'a> for AssignProp<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::AssignProp(node) = node {
       Some(node)
     } else {
@@ -9367,7 +9539,7 @@ impl<'a> NodeTrait<'a> for &'a TsInterfaceDecl<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsInterfaceDecl<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsInterfaceDecl(node) = node {
       Some(node)
     } else {
@@ -9436,7 +9608,7 @@ impl<'a> NodeTrait<'a> for &'a JSXEmptyExpr<'a> {
 }
 
 impl<'a> CastableNode<'a> for JSXEmptyExpr<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::JSXEmptyExpr(node) = node {
       Some(node)
     } else {
@@ -9498,7 +9670,7 @@ impl<'a> NodeTrait<'a> for &'a TsQualifiedName<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsQualifiedName<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsQualifiedName(node) = node {
       Some(node)
     } else {
@@ -9563,7 +9735,7 @@ impl<'a> NodeTrait<'a> for &'a ExportDecl<'a> {
 }
 
 impl<'a> CastableNode<'a> for ExportDecl<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ExportDecl(node) = node {
       Some(node)
     } else {
@@ -9590,7 +9762,7 @@ pub struct CatchClause<'a> {
   pub parent: &'a TryStmt<'a>,
   pub inner: &'a swc_ast::CatchClause,
   /// es2019
-  /// 
+  ///
   /// The param is null if the catch binding is omitted. E.g., try { foo() }
   /// catch { bar() }
   pub param: Option<Pat<'a>>,
@@ -9634,7 +9806,7 @@ impl<'a> NodeTrait<'a> for &'a CatchClause<'a> {
 }
 
 impl<'a> CastableNode<'a> for CatchClause<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::CatchClause(node) = node {
       Some(node)
     } else {
@@ -9704,7 +9876,7 @@ impl<'a> NodeTrait<'a> for &'a LabeledStmt<'a> {
 }
 
 impl<'a> CastableNode<'a> for LabeledStmt<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::LabeledStmt(node) = node {
       Some(node)
     } else {
@@ -9771,7 +9943,7 @@ impl<'a> NodeTrait<'a> for &'a ContinueStmt<'a> {
 }
 
 impl<'a> CastableNode<'a> for ContinueStmt<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ContinueStmt(node) = node {
       Some(node)
     } else {
@@ -9847,7 +10019,7 @@ impl<'a> NodeTrait<'a> for &'a TsConstructSignatureDecl<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsConstructSignatureDecl<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsConstructSignatureDecl(node) = node {
       Some(node)
     } else {
@@ -9934,7 +10106,7 @@ impl<'a> NodeTrait<'a> for &'a TsEnumDecl<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsEnumDecl<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsEnumDecl(node) = node {
       Some(node)
     } else {
@@ -10005,7 +10177,7 @@ impl<'a> NodeTrait<'a> for &'a OptChainExpr<'a> {
 }
 
 impl<'a> CastableNode<'a> for OptChainExpr<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::OptChainExpr(node) = node {
       Some(node)
     } else {
@@ -10081,7 +10253,7 @@ impl<'a> NodeTrait<'a> for &'a TsNamespaceDecl<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsNamespaceDecl<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsNamespaceDecl(node) = node {
       Some(node)
     } else {
@@ -10148,7 +10320,7 @@ impl<'a> NodeTrait<'a> for &'a SeqExpr<'a> {
 }
 
 impl<'a> CastableNode<'a> for SeqExpr<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::SeqExpr(node) = node {
       Some(node)
     } else {
@@ -10211,7 +10383,7 @@ impl<'a> NodeTrait<'a> for &'a TsExternalModuleRef<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsExternalModuleRef<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsExternalModuleRef(node) = node {
       Some(node)
     } else {
@@ -10276,7 +10448,7 @@ impl<'a> NodeTrait<'a> for &'a TsTypeParamInstantiation<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsTypeParamInstantiation<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsTypeParamInstantiation(node) = node {
       Some(node)
     } else {
@@ -10341,7 +10513,7 @@ impl<'a> NodeTrait<'a> for &'a ReturnStmt<'a> {
 }
 
 impl<'a> CastableNode<'a> for ReturnStmt<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ReturnStmt(node) = node {
       Some(node)
     } else {
@@ -10413,7 +10585,7 @@ impl<'a> NodeTrait<'a> for &'a TsTplLitType<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsTplLitType<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsTplLitType(node) = node {
       Some(node)
     } else {
@@ -10478,7 +10650,7 @@ impl<'a> NodeTrait<'a> for &'a ExportDefaultExpr<'a> {
 }
 
 impl<'a> CastableNode<'a> for ExportDefaultExpr<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ExportDefaultExpr(node) = node {
       Some(node)
     } else {
@@ -10551,7 +10723,7 @@ impl<'a> NodeTrait<'a> for &'a TsCallSignatureDecl<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsCallSignatureDecl<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsCallSignatureDecl(node) = node {
       Some(node)
     } else {
@@ -10624,7 +10796,7 @@ impl<'a> NodeTrait<'a> for &'a AwaitExpr<'a> {
 }
 
 impl<'a> CastableNode<'a> for AwaitExpr<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::AwaitExpr(node) = node {
       Some(node)
     } else {
@@ -10713,7 +10885,7 @@ impl<'a> NodeTrait<'a> for &'a ClassMethod<'a> {
 }
 
 impl<'a> CastableNode<'a> for ClassMethod<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ClassMethod(node) = node {
       Some(node)
     } else {
@@ -10793,7 +10965,7 @@ impl<'a> NodeTrait<'a> for &'a TsParamProp<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsParamProp<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsParamProp(node) = node {
       Some(node)
     } else {
@@ -10906,7 +11078,7 @@ impl<'a> NodeTrait<'a> for &'a ClassProp<'a> {
 }
 
 impl<'a> CastableNode<'a> for ClassProp<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ClassProp(node) = node {
       Some(node)
     } else {
@@ -10981,7 +11153,7 @@ impl<'a> NodeTrait<'a> for &'a TsTypeAnn<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsTypeAnn<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsTypeAnn(node) = node {
       Some(node)
     } else {
@@ -11056,7 +11228,7 @@ impl<'a> NodeTrait<'a> for &'a ForStmt<'a> {
 }
 
 impl<'a> CastableNode<'a> for ForStmt<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ForStmt(node) = node {
       Some(node)
     } else {
@@ -11147,7 +11319,7 @@ impl<'a> NodeTrait<'a> for &'a ObjectPat<'a> {
 }
 
 impl<'a> CastableNode<'a> for ObjectPat<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ObjectPat(node) = node {
       Some(node)
     } else {
@@ -11216,7 +11388,7 @@ impl<'a> NodeTrait<'a> for &'a TsTypeQuery<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsTypeQuery<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsTypeQuery(node) = node {
       Some(node)
     } else {
@@ -11276,7 +11448,7 @@ impl<'a> NodeTrait<'a> for &'a ThisExpr<'a> {
 }
 
 impl<'a> CastableNode<'a> for ThisExpr<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ThisExpr(node) = node {
       Some(node)
     } else {
@@ -11333,7 +11505,7 @@ impl<'a> NodeTrait<'a> for &'a DebuggerStmt<'a> {
 }
 
 impl<'a> CastableNode<'a> for DebuggerStmt<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::DebuggerStmt(node) = node {
       Some(node)
     } else {
@@ -11395,7 +11567,7 @@ impl<'a> NodeTrait<'a> for &'a TsTypeParamDecl<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsTypeParamDecl<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsTypeParamDecl(node) = node {
       Some(node)
     } else {
@@ -11460,7 +11632,7 @@ impl<'a> NodeTrait<'a> for &'a TsTypeAssertion<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsTypeAssertion<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsTypeAssertion(node) = node {
       Some(node)
     } else {
@@ -11535,7 +11707,7 @@ impl<'a> NodeTrait<'a> for &'a TplElement<'a> {
 }
 
 impl<'a> CastableNode<'a> for TplElement<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TplElement(node) = node {
       Some(node)
     } else {
@@ -11606,7 +11778,7 @@ impl<'a> NodeTrait<'a> for &'a TsKeywordType<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsKeywordType<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsKeywordType(node) = node {
       Some(node)
     } else {
@@ -11666,7 +11838,7 @@ impl<'a> NodeTrait<'a> for &'a JSXSpreadChild<'a> {
 }
 
 impl<'a> CastableNode<'a> for JSXSpreadChild<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::JSXSpreadChild(node) = node {
       Some(node)
     } else {
@@ -11731,7 +11903,7 @@ impl<'a> NodeTrait<'a> for &'a TsIntersectionType<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsIntersectionType<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsIntersectionType(node) = node {
       Some(node)
     } else {
@@ -11796,7 +11968,7 @@ impl<'a> NodeTrait<'a> for &'a MetaPropExpr<'a> {
 }
 
 impl<'a> CastableNode<'a> for MetaPropExpr<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::MetaPropExpr(node) = node {
       Some(node)
     } else {
@@ -11867,7 +12039,7 @@ impl<'a> NodeTrait<'a> for &'a ExprOrSpread<'a> {
 }
 
 impl<'a> CastableNode<'a> for ExprOrSpread<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ExprOrSpread(node) = node {
       Some(node)
     } else {
@@ -11930,7 +12102,7 @@ impl<'a> NodeTrait<'a> for &'a TsArrayType<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsArrayType<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsArrayType(node) = node {
       Some(node)
     } else {
@@ -11997,7 +12169,7 @@ impl<'a> NodeTrait<'a> for &'a TsTypeRef<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsTypeRef<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsTypeRef(node) = node {
       Some(node)
     } else {
@@ -12062,7 +12234,7 @@ impl<'a> NodeTrait<'a> for &'a TsThisType<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsThisType<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsThisType(node) = node {
       Some(node)
     } else {
@@ -12130,7 +12302,7 @@ impl<'a> NodeTrait<'a> for &'a TryStmt<'a> {
 }
 
 impl<'a> CastableNode<'a> for TryStmt<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TryStmt(node) = node {
       Some(node)
     } else {
@@ -12211,7 +12383,7 @@ impl<'a> NodeTrait<'a> for &'a CallExpr<'a> {
 }
 
 impl<'a> CastableNode<'a> for CallExpr<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::CallExpr(node) = node {
       Some(node)
     } else {
@@ -12299,7 +12471,7 @@ impl<'a> NodeTrait<'a> for &'a TsMappedType<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsMappedType<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsMappedType(node) = node {
       Some(node)
     } else {
@@ -12372,7 +12544,7 @@ impl<'a> NodeTrait<'a> for &'a JSXExprContainer<'a> {
 }
 
 impl<'a> CastableNode<'a> for JSXExprContainer<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::JSXExprContainer(node) = node {
       Some(node)
     } else {
@@ -12479,7 +12651,7 @@ impl<'a> NodeTrait<'a> for &'a PrivateProp<'a> {
 }
 
 impl<'a> CastableNode<'a> for PrivateProp<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::PrivateProp(node) = node {
       Some(node)
     } else {
@@ -12557,7 +12729,7 @@ impl<'a> NodeTrait<'a> for &'a TsExportAssignment<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsExportAssignment<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsExportAssignment(node) = node {
       Some(node)
     } else {
@@ -12622,7 +12794,7 @@ impl<'a> NodeTrait<'a> for &'a TsInterfaceBody<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsInterfaceBody<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsInterfaceBody(node) = node {
       Some(node)
     } else {
@@ -12690,7 +12862,7 @@ impl<'a> NodeTrait<'a> for &'a TsTupleElement<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsTupleElement<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsTupleElement(node) = node {
       Some(node)
     } else {
@@ -12770,7 +12942,7 @@ impl<'a> NodeTrait<'a> for &'a VarDeclarator<'a> {
 }
 
 impl<'a> CastableNode<'a> for VarDeclarator<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::VarDeclarator(node) = node {
       Some(node)
     } else {
@@ -12840,7 +13012,7 @@ impl<'a> NodeTrait<'a> for &'a JSXMemberExpr<'a> {
 }
 
 impl<'a> CastableNode<'a> for JSXMemberExpr<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::JSXMemberExpr(node) = node {
       Some(node)
     } else {
@@ -12905,7 +13077,7 @@ impl<'a> NodeTrait<'a> for &'a TsConstAssertion<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsConstAssertion<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsConstAssertion(node) = node {
       Some(node)
     } else {
@@ -12969,7 +13141,7 @@ impl<'a> NodeTrait<'a> for &'a ExportNamespaceSpecifier<'a> {
 }
 
 impl<'a> CastableNode<'a> for ExportNamespaceSpecifier<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ExportNamespaceSpecifier(node) = node {
       Some(node)
     } else {
@@ -13035,7 +13207,7 @@ impl<'a> NodeTrait<'a> for &'a ObjectLit<'a> {
 }
 
 impl<'a> CastableNode<'a> for ObjectLit<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ObjectLit(node) = node {
       Some(node)
     } else {
@@ -13108,7 +13280,7 @@ impl<'a> NodeTrait<'a> for &'a Module<'a> {
 }
 
 impl<'a> CastableNode<'a> for Module<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::Module(node) = node {
       Some(node)
     } else {
@@ -13192,7 +13364,7 @@ impl<'a> NodeTrait<'a> for &'a TsIndexSignature<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsIndexSignature<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsIndexSignature(node) = node {
       Some(node)
     } else {
@@ -13262,7 +13434,7 @@ impl<'a> NodeTrait<'a> for &'a TsTypeCastExpr<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsTypeCastExpr<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsTypeCastExpr(node) = node {
       Some(node)
     } else {
@@ -13329,7 +13501,7 @@ impl<'a> NodeTrait<'a> for &'a TsTupleType<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsTupleType<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsTupleType(node) = node {
       Some(node)
     } else {
@@ -13389,7 +13561,7 @@ impl<'a> NodeTrait<'a> for &'a Null<'a> {
 }
 
 impl<'a> CastableNode<'a> for Null<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::Null(node) = node {
       Some(node)
     } else {
@@ -13455,7 +13627,7 @@ impl<'a> NodeTrait<'a> for &'a TsTypeOperator<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsTypeOperator<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsTypeOperator(node) = node {
       Some(node)
     } else {
@@ -13518,7 +13690,7 @@ impl<'a> NodeTrait<'a> for &'a JSXClosingElement<'a> {
 }
 
 impl<'a> CastableNode<'a> for JSXClosingElement<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::JSXClosingElement(node) = node {
       Some(node)
     } else {
@@ -13589,7 +13761,7 @@ impl<'a> NodeTrait<'a> for &'a BinExpr<'a> {
 }
 
 impl<'a> CastableNode<'a> for BinExpr<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::BinExpr(node) = node {
       Some(node)
     } else {
@@ -13660,7 +13832,7 @@ impl<'a> NodeTrait<'a> for &'a UnaryExpr<'a> {
 }
 
 impl<'a> CastableNode<'a> for UnaryExpr<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::UnaryExpr(node) = node {
       Some(node)
     } else {
@@ -13753,7 +13925,7 @@ impl<'a> NodeTrait<'a> for &'a TsPropertySignature<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsPropertySignature<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsPropertySignature(node) = node {
       Some(node)
     } else {
@@ -13851,7 +14023,7 @@ impl<'a> NodeTrait<'a> for &'a Constructor<'a> {
 }
 
 impl<'a> CastableNode<'a> for Constructor<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::Constructor(node) = node {
       Some(node)
     } else {
@@ -13929,7 +14101,7 @@ impl<'a> NodeTrait<'a> for &'a FnDecl<'a> {
 }
 
 impl<'a> CastableNode<'a> for FnDecl<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::FnDecl(node) = node {
       Some(node)
     } else {
@@ -13994,7 +14166,7 @@ impl<'a> NodeTrait<'a> for &'a TsNonNullExpr<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsNonNullExpr<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsNonNullExpr(node) = node {
       Some(node)
     } else {
@@ -14062,7 +14234,7 @@ impl<'a> NodeTrait<'a> for &'a ClassExpr<'a> {
 }
 
 impl<'a> CastableNode<'a> for ClassExpr<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ClassExpr(node) = node {
       Some(node)
     } else {
@@ -14134,7 +14306,7 @@ impl<'a> NodeTrait<'a> for &'a ForInStmt<'a> {
 }
 
 impl<'a> CastableNode<'a> for ForInStmt<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ForInStmt(node) = node {
       Some(node)
     } else {
@@ -14198,7 +14370,7 @@ impl<'a> NodeTrait<'a> for &'a EmptyStmt<'a> {
 }
 
 impl<'a> CastableNode<'a> for EmptyStmt<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::EmptyStmt(node) = node {
       Some(node)
     } else {
@@ -14260,7 +14432,7 @@ impl<'a> NodeTrait<'a> for &'a WhileStmt<'a> {
 }
 
 impl<'a> CastableNode<'a> for WhileStmt<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::WhileStmt(node) = node {
       Some(node)
     } else {
@@ -14333,7 +14505,7 @@ impl<'a> NodeTrait<'a> for &'a Str<'a> {
 }
 
 impl<'a> CastableNode<'a> for Str<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::Str(node) = node {
       Some(node)
     } else {
@@ -14397,7 +14569,7 @@ impl<'a> NodeTrait<'a> for &'a TsExprWithTypeArgs<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsExprWithTypeArgs<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsExprWithTypeArgs(node) = node {
       Some(node)
     } else {
@@ -14471,7 +14643,7 @@ impl<'a> NodeTrait<'a> for &'a AssignPat<'a> {
 }
 
 impl<'a> CastableNode<'a> for AssignPat<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::AssignPat(node) = node {
       Some(node)
     } else {
@@ -14547,7 +14719,7 @@ impl<'a> NodeTrait<'a> for &'a ExportNamedSpecifier<'a> {
 }
 
 impl<'a> CastableNode<'a> for ExportNamedSpecifier<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ExportNamedSpecifier(node) = node {
       Some(node)
     } else {
@@ -14621,7 +14793,7 @@ impl<'a> NodeTrait<'a> for &'a TsConditionalType<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsConditionalType<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsConditionalType(node) = node {
       Some(node)
     } else {
@@ -14692,7 +14864,7 @@ impl<'a> NodeTrait<'a> for &'a TsTypeLit<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsTypeLit<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsTypeLit(node) = node {
       Some(node)
     } else {
@@ -14757,7 +14929,7 @@ impl<'a> NodeTrait<'a> for &'a BreakStmt<'a> {
 }
 
 impl<'a> CastableNode<'a> for BreakStmt<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::BreakStmt(node) = node {
       Some(node)
     } else {
@@ -14824,7 +14996,7 @@ impl<'a> NodeTrait<'a> for &'a ImportStarAsSpecifier<'a> {
 }
 
 impl<'a> CastableNode<'a> for ImportStarAsSpecifier<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ImportStarAsSpecifier(node) = node {
       Some(node)
     } else {
@@ -14887,7 +15059,7 @@ impl<'a> NodeTrait<'a> for &'a TsInferType<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsInferType<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsInferType(node) = node {
       Some(node)
     } else {
@@ -14976,7 +15148,7 @@ impl<'a> NodeTrait<'a> for &'a PrivateMethod<'a> {
 }
 
 impl<'a> CastableNode<'a> for PrivateMethod<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::PrivateMethod(node) = node {
       Some(node)
     } else {
@@ -15011,9 +15183,9 @@ pub struct ForOfStmt<'a> {
 
 impl<'a> ForOfStmt<'a> {
   /// Span of the await token.
-  /// 
+  ///
   /// es2018
-  /// 
+  ///
   /// for-await-of statements, e.g., `for await (const x of xs) {`
   pub fn await_token(&self) -> &Option<swc_common::Span> {
     &self.inner.await_token
@@ -15056,7 +15228,7 @@ impl<'a> NodeTrait<'a> for &'a ForOfStmt<'a> {
 }
 
 impl<'a> CastableNode<'a> for ForOfStmt<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ForOfStmt(node) = node {
       Some(node)
     } else {
@@ -15125,7 +15297,7 @@ impl<'a> NodeTrait<'a> for &'a TsUnionType<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsUnionType<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsUnionType(node) = node {
       Some(node)
     } else {
@@ -15203,7 +15375,7 @@ impl<'a> NodeTrait<'a> for &'a TsModuleDecl<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsModuleDecl<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsModuleDecl(node) = node {
       Some(node)
     } else {
@@ -15279,7 +15451,7 @@ impl<'a> NodeTrait<'a> for &'a GetterProp<'a> {
 }
 
 impl<'a> CastableNode<'a> for GetterProp<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::GetterProp(node) = node {
       Some(node)
     } else {
@@ -15356,7 +15528,7 @@ impl<'a> NodeTrait<'a> for &'a CondExpr<'a> {
 }
 
 impl<'a> CastableNode<'a> for CondExpr<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::CondExpr(node) = node {
       Some(node)
     } else {
@@ -15430,7 +15602,7 @@ impl<'a> NodeTrait<'a> for &'a ImportNamedSpecifier<'a> {
 }
 
 impl<'a> CastableNode<'a> for ImportNamedSpecifier<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ImportNamedSpecifier(node) = node {
       Some(node)
     } else {
@@ -15512,7 +15684,7 @@ impl<'a> NodeTrait<'a> for &'a NamedExport<'a> {
 }
 
 impl<'a> CastableNode<'a> for NamedExport<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::NamedExport(node) = node {
       Some(node)
     } else {
@@ -15588,7 +15760,7 @@ impl<'a> NodeTrait<'a> for &'a JSXElement<'a> {
 }
 
 impl<'a> CastableNode<'a> for JSXElement<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::JSXElement(node) = node {
       Some(node)
     } else {
@@ -15666,7 +15838,7 @@ impl<'a> NodeTrait<'a> for &'a ClassDecl<'a> {
 }
 
 impl<'a> CastableNode<'a> for ClassDecl<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ClassDecl(node) = node {
       Some(node)
     } else {
@@ -15746,7 +15918,7 @@ impl<'a> NodeTrait<'a> for &'a ArrayPat<'a> {
 }
 
 impl<'a> CastableNode<'a> for ArrayPat<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ArrayPat(node) = node {
       Some(node)
     } else {
@@ -15819,7 +15991,7 @@ impl<'a> NodeTrait<'a> for &'a DoWhileStmt<'a> {
 }
 
 impl<'a> CastableNode<'a> for DoWhileStmt<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::DoWhileStmt(node) = node {
       Some(node)
     } else {
@@ -15891,7 +16063,7 @@ impl<'a> NodeTrait<'a> for &'a JSXText<'a> {
 }
 
 impl<'a> CastableNode<'a> for JSXText<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::JSXText(node) = node {
       Some(node)
     } else {
@@ -15963,7 +16135,7 @@ impl<'a> NodeTrait<'a> for &'a VarDecl<'a> {
 }
 
 impl<'a> CastableNode<'a> for VarDecl<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::VarDecl(node) = node {
       Some(node)
     } else {
@@ -16026,7 +16198,7 @@ impl<'a> NodeTrait<'a> for &'a PrivateName<'a> {
 }
 
 impl<'a> CastableNode<'a> for PrivateName<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::PrivateName(node) = node {
       Some(node)
     } else {
@@ -16092,7 +16264,7 @@ impl<'a> NodeTrait<'a> for &'a JSXNamespacedName<'a> {
 }
 
 impl<'a> CastableNode<'a> for JSXNamespacedName<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::JSXNamespacedName(node) = node {
       Some(node)
     } else {
@@ -16173,7 +16345,7 @@ impl<'a> NodeTrait<'a> for &'a JSXOpeningElement<'a> {
 }
 
 impl<'a> CastableNode<'a> for JSXOpeningElement<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::JSXOpeningElement(node) = node {
       Some(node)
     } else {
@@ -16249,7 +16421,7 @@ impl<'a> NodeTrait<'a> for &'a SpreadElement<'a> {
 }
 
 impl<'a> CastableNode<'a> for SpreadElement<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::SpreadElement(node) = node {
       Some(node)
     } else {
@@ -16312,7 +16484,7 @@ impl<'a> NodeTrait<'a> for &'a ExportDefaultDecl<'a> {
 }
 
 impl<'a> CastableNode<'a> for ExportDefaultDecl<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ExportDefaultDecl(node) = node {
       Some(node)
     } else {
@@ -16397,7 +16569,7 @@ impl<'a> NodeTrait<'a> for &'a ArrowExpr<'a> {
 }
 
 impl<'a> CastableNode<'a> for ArrowExpr<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ArrowExpr(node) = node {
       Some(node)
     } else {
@@ -16474,7 +16646,7 @@ impl<'a> NodeTrait<'a> for &'a TsAsExpr<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsAsExpr<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsAsExpr(node) = node {
       Some(node)
     } else {
@@ -16542,7 +16714,7 @@ impl<'a> NodeTrait<'a> for &'a KeyValuePatProp<'a> {
 }
 
 impl<'a> CastableNode<'a> for KeyValuePatProp<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::KeyValuePatProp(node) = node {
       Some(node)
     } else {
@@ -16607,7 +16779,7 @@ impl<'a> NodeTrait<'a> for &'a TsLitType<'a> {
 }
 
 impl<'a> CastableNode<'a> for TsLitType<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::TsLitType(node) = node {
       Some(node)
     } else {
@@ -16678,7 +16850,7 @@ impl<'a> NodeTrait<'a> for &'a AssignExpr<'a> {
 }
 
 impl<'a> CastableNode<'a> for AssignExpr<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::AssignExpr(node) = node {
       Some(node)
     } else {
@@ -16748,7 +16920,7 @@ impl<'a> NodeTrait<'a> for &'a ArrayLit<'a> {
 }
 
 impl<'a> CastableNode<'a> for ArrayLit<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::ArrayLit(node) = node {
       Some(node)
     } else {
@@ -16814,7 +16986,7 @@ impl<'a> NodeTrait<'a> for &'a Decorator<'a> {
 }
 
 impl<'a> CastableNode<'a> for Decorator<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::Decorator(node) = node {
       Some(node)
     } else {
@@ -16891,7 +17063,7 @@ impl<'a> NodeTrait<'a> for &'a Ident<'a> {
 }
 
 impl<'a> CastableNode<'a> for Ident<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::Ident(node) = node {
       Some(node)
     } else {
@@ -16959,7 +17131,7 @@ impl<'a> NodeTrait<'a> for &'a MethodProp<'a> {
 }
 
 impl<'a> CastableNode<'a> for MethodProp<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
     if let Node::MethodProp(node) = node {
       Some(node)
     } else {

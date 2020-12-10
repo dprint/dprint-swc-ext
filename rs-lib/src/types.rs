@@ -227,7 +227,7 @@ fn get_column_at_pos(module: &Module, pos: BytePos) -> usize {
 }
 
 pub trait CastableNode<'a> {
-  fn try_cast(node: &Node<'a>) -> Option<&'a Self>;
+  fn to(node: &Node<'a>) -> Option<&'a Self>;
   fn kind() -> NodeKind;
 }
 

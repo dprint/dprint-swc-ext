@@ -85,14 +85,14 @@ export function generate(analysisResult: AnalysisResult) {
 
         writer.writeLine("impl<'a> Node<'a> {");
         writer.indent(() => {
-            writer.writeLine("pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {");
+            writer.writeLine("pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {");
             writer.indent(() => {
-                writer.writeLine("T::try_cast(self)");
+                writer.writeLine("T::to(self)");
             }).write("}").newLine().newLine();
 
-            writer.writeLine("pub fn to<T: CastableNode<'a>>(&self) -> &'a T {");
+            writer.writeLine("pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {");
             writer.indent(() => {
-                writer.writeLine("if let Some(result) = T::try_cast(self) {");
+                writer.writeLine("if let Some(result) = T::to(self) {");
                 writer.indent(() => {
                     writer.writeLine("result");
                 }).write("} else {").newLine();
@@ -100,6 +100,11 @@ export function generate(analysisResult: AnalysisResult) {
                     writer.writeLine(`panic!("Tried to cast node of type {} to {}.", self.kind(), T::kind())`);
                 });
                 writer.write("}").newLine();
+            }).write("}").newLine().newLine();
+
+            writer.writeLine("pub fn is<T: CastableNode<'a>>(&self) -> bool {");
+            writer.indent(() => {
+                writer.writeLine("self.kind() == T::kind()");
             }).write("}").newLine();
         }).write("}").newLine().newLine();
 
@@ -194,15 +199,15 @@ export function generate(analysisResult: AnalysisResult) {
             writer.write("}").newLine().newLine();
 
             writer.writeLine(`impl<'a> ${enumDef.name}<'a> {`).indent(() => {
-                writer.writeLine("pub fn try_to<T: CastableNode<'a>>(&self) -> Option<&'a T> {");
+                writer.writeLine("pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {");
                 writer.indent(() => {
-                    writer.writeLine("T::try_cast(&self.into())");
+                    writer.writeLine("T::to(&self.into())");
                 }).write("}").newLine().newLine();
 
-                writer.writeLine("pub fn to<T: CastableNode<'a>>(&self) -> &'a T {");
+                writer.writeLine("pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {");
                 writer.indent(() => {
                     writer.writeLine(`let node: Node<'a> = self.into();`);
-                    writer.writeLine("if let Some(result) = T::try_cast(&node) {");
+                    writer.writeLine("if let Some(result) = T::to(&node) {");
                     writer.indent(() => {
                         writer.writeLine("result");
                     }).write("} else {").newLine();
@@ -210,6 +215,11 @@ export function generate(analysisResult: AnalysisResult) {
                         writer.writeLine(`panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())`);
                     });
                     writer.write("}").newLine();
+                }).write("}").newLine().newLine();
+
+                writer.writeLine("pub fn is<T: CastableNode<'a>>(&self) -> bool {");
+                writer.indent(() => {
+                    writer.writeLine("self.kind() == T::kind()");
                 }).write("}").newLine();
             }).write("}").newLine().newLine();
 
@@ -419,7 +429,7 @@ export function generate(analysisResult: AnalysisResult) {
 
             writer.newLine();
             writeTrait("CastableNode<'a>", `${struct.name}<'a>`, () => {
-                writer.writeLine("fn try_cast(node: &Node<'a>) -> Option<&'a Self> {");
+                writer.writeLine("fn to(node: &Node<'a>) -> Option<&'a Self> {");
                 writer.indent(() => {
                     writer.writeLine(`if let Node::${struct.name}(node) = node {`);
                     writer.indent(() => {
