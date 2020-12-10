@@ -81,14 +81,19 @@ pub struct CommentsIterator<'a> {
   comment_vecs: Vec<&'a Vec<Comment>>,
   outer_index: usize,
   inner_index: usize,
+  outer_index_back: usize,
+  inner_index_back: usize,
 }
 
 impl<'a> CommentsIterator<'a> {
   pub fn new(comment_vecs: Vec<&'a Vec<Comment>>) -> CommentsIterator<'a> {
+    let outer_index_back = comment_vecs.len();
     CommentsIterator {
       comment_vecs,
       outer_index: 0,
       inner_index: 0,
+      outer_index_back,
+      inner_index_back: 0,
     }
   }
 
@@ -99,6 +104,10 @@ impl<'a> CommentsIterator<'a> {
 
   pub fn extend(&mut self, iterator: CommentsIterator<'a>) {
     self.comment_vecs.extend(iterator.comment_vecs);
+
+    // reset the back iterator
+    self.outer_index_back = self.comment_vecs.len();
+    self.inner_index_back = 0;
   }
 
   pub fn is_empty(&self) -> bool {
@@ -147,5 +156,25 @@ impl<'a> Iterator for CommentsIterator<'a> {
       next_inner_index = 0;
     }
     (count, Some(count))
+  }
+}
+
+impl<'a> DoubleEndedIterator for CommentsIterator<'a> {
+  fn next_back(&mut self) -> Option<&'a Comment> {
+    if self.inner_index_back == 0 {
+      if self.outer_index_back == 0 {
+        return None;
+      }
+      self.outer_index_back -= 1;
+      self.inner_index_back = self.comment_vecs.get(self.outer_index_back).unwrap().len() - 1;
+    } else {
+      self.inner_index_back -= 1;
+    }
+
+    self
+      .comment_vecs
+      .get(self.outer_index_back)
+      .map(|inner| inner.get(self.inner_index_back))
+      .flatten()
   }
 }
