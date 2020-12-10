@@ -3633,7 +3633,7 @@ fn get_view_for_default_decl<'a>(inner: &'a swc_ast::DefaultDecl, parent: Node<'
 }
 
 
-/// 
+///
 /// - Invalid: [Ident] with empty symbol.
 pub enum TsEnumMemberId<'a> {
   Ident(&'a Ident<'a>),
@@ -8187,7 +8187,7 @@ pub struct Number<'a> {
 
 impl<'a> Number<'a> {
   /// **Note**: This should not be `NaN`. Use [crate::Ident] to represent NaN.
-  /// 
+  ///
   /// If you store `NaN` in this field, a hash map will behave strangely.
   pub fn value(&self) -> f64 {
     self.inner.value
@@ -9762,7 +9762,7 @@ pub struct CatchClause<'a> {
   pub parent: &'a TryStmt<'a>,
   pub inner: &'a swc_ast::CatchClause,
   /// es2019
-  /// 
+  ///
   /// The param is null if the catch binding is omitted. E.g., try { foo() }
   /// catch { bar() }
   pub param: Option<Pat<'a>>,
@@ -15183,9 +15183,9 @@ pub struct ForOfStmt<'a> {
 
 impl<'a> ForOfStmt<'a> {
   /// Span of the await token.
-  /// 
+  ///
   /// es2018
-  /// 
+  ///
   /// for-await-of statements, e.g., `for await (const x of xs) {`
   pub fn await_token(&self) -> &Option<swc_common::Span> {
     &self.inner.await_token

@@ -747,7 +747,11 @@ export function generate(analysisResult: AnalysisResult) {
         }
         const lines = docs.split(/\r?\n/);
         for (const line of lines) {
-            writer.writeLine(`/// ${line}`);
+            writer.write("///");
+            if (line.trim().length > 0) {
+                writer.write(` ${line.trimRight()}`);
+            }
+            writer.newLine();
         }
     }
 
