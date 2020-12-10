@@ -1,5 +1,7 @@
 # dprint-swc-ecma-ast-view
 
+[![](https://img.shields.io/crates/v/dprint-swc-ecma-ast-view.svg)](https://crates.io/crates/dprint-swc-ecma-ast-view)
+
 Proof of concept.
 
 The library at `./rs-lib` is code generated from [swc_ecma_ast](https://crates.io/crates/swc_ecma_ast) via the code in `./generation` to produce a more easily navigable immutable AST.
