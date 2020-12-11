@@ -3,7 +3,7 @@
 use std::mem::{self, MaybeUninit};
 use bumpalo::Bump;
 use swc_common::{Span, Spanned};
-use swc_ecmascript::ast::{self as swc_ast, VarDeclKind, TsTypeOperatorOp, TsKeywordTypeKind, BinaryOp, AssignOp, UpdateOp, Accessibility, MethodKind, UnaryOp, TruePlusMinus};
+pub use swc_ecmascript::ast::{self as swc_ast, VarDeclKind, TsTypeOperatorOp, TsKeywordTypeKind, BinaryOp, AssignOp, UpdateOp, Accessibility, MethodKind, UnaryOp, TruePlusMinus};
 use crate::comments::*;
 use crate::tokens::*;
 use crate::types::*;
@@ -6311,8 +6311,8 @@ pub struct UpdateExpr<'a> {
 }
 
 impl<'a> UpdateExpr<'a> {
-  pub fn op(&self) -> &UpdateOp {
-    &self.inner.op
+  pub fn op(&self) -> UpdateOp {
+    self.inner.op
   }
 
   pub fn prefix(&self) -> bool {
@@ -10827,8 +10827,8 @@ pub struct ClassMethod<'a> {
 }
 
 impl<'a> ClassMethod<'a> {
-  pub fn kind(&self) -> &MethodKind {
-    &self.inner.kind
+  pub fn kind(&self) -> MethodKind {
+    self.inner.kind
   }
 
   pub fn is_static(&self) -> bool {
@@ -10836,8 +10836,8 @@ impl<'a> ClassMethod<'a> {
   }
 
   /// Typescript extension.
-  pub fn accessibility(&self) -> &Option<Accessibility> {
-    &self.inner.accessibility
+  pub fn accessibility(&self) -> Option<Accessibility> {
+    self.inner.accessibility
   }
 
   /// Typescript extension.
@@ -10919,8 +10919,8 @@ pub struct TsParamProp<'a> {
 
 impl<'a> TsParamProp<'a> {
   /// At least one of `accessibility` or `readonly` must be set.
-  pub fn accessibility(&self) -> &Option<Accessibility> {
-    &self.inner.accessibility
+  pub fn accessibility(&self) -> Option<Accessibility> {
+    self.inner.accessibility
   }
 
   pub fn readonly(&self) -> bool {
@@ -11009,8 +11009,8 @@ impl<'a> ClassProp<'a> {
   }
 
   /// Typescript extension.
-  pub fn accessibility(&self) -> &Option<Accessibility> {
-    &self.inner.accessibility
+  pub fn accessibility(&self) -> Option<Accessibility> {
+    self.inner.accessibility
   }
 
   /// Typescript extension.
@@ -11741,8 +11741,8 @@ pub struct TsKeywordType<'a> {
 }
 
 impl<'a> TsKeywordType<'a> {
-  pub fn kind(&self) -> &TsKeywordTypeKind {
-    &self.inner.kind
+  pub fn kind(&self) -> TsKeywordTypeKind {
+    self.inner.kind
   }
 }
 
@@ -12422,12 +12422,12 @@ pub struct TsMappedType<'a> {
 }
 
 impl<'a> TsMappedType<'a> {
-  pub fn readonly(&self) -> &Option<TruePlusMinus> {
-    &self.inner.readonly
+  pub fn readonly(&self) -> Option<TruePlusMinus> {
+    self.inner.readonly
   }
 
-  pub fn optional(&self) -> &Option<TruePlusMinus> {
-    &self.inner.optional
+  pub fn optional(&self) -> Option<TruePlusMinus> {
+    self.inner.optional
   }
 }
 
@@ -12586,8 +12586,8 @@ impl<'a> PrivateProp<'a> {
   }
 
   /// Typescript extension.
-  pub fn accessibility(&self) -> &Option<Accessibility> {
-    &self.inner.accessibility
+  pub fn accessibility(&self) -> Option<Accessibility> {
+    self.inner.accessibility
   }
 
   /// Typescript extension.
@@ -13588,8 +13588,8 @@ pub struct TsTypeOperator<'a> {
 }
 
 impl<'a> TsTypeOperator<'a> {
-  pub fn op(&self) -> &TsTypeOperatorOp {
-    &self.inner.op
+  pub fn op(&self) -> TsTypeOperatorOp {
+    self.inner.op
   }
 }
 
@@ -13721,8 +13721,8 @@ pub struct BinExpr<'a> {
 }
 
 impl<'a> BinExpr<'a> {
-  pub fn op(&self) -> &BinaryOp {
-    &self.inner.op
+  pub fn op(&self) -> BinaryOp {
+    self.inner.op
   }
 }
 
@@ -13793,8 +13793,8 @@ pub struct UnaryExpr<'a> {
 }
 
 impl<'a> UnaryExpr<'a> {
-  pub fn op(&self) -> &UnaryOp {
-    &self.inner.op
+  pub fn op(&self) -> UnaryOp {
+    self.inner.op
   }
 }
 
@@ -13974,8 +13974,8 @@ pub struct Constructor<'a> {
 }
 
 impl<'a> Constructor<'a> {
-  pub fn accessibility(&self) -> &Option<Accessibility> {
-    &self.inner.accessibility
+  pub fn accessibility(&self) -> Option<Accessibility> {
+    self.inner.accessibility
   }
 
   pub fn is_optional(&self) -> bool {
@@ -15090,8 +15090,8 @@ pub struct PrivateMethod<'a> {
 }
 
 impl<'a> PrivateMethod<'a> {
-  pub fn kind(&self) -> &MethodKind {
-    &self.inner.kind
+  pub fn kind(&self) -> MethodKind {
+    self.inner.kind
   }
 
   pub fn is_static(&self) -> bool {
@@ -15099,8 +15099,8 @@ impl<'a> PrivateMethod<'a> {
   }
 
   /// Typescript extension.
-  pub fn accessibility(&self) -> &Option<Accessibility> {
-    &self.inner.accessibility
+  pub fn accessibility(&self) -> Option<Accessibility> {
+    self.inner.accessibility
   }
 
   /// Typescript extension.
@@ -16090,8 +16090,8 @@ pub struct VarDecl<'a> {
 }
 
 impl<'a> VarDecl<'a> {
-  pub fn kind(&self) -> &VarDeclKind {
-    &self.inner.kind
+  pub fn kind(&self) -> VarDeclKind {
+    self.inner.kind
   }
 
   pub fn declare(&self) -> bool {
@@ -16810,8 +16810,8 @@ pub struct AssignExpr<'a> {
 }
 
 impl<'a> AssignExpr<'a> {
-  pub fn op(&self) -> &AssignOp {
-    &self.inner.op
+  pub fn op(&self) -> AssignOp {
+    self.inner.op
   }
 }
 

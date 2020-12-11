@@ -9,12 +9,23 @@ pub enum NodeOrToken<'a> {
   Token(&'a TokenAndSpan),
 }
 
-pub trait NodeTrait<'a>: Spanned {
-  fn parent(&self) -> Option<Node<'a>>;
-  fn children(&self) -> Vec<Node<'a>>;
-  fn into_node(&self) -> Node<'a>;
-  fn kind(&self) -> NodeKind;
+pub trait SpannedExt {
+  fn lo(&self) -> BytePos;
+  fn hi(&self) -> BytePos;
+  fn lo_line_fast(&self, module: &Module) -> usize;
+  fn hi_line_fast(&self, module: &Module) -> usize;
+  fn lo_column_fast(&self, module: &Module) -> usize;
+  fn hi_column_fast(&self, module: &Module) -> usize;
+  fn tokens_fast<'a>(&self, module: &Module<'a>) -> &'a [TokenAndSpan];
+  fn text_fast<'a>(&self, module: &Module<'a>) -> &'a str;
+  fn leading_comments_fast<'a>(&self, module: &Module<'a>) -> CommentsIterator<'a>;
+  fn trailing_comments_fast<'a>(&self, module: &Module<'a>) -> CommentsIterator<'a>;
+}
 
+impl<T> SpannedExt for T
+where
+  T: Spanned,
+{
   fn lo(&self) -> BytePos {
     self.span().lo
   }
@@ -23,45 +34,72 @@ pub trait NodeTrait<'a>: Spanned {
     self.span().hi
   }
 
-  fn lo_line(&self) -> usize {
-    self.lo_line_fast(self.module())
-  }
-
-  fn lo_line_fast(&self, module: &Module<'a>) -> usize {
+  fn lo_line_fast(&self, module: &Module) -> usize {
     module_to_source_file(module)
       .lookup_line(self.lo())
       .unwrap_or(0)
+  }
+
+  fn hi_line_fast(&self, module: &Module) -> usize {
+    module_to_source_file(module)
+      .lookup_line(self.hi())
+      .unwrap_or(0)
+  }
+
+  fn lo_column_fast(&self, module: &Module) -> usize {
+    get_column_at_pos(module, self.lo())
+  }
+
+  fn hi_column_fast(&self, module: &Module) -> usize {
+    get_column_at_pos(module, self.hi())
+  }
+
+  fn tokens_fast<'a>(&self, module: &Module<'a>) -> &'a [TokenAndSpan] {
+    let span = self.span();
+    let token_container = module_to_token_container(module);
+    token_container.get_tokens_in_range(span.lo, span.hi)
+  }
+
+  fn text_fast<'a>(&self, module: &Module<'a>) -> &'a str {
+    let span = self.span();
+    let source_file = module_to_source_file(module);
+    &source_file.src[(span.lo.0 as usize)..(span.hi.0 as usize)]
+  }
+
+  fn leading_comments_fast<'a>(&self, module: &Module<'a>) -> CommentsIterator<'a> {
+    module_to_comment_container(module).leading_comments(self.lo())
+  }
+
+  fn trailing_comments_fast<'a>(&self, module: &Module<'a>) -> CommentsIterator<'a> {
+    module_to_comment_container(module).trailing_comments(self.hi())
+  }
+}
+
+pub trait NodeTrait<'a>: SpannedExt {
+  fn parent(&self) -> Option<Node<'a>>;
+  fn children(&self) -> Vec<Node<'a>>;
+  fn into_node(&self) -> Node<'a>;
+  fn kind(&self) -> NodeKind;
+
+  fn lo_line(&self) -> usize {
+    self.lo_line_fast(self.module())
   }
 
   fn hi_line(&self) -> usize {
     self.hi_line_fast(self.module())
   }
 
-  fn hi_line_fast(&self, module: &Module<'a>) -> usize {
-    module_to_source_file(module)
-      .lookup_line(self.hi())
-      .unwrap_or(0)
-  }
-
   fn lo_column(&self) -> usize {
     self.lo_column_fast(self.module())
-  }
-
-  fn lo_column_fast(&self, module: &Module<'a>) -> usize {
-    get_column_at_pos(module, self.lo())
   }
 
   fn hi_column(&self) -> usize {
     self.hi_column_fast(self.module())
   }
 
-  fn hi_column_fast(&self, module: &Module<'a>) -> usize {
-    get_column_at_pos(module, self.hi())
-  }
-
   fn child_index(&self) -> usize {
     if let Some(parent) = self.parent() {
-      let lo = self.span().lo;
+      let lo = self.lo();
       for (i, child) in parent.children().iter().enumerate() {
         if child.span().lo == lo {
           return i;
@@ -100,24 +138,8 @@ pub trait NodeTrait<'a>: Spanned {
     }
   }
 
-  fn text(&self) -> &'a str {
-    self.text_fast(&self.module())
-  }
-
-  fn text_fast(&self, module: &Module<'a>) -> &'a str {
-    let span = self.span();
-    let source_file = module_to_source_file(module);
-    &source_file.src[(span.lo.0 as usize)..(span.hi.0 as usize)]
-  }
-
   fn tokens(&self) -> &'a [TokenAndSpan] {
     self.tokens_fast(self.module())
-  }
-
-  fn tokens_fast(&self, module: &Module<'a>) -> &'a [TokenAndSpan] {
-    let span = self.span();
-    let token_container = module_to_token_container(module);
-    token_container.get_tokens_in_range(span.lo, span.hi)
   }
 
   fn children_with_tokens(&self) -> Vec<NodeOrToken<'a>> {
@@ -168,16 +190,8 @@ pub trait NodeTrait<'a>: Spanned {
     self.leading_comments_fast(self.module())
   }
 
-  fn leading_comments_fast(&self, module: &Module<'a>) -> CommentsIterator<'a> {
-    module_to_comment_container(module).leading_comments(self.lo())
-  }
-
   fn trailing_comments(&self) -> CommentsIterator<'a> {
     self.trailing_comments_fast(self.module())
-  }
-
-  fn trailing_comments_fast(&self, module: &Module<'a>) -> CommentsIterator<'a> {
-    module_to_comment_container(module).trailing_comments(self.hi())
   }
 
   fn module(&self) -> &Module<'a> {
@@ -187,7 +201,11 @@ pub trait NodeTrait<'a>: Spanned {
     }
 
     // the top-most node will always be a module
-    current.expect::<Module<'a>>()
+    current.expect::<Module>()
+  }
+
+  fn text(&self) -> &'a str {
+    self.text_fast(&self.module())
   }
 }
 

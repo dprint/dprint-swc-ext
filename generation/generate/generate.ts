@@ -39,7 +39,7 @@ export function generate(analysisResult: AnalysisResult) {
         writer.writeLine("use std::mem::{self, MaybeUninit};");
         writer.writeLine("use bumpalo::Bump;");
         writer.writeLine("use swc_common::{Span, Spanned};");
-        writer.write("use swc_ecmascript::ast::{self as swc_ast, ");
+        writer.write("pub use swc_ecmascript::ast::{self as swc_ast, ");
         writer.write(analysisResult.enums.filter(e => e.isPlain).map(e => e.name).join(", "));
         writer.write("};").newLine();
         writer.writeLine("use crate::comments::*;");
@@ -703,6 +703,10 @@ export function generate(analysisResult: AnalysisResult) {
         return type != null && type.kind === "reference" && analysisResult.enums.some(e => !e.isPlain && e.name === type.name);
     }
 
+    function isSwcPlainEnumType(type: TypeDefinition | undefined): boolean {
+        return type != null && type.kind === "reference" && analysisResult.enums.some(e => e.isPlain && e.name === type.name);
+    }
+
     function isSwcStructType(type: TypeDefinition | undefined): boolean {
         return type != null && type.kind === "reference" && analysisResult.structs.some(s => s.name === type.name);
     }
@@ -735,8 +739,8 @@ export function generate(analysisResult: AnalysisResult) {
         if (type.name === "Option") {
             return getIsReferenceType(type.generic_args[0]);
         }
-        if (type.path[0] === "swc_ecma_ast") {
-            return analysisResult.enums.some(s => s.isPlain && s.name === type.path[1]);
+        if (isSwcPlainEnumType(type)) {
+            return false;
         }
         return true;
     }
