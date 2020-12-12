@@ -12,10 +12,10 @@ pub enum NodeOrToken<'a> {
 pub trait SpannedExt {
   fn lo(&self) -> BytePos;
   fn hi(&self) -> BytePos;
-  fn lo_line_fast(&self, module: &Module) -> usize;
-  fn hi_line_fast(&self, module: &Module) -> usize;
-  fn lo_column_fast(&self, module: &Module) -> usize;
-  fn hi_column_fast(&self, module: &Module) -> usize;
+  fn start_line_fast(&self, module: &Module) -> usize;
+  fn end_line_fast(&self, module: &Module) -> usize;
+  fn start_column_fast(&self, module: &Module) -> usize;
+  fn end_column_fast(&self, module: &Module) -> usize;
   fn width_fast(&self, module: &Module) -> usize;
   fn tokens_fast<'a>(&self, module: &Module<'a>) -> &'a [TokenAndSpan];
   fn text_fast<'a>(&self, module: &Module<'a>) -> &'a str;
@@ -35,23 +35,23 @@ where
     self.span().hi
   }
 
-  fn lo_line_fast(&self, module: &Module) -> usize {
+  fn start_line_fast(&self, module: &Module) -> usize {
     module_to_source_file(module)
       .lookup_line(self.lo())
       .unwrap_or(0)
   }
 
-  fn hi_line_fast(&self, module: &Module) -> usize {
+  fn end_line_fast(&self, module: &Module) -> usize {
     module_to_source_file(module)
       .lookup_line(self.hi())
       .unwrap_or(0)
   }
 
-  fn lo_column_fast(&self, module: &Module) -> usize {
+  fn start_column_fast(&self, module: &Module) -> usize {
     get_column_at_pos(module, self.lo())
   }
 
-  fn hi_column_fast(&self, module: &Module) -> usize {
+  fn end_column_fast(&self, module: &Module) -> usize {
     get_column_at_pos(module, self.hi())
   }
 
@@ -86,20 +86,20 @@ pub trait NodeTrait<'a>: SpannedExt {
   fn into_node(&self) -> Node<'a>;
   fn kind(&self) -> NodeKind;
 
-  fn lo_line(&self) -> usize {
-    self.lo_line_fast(self.module())
+  fn start_line(&self) -> usize {
+    self.start_line_fast(self.module())
   }
 
-  fn hi_line(&self) -> usize {
-    self.hi_line_fast(self.module())
+  fn end_line(&self) -> usize {
+    self.end_line_fast(self.module())
   }
 
-  fn lo_column(&self) -> usize {
-    self.lo_column_fast(self.module())
+  fn start_column(&self) -> usize {
+    self.start_column_fast(self.module())
   }
 
-  fn hi_column(&self) -> usize {
-    self.hi_column_fast(self.module())
+  fn end_column(&self) -> usize {
+    self.end_column_fast(self.module())
   }
 
   fn width(&self) -> usize {

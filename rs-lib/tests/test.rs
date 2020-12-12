@@ -42,8 +42,8 @@ fn test_creating_reference() {
     for child in class.children() {
       println!("---------");
       println!("Child: {:?}", child.text());
-      println!("Lo column: {:?}", child.lo_column());
-      println!("Hi column: {:?}", child.hi_column());
+      println!("Lo column: {:?}", child.start_column());
+      println!("Hi column: {:?}", child.end_column());
       println!("Parent: {:?}", child.parent().unwrap().text());
       if let Some(prev_sibling) = child.prev_sibling() {
         println!("Previous sibling: {:?}", prev_sibling.text());

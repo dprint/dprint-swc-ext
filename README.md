@@ -24,14 +24,14 @@ All:
 - `.text_fast(module: &Module) -> &str` -- Doesn't require going up the tree to the root node
 - `.lo() -> BytePos`
 - `.hi() -> BytePos`
-- `.lo_line() -> usize`
-- `.lo_line_fast(module: &Module) -> usize`
-- `.hi_line() -> usize`
-- `.hi_line_fast(module: &Module) -> usize`
-- `.lo_column() -> usize`
-- `.lo_column_fast(module: &Module) -> usize`
-- `.hi_column() -> usize`
-- `.hi_column_fast(module: &Module) -> usize`
+- `.start_line() -> usize`
+- `.start_line_fast(module: &Module) -> usize`
+- `.end_line() -> usize`
+- `.end_line_fast(module: &Module) -> usize`
+- `.start_column() -> usize`
+- `.start_column_fast(module: &Module) -> usize`
+- `.end_column() -> usize`
+- `.end_column_fast(module: &Module) -> usize`
 - `.width() -> usize`
 - `.width_fast(module: &Module) -> usize`
 - `.tokens() -> &[TokenAndSpan]` - All the descendant tokens within the span of the node.
