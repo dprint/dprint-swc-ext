@@ -16,6 +16,7 @@ pub trait SpannedExt {
   fn hi_line_fast(&self, module: &Module) -> usize;
   fn lo_column_fast(&self, module: &Module) -> usize;
   fn hi_column_fast(&self, module: &Module) -> usize;
+  fn width_fast(&self, module: &Module) -> usize;
   fn tokens_fast<'a>(&self, module: &Module<'a>) -> &'a [TokenAndSpan];
   fn text_fast<'a>(&self, module: &Module<'a>) -> &'a str;
   fn leading_comments_fast<'a>(&self, module: &Module<'a>) -> CommentsIterator<'a>;
@@ -52,6 +53,10 @@ where
 
   fn hi_column_fast(&self, module: &Module) -> usize {
     get_column_at_pos(module, self.hi())
+  }
+
+  fn width_fast(&self, module: &Module) -> usize {
+    self.text_fast(module).chars().count()
   }
 
   fn tokens_fast<'a>(&self, module: &Module<'a>) -> &'a [TokenAndSpan] {
@@ -95,6 +100,10 @@ pub trait NodeTrait<'a>: SpannedExt {
 
   fn hi_column(&self) -> usize {
     self.hi_column_fast(self.module())
+  }
+
+  fn width(&self) -> usize {
+    self.width_fast(self.module())
   }
 
   fn child_index(&self) -> usize {
@@ -240,7 +249,7 @@ fn get_column_at_pos(module: &Module, pos: BytePos) -> usize {
       break;
     }
   }
-  let text_slice = std::str::from_utf8(&text_bytes[line_start..pos]).unwrap();
+  let text_slice = &source_file.src[line_start..pos];
   text_slice.chars().count()
 }
 

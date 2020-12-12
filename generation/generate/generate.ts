@@ -236,6 +236,7 @@ export function generate(analysisResult: AnalysisResult) {
                 writer.newLine();
                 implementTraitMethod("kind", "NodeKind", false);
             });
+            writer.newLine();
 
             writeTrait(`From<&${enumDef.name}<'a>>`, "Node<'a>", () => {
                 writer.writeLine(`fn from(node: &${enumDef.name}<'a>) -> Node<'a> {`);
@@ -250,6 +251,21 @@ export function generate(analysisResult: AnalysisResult) {
                             } else {
                                 writer.write(`node.into(),`);
                             }
+                            writer.newLine();
+                        }
+                    }).write("}").newLine();
+                }).write("}").newLine();
+            });
+            writer.newLine();
+
+            writeTrait(`From<${enumDef.name}<'a>>`, "Node<'a>", () => {
+                writer.writeLine(`fn from(node: ${enumDef.name}<'a>) -> Node<'a> {`);
+                writer.indent(() => {
+                    writer.writeLine("match node {");
+                    writer.indent(() => {
+                        for (const variant of enumDef.variants) {
+                            const fullName = `${enumDef.name}::${variant.name}`;
+                            writer.write(`${fullName}(node) => node.into(),`);
                             writer.newLine();
                         }
                     }).write("}").newLine();

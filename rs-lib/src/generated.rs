@@ -1433,6 +1433,7 @@ impl<'a> NodeTrait<'a> for JSXAttrValue<'a> {
     }
   }
 }
+
 impl<'a> From<&JSXAttrValue<'a>> for Node<'a> {
   fn from(node: &JSXAttrValue<'a>) -> Node<'a> {
     match node {
@@ -1440,6 +1441,17 @@ impl<'a> From<&JSXAttrValue<'a>> for Node<'a> {
       JSXAttrValue::JSXExprContainer(node) => (*node).into(),
       JSXAttrValue::JSXElement(node) => (*node).into(),
       JSXAttrValue::JSXFragment(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<JSXAttrValue<'a>> for Node<'a> {
+  fn from(node: JSXAttrValue<'a>) -> Node<'a> {
+    match node {
+      JSXAttrValue::Lit(node) => node.into(),
+      JSXAttrValue::JSXExprContainer(node) => node.into(),
+      JSXAttrValue::JSXElement(node) => node.into(),
+      JSXAttrValue::JSXFragment(node) => node.into(),
     }
   }
 }
@@ -1517,10 +1529,20 @@ impl<'a> NodeTrait<'a> for PropOrSpread<'a> {
     }
   }
 }
+
 impl<'a> From<&PropOrSpread<'a>> for Node<'a> {
   fn from(node: &PropOrSpread<'a>) -> Node<'a> {
     match node {
       PropOrSpread::Spread(node) => (*node).into(),
+      PropOrSpread::Prop(node) => node.into(),
+    }
+  }
+}
+
+impl<'a> From<PropOrSpread<'a>> for Node<'a> {
+  fn from(node: PropOrSpread<'a>) -> Node<'a> {
+    match node {
+      PropOrSpread::Spread(node) => node.into(),
       PropOrSpread::Prop(node) => node.into(),
     }
   }
@@ -1596,10 +1618,20 @@ impl<'a> NodeTrait<'a> for VarDeclOrExpr<'a> {
     }
   }
 }
+
 impl<'a> From<&VarDeclOrExpr<'a>> for Node<'a> {
   fn from(node: &VarDeclOrExpr<'a>) -> Node<'a> {
     match node {
       VarDeclOrExpr::VarDecl(node) => (*node).into(),
+      VarDeclOrExpr::Expr(node) => node.into(),
+    }
+  }
+}
+
+impl<'a> From<VarDeclOrExpr<'a>> for Node<'a> {
+  fn from(node: VarDeclOrExpr<'a>) -> Node<'a> {
+    match node {
+      VarDeclOrExpr::VarDecl(node) => node.into(),
       VarDeclOrExpr::Expr(node) => node.into(),
     }
   }
@@ -1675,11 +1707,21 @@ impl<'a> NodeTrait<'a> for TsThisTypeOrIdent<'a> {
     }
   }
 }
+
 impl<'a> From<&TsThisTypeOrIdent<'a>> for Node<'a> {
   fn from(node: &TsThisTypeOrIdent<'a>) -> Node<'a> {
     match node {
       TsThisTypeOrIdent::TsThisType(node) => (*node).into(),
       TsThisTypeOrIdent::Ident(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<TsThisTypeOrIdent<'a>> for Node<'a> {
+  fn from(node: TsThisTypeOrIdent<'a>) -> Node<'a> {
+    match node {
+      TsThisTypeOrIdent::TsThisType(node) => node.into(),
+      TsThisTypeOrIdent::Ident(node) => node.into(),
     }
   }
 }
@@ -1781,6 +1823,7 @@ impl<'a> NodeTrait<'a> for Prop<'a> {
     }
   }
 }
+
 impl<'a> From<&Prop<'a>> for Node<'a> {
   fn from(node: &Prop<'a>) -> Node<'a> {
     match node {
@@ -1790,6 +1833,19 @@ impl<'a> From<&Prop<'a>> for Node<'a> {
       Prop::Getter(node) => (*node).into(),
       Prop::Setter(node) => (*node).into(),
       Prop::Method(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<Prop<'a>> for Node<'a> {
+  fn from(node: Prop<'a>) -> Node<'a> {
+    match node {
+      Prop::Shorthand(node) => node.into(),
+      Prop::KeyValue(node) => node.into(),
+      Prop::Assign(node) => node.into(),
+      Prop::Getter(node) => node.into(),
+      Prop::Setter(node) => node.into(),
+      Prop::Method(node) => node.into(),
     }
   }
 }
@@ -1868,11 +1924,21 @@ impl<'a> NodeTrait<'a> for TsTypeQueryExpr<'a> {
     }
   }
 }
+
 impl<'a> From<&TsTypeQueryExpr<'a>> for Node<'a> {
   fn from(node: &TsTypeQueryExpr<'a>) -> Node<'a> {
     match node {
       TsTypeQueryExpr::TsEntityName(node) => node.into(),
       TsTypeQueryExpr::Import(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<TsTypeQueryExpr<'a>> for Node<'a> {
+  fn from(node: TsTypeQueryExpr<'a>) -> Node<'a> {
+    match node {
+      TsTypeQueryExpr::TsEntityName(node) => node.into(),
+      TsTypeQueryExpr::Import(node) => node.into(),
     }
   }
 }
@@ -1949,11 +2015,21 @@ impl<'a> NodeTrait<'a> for TsNamespaceBody<'a> {
     }
   }
 }
+
 impl<'a> From<&TsNamespaceBody<'a>> for Node<'a> {
   fn from(node: &TsNamespaceBody<'a>) -> Node<'a> {
     match node {
       TsNamespaceBody::TsModuleBlock(node) => (*node).into(),
       TsNamespaceBody::TsNamespaceDecl(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<TsNamespaceBody<'a>> for Node<'a> {
+  fn from(node: TsNamespaceBody<'a>) -> Node<'a> {
+    match node {
+      TsNamespaceBody::TsModuleBlock(node) => node.into(),
+      TsNamespaceBody::TsNamespaceDecl(node) => node.into(),
     }
   }
 }
@@ -2058,6 +2134,7 @@ impl<'a> NodeTrait<'a> for Lit<'a> {
     }
   }
 }
+
 impl<'a> From<&Lit<'a>> for Node<'a> {
   fn from(node: &Lit<'a>) -> Node<'a> {
     match node {
@@ -2068,6 +2145,20 @@ impl<'a> From<&Lit<'a>> for Node<'a> {
       Lit::BigInt(node) => (*node).into(),
       Lit::Regex(node) => (*node).into(),
       Lit::JSXText(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<Lit<'a>> for Node<'a> {
+  fn from(node: Lit<'a>) -> Node<'a> {
+    match node {
+      Lit::Str(node) => node.into(),
+      Lit::Bool(node) => node.into(),
+      Lit::Null(node) => node.into(),
+      Lit::Num(node) => node.into(),
+      Lit::BigInt(node) => node.into(),
+      Lit::Regex(node) => node.into(),
+      Lit::JSXText(node) => node.into(),
     }
   }
 }
@@ -2153,12 +2244,23 @@ impl<'a> NodeTrait<'a> for ImportSpecifier<'a> {
     }
   }
 }
+
 impl<'a> From<&ImportSpecifier<'a>> for Node<'a> {
   fn from(node: &ImportSpecifier<'a>) -> Node<'a> {
     match node {
       ImportSpecifier::Named(node) => (*node).into(),
       ImportSpecifier::Default(node) => (*node).into(),
       ImportSpecifier::Namespace(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<ImportSpecifier<'a>> for Node<'a> {
+  fn from(node: ImportSpecifier<'a>) -> Node<'a> {
+    match node {
+      ImportSpecifier::Named(node) => node.into(),
+      ImportSpecifier::Default(node) => node.into(),
+      ImportSpecifier::Namespace(node) => node.into(),
     }
   }
 }
@@ -2240,12 +2342,23 @@ impl<'a> NodeTrait<'a> for ExportSpecifier<'a> {
     }
   }
 }
+
 impl<'a> From<&ExportSpecifier<'a>> for Node<'a> {
   fn from(node: &ExportSpecifier<'a>) -> Node<'a> {
     match node {
       ExportSpecifier::Namespace(node) => (*node).into(),
       ExportSpecifier::Default(node) => (*node).into(),
       ExportSpecifier::Named(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<ExportSpecifier<'a>> for Node<'a> {
+  fn from(node: ExportSpecifier<'a>) -> Node<'a> {
+    match node {
+      ExportSpecifier::Namespace(node) => node.into(),
+      ExportSpecifier::Default(node) => node.into(),
+      ExportSpecifier::Named(node) => node.into(),
     }
   }
 }
@@ -2424,6 +2537,7 @@ impl<'a> NodeTrait<'a> for Stmt<'a> {
     }
   }
 }
+
 impl<'a> From<&Stmt<'a>> for Node<'a> {
   fn from(node: &Stmt<'a>) -> Node<'a> {
     match node {
@@ -2446,6 +2560,32 @@ impl<'a> From<&Stmt<'a>> for Node<'a> {
       Stmt::ForOf(node) => (*node).into(),
       Stmt::Decl(node) => node.into(),
       Stmt::Expr(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<Stmt<'a>> for Node<'a> {
+  fn from(node: Stmt<'a>) -> Node<'a> {
+    match node {
+      Stmt::Block(node) => node.into(),
+      Stmt::Empty(node) => node.into(),
+      Stmt::Debugger(node) => node.into(),
+      Stmt::With(node) => node.into(),
+      Stmt::Return(node) => node.into(),
+      Stmt::Labeled(node) => node.into(),
+      Stmt::Break(node) => node.into(),
+      Stmt::Continue(node) => node.into(),
+      Stmt::If(node) => node.into(),
+      Stmt::Switch(node) => node.into(),
+      Stmt::Throw(node) => node.into(),
+      Stmt::Try(node) => node.into(),
+      Stmt::While(node) => node.into(),
+      Stmt::DoWhile(node) => node.into(),
+      Stmt::For(node) => node.into(),
+      Stmt::ForIn(node) => node.into(),
+      Stmt::ForOf(node) => node.into(),
+      Stmt::Decl(node) => node.into(),
+      Stmt::Expr(node) => node.into(),
     }
   }
 }
@@ -2568,6 +2708,7 @@ impl<'a> NodeTrait<'a> for Pat<'a> {
     }
   }
 }
+
 impl<'a> From<&Pat<'a>> for Node<'a> {
   fn from(node: &Pat<'a>) -> Node<'a> {
     match node {
@@ -2577,6 +2718,20 @@ impl<'a> From<&Pat<'a>> for Node<'a> {
       Pat::Object(node) => (*node).into(),
       Pat::Assign(node) => (*node).into(),
       Pat::Invalid(node) => (*node).into(),
+      Pat::Expr(node) => node.into(),
+    }
+  }
+}
+
+impl<'a> From<Pat<'a>> for Node<'a> {
+  fn from(node: Pat<'a>) -> Node<'a> {
+    match node {
+      Pat::Ident(node) => node.into(),
+      Pat::Array(node) => node.into(),
+      Pat::Rest(node) => node.into(),
+      Pat::Object(node) => node.into(),
+      Pat::Assign(node) => node.into(),
+      Pat::Invalid(node) => node.into(),
       Pat::Expr(node) => node.into(),
     }
   }
@@ -2657,11 +2812,21 @@ impl<'a> NodeTrait<'a> for TsModuleName<'a> {
     }
   }
 }
+
 impl<'a> From<&TsModuleName<'a>> for Node<'a> {
   fn from(node: &TsModuleName<'a>) -> Node<'a> {
     match node {
       TsModuleName::Ident(node) => (*node).into(),
       TsModuleName::Str(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<TsModuleName<'a>> for Node<'a> {
+  fn from(node: TsModuleName<'a>) -> Node<'a> {
+    match node {
+      TsModuleName::Ident(node) => node.into(),
+      TsModuleName::Str(node) => node.into(),
     }
   }
 }
@@ -2748,6 +2913,7 @@ impl<'a> NodeTrait<'a> for TsFnParam<'a> {
     }
   }
 }
+
 impl<'a> From<&TsFnParam<'a>> for Node<'a> {
   fn from(node: &TsFnParam<'a>) -> Node<'a> {
     match node {
@@ -2755,6 +2921,17 @@ impl<'a> From<&TsFnParam<'a>> for Node<'a> {
       TsFnParam::Array(node) => (*node).into(),
       TsFnParam::Rest(node) => (*node).into(),
       TsFnParam::Object(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<TsFnParam<'a>> for Node<'a> {
+  fn from(node: TsFnParam<'a>) -> Node<'a> {
+    match node {
+      TsFnParam::Ident(node) => node.into(),
+      TsFnParam::Array(node) => node.into(),
+      TsFnParam::Rest(node) => node.into(),
+      TsFnParam::Object(node) => node.into(),
     }
   }
 }
@@ -2863,6 +3040,7 @@ impl<'a> NodeTrait<'a> for ClassMember<'a> {
     }
   }
 }
+
 impl<'a> From<&ClassMember<'a>> for Node<'a> {
   fn from(node: &ClassMember<'a>) -> Node<'a> {
     match node {
@@ -2873,6 +3051,20 @@ impl<'a> From<&ClassMember<'a>> for Node<'a> {
       ClassMember::PrivateProp(node) => (*node).into(),
       ClassMember::TsIndexSignature(node) => (*node).into(),
       ClassMember::Empty(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<ClassMember<'a>> for Node<'a> {
+  fn from(node: ClassMember<'a>) -> Node<'a> {
+    match node {
+      ClassMember::Constructor(node) => node.into(),
+      ClassMember::Method(node) => node.into(),
+      ClassMember::PrivateMethod(node) => node.into(),
+      ClassMember::ClassProp(node) => node.into(),
+      ClassMember::PrivateProp(node) => node.into(),
+      ClassMember::TsIndexSignature(node) => node.into(),
+      ClassMember::Empty(node) => node.into(),
     }
   }
 }
@@ -2952,10 +3144,20 @@ impl<'a> NodeTrait<'a> for VarDeclOrPat<'a> {
     }
   }
 }
+
 impl<'a> From<&VarDeclOrPat<'a>> for Node<'a> {
   fn from(node: &VarDeclOrPat<'a>) -> Node<'a> {
     match node {
       VarDeclOrPat::VarDecl(node) => (*node).into(),
+      VarDeclOrPat::Pat(node) => node.into(),
+    }
+  }
+}
+
+impl<'a> From<VarDeclOrPat<'a>> for Node<'a> {
+  fn from(node: VarDeclOrPat<'a>) -> Node<'a> {
+    match node {
+      VarDeclOrPat::VarDecl(node) => node.into(),
       VarDeclOrPat::Pat(node) => node.into(),
     }
   }
@@ -3031,11 +3233,21 @@ impl<'a> NodeTrait<'a> for TsModuleRef<'a> {
     }
   }
 }
+
 impl<'a> From<&TsModuleRef<'a>> for Node<'a> {
   fn from(node: &TsModuleRef<'a>) -> Node<'a> {
     match node {
       TsModuleRef::TsEntityName(node) => node.into(),
       TsModuleRef::TsExternalModuleRef(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<TsModuleRef<'a>> for Node<'a> {
+  fn from(node: TsModuleRef<'a>) -> Node<'a> {
+    match node {
+      TsModuleRef::TsEntityName(node) => node.into(),
+      TsModuleRef::TsExternalModuleRef(node) => node.into(),
     }
   }
 }
@@ -3110,11 +3322,21 @@ impl<'a> NodeTrait<'a> for JSXAttrOrSpread<'a> {
     }
   }
 }
+
 impl<'a> From<&JSXAttrOrSpread<'a>> for Node<'a> {
   fn from(node: &JSXAttrOrSpread<'a>) -> Node<'a> {
     match node {
       JSXAttrOrSpread::JSXAttr(node) => (*node).into(),
       JSXAttrOrSpread::SpreadElement(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<JSXAttrOrSpread<'a>> for Node<'a> {
+  fn from(node: JSXAttrOrSpread<'a>) -> Node<'a> {
+    match node {
+      JSXAttrOrSpread::JSXAttr(node) => node.into(),
+      JSXAttrOrSpread::SpreadElement(node) => node.into(),
     }
   }
 }
@@ -3189,11 +3411,21 @@ impl<'a> NodeTrait<'a> for ParamOrTsParamProp<'a> {
     }
   }
 }
+
 impl<'a> From<&ParamOrTsParamProp<'a>> for Node<'a> {
   fn from(node: &ParamOrTsParamProp<'a>) -> Node<'a> {
     match node {
       ParamOrTsParamProp::TsParamProp(node) => (*node).into(),
       ParamOrTsParamProp::Param(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<ParamOrTsParamProp<'a>> for Node<'a> {
+  fn from(node: ParamOrTsParamProp<'a>) -> Node<'a> {
+    match node {
+      ParamOrTsParamProp::TsParamProp(node) => node.into(),
+      ParamOrTsParamProp::Param(node) => node.into(),
     }
   }
 }
@@ -3268,10 +3500,20 @@ impl<'a> NodeTrait<'a> for ExprOrSuper<'a> {
     }
   }
 }
+
 impl<'a> From<&ExprOrSuper<'a>> for Node<'a> {
   fn from(node: &ExprOrSuper<'a>) -> Node<'a> {
     match node {
       ExprOrSuper::Super(node) => (*node).into(),
+      ExprOrSuper::Expr(node) => node.into(),
+    }
+  }
+}
+
+impl<'a> From<ExprOrSuper<'a>> for Node<'a> {
+  fn from(node: ExprOrSuper<'a>) -> Node<'a> {
+    match node {
+      ExprOrSuper::Super(node) => node.into(),
       ExprOrSuper::Expr(node) => node.into(),
     }
   }
@@ -3365,6 +3607,7 @@ impl<'a> NodeTrait<'a> for TsTypeElement<'a> {
     }
   }
 }
+
 impl<'a> From<&TsTypeElement<'a>> for Node<'a> {
   fn from(node: &TsTypeElement<'a>) -> Node<'a> {
     match node {
@@ -3373,6 +3616,18 @@ impl<'a> From<&TsTypeElement<'a>> for Node<'a> {
       TsTypeElement::TsPropertySignature(node) => (*node).into(),
       TsTypeElement::TsMethodSignature(node) => (*node).into(),
       TsTypeElement::TsIndexSignature(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<TsTypeElement<'a>> for Node<'a> {
+  fn from(node: TsTypeElement<'a>) -> Node<'a> {
+    match node {
+      TsTypeElement::TsCallSignatureDecl(node) => node.into(),
+      TsTypeElement::TsConstructSignatureDecl(node) => node.into(),
+      TsTypeElement::TsPropertySignature(node) => node.into(),
+      TsTypeElement::TsMethodSignature(node) => node.into(),
+      TsTypeElement::TsIndexSignature(node) => node.into(),
     }
   }
 }
@@ -3450,10 +3705,20 @@ impl<'a> NodeTrait<'a> for BlockStmtOrExpr<'a> {
     }
   }
 }
+
 impl<'a> From<&BlockStmtOrExpr<'a>> for Node<'a> {
   fn from(node: &BlockStmtOrExpr<'a>) -> Node<'a> {
     match node {
       BlockStmtOrExpr::BlockStmt(node) => (*node).into(),
+      BlockStmtOrExpr::Expr(node) => node.into(),
+    }
+  }
+}
+
+impl<'a> From<BlockStmtOrExpr<'a>> for Node<'a> {
+  fn from(node: BlockStmtOrExpr<'a>) -> Node<'a> {
+    match node {
+      BlockStmtOrExpr::BlockStmt(node) => node.into(),
       BlockStmtOrExpr::Expr(node) => node.into(),
     }
   }
@@ -3529,11 +3794,21 @@ impl<'a> NodeTrait<'a> for TsUnionOrIntersectionType<'a> {
     }
   }
 }
+
 impl<'a> From<&TsUnionOrIntersectionType<'a>> for Node<'a> {
   fn from(node: &TsUnionOrIntersectionType<'a>) -> Node<'a> {
     match node {
       TsUnionOrIntersectionType::TsUnionType(node) => (*node).into(),
       TsUnionOrIntersectionType::TsIntersectionType(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<TsUnionOrIntersectionType<'a>> for Node<'a> {
+  fn from(node: TsUnionOrIntersectionType<'a>) -> Node<'a> {
+    match node {
+      TsUnionOrIntersectionType::TsUnionType(node) => node.into(),
+      TsUnionOrIntersectionType::TsIntersectionType(node) => node.into(),
     }
   }
 }
@@ -3614,12 +3889,23 @@ impl<'a> NodeTrait<'a> for DefaultDecl<'a> {
     }
   }
 }
+
 impl<'a> From<&DefaultDecl<'a>> for Node<'a> {
   fn from(node: &DefaultDecl<'a>) -> Node<'a> {
     match node {
       DefaultDecl::Class(node) => (*node).into(),
       DefaultDecl::Fn(node) => (*node).into(),
       DefaultDecl::TsInterfaceDecl(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<DefaultDecl<'a>> for Node<'a> {
+  fn from(node: DefaultDecl<'a>) -> Node<'a> {
+    match node {
+      DefaultDecl::Class(node) => node.into(),
+      DefaultDecl::Fn(node) => node.into(),
+      DefaultDecl::TsInterfaceDecl(node) => node.into(),
     }
   }
 }
@@ -3697,11 +3983,21 @@ impl<'a> NodeTrait<'a> for TsEnumMemberId<'a> {
     }
   }
 }
+
 impl<'a> From<&TsEnumMemberId<'a>> for Node<'a> {
   fn from(node: &TsEnumMemberId<'a>) -> Node<'a> {
     match node {
       TsEnumMemberId::Ident(node) => (*node).into(),
       TsEnumMemberId::Str(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<TsEnumMemberId<'a>> for Node<'a> {
+  fn from(node: TsEnumMemberId<'a>) -> Node<'a> {
+    match node {
+      TsEnumMemberId::Ident(node) => node.into(),
+      TsEnumMemberId::Str(node) => node.into(),
     }
   }
 }
@@ -3776,11 +4072,21 @@ impl<'a> NodeTrait<'a> for TsParamPropParam<'a> {
     }
   }
 }
+
 impl<'a> From<&TsParamPropParam<'a>> for Node<'a> {
   fn from(node: &TsParamPropParam<'a>) -> Node<'a> {
     match node {
       TsParamPropParam::Ident(node) => (*node).into(),
       TsParamPropParam::Assign(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<TsParamPropParam<'a>> for Node<'a> {
+  fn from(node: TsParamPropParam<'a>) -> Node<'a> {
+    match node {
+      TsParamPropParam::Ident(node) => node.into(),
+      TsParamPropParam::Assign(node) => node.into(),
     }
   }
 }
@@ -3873,6 +4179,7 @@ impl<'a> NodeTrait<'a> for JSXElementChild<'a> {
     }
   }
 }
+
 impl<'a> From<&JSXElementChild<'a>> for Node<'a> {
   fn from(node: &JSXElementChild<'a>) -> Node<'a> {
     match node {
@@ -3881,6 +4188,18 @@ impl<'a> From<&JSXElementChild<'a>> for Node<'a> {
       JSXElementChild::JSXSpreadChild(node) => (*node).into(),
       JSXElementChild::JSXElement(node) => (*node).into(),
       JSXElementChild::JSXFragment(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<JSXElementChild<'a>> for Node<'a> {
+  fn from(node: JSXElementChild<'a>) -> Node<'a> {
+    match node {
+      JSXElementChild::JSXText(node) => node.into(),
+      JSXElementChild::JSXExprContainer(node) => node.into(),
+      JSXElementChild::JSXSpreadChild(node) => node.into(),
+      JSXElementChild::JSXElement(node) => node.into(),
+      JSXElementChild::JSXFragment(node) => node.into(),
     }
   }
 }
@@ -3958,8 +4277,18 @@ impl<'a> NodeTrait<'a> for ModuleItem<'a> {
     }
   }
 }
+
 impl<'a> From<&ModuleItem<'a>> for Node<'a> {
   fn from(node: &ModuleItem<'a>) -> Node<'a> {
+    match node {
+      ModuleItem::ModuleDecl(node) => node.into(),
+      ModuleItem::Stmt(node) => node.into(),
+    }
+  }
+}
+
+impl<'a> From<ModuleItem<'a>> for Node<'a> {
+  fn from(node: ModuleItem<'a>) -> Node<'a> {
     match node {
       ModuleItem::ModuleDecl(node) => node.into(),
       ModuleItem::Stmt(node) => node.into(),
@@ -4057,6 +4386,7 @@ impl<'a> NodeTrait<'a> for PropName<'a> {
     }
   }
 }
+
 impl<'a> From<&PropName<'a>> for Node<'a> {
   fn from(node: &PropName<'a>) -> Node<'a> {
     match node {
@@ -4065,6 +4395,18 @@ impl<'a> From<&PropName<'a>> for Node<'a> {
       PropName::Num(node) => (*node).into(),
       PropName::Computed(node) => (*node).into(),
       PropName::BigInt(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<PropName<'a>> for Node<'a> {
+  fn from(node: PropName<'a>) -> Node<'a> {
+    match node {
+      PropName::Ident(node) => node.into(),
+      PropName::Str(node) => node.into(),
+      PropName::Num(node) => node.into(),
+      PropName::Computed(node) => node.into(),
+      PropName::BigInt(node) => node.into(),
     }
   }
 }
@@ -4142,11 +4484,21 @@ impl<'a> NodeTrait<'a> for JSXAttrName<'a> {
     }
   }
 }
+
 impl<'a> From<&JSXAttrName<'a>> for Node<'a> {
   fn from(node: &JSXAttrName<'a>) -> Node<'a> {
     match node {
       JSXAttrName::Ident(node) => (*node).into(),
       JSXAttrName::JSXNamespacedName(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<JSXAttrName<'a>> for Node<'a> {
+  fn from(node: JSXAttrName<'a>) -> Node<'a> {
+    match node {
+      JSXAttrName::Ident(node) => node.into(),
+      JSXAttrName::JSXNamespacedName(node) => node.into(),
     }
   }
 }
@@ -4251,6 +4603,7 @@ impl<'a> NodeTrait<'a> for Decl<'a> {
     }
   }
 }
+
 impl<'a> From<&Decl<'a>> for Node<'a> {
   fn from(node: &Decl<'a>) -> Node<'a> {
     match node {
@@ -4261,6 +4614,20 @@ impl<'a> From<&Decl<'a>> for Node<'a> {
       Decl::TsTypeAlias(node) => (*node).into(),
       Decl::TsEnum(node) => (*node).into(),
       Decl::TsModule(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<Decl<'a>> for Node<'a> {
+  fn from(node: Decl<'a>) -> Node<'a> {
+    match node {
+      Decl::Class(node) => node.into(),
+      Decl::Fn(node) => node.into(),
+      Decl::Var(node) => node.into(),
+      Decl::TsInterface(node) => node.into(),
+      Decl::TsTypeAlias(node) => node.into(),
+      Decl::TsEnum(node) => node.into(),
+      Decl::TsModule(node) => node.into(),
     }
   }
 }
@@ -4358,6 +4725,7 @@ impl<'a> NodeTrait<'a> for TsLit<'a> {
     }
   }
 }
+
 impl<'a> From<&TsLit<'a>> for Node<'a> {
   fn from(node: &TsLit<'a>) -> Node<'a> {
     match node {
@@ -4366,6 +4734,18 @@ impl<'a> From<&TsLit<'a>> for Node<'a> {
       TsLit::Bool(node) => (*node).into(),
       TsLit::BigInt(node) => (*node).into(),
       TsLit::Tpl(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<TsLit<'a>> for Node<'a> {
+  fn from(node: TsLit<'a>) -> Node<'a> {
+    match node {
+      TsLit::Number(node) => node.into(),
+      TsLit::Str(node) => node.into(),
+      TsLit::Bool(node) => node.into(),
+      TsLit::BigInt(node) => node.into(),
+      TsLit::Tpl(node) => node.into(),
     }
   }
 }
@@ -4443,11 +4823,21 @@ impl<'a> NodeTrait<'a> for TsEntityName<'a> {
     }
   }
 }
+
 impl<'a> From<&TsEntityName<'a>> for Node<'a> {
   fn from(node: &TsEntityName<'a>) -> Node<'a> {
     match node {
       TsEntityName::TsQualifiedName(node) => (*node).into(),
       TsEntityName::Ident(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<TsEntityName<'a>> for Node<'a> {
+  fn from(node: TsEntityName<'a>) -> Node<'a> {
+    match node {
+      TsEntityName::TsQualifiedName(node) => node.into(),
+      TsEntityName::Ident(node) => node.into(),
     }
   }
 }
@@ -4733,6 +5123,7 @@ impl<'a> NodeTrait<'a> for Expr<'a> {
     }
   }
 }
+
 impl<'a> From<&Expr<'a>> for Node<'a> {
   fn from(node: &Expr<'a>) -> Node<'a> {
     match node {
@@ -4772,6 +5163,49 @@ impl<'a> From<&Expr<'a>> for Node<'a> {
       Expr::PrivateName(node) => (*node).into(),
       Expr::OptChain(node) => (*node).into(),
       Expr::Invalid(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<Expr<'a>> for Node<'a> {
+  fn from(node: Expr<'a>) -> Node<'a> {
+    match node {
+      Expr::This(node) => node.into(),
+      Expr::Array(node) => node.into(),
+      Expr::Object(node) => node.into(),
+      Expr::Fn(node) => node.into(),
+      Expr::Unary(node) => node.into(),
+      Expr::Update(node) => node.into(),
+      Expr::Bin(node) => node.into(),
+      Expr::Assign(node) => node.into(),
+      Expr::Member(node) => node.into(),
+      Expr::Cond(node) => node.into(),
+      Expr::Call(node) => node.into(),
+      Expr::New(node) => node.into(),
+      Expr::Seq(node) => node.into(),
+      Expr::Ident(node) => node.into(),
+      Expr::Lit(node) => node.into(),
+      Expr::Tpl(node) => node.into(),
+      Expr::TaggedTpl(node) => node.into(),
+      Expr::Arrow(node) => node.into(),
+      Expr::Class(node) => node.into(),
+      Expr::Yield(node) => node.into(),
+      Expr::MetaProp(node) => node.into(),
+      Expr::Await(node) => node.into(),
+      Expr::Paren(node) => node.into(),
+      Expr::JSXMember(node) => node.into(),
+      Expr::JSXNamespacedName(node) => node.into(),
+      Expr::JSXEmpty(node) => node.into(),
+      Expr::JSXElement(node) => node.into(),
+      Expr::JSXFragment(node) => node.into(),
+      Expr::TsTypeAssertion(node) => node.into(),
+      Expr::TsConstAssertion(node) => node.into(),
+      Expr::TsNonNull(node) => node.into(),
+      Expr::TsTypeCast(node) => node.into(),
+      Expr::TsAs(node) => node.into(),
+      Expr::PrivateName(node) => node.into(),
+      Expr::OptChain(node) => node.into(),
+      Expr::Invalid(node) => node.into(),
     }
   }
 }
@@ -4881,11 +5315,21 @@ impl<'a> NodeTrait<'a> for JSXObject<'a> {
     }
   }
 }
+
 impl<'a> From<&JSXObject<'a>> for Node<'a> {
   fn from(node: &JSXObject<'a>) -> Node<'a> {
     match node {
       JSXObject::JSXMemberExpr(node) => (*node).into(),
       JSXObject::Ident(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<JSXObject<'a>> for Node<'a> {
+  fn from(node: JSXObject<'a>) -> Node<'a> {
+    match node {
+      JSXObject::JSXMemberExpr(node) => node.into(),
+      JSXObject::Ident(node) => node.into(),
     }
   }
 }
@@ -4960,8 +5404,18 @@ impl<'a> NodeTrait<'a> for PatOrExpr<'a> {
     }
   }
 }
+
 impl<'a> From<&PatOrExpr<'a>> for Node<'a> {
   fn from(node: &PatOrExpr<'a>) -> Node<'a> {
+    match node {
+      PatOrExpr::Expr(node) => node.into(),
+      PatOrExpr::Pat(node) => node.into(),
+    }
+  }
+}
+
+impl<'a> From<PatOrExpr<'a>> for Node<'a> {
+  fn from(node: PatOrExpr<'a>) -> Node<'a> {
     match node {
       PatOrExpr::Expr(node) => node.into(),
       PatOrExpr::Pat(node) => node.into(),
@@ -5081,6 +5535,7 @@ impl<'a> NodeTrait<'a> for ModuleDecl<'a> {
     }
   }
 }
+
 impl<'a> From<&ModuleDecl<'a>> for Node<'a> {
   fn from(node: &ModuleDecl<'a>) -> Node<'a> {
     match node {
@@ -5093,6 +5548,22 @@ impl<'a> From<&ModuleDecl<'a>> for Node<'a> {
       ModuleDecl::TsImportEquals(node) => (*node).into(),
       ModuleDecl::TsExportAssignment(node) => (*node).into(),
       ModuleDecl::TsNamespaceExport(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<ModuleDecl<'a>> for Node<'a> {
+  fn from(node: ModuleDecl<'a>) -> Node<'a> {
+    match node {
+      ModuleDecl::Import(node) => node.into(),
+      ModuleDecl::ExportDecl(node) => node.into(),
+      ModuleDecl::ExportNamed(node) => node.into(),
+      ModuleDecl::ExportDefaultDecl(node) => node.into(),
+      ModuleDecl::ExportDefaultExpr(node) => node.into(),
+      ModuleDecl::ExportAll(node) => node.into(),
+      ModuleDecl::TsImportEquals(node) => node.into(),
+      ModuleDecl::TsExportAssignment(node) => node.into(),
+      ModuleDecl::TsNamespaceExport(node) => node.into(),
     }
   }
 }
@@ -5180,12 +5651,23 @@ impl<'a> NodeTrait<'a> for JSXElementName<'a> {
     }
   }
 }
+
 impl<'a> From<&JSXElementName<'a>> for Node<'a> {
   fn from(node: &JSXElementName<'a>) -> Node<'a> {
     match node {
       JSXElementName::Ident(node) => (*node).into(),
       JSXElementName::JSXMemberExpr(node) => (*node).into(),
       JSXElementName::JSXNamespacedName(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<JSXElementName<'a>> for Node<'a> {
+  fn from(node: JSXElementName<'a>) -> Node<'a> {
+    match node {
+      JSXElementName::Ident(node) => node.into(),
+      JSXElementName::JSXMemberExpr(node) => node.into(),
+      JSXElementName::JSXNamespacedName(node) => node.into(),
     }
   }
 }
@@ -5261,10 +5743,20 @@ impl<'a> NodeTrait<'a> for JSXExpr<'a> {
     }
   }
 }
+
 impl<'a> From<&JSXExpr<'a>> for Node<'a> {
   fn from(node: &JSXExpr<'a>) -> Node<'a> {
     match node {
       JSXExpr::JSXEmptyExpr(node) => (*node).into(),
+      JSXExpr::Expr(node) => node.into(),
+    }
+  }
+}
+
+impl<'a> From<JSXExpr<'a>> for Node<'a> {
+  fn from(node: JSXExpr<'a>) -> Node<'a> {
+    match node {
+      JSXExpr::JSXEmptyExpr(node) => node.into(),
       JSXExpr::Expr(node) => node.into(),
     }
   }
@@ -5448,6 +5940,7 @@ impl<'a> NodeTrait<'a> for TsType<'a> {
     }
   }
 }
+
 impl<'a> From<&TsType<'a>> for Node<'a> {
   fn from(node: &TsType<'a>) -> Node<'a> {
     match node {
@@ -5471,6 +5964,33 @@ impl<'a> From<&TsType<'a>> for Node<'a> {
       TsType::TsLitType(node) => (*node).into(),
       TsType::TsTypePredicate(node) => (*node).into(),
       TsType::TsImportType(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<TsType<'a>> for Node<'a> {
+  fn from(node: TsType<'a>) -> Node<'a> {
+    match node {
+      TsType::TsKeywordType(node) => node.into(),
+      TsType::TsThisType(node) => node.into(),
+      TsType::TsFnOrConstructorType(node) => node.into(),
+      TsType::TsTypeRef(node) => node.into(),
+      TsType::TsTypeQuery(node) => node.into(),
+      TsType::TsTypeLit(node) => node.into(),
+      TsType::TsArrayType(node) => node.into(),
+      TsType::TsTupleType(node) => node.into(),
+      TsType::TsOptionalType(node) => node.into(),
+      TsType::TsRestType(node) => node.into(),
+      TsType::TsUnionOrIntersectionType(node) => node.into(),
+      TsType::TsConditionalType(node) => node.into(),
+      TsType::TsInferType(node) => node.into(),
+      TsType::TsParenthesizedType(node) => node.into(),
+      TsType::TsTypeOperator(node) => node.into(),
+      TsType::TsIndexedAccessType(node) => node.into(),
+      TsType::TsMappedType(node) => node.into(),
+      TsType::TsLitType(node) => node.into(),
+      TsType::TsTypePredicate(node) => node.into(),
+      TsType::TsImportType(node) => node.into(),
     }
   }
 }
@@ -5569,12 +6089,23 @@ impl<'a> NodeTrait<'a> for ObjectPatProp<'a> {
     }
   }
 }
+
 impl<'a> From<&ObjectPatProp<'a>> for Node<'a> {
   fn from(node: &ObjectPatProp<'a>) -> Node<'a> {
     match node {
       ObjectPatProp::KeyValue(node) => (*node).into(),
       ObjectPatProp::Assign(node) => (*node).into(),
       ObjectPatProp::Rest(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<ObjectPatProp<'a>> for Node<'a> {
+  fn from(node: ObjectPatProp<'a>) -> Node<'a> {
+    match node {
+      ObjectPatProp::KeyValue(node) => node.into(),
+      ObjectPatProp::Assign(node) => node.into(),
+      ObjectPatProp::Rest(node) => node.into(),
     }
   }
 }
@@ -5650,11 +6181,21 @@ impl<'a> NodeTrait<'a> for TsFnOrConstructorType<'a> {
     }
   }
 }
+
 impl<'a> From<&TsFnOrConstructorType<'a>> for Node<'a> {
   fn from(node: &TsFnOrConstructorType<'a>) -> Node<'a> {
     match node {
       TsFnOrConstructorType::TsFnType(node) => (*node).into(),
       TsFnOrConstructorType::TsConstructorType(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<TsFnOrConstructorType<'a>> for Node<'a> {
+  fn from(node: TsFnOrConstructorType<'a>) -> Node<'a> {
+    match node {
+      TsFnOrConstructorType::TsFnType(node) => node.into(),
+      TsFnOrConstructorType::TsConstructorType(node) => node.into(),
     }
   }
 }

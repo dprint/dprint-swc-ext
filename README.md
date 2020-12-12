@@ -32,6 +32,8 @@ All:
 - `.lo_column_fast(module: &Module) -> usize`
 - `.hi_column() -> usize`
 - `.hi_column_fast(module: &Module) -> usize`
+- `.width() -> usize`
+- `.width_fast(module: &Module) -> usize`
 - `.tokens() -> &[TokenAndSpan]` - All the descendant tokens within the span of the node.
 - `.tokens_fast(module: &Module) -> &[TokenAndSpan]`
 - `.children_with_tokens() -> Vec<NodeOrToken<'a>>` - Gets the children with the tokens found between the children
