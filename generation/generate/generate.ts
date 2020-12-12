@@ -124,7 +124,7 @@ export function generate(analysisResult: AnalysisResult) {
         });
         writer.newLine();
 
-        writer.writeLine("#[derive(Clone, PartialEq, Debug)]");
+        writer.writeLine("#[derive(Clone, PartialEq, Debug, Copy)]");
         writer.writeLine("pub enum NodeKind {");
         writer.indent(() => {
             for (const struct of analysisResult.structs) {

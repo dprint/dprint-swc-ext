@@ -1029,7 +1029,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
   }
 }
 
-#[derive(Clone, PartialEq, Debug)]
+#[derive(Clone, PartialEq, Debug, Copy)]
 pub enum NodeKind {
   SwitchCase,
   ThrowStmt,
