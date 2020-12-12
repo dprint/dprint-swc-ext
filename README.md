@@ -10,7 +10,21 @@ Creates a wrapper AST around [swc](https://github.com/swc-project/swc)'s AST tha
 
 ## Helpers
 
-All:
+Spanned (All):
+
+- `.lo() -> BytePos`
+- `.hi() -> BytePos`
+- `.text_fast(module: &Module<'a>) -> &'a str` -- Doesn't require going up the tree to the root node
+- `.start_line_fast(module: &Module) -> usize`
+- `.end_line_fast(module: &Module) -> usize`
+- `.start_column_fast(module: &Module) -> usize`
+- `.end_column_fast(module: &Module) -> usize`
+- `.width_fast(module: &Module) -> usize`
+- `.tokens_fast(module: &Module<'a>) -> &'a [TokenAndSpan]`
+- `.leading_comments_fast(module: &Module<'a>) -> CommentsIterator<'a>`
+- `.trailing_comments_fast(module: &Module<'a>) -> CommentsIterator<'a>`
+
+Node/Enum Node/Nodes:
 
 - `.module() -> &'a Module` - Gets the root node.
 - `.parent() -> Option<Node<'a>>`
@@ -18,31 +32,20 @@ All:
 - `.child_index() -> usize`
 - `.prev_sibling() -> Option<Node<'a>>`
 - `.next_sibling() -> Option<Node<'a>>`
-- `.text() -> &str`
-- `.text_fast(module: &Module<'a>) -> &'a str` -- Doesn't require going up the tree to the root node
-- `.lo() -> BytePos`
-- `.hi() -> BytePos`
+- `.text() -> &str` - Slightly slower than `.text_fast(module)` because it requires going up the tree to get the root node
 - `.start_line() -> usize`
-- `.start_line_fast(module: &Module) -> usize`
 - `.end_line() -> usize`
-- `.end_line_fast(module: &Module) -> usize`
 - `.start_column() -> usize`
-- `.start_column_fast(module: &Module) -> usize`
 - `.end_column() -> usize`
-- `.end_column_fast(module: &Module) -> usize`
 - `.width() -> usize`
-- `.width_fast(module: &Module) -> usize`
 - `.tokens() -> &[TokenAndSpan]` - All the descendant tokens within the span of the node.
-- `.tokens_fast(module: &Module<'a>) -> &'a [TokenAndSpan]`
 - `.children_with_tokens() -> Vec<NodeOrToken<'a>>` - Gets the children with the tokens found between the children
 - `.children_with_tokens_fast(module: &Module<'a>) -> Vec<NodeOrToken<'a>>`
 - `.leading_comments() -> CommentsIterator<'a>`
-- `.leading_comments_fast(module: &Module<'a>) -> CommentsIterator<'a>`
 - `.trailing_comments() -> CommentsIterator<'a>`
-- `.trailing_comments_fast(module: &Module<'a>) -> CommentsIterator<'a>`
 - `.kind() -> NodeKind` - Gets the "node kind" enum variant associated with the node (ex. `NodeKind::ClassDecl`).
 
-Node/enum node specific helpers:
+Node/Enum Node:
 
 - `.to::<NodeType>() -> Option<&NodeType>`
 - `.expect::<NodeType>() -> &NodeType`
