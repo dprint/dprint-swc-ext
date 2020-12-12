@@ -2,8 +2,6 @@
 
 [![](https://img.shields.io/crates/v/dprint-swc-ecma-ast-view.svg)](https://crates.io/crates/dprint-swc-ecma-ast-view)
 
-Proof of concept.
-
 The library at `./rs-lib` is code generated from [swc_ecma_ast](https://crates.io/crates/swc_ecma_ast) via the code in `./generation` to produce a more easily navigable immutable AST.
 
 ## What does this do?
@@ -21,7 +19,7 @@ All:
 - `.prev_sibling() -> Option<Node<'a>>`
 - `.next_sibling() -> Option<Node<'a>>`
 - `.text() -> &str`
-- `.text_fast(module: &Module) -> &str` -- Doesn't require going up the tree to the root node
+- `.text_fast(module: &Module<'a>) -> &'a str` -- Doesn't require going up the tree to the root node
 - `.lo() -> BytePos`
 - `.hi() -> BytePos`
 - `.start_line() -> usize`
@@ -35,13 +33,13 @@ All:
 - `.width() -> usize`
 - `.width_fast(module: &Module) -> usize`
 - `.tokens() -> &[TokenAndSpan]` - All the descendant tokens within the span of the node.
-- `.tokens_fast(module: &Module) -> &[TokenAndSpan]`
+- `.tokens_fast(module: &Module<'a>) -> &'a [TokenAndSpan]`
 - `.children_with_tokens() -> Vec<NodeOrToken<'a>>` - Gets the children with the tokens found between the children
-- `.children_with_tokens_fast(module: &Module) -> Vec<NodeOrToken<'a>>`
+- `.children_with_tokens_fast(module: &Module<'a>) -> Vec<NodeOrToken<'a>>`
 - `.leading_comments() -> CommentsIterator<'a>`
-- `.leading_comments_fast(module: &Module) -> CommentsIterator<'a>`
+- `.leading_comments_fast(module: &Module<'a>) -> CommentsIterator<'a>`
 - `.trailing_comments() -> CommentsIterator<'a>`
-- `.trailing_comments_fast(module: &Module) -> CommentsIterator<'a>`
+- `.trailing_comments_fast(module: &Module<'a>) -> CommentsIterator<'a>`
 - `.kind() -> NodeKind` - Gets the "node kind" enum variant associated with the node (ex. `NodeKind::ClassDecl`).
 
 Node/enum node specific helpers:
