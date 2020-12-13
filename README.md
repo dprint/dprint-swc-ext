@@ -30,6 +30,7 @@ Node/Enum Node/Nodes:
 - `.parent() -> Option<Node<'a>>`
 - `.children() -> Vec<Node<'a>>`
 - `.child_index() -> usize`
+- `.ancestors() -> AncestorsIterator<'a>`
 - `.prev_sibling() -> Option<Node<'a>>`
 - `.next_sibling() -> Option<Node<'a>>`
 - `.text() -> &str` - Slightly slower than `.text_fast(module)` because it requires going up the tree to get the root node

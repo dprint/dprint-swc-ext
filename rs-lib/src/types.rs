@@ -86,6 +86,10 @@ pub trait NodeTrait<'a>: SpannedExt {
   fn into_node(&self) -> Node<'a>;
   fn kind(&self) -> NodeKind;
 
+  fn ancestors(&self) -> AncestorIterator<'a> {
+    AncestorIterator::new(self.into_node())
+  }
+
   fn start_line(&self) -> usize {
     self.start_line_fast(self.module())
   }
@@ -263,4 +267,27 @@ pub struct SourceFileInfo<'a> {
   pub source_file: Option<&'a swc_common::SourceFile>,
   pub tokens: Option<&'a Vec<TokenAndSpan>>,
   pub comments: Option<&'a SingleThreadedComments>,
+}
+
+#[derive(Clone)]
+pub struct AncestorIterator<'a> {
+  current: Node<'a>,
+}
+
+impl<'a> AncestorIterator<'a> {
+  pub fn new(node: Node<'a>) -> AncestorIterator<'a> {
+    AncestorIterator { current: node }
+  }
+}
+
+impl<'a> Iterator for AncestorIterator<'a> {
+  type Item = Node<'a>;
+
+  fn next(&mut self) -> Option<Node<'a>> {
+    let parent = self.current.parent();
+    if let Some(parent) = parent {
+      self.current = parent;
+    }
+    parent
+  }
 }
