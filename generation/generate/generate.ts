@@ -74,7 +74,7 @@ export function generate(analysisResult: AnalysisResult) {
     }
 
     function writeNode() {
-        writer.writeLine("#[derive(Clone)]");
+        writer.writeLine("#[derive(Clone, Copy)]");
         writer.writeLine("pub enum Node<'a> {");
         writer.indent(() => {
             for (const struct of analysisResult.structs) {
@@ -177,6 +177,7 @@ export function generate(analysisResult: AnalysisResult) {
 
         function writeEnum() {
             writeDocs(enumDef.docs);
+            writer.writeLine("#[derive(Copy, Clone)]");
             writer.write(`pub enum ${enumDef.name}<'a> {`);
             writer.indent(() => {
                 for (const variant of enumDef.variants) {

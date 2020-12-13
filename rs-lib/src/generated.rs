@@ -24,7 +24,7 @@ pub fn with_ast_view<'a, T>(source_file_info: SourceFileInfo, with_view: impl Fn
   })
 }
 
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub enum Node<'a> {
   SwitchCase(&'a SwitchCase<'a>),
   ThrowStmt(&'a ThrowStmt<'a>),
@@ -1359,6 +1359,7 @@ impl std::fmt::Display for NodeKind {
 }
 
 
+#[derive(Copy, Clone)]
 pub enum JSXAttrValue<'a> {
   Lit(Lit<'a>),
   JSXExprContainer(&'a JSXExprContainer<'a>),
@@ -1466,6 +1467,7 @@ fn get_view_for_jsxattr_value<'a>(inner: &'a swc_ast::JSXAttrValue, parent: Node
 }
 
 
+#[derive(Copy, Clone)]
 pub enum PropOrSpread<'a> {
   /// Spread properties, e.g., `{a: 1, ...obj, b: 2}`.
   Spread(&'a SpreadElement<'a>),
@@ -1556,6 +1558,7 @@ fn get_view_for_prop_or_spread<'a>(inner: &'a swc_ast::PropOrSpread, parent: Nod
 }
 
 
+#[derive(Copy, Clone)]
 pub enum VarDeclOrExpr<'a> {
   VarDecl(&'a VarDecl<'a>),
   Expr(Expr<'a>),
@@ -1645,6 +1648,7 @@ fn get_view_for_var_decl_or_expr<'a>(inner: &'a swc_ast::VarDeclOrExpr, parent: 
 }
 
 
+#[derive(Copy, Clone)]
 pub enum TsThisTypeOrIdent<'a> {
   TsThisType(&'a TsThisType<'a>),
   Ident(&'a Ident<'a>),
@@ -1734,6 +1738,7 @@ fn get_view_for_ts_this_type_or_ident<'a>(inner: &'a swc_ast::TsThisTypeOrIdent,
 }
 
 
+#[derive(Copy, Clone)]
 pub enum Prop<'a> {
   /// `a` in `{ a, }`
   Shorthand(&'a Ident<'a>),
@@ -1862,6 +1867,7 @@ fn get_view_for_prop<'a>(inner: &'a swc_ast::Prop, parent: Node<'a>, bump: &'a B
 }
 
 
+#[derive(Copy, Clone)]
 pub enum TsTypeQueryExpr<'a> {
   TsEntityName(TsEntityName<'a>),
   Import(&'a TsImportType<'a>),
@@ -1953,6 +1959,7 @@ fn get_view_for_ts_type_query_expr<'a>(inner: &'a swc_ast::TsTypeQueryExpr, pare
 
 /// `namespace A.B { }` is a namespace named `A` with another TsNamespaceDecl as
 /// its body.
+#[derive(Copy, Clone)]
 pub enum TsNamespaceBody<'a> {
   TsModuleBlock(&'a TsModuleBlock<'a>),
   TsNamespaceDecl(&'a TsNamespaceDecl<'a>),
@@ -2042,6 +2049,7 @@ fn get_view_for_ts_namespace_body<'a>(inner: &'a swc_ast::TsNamespaceBody, paren
 }
 
 
+#[derive(Copy, Clone)]
 pub enum Lit<'a> {
   Str(&'a Str<'a>),
   Bool(&'a Bool<'a>),
@@ -2176,6 +2184,7 @@ fn get_view_for_lit<'a>(inner: &'a swc_ast::Lit, parent: Node<'a>, bump: &'a Bum
 }
 
 
+#[derive(Copy, Clone)]
 pub enum ImportSpecifier<'a> {
   Named(&'a ImportNamedSpecifier<'a>),
   Default(&'a ImportDefaultSpecifier<'a>),
@@ -2274,6 +2283,7 @@ fn get_view_for_import_specifier<'a>(inner: &'a swc_ast::ImportSpecifier, parent
 }
 
 
+#[derive(Copy, Clone)]
 pub enum ExportSpecifier<'a> {
   Namespace(&'a ExportNamespaceSpecifier<'a>),
   Default(&'a ExportDefaultSpecifier<'a>),
@@ -2372,6 +2382,7 @@ fn get_view_for_export_specifier<'a>(inner: &'a swc_ast::ExportSpecifier, parent
 }
 
 
+#[derive(Copy, Clone)]
 pub enum Stmt<'a> {
   Block(&'a BlockStmt<'a>),
   Empty(&'a EmptyStmt<'a>),
@@ -2615,6 +2626,7 @@ fn get_view_for_stmt<'a>(inner: &'a swc_ast::Stmt, parent: Node<'a>, bump: &'a B
 }
 
 
+#[derive(Copy, Clone)]
 pub enum Pat<'a> {
   Ident(&'a Ident<'a>),
   Array(&'a ArrayPat<'a>),
@@ -2750,6 +2762,7 @@ fn get_view_for_pat<'a>(inner: &'a swc_ast::Pat, parent: Node<'a>, bump: &'a Bum
 }
 
 
+#[derive(Copy, Clone)]
 pub enum TsModuleName<'a> {
   Ident(&'a Ident<'a>),
   Str(&'a Str<'a>),
@@ -2839,6 +2852,7 @@ fn get_view_for_ts_module_name<'a>(inner: &'a swc_ast::TsModuleName, parent: Nod
 }
 
 
+#[derive(Copy, Clone)]
 pub enum TsFnParam<'a> {
   Ident(&'a Ident<'a>),
   Array(&'a ArrayPat<'a>),
@@ -2946,6 +2960,7 @@ fn get_view_for_ts_fn_param<'a>(inner: &'a swc_ast::TsFnParam, parent: Node<'a>,
 }
 
 
+#[derive(Copy, Clone)]
 pub enum ClassMember<'a> {
   Constructor(&'a Constructor<'a>),
   /// `es2015`
@@ -3082,6 +3097,7 @@ fn get_view_for_class_member<'a>(inner: &'a swc_ast::ClassMember, parent: Node<'
 }
 
 
+#[derive(Copy, Clone)]
 pub enum VarDeclOrPat<'a> {
   VarDecl(&'a VarDecl<'a>),
   Pat(Pat<'a>),
@@ -3171,6 +3187,7 @@ fn get_view_for_var_decl_or_pat<'a>(inner: &'a swc_ast::VarDeclOrPat, parent: No
 }
 
 
+#[derive(Copy, Clone)]
 pub enum TsModuleRef<'a> {
   TsEntityName(TsEntityName<'a>),
   TsExternalModuleRef(&'a TsExternalModuleRef<'a>),
@@ -3260,6 +3277,7 @@ fn get_view_for_ts_module_ref<'a>(inner: &'a swc_ast::TsModuleRef, parent: Node<
 }
 
 
+#[derive(Copy, Clone)]
 pub enum JSXAttrOrSpread<'a> {
   JSXAttr(&'a JSXAttr<'a>),
   SpreadElement(&'a SpreadElement<'a>),
@@ -3349,6 +3367,7 @@ fn get_view_for_jsxattr_or_spread<'a>(inner: &'a swc_ast::JSXAttrOrSpread, paren
 }
 
 
+#[derive(Copy, Clone)]
 pub enum ParamOrTsParamProp<'a> {
   TsParamProp(&'a TsParamProp<'a>),
   Param(&'a Param<'a>),
@@ -3438,6 +3457,7 @@ fn get_view_for_param_or_ts_param_prop<'a>(inner: &'a swc_ast::ParamOrTsParamPro
 }
 
 
+#[derive(Copy, Clone)]
 pub enum ExprOrSuper<'a> {
   Super(&'a Super<'a>),
   Expr(Expr<'a>),
@@ -3527,6 +3547,7 @@ fn get_view_for_expr_or_super<'a>(inner: &'a swc_ast::ExprOrSuper, parent: Node<
 }
 
 
+#[derive(Copy, Clone)]
 pub enum TsTypeElement<'a> {
   TsCallSignatureDecl(&'a TsCallSignatureDecl<'a>),
   TsConstructSignatureDecl(&'a TsConstructSignatureDecl<'a>),
@@ -3643,6 +3664,7 @@ fn get_view_for_ts_type_element<'a>(inner: &'a swc_ast::TsTypeElement, parent: N
 }
 
 
+#[derive(Copy, Clone)]
 pub enum BlockStmtOrExpr<'a> {
   BlockStmt(&'a BlockStmt<'a>),
   Expr(Expr<'a>),
@@ -3732,6 +3754,7 @@ fn get_view_for_block_stmt_or_expr<'a>(inner: &'a swc_ast::BlockStmtOrExpr, pare
 }
 
 
+#[derive(Copy, Clone)]
 pub enum TsUnionOrIntersectionType<'a> {
   TsUnionType(&'a TsUnionType<'a>),
   TsIntersectionType(&'a TsIntersectionType<'a>),
@@ -3821,6 +3844,7 @@ fn get_view_for_ts_union_or_intersection_type<'a>(inner: &'a swc_ast::TsUnionOrI
 }
 
 
+#[derive(Copy, Clone)]
 pub enum DefaultDecl<'a> {
   Class(&'a ClassExpr<'a>),
   Fn(&'a FnExpr<'a>),
@@ -3921,6 +3945,7 @@ fn get_view_for_default_decl<'a>(inner: &'a swc_ast::DefaultDecl, parent: Node<'
 
 ///
 /// - Invalid: [Ident] with empty symbol.
+#[derive(Copy, Clone)]
 pub enum TsEnumMemberId<'a> {
   Ident(&'a Ident<'a>),
   Str(&'a Str<'a>),
@@ -4010,6 +4035,7 @@ fn get_view_for_ts_enum_member_id<'a>(inner: &'a swc_ast::TsEnumMemberId, parent
 }
 
 
+#[derive(Copy, Clone)]
 pub enum TsParamPropParam<'a> {
   Ident(&'a Ident<'a>),
   Assign(&'a AssignPat<'a>),
@@ -4099,6 +4125,7 @@ fn get_view_for_ts_param_prop_param<'a>(inner: &'a swc_ast::TsParamPropParam, pa
 }
 
 
+#[derive(Copy, Clone)]
 pub enum JSXElementChild<'a> {
   JSXText(&'a JSXText<'a>),
   JSXExprContainer(&'a JSXExprContainer<'a>),
@@ -4215,6 +4242,7 @@ fn get_view_for_jsxelement_child<'a>(inner: &'a swc_ast::JSXElementChild, parent
 }
 
 
+#[derive(Copy, Clone)]
 pub enum ModuleItem<'a> {
   ModuleDecl(ModuleDecl<'a>),
   Stmt(Stmt<'a>),
@@ -4304,6 +4332,7 @@ fn get_view_for_module_item<'a>(inner: &'a swc_ast::ModuleItem, parent: Node<'a>
 }
 
 
+#[derive(Copy, Clone)]
 pub enum PropName<'a> {
   Ident(&'a Ident<'a>),
   /// String literal.
@@ -4422,6 +4451,7 @@ fn get_view_for_prop_name<'a>(inner: &'a swc_ast::PropName, parent: Node<'a>, bu
 }
 
 
+#[derive(Copy, Clone)]
 pub enum JSXAttrName<'a> {
   Ident(&'a Ident<'a>),
   JSXNamespacedName(&'a JSXNamespacedName<'a>),
@@ -4511,6 +4541,7 @@ fn get_view_for_jsxattr_name<'a>(inner: &'a swc_ast::JSXAttrName, parent: Node<'
 }
 
 
+#[derive(Copy, Clone)]
 pub enum Decl<'a> {
   Class(&'a ClassDecl<'a>),
   Fn(&'a FnDecl<'a>),
@@ -4645,6 +4676,7 @@ fn get_view_for_decl<'a>(inner: &'a swc_ast::Decl, parent: Node<'a>, bump: &'a B
 }
 
 
+#[derive(Copy, Clone)]
 pub enum TsLit<'a> {
   Number(&'a Number<'a>),
   Str(&'a Str<'a>),
@@ -4761,6 +4793,7 @@ fn get_view_for_ts_lit<'a>(inner: &'a swc_ast::TsLit, parent: Node<'a>, bump: &'
 }
 
 
+#[derive(Copy, Clone)]
 pub enum TsEntityName<'a> {
   TsQualifiedName(&'a TsQualifiedName<'a>),
   Ident(&'a Ident<'a>),
@@ -4850,6 +4883,7 @@ fn get_view_for_ts_entity_name<'a>(inner: &'a swc_ast::TsEntityName, parent: Nod
 }
 
 
+#[derive(Copy, Clone)]
 pub enum Expr<'a> {
   This(&'a ThisExpr<'a>),
   Array(&'a ArrayLit<'a>),
@@ -5253,6 +5287,7 @@ fn get_view_for_expr<'a>(inner: &'a swc_ast::Expr, parent: Node<'a>, bump: &'a B
 
 
 /// Used for `obj` property of `JSXMemberExpr`.
+#[derive(Copy, Clone)]
 pub enum JSXObject<'a> {
   JSXMemberExpr(&'a JSXMemberExpr<'a>),
   Ident(&'a Ident<'a>),
@@ -5342,6 +5377,7 @@ fn get_view_for_jsxobject<'a>(inner: &'a swc_ast::JSXObject, parent: Node<'a>, b
 }
 
 
+#[derive(Copy, Clone)]
 pub enum PatOrExpr<'a> {
   Expr(Expr<'a>),
   Pat(Pat<'a>),
@@ -5431,6 +5467,7 @@ fn get_view_for_pat_or_expr<'a>(inner: &'a swc_ast::PatOrExpr, parent: Node<'a>,
 }
 
 
+#[derive(Copy, Clone)]
 pub enum ModuleDecl<'a> {
   Import(&'a ImportDecl<'a>),
   ExportDecl(&'a ExportDecl<'a>),
@@ -5583,6 +5620,7 @@ fn get_view_for_module_decl<'a>(inner: &'a swc_ast::ModuleDecl, parent: Node<'a>
 }
 
 
+#[derive(Copy, Clone)]
 pub enum JSXElementName<'a> {
   Ident(&'a Ident<'a>),
   JSXMemberExpr(&'a JSXMemberExpr<'a>),
@@ -5681,6 +5719,7 @@ fn get_view_for_jsxelement_name<'a>(inner: &'a swc_ast::JSXElementName, parent: 
 }
 
 
+#[derive(Copy, Clone)]
 pub enum JSXExpr<'a> {
   JSXEmptyExpr(&'a JSXEmptyExpr<'a>),
   Expr(Expr<'a>),
@@ -5770,6 +5809,7 @@ fn get_view_for_jsxexpr<'a>(inner: &'a swc_ast::JSXExpr, parent: Node<'a>, bump:
 }
 
 
+#[derive(Copy, Clone)]
 pub enum TsType<'a> {
   TsKeywordType(&'a TsKeywordType<'a>),
   TsThisType(&'a TsThisType<'a>),
@@ -6021,6 +6061,7 @@ fn get_view_for_ts_type<'a>(inner: &'a swc_ast::TsType, parent: Node<'a>, bump: 
 }
 
 
+#[derive(Copy, Clone)]
 pub enum ObjectPatProp<'a> {
   KeyValue(&'a KeyValuePatProp<'a>),
   Assign(&'a AssignPatProp<'a>),
@@ -6119,6 +6160,7 @@ fn get_view_for_object_pat_prop<'a>(inner: &'a swc_ast::ObjectPatProp, parent: N
 }
 
 
+#[derive(Copy, Clone)]
 pub enum TsFnOrConstructorType<'a> {
   TsFnType(&'a TsFnType<'a>),
   TsConstructorType(&'a TsConstructorType<'a>),
