@@ -6,6 +6,9 @@ export function analyze(): AnalysisResult {
     const structs = Array.from(getStructs());
     const enums = Array.from(getEnums());
 
+    structs.sort((a, b) => a.name.localeCompare(b.name));
+    enums.sort((a, b) => a.name.localeCompare(b.name));
+
     fillStructParents({ structs, enums });
 
     return {

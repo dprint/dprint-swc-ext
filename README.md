@@ -104,8 +104,8 @@ let source_file_info = SourceFileInfo {
 }
 
 // now create and use the view
-dprint_swc_ecma_ast_view::with_ast_view(source_file_info, |ast_view| {
-  let class = ast_view.body[0].expect::<ClassDecl>().class;
+dprint_swc_ecma_ast_view::with_ast_view(source_file_info, |module| {
+  let class = module.body[0].expect::<ClassDecl>().class;
   println!("{:?}", class.text());
 
   for child in class.children() {
