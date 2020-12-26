@@ -23,6 +23,10 @@ Spanned (All):
 - `.tokens_fast(module: &Module<'a>) -> &'a [TokenAndSpan]`
 - `.leading_comments_fast(module: &Module<'a>) -> CommentsIterator<'a>`
 - `.trailing_comments_fast(module: &Module<'a>) -> CommentsIterator<'a>`
+- `.previous_token_fast(module: &Module) -> Option<&TokenAndSpan>`
+- `.next_token_fast(module: &Module) -> Option<&TokenAndSpan>`
+- `.previous_tokens_fast(module: &Module) -> Rev<Iter<'a, TokenAndSpan>>`
+- `.next_tokens_fast(module: &Module) -> &'a [TokenAndSpan]`
 
 Node/Enum Node/Nodes:
 
@@ -31,7 +35,7 @@ Node/Enum Node/Nodes:
 - `.children() -> Vec<Node<'a>>`
 - `.child_index() -> usize`
 - `.ancestors() -> AncestorsIterator<'a>`
-- `.prev_sibling() -> Option<Node<'a>>`
+- `.previous_sibling() -> Option<Node<'a>>`
 - `.next_sibling() -> Option<Node<'a>>`
 - `.text() -> &str` - Slightly slower than `.text_fast(module)` because it requires going up the tree to get the root node
 - `.start_line() -> usize`
@@ -45,6 +49,10 @@ Node/Enum Node/Nodes:
 - `.leading_comments() -> CommentsIterator<'a>`
 - `.trailing_comments() -> CommentsIterator<'a>`
 - `.kind() -> NodeKind` - Gets the "node kind" enum variant associated with the node (ex. `NodeKind::ClassDecl`).
+- `.previous_token() -> Option<&TokenAndSpan>`
+- `.next_token() -> Option<&TokenAndSpan>`
+- `.previous_tokens() -> Rev<Iter<'a, TokenAndSpan>>`
+- `.next_tokens() -> &'a [TokenAndSpan]`
 
 Node/Enum Node:
 
@@ -52,10 +60,19 @@ Node/Enum Node:
 - `.expect::<NodeType>() -> &NodeType`
 - `.is::<NodeType>() -> bool`
 
+TokenAndSpan extensions:
+
+- `.token_index(module: &Module) -> usize` - Gets the token index of the specified module.
+
+Module:
+
+- `token_at_index(index: &usize) - Option<&TokenAndSpan>`
+
 ## TODO
 
 - Right now this only works if analyzing one file at a time. It would be good to improve the API to accept a large
   collection of source files (should be easy).
+- Unit tests
 
 ## Example
 
