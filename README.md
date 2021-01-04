@@ -6,7 +6,9 @@ The library at `./rs-lib` is code generated from [swc_ecma_ast](https://crates.i
 
 ## What does this do?
 
-Creates a wrapper AST around [swc](https://github.com/swc-project/swc)'s AST that keeps track of the node parents and adds a `Node` enum type to allow referencing any kind of node.
+1. Creates a wrapper AST around [swc](https://github.com/swc-project/swc)'s AST that stores the node parents.
+2. Adds a `Node` enum type to allow referencing any kind of node.
+3. Adds many helper methods.
 
 ## Helpers
 
