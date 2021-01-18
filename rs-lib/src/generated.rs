@@ -13861,6 +13861,12 @@ pub struct TsConstructorType<'a> {
   pub type_ann: &'a TsTypeAnn<'a>,
 }
 
+impl<'a> TsConstructorType<'a> {
+  pub fn is_abstract(&self) -> bool {
+    self.inner.is_abstract
+  }
+}
+
 impl<'a> Spanned for TsConstructorType<'a> {
   fn span(&self) -> Span {
     self.inner.span()
