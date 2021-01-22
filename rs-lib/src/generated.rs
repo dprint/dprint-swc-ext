@@ -3,7 +3,7 @@
 use std::mem::{self, MaybeUninit};
 use bumpalo::Bump;
 use swc_common::{Span, Spanned};
-pub use swc_ecmascript::ast::{self as swc_ast, Accessibility, AssignOp, BinaryOp, MethodKind, StrKind, TruePlusMinus, TsKeywordTypeKind, TsTypeOperatorOp, UnaryOp, UpdateOp, VarDeclKind};
+pub use swc_ecmascript::ast::{self as swc_ast, Accessibility, AssignOp, BinaryOp, EsVersion, MethodKind, StrKind, TruePlusMinus, TsKeywordTypeKind, TsTypeOperatorOp, UnaryOp, UpdateOp, VarDeclKind};
 use crate::comments::*;
 use crate::tokens::*;
 use crate::types::*;
