@@ -69,13 +69,10 @@ pub trait SpannedExt {
     token_container.get_token_at_index(index + 1)
   }
 
-  fn previous_tokens_fast<'a>(
-    &self,
-    module: &Module<'a>,
-  ) -> std::iter::Rev<std::slice::Iter<'a, TokenAndSpan>> {
+  fn previous_tokens_fast<'a>(&self, module: &Module<'a>) -> &'a [TokenAndSpan] {
     let token_container = module_to_token_container(module);
     let index = token_container.get_token_index_at_lo(self.lo());
-    token_container.tokens[0..index].iter().rev()
+    &token_container.tokens[0..index]
   }
 
   fn next_tokens_fast<'a>(&self, module: &Module<'a>) -> &'a [TokenAndSpan] {
@@ -199,17 +196,49 @@ pub trait NodeTrait<'a>: SpannedExt {
     }
   }
 
+  /// Gets the previous siblings in the order they appear in the file.
+  fn previous_siblings(&self) -> Vec<Node<'a>> {
+    if let Some(parent) = self.parent() {
+      let child_index = self.child_index();
+      if child_index > 0 {
+        let mut parent_children = parent.children();
+        parent_children.drain(child_index..);
+        parent_children
+      } else {
+        Vec::new()
+      }
+    } else {
+      Vec::new()
+    }
+  }
+
+  /// Gets the next siblings in the order they appear in the file.
   fn next_sibling(&self) -> Option<Node<'a>> {
     if let Some(parent) = self.parent() {
       let next_index = self.child_index() + 1;
-      let mut children = parent.children();
-      if next_index < children.len() {
-        Some(children.remove(next_index))
+      let mut parent_children = parent.children();
+      if next_index < parent_children.len() {
+        Some(parent_children.remove(next_index))
       } else {
         None
       }
     } else {
       None
+    }
+  }
+
+  fn next_siblings(&self) -> Vec<Node<'a>> {
+    if let Some(parent) = self.parent() {
+      let next_index = self.child_index() + 1;
+      let mut parent_children = parent.children();
+      if next_index < parent_children.len() {
+        parent_children.drain(0..next_index);
+        parent_children
+      } else {
+        Vec::new()
+      }
+    } else {
+      Vec::new()
     }
   }
 
@@ -291,10 +320,12 @@ pub trait NodeTrait<'a>: SpannedExt {
     self.next_token_fast(self.module())
   }
 
-  fn previous_tokens(&self) -> std::iter::Rev<std::slice::Iter<'a, TokenAndSpan>> {
+  /// Gets the previous tokens in the order they appear in the file.
+  fn previous_tokens(&self) -> &'a [TokenAndSpan] {
     self.previous_tokens_fast(self.module())
   }
 
+  /// Gets the next tokens in the order they appear in the file.
   fn next_tokens(&self) -> &'a [TokenAndSpan] {
     self.next_tokens_fast(self.module())
   }

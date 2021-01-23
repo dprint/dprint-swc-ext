@@ -27,7 +27,7 @@ Spanned (All):
 - `.trailing_comments_fast(module: &Module<'a>) -> CommentsIterator<'a>`
 - `.previous_token_fast(module: &Module) -> Option<&TokenAndSpan>`
 - `.next_token_fast(module: &Module) -> Option<&TokenAndSpan>`
-- `.previous_tokens_fast(module: &Module) -> Rev<Iter<'a, TokenAndSpan>>`
+- `.previous_tokens_fast(module: &Module) -> &'a [TokenAndSpan]`
 - `.next_tokens_fast(module: &Module) -> &'a [TokenAndSpan]`
 
 Node/Enum Node/Nodes:
@@ -39,6 +39,8 @@ Node/Enum Node/Nodes:
 - `.ancestors() -> AncestorsIterator<'a>`
 - `.previous_sibling() -> Option<Node<'a>>`
 - `.next_sibling() -> Option<Node<'a>>`
+- `.previous_siblings() -> Vec<Node<'a>>`
+- `.next_siblings() -> Vec<Node<'a>>`
 - `.text() -> &str` - Slightly slower than `.text_fast(module)` because it requires going up the tree to get the root node
 - `.start_line() -> usize`
 - `.end_line() -> usize`
@@ -53,7 +55,7 @@ Node/Enum Node/Nodes:
 - `.kind() -> NodeKind` - Gets the "node kind" enum variant associated with the node (ex. `NodeKind::ClassDecl`).
 - `.previous_token() -> Option<&TokenAndSpan>`
 - `.next_token() -> Option<&TokenAndSpan>`
-- `.previous_tokens() -> Rev<Iter<'a, TokenAndSpan>>`
+- `.previous_tokens() -> &'a [TokenAndSpan]`
 - `.next_tokens() -> &'a [TokenAndSpan]`
 
 Node/Enum Node:
