@@ -12,12 +12,45 @@ thread_local! {
   static LOCAL_BUMP_ALLOCATOR: std::cell::RefCell<Bump> = std::cell::RefCell::new(Bump::new());
 }
 
-pub fn with_ast_view<'a, T>(source_file_info: SourceFileInfo, with_view: impl FnOnce(&'a Module<'a>) -> T) -> T {
+pub fn with_ast_view<'a, T>(info: ProgramInfo, with_view: impl FnOnce(Program<'a>) -> T) -> T {
+  match info.program {
+    swc_ast::Program::Module(module) => {
+      with_ast_view_for_module(ModuleInfo {
+        module,
+        source_file: info.source_file,
+        tokens: info.tokens,
+        comments: info.comments,
+      }, |module| with_view(Program::Module(module)))
+    },
+    swc_ast::Program::Script(script) => {
+      with_ast_view_for_script(ScriptInfo {
+        script,
+        source_file: info.source_file,
+        tokens: info.tokens,
+        comments: info.comments,
+      }, |script| with_view(Program::Script(script)))
+    },
+  }
+}
+
+pub fn with_ast_view_for_module<'a, T>(info: ModuleInfo, with_view: impl FnOnce(&'a Module<'a>) -> T) -> T {
   LOCAL_BUMP_ALLOCATOR.with(|bump_cell| {
     let mut bump_borrow = bump_cell.borrow_mut();
     let bump_ref = unsafe { mem::transmute::<&Bump, &'a Bump>(&bump_borrow) };
-    let info_ref = unsafe { mem::transmute::<&SourceFileInfo, &'a SourceFileInfo<'a>>(&source_file_info) };
+    let info_ref = unsafe { mem::transmute::<&ModuleInfo, &'a ModuleInfo<'a>>(&info) };
     let ast_view = get_view_for_module(info_ref, bump_ref);
+    let result = with_view(ast_view);
+    bump_borrow.reset();
+    result
+  })
+}
+
+pub fn with_ast_view_for_script<'a, T>(info: ScriptInfo, with_view: impl FnOnce(&'a Script<'a>) -> T) -> T {
+  LOCAL_BUMP_ALLOCATOR.with(|bump_cell| {
+    let mut bump_borrow = bump_cell.borrow_mut();
+    let bump_ref = unsafe { mem::transmute::<&Bump, &'a Bump>(&bump_borrow) };
+    let info_ref = unsafe { mem::transmute::<&ScriptInfo, &'a ScriptInfo<'a>>(&info) };
+    let ast_view = get_view_for_script(info_ref, bump_ref);
     let result = with_view(ast_view);
     bump_borrow.reset();
     result
@@ -112,6 +145,7 @@ pub enum Node<'a> {
   Regex(&'a Regex<'a>),
   RestPat(&'a RestPat<'a>),
   ReturnStmt(&'a ReturnStmt<'a>),
+  Script(&'a Script<'a>),
   SeqExpr(&'a SeqExpr<'a>),
   SetterProp(&'a SetterProp<'a>),
   SpreadElement(&'a SpreadElement<'a>),
@@ -294,6 +328,7 @@ impl<'a> Spanned for Node<'a> {
       Node::Regex(node) => node.span(),
       Node::RestPat(node) => node.span(),
       Node::ReturnStmt(node) => node.span(),
+      Node::Script(node) => node.span(),
       Node::SeqExpr(node) => node.span(),
       Node::SetterProp(node) => node.span(),
       Node::SpreadElement(node) => node.span(),
@@ -460,6 +495,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::Regex(node) => node.parent(),
       Node::RestPat(node) => node.parent(),
       Node::ReturnStmt(node) => node.parent(),
+      Node::Script(node) => node.parent(),
       Node::SeqExpr(node) => node.parent(),
       Node::SetterProp(node) => node.parent(),
       Node::SpreadElement(node) => node.parent(),
@@ -624,6 +660,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::Regex(node) => node.children(),
       Node::RestPat(node) => node.children(),
       Node::ReturnStmt(node) => node.children(),
+      Node::Script(node) => node.children(),
       Node::SeqExpr(node) => node.children(),
       Node::SetterProp(node) => node.children(),
       Node::SpreadElement(node) => node.children(),
@@ -788,6 +825,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::Regex(node) => node.into_node(),
       Node::RestPat(node) => node.into_node(),
       Node::ReturnStmt(node) => node.into_node(),
+      Node::Script(node) => node.into_node(),
       Node::SeqExpr(node) => node.into_node(),
       Node::SetterProp(node) => node.into_node(),
       Node::SpreadElement(node) => node.into_node(),
@@ -952,6 +990,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::Regex(node) => node.kind(),
       Node::RestPat(node) => node.kind(),
       Node::ReturnStmt(node) => node.kind(),
+      Node::Script(node) => node.kind(),
       Node::SeqExpr(node) => node.kind(),
       Node::SetterProp(node) => node.kind(),
       Node::SpreadElement(node) => node.kind(),
@@ -1117,6 +1156,7 @@ pub enum NodeKind {
   Regex,
   RestPat,
   ReturnStmt,
+  Script,
   SeqExpr,
   SetterProp,
   SpreadElement,
@@ -1281,6 +1321,7 @@ impl std::fmt::Display for NodeKind {
       NodeKind::Regex => "Regex",
       NodeKind::RestPat => "RestPat",
       NodeKind::ReturnStmt => "ReturnStmt",
+      NodeKind::Script => "Script",
       NodeKind::SeqExpr => "SeqExpr",
       NodeKind::SetterProp => "SetterProp",
       NodeKind::SpreadElement => "SpreadElement",
@@ -11317,7 +11358,7 @@ impl<'a> CastableNode<'a> for Module<'a> {
   }
 }
 
-fn get_view_for_module<'a>(source_file_info: &'a SourceFileInfo<'a>, bump: &'a Bump) -> &'a Module<'a> {
+fn get_view_for_module<'a>(source_file_info: &'a ModuleInfo<'a>, bump: &'a Bump) -> &'a Module<'a> {
   let inner = source_file_info.module;
   let tokens = source_file_info.tokens.map(|t| &*bump.alloc(TokenContainer::new(t)));
   let comments = source_file_info.comments.map(|c| &*bump.alloc(CommentContainer::new(
@@ -12457,6 +12498,88 @@ fn get_view_for_return_stmt<'a>(inner: &'a swc_ast::ReturnStmt, parent: Node<'a>
     Some(value) => Some(get_view_for_expr(value, parent, bump)),
     None => None,
   };
+  node
+}
+
+pub struct Script<'a> {
+  pub source_file: Option<&'a swc_common::SourceFile>,
+  pub tokens: Option<&'a TokenContainer<'a>>,
+  pub comments: Option<&'a CommentContainer<'a>>,
+  pub inner: &'a swc_ast::Script,
+  pub body: Vec<Stmt<'a>>,
+}
+
+impl<'a> Script<'a> {
+  pub fn shebang(&self) -> &Option<swc_atoms::JsWord> {
+    &self.inner.shebang
+  }
+}
+
+impl<'a> Spanned for Script<'a> {
+  fn span(&self) -> Span {
+    self.inner.span()
+  }
+}
+
+impl<'a> From<&Script<'a>> for Node<'a> {
+  fn from(node: &Script<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&Script<'a>, &'a Script<'a>>(node) };
+    Node::Script(node)
+  }
+}
+
+impl<'a> NodeTrait<'a> for &'a Script<'a> {
+  fn parent(&self) -> Option<Node<'a>> {
+    None
+  }
+
+  fn children(&self) -> Vec<Node<'a>> {
+    let mut children = Vec::with_capacity(self.body.len());
+    for child in self.body.iter() {
+      children.push(child.into());
+    }
+    children
+  }
+
+  fn into_node(&self) -> Node<'a> {
+    (*self).into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::Script
+  }
+}
+
+impl<'a> CastableNode<'a> for Script<'a> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
+    if let Node::Script(node) = node {
+      Some(node)
+    } else {
+      None
+    }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::Script
+  }
+}
+
+fn get_view_for_script<'a>(source_file_info: &'a ScriptInfo<'a>, bump: &'a Bump) -> &'a Script<'a> {
+  let inner = source_file_info.script;
+  let tokens = source_file_info.tokens.map(|t| &*bump.alloc(TokenContainer::new(t)));
+  let comments = source_file_info.comments.map(|c| &*bump.alloc(CommentContainer::new(
+    c,
+    tokens.expect("Tokens must be provided when using comments."),
+    source_file_info.source_file.expect("Source file must be provided when using comments"),
+  )));
+  let node = bump.alloc(Script {
+    inner,
+    source_file: source_file_info.source_file,
+    tokens,
+    comments,
+    body: Vec::with_capacity(inner.body.len()),
+  });
+  let parent: Node<'a> = (&*node).into();
+  node.body.extend(inner.body.iter().map(|value| get_view_for_stmt(value, parent.clone(), bump)));
   node
 }
 

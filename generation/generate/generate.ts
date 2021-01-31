@@ -15,7 +15,7 @@ export function generate(analysisResult: AnalysisResult) {
     writeHeader();
     writeUseDeclarations();
     writeBumpAllocator();
-    writePublicFunction();
+    writePublicFunctions();
     writeNode();
 
     for (const enumDef of analysisResult.enums.filter(e => !e.isPlain)) {
@@ -56,16 +56,61 @@ export function generate(analysisResult: AnalysisResult) {
         }).write("}").newLine().newLine();
     }
 
-    function writePublicFunction() {
-        writer.writeLine("pub fn with_ast_view<'a, T>(source_file_info: SourceFileInfo, with_view: impl FnOnce(&'a Module<'a>) -> T) -> T {");
+    function writePublicFunctions() {
+        writer.writeLine("pub fn with_ast_view<'a, T>(info: ProgramInfo, with_view: impl FnOnce(Program<'a>) -> T) -> T {");
+        writer.indent(() => {
+            writer.writeLine("match info.program {");
+            writer.indent(() => {
+                writer.writeLine("swc_ast::Program::Module(module) => {");
+                writer.indent(() => {
+                    writer.writeLine("with_ast_view_for_module(ModuleInfo {");
+                    writer.indent(() => {
+                        writer.writeLine("module,");
+                        writer.writeLine("source_file: info.source_file,");
+                        writer.writeLine("tokens: info.tokens,");
+                        writer.writeLine("comments: info.comments,");
+                    }).write("}, |module| with_view(Program::Module(module)))").newLine();
+                });
+                writer.writeLine("},");
+                writer.writeLine("swc_ast::Program::Script(script) => {");
+                writer.indent(() => {
+                    writer.writeLine("with_ast_view_for_script(ScriptInfo {");
+                    writer.indent(() => {
+                        writer.writeLine("script,");
+                        writer.writeLine("source_file: info.source_file,");
+                        writer.writeLine("tokens: info.tokens,");
+                        writer.writeLine("comments: info.comments,");
+                    }).write("}, |script| with_view(Program::Script(script)))").newLine();
+                });
+                writer.writeLine("},");
+            });
+            writer.writeLine("}");
+        }).write("}").newLine().newLine();
+
+        writer.writeLine("pub fn with_ast_view_for_module<'a, T>(info: ModuleInfo, with_view: impl FnOnce(&'a Module<'a>) -> T) -> T {");
         writer.indent(() => {
             writer.writeLine("LOCAL_BUMP_ALLOCATOR.with(|bump_cell| {");
             writer.indent(() => {
                 writer.writeLine("let mut bump_borrow = bump_cell.borrow_mut();");
                 // hack to avoid yet another lifetime
                 writer.writeLine("let bump_ref = unsafe { mem::transmute::<&Bump, &'a Bump>(&bump_borrow) };");
-                writer.writeLine("let info_ref = unsafe { mem::transmute::<&SourceFileInfo, &'a SourceFileInfo<'a>>(&source_file_info) };");
+                writer.writeLine("let info_ref = unsafe { mem::transmute::<&ModuleInfo, &'a ModuleInfo<'a>>(&info) };");
                 writer.writeLine(`let ast_view = ${getViewForFunctionName("Module")}(info_ref, bump_ref);`);
+                writer.writeLine(`let result = with_view(ast_view);`);
+                writer.writeLine("bump_borrow.reset();");
+                writer.writeLine("result");
+            }).write("})").newLine();
+        }).write("}").newLine().newLine();
+
+        writer.writeLine("pub fn with_ast_view_for_script<'a, T>(info: ScriptInfo, with_view: impl FnOnce(&'a Script<'a>) -> T) -> T {");
+        writer.indent(() => {
+            writer.writeLine("LOCAL_BUMP_ALLOCATOR.with(|bump_cell| {");
+            writer.indent(() => {
+                writer.writeLine("let mut bump_borrow = bump_cell.borrow_mut();");
+                // hack to avoid yet another lifetime
+                writer.writeLine("let bump_ref = unsafe { mem::transmute::<&Bump, &'a Bump>(&bump_borrow) };");
+                writer.writeLine("let info_ref = unsafe { mem::transmute::<&ScriptInfo, &'a ScriptInfo<'a>>(&info) };");
+                writer.writeLine(`let ast_view = ${getViewForFunctionName("Script")}(info_ref, bump_ref);`);
                 writer.writeLine(`let result = with_view(ast_view);`);
                 writer.writeLine("bump_borrow.reset();");
                 writer.writeLine("result");
@@ -341,7 +386,7 @@ export function generate(analysisResult: AnalysisResult) {
                         writer.writeLine(`pub parent: Node<'a>,`);
                     }
                 }
-                if (struct.name === "Module") {
+                if (struct.name === "Module" || struct.name === "Script") {
                     writer.writeLine("pub source_file: Option<&'a swc_common::SourceFile>,");
                     writer.writeLine("pub tokens: Option<&'a TokenContainer<'a>>,");
                     writer.writeLine("pub comments: Option<&'a CommentContainer<'a>>,");
@@ -551,7 +596,9 @@ export function generate(analysisResult: AnalysisResult) {
         function writeStructFunction() {
             writer.write(`fn ${getViewForFunctionName(struct.name)}<'a>(`);
             if (struct.name === "Module") {
-                writer.write(`source_file_info: &'a SourceFileInfo<'a>`);
+                writer.write(`source_file_info: &'a ModuleInfo<'a>`);
+            } else if (struct.name === "Script") {
+                writer.write(`source_file_info: &'a ScriptInfo<'a>`);
             } else {
                 writer.write(`inner: &'a swc_ast::${struct.name}, `);
                 writer.write(`parent: Node<'a>`);
@@ -561,6 +608,10 @@ export function generate(analysisResult: AnalysisResult) {
             writer.indent(() => {
                 if (struct.name === "Module") {
                     writer.writeLine("let inner = source_file_info.module;");
+                } else if (struct.name === "Script") {
+                    writer.writeLine("let inner = source_file_info.script;");
+                }
+                if (struct.name === "Module" || struct.name === "Script") {
                     writer.writeLine("let tokens = source_file_info.tokens.map(|t| &*bump.alloc(TokenContainer::new(t)));");
                     writer.writeLine(
                         `let comments = source_file_info.comments.map(|c| &*bump.alloc(CommentContainer::new(`,
@@ -585,7 +636,7 @@ export function generate(analysisResult: AnalysisResult) {
                         }
                         writer.write(",").newLine();
                     }
-                    if (struct.name === "Module") {
+                    if (struct.name === "Module" || struct.name === "Script") {
                         writer.write("source_file: source_file_info.source_file,").newLine();
                         writer.write("tokens,").newLine();
                         writer.write("comments,").newLine();
