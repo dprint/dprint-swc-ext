@@ -2,3 +2,4 @@
 Cargo.lock
 /rs-lib/target
 swc_ecma_ast.json
+/swc_ecma_ast

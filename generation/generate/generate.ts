@@ -762,8 +762,8 @@ export function generate(analysisResult: AnalysisResult) {
         return true;
     }
 
-    function writeDocs(docs: string) {
-        if (docs.length === 0) {
+    function writeDocs(docs: string | undefined) {
+        if (docs == null || docs.length === 0) {
             return;
         }
         const lines = docs.split(/\r?\n/);

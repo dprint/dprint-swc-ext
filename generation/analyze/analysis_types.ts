@@ -5,14 +5,14 @@ export interface AnalysisResult {
 
 export interface StructDefinition {
     name: string;
-    docs: string;
+    docs: string | undefined;
     fields: StructFieldDefinition[];
     parents: StructDefinition[];
 }
 
 export interface EnumDefinition {
     name: string;
-    docs: string;
+    docs: string | undefined;
     /** If it only contains "plain" variants, meaning no tuple or struct variants. */
     isPlain: boolean;
     variants: EnumVariantDefinition[];
@@ -20,7 +20,7 @@ export interface EnumDefinition {
 
 export interface EnumVariantDefinition {
     name: string;
-    docs: string;
+    docs: string | undefined;
     tuple_args: TypeDefinition[] | undefined;
 }
 
