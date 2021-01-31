@@ -23,9 +23,6 @@ export function analyze(): AnalysisResult {
             if (struct.visibility !== "public") {
                 continue;
             }
-            if (struct.name === "Script") {
-                continue;
-            }
 
             // console.log(struct);
             yield analyzeStruct(struct);

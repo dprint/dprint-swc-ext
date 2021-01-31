@@ -40,21 +40,93 @@ impl<'a> Spanned for NodeOrToken<'a> {
   }
 }
 
+/// A Module or Script node.
+pub trait RootNode<'a> {
+  fn source_file(&self) -> Option<&'a swc_common::SourceFile>;
+  fn tokens(&self) -> Option<&'a TokenContainer<'a>>;
+  fn comments(&self) -> Option<&'a CommentContainer<'a>>;
+
+  fn token_at_index(&self, index: usize) -> Option<&'a TokenAndSpan> {
+    let tokens = self.tokens();
+    let token_container = tokens
+      .as_ref()
+      .expect("The tokens must be provided to `with_view` in order to use this method.");
+    token_container.get_token_at_index(index)
+  }
+}
+
+impl<'a> RootNode<'a> for Module<'a> {
+  fn source_file(&self) -> Option<&'a swc_common::SourceFile> {
+    self.source_file
+  }
+
+  fn tokens(&self) -> Option<&'a TokenContainer<'a>> {
+    self.tokens
+  }
+
+  fn comments(&self) -> Option<&'a CommentContainer<'a>> {
+    self.comments
+  }
+}
+
+impl<'a> RootNode<'a> for Script<'a> {
+  fn source_file(&self) -> Option<&'a swc_common::SourceFile> {
+    self.source_file
+  }
+
+  fn tokens(&self) -> Option<&'a TokenContainer<'a>> {
+    self.tokens
+  }
+
+  fn comments(&self) -> Option<&'a CommentContainer<'a>> {
+    self.comments
+  }
+}
+
+/// A Module or Script node.
+pub enum Program<'a> {
+  Module(&'a Module<'a>),
+  Script(&'a Script<'a>),
+}
+
+impl<'a> RootNode<'a> for Program<'a> {
+  fn source_file(&self) -> Option<&'a swc_common::SourceFile> {
+    match self {
+      Program::Module(module) => module.source_file,
+      Program::Script(script) => script.source_file,
+    }
+  }
+
+  fn tokens(&self) -> Option<&'a TokenContainer<'a>> {
+    match self {
+      Program::Module(module) => module.tokens,
+      Program::Script(script) => script.tokens,
+    }
+  }
+
+  fn comments(&self) -> Option<&'a CommentContainer<'a>> {
+    match self {
+      Program::Module(module) => module.comments,
+      Program::Script(script) => script.comments,
+    }
+  }
+}
+
 pub trait SpannedExt {
   fn lo(&self) -> BytePos;
   fn hi(&self) -> BytePos;
-  fn start_line_fast(&self, module: &Module) -> usize;
-  fn end_line_fast(&self, module: &Module) -> usize;
-  fn start_column_fast(&self, module: &Module) -> usize;
-  fn end_column_fast(&self, module: &Module) -> usize;
-  fn width_fast(&self, module: &Module) -> usize;
-  fn tokens_fast<'a>(&self, module: &Module<'a>) -> &'a [TokenAndSpan];
-  fn text_fast<'a>(&self, module: &Module<'a>) -> &'a str;
-  fn leading_comments_fast<'a>(&self, module: &Module<'a>) -> CommentsIterator<'a>;
-  fn trailing_comments_fast<'a>(&self, module: &Module<'a>) -> CommentsIterator<'a>;
+  fn start_line_fast(&self, program: &dyn RootNode) -> usize;
+  fn end_line_fast(&self, program: &dyn RootNode) -> usize;
+  fn start_column_fast(&self, program: &dyn RootNode) -> usize;
+  fn end_column_fast(&self, program: &dyn RootNode) -> usize;
+  fn width_fast(&self, program: &dyn RootNode) -> usize;
+  fn tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndSpan];
+  fn text_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a str;
+  fn leading_comments_fast<'a>(&self, program: &dyn RootNode<'a>) -> CommentsIterator<'a>;
+  fn trailing_comments_fast<'a>(&self, program: &dyn RootNode<'a>) -> CommentsIterator<'a>;
 
-  fn previous_token_fast<'a>(&self, module: &Module<'a>) -> Option<&'a TokenAndSpan> {
-    let token_container = module_to_token_container(module);
+  fn previous_token_fast<'a>(&self, program: &dyn RootNode<'a>) -> Option<&'a TokenAndSpan> {
+    let token_container = root_node_to_token_container(program);
     let index = token_container.get_token_index_at_lo(self.lo());
     if index == 0 {
       None
@@ -63,20 +135,20 @@ pub trait SpannedExt {
     }
   }
 
-  fn next_token_fast<'a>(&self, module: &Module<'a>) -> Option<&'a TokenAndSpan> {
-    let token_container = module_to_token_container(module);
+  fn next_token_fast<'a>(&self, program: &dyn RootNode<'a>) -> Option<&'a TokenAndSpan> {
+    let token_container = root_node_to_token_container(program);
     let index = token_container.get_token_index_at_hi(self.hi());
     token_container.get_token_at_index(index + 1)
   }
 
-  fn previous_tokens_fast<'a>(&self, module: &Module<'a>) -> &'a [TokenAndSpan] {
-    let token_container = module_to_token_container(module);
+  fn previous_tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndSpan] {
+    let token_container = root_node_to_token_container(program);
     let index = token_container.get_token_index_at_lo(self.lo());
     &token_container.tokens[0..index]
   }
 
-  fn next_tokens_fast<'a>(&self, module: &Module<'a>) -> &'a [TokenAndSpan] {
-    let token_container = module_to_token_container(module);
+  fn next_tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndSpan] {
+    let token_container = root_node_to_token_container(program);
     let index = token_container.get_token_index_at_hi(self.hi());
     &token_container.tokens[index + 1..]
   }
@@ -94,48 +166,48 @@ where
     self.span().hi
   }
 
-  fn start_line_fast(&self, module: &Module) -> usize {
-    module_to_source_file(module)
+  fn start_line_fast(&self, program: &dyn RootNode) -> usize {
+    root_node_to_source_file(program)
       .lookup_line(self.lo())
       .unwrap_or(0)
   }
 
-  fn end_line_fast(&self, module: &Module) -> usize {
-    module_to_source_file(module)
+  fn end_line_fast(&self, program: &dyn RootNode) -> usize {
+    root_node_to_source_file(program)
       .lookup_line(self.hi())
       .unwrap_or(0)
   }
 
-  fn start_column_fast(&self, module: &Module) -> usize {
-    get_column_at_pos(module, self.lo())
+  fn start_column_fast(&self, program: &dyn RootNode) -> usize {
+    get_column_at_pos(program, self.lo())
   }
 
-  fn end_column_fast(&self, module: &Module) -> usize {
-    get_column_at_pos(module, self.hi())
+  fn end_column_fast(&self, program: &dyn RootNode) -> usize {
+    get_column_at_pos(program, self.hi())
   }
 
-  fn width_fast(&self, module: &Module) -> usize {
-    self.text_fast(module).chars().count()
+  fn width_fast(&self, program: &dyn RootNode) -> usize {
+    self.text_fast(program).chars().count()
   }
 
-  fn tokens_fast<'a>(&self, module: &Module<'a>) -> &'a [TokenAndSpan] {
+  fn tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndSpan] {
     let span = self.span();
-    let token_container = module_to_token_container(module);
+    let token_container = root_node_to_token_container(program);
     token_container.get_tokens_in_range(span.lo, span.hi)
   }
 
-  fn text_fast<'a>(&self, module: &Module<'a>) -> &'a str {
+  fn text_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a str {
     let span = self.span();
-    let source_file = module_to_source_file(module);
+    let source_file = root_node_to_source_file(program);
     &source_file.src[(span.lo.0 as usize)..(span.hi.0 as usize)]
   }
 
-  fn leading_comments_fast<'a>(&self, module: &Module<'a>) -> CommentsIterator<'a> {
-    module_to_comment_container(module).leading_comments(self.lo())
+  fn leading_comments_fast<'a>(&self, program: &dyn RootNode<'a>) -> CommentsIterator<'a> {
+    root_node_to_comment_container(program).leading_comments(self.lo())
   }
 
-  fn trailing_comments_fast<'a>(&self, module: &Module<'a>) -> CommentsIterator<'a> {
-    module_to_comment_container(module).trailing_comments(self.hi())
+  fn trailing_comments_fast<'a>(&self, program: &dyn RootNode<'a>) -> CommentsIterator<'a> {
+    root_node_to_comment_container(program).trailing_comments(self.hi())
   }
 }
 
@@ -150,23 +222,23 @@ pub trait NodeTrait<'a>: SpannedExt {
   }
 
   fn start_line(&self) -> usize {
-    self.start_line_fast(self.module())
+    self.start_line_fast(&self.program())
   }
 
   fn end_line(&self) -> usize {
-    self.end_line_fast(self.module())
+    self.end_line_fast(&self.program())
   }
 
   fn start_column(&self) -> usize {
-    self.start_column_fast(self.module())
+    self.start_column_fast(&self.program())
   }
 
   fn end_column(&self) -> usize {
-    self.end_column_fast(self.module())
+    self.end_column_fast(&self.program())
   }
 
   fn width(&self) -> usize {
-    self.width_fast(self.module())
+    self.width_fast(&self.program())
   }
 
   fn child_index(&self) -> usize {
@@ -243,16 +315,16 @@ pub trait NodeTrait<'a>: SpannedExt {
   }
 
   fn tokens(&self) -> &'a [TokenAndSpan] {
-    self.tokens_fast(self.module())
+    self.tokens_fast(&self.program())
   }
 
   fn children_with_tokens(&self) -> Vec<NodeOrToken<'a>> {
-    self.children_with_tokens_fast(self.module())
+    self.children_with_tokens_fast(&self.program())
   }
 
-  fn children_with_tokens_fast(&self, module: &Module<'a>) -> Vec<NodeOrToken<'a>> {
+  fn children_with_tokens_fast(&self, program: &dyn RootNode<'a>) -> Vec<NodeOrToken<'a>> {
     let children = self.children();
-    let tokens = self.tokens_fast(module);
+    let tokens = self.tokens_fast(program);
     let mut result = Vec::new();
     let mut tokens_index = 0;
 
@@ -291,90 +363,107 @@ pub trait NodeTrait<'a>: SpannedExt {
   }
 
   fn leading_comments(&self) -> CommentsIterator<'a> {
-    self.leading_comments_fast(self.module())
+    self.leading_comments_fast(&self.program())
   }
 
   fn trailing_comments(&self) -> CommentsIterator<'a> {
-    self.trailing_comments_fast(self.module())
+    self.trailing_comments_fast(&self.program())
   }
 
-  fn module(&self) -> &Module<'a> {
+  /// Gets the root node.
+  fn program(&self) -> Program<'a> {
     let mut current: Node<'a> = self.into_node();
     while let Some(parent) = current.parent() {
       current = parent;
     }
 
-    // the top-most node will always be a module
-    current.expect::<Module>()
+    // the top-most node will always be a script or module
+    match current {
+      Node::Module(module) => Program::Module(module),
+      Node::Script(script) => Program::Script(script),
+      _ => panic!(
+        "Expected the root node to be a Module or Script, but it was a {}.",
+        current.kind()
+      ),
+    }
+  }
+
+  /// Gets the root node if the view was created from a Module; otherwise panics.
+  fn module(&self) -> &Module<'a> {
+    match self.program() {
+      Program::Module(module) => module,
+      Program::Script(_) => {
+        panic!("The root node was a Module and not a Script. Use .script() or .program() instead.")
+      }
+    }
+  }
+
+  /// Gets the root node if the view was created from a Script; otherwise panics.
+  fn script(&self) -> &Script<'a> {
+    match self.program() {
+      Program::Script(script) => script,
+      Program::Module(_) => {
+        panic!("The root node was a Script and not a Module. Use .module() or .program() instead.")
+      }
+    }
   }
 
   fn text(&self) -> &'a str {
-    self.text_fast(&self.module())
+    self.text_fast(&self.program())
   }
 
   fn previous_token(&self) -> Option<&'a TokenAndSpan> {
-    self.previous_token_fast(self.module())
+    self.previous_token_fast(&self.program())
   }
 
   fn next_token(&self) -> Option<&'a TokenAndSpan> {
-    self.next_token_fast(self.module())
+    self.next_token_fast(&self.program())
   }
 
   /// Gets the previous tokens in the order they appear in the file.
   fn previous_tokens(&self) -> &'a [TokenAndSpan] {
-    self.previous_tokens_fast(self.module())
+    self.previous_tokens_fast(&self.program())
   }
 
   /// Gets the next tokens in the order they appear in the file.
   fn next_tokens(&self) -> &'a [TokenAndSpan] {
-    self.next_tokens_fast(self.module())
+    self.next_tokens_fast(&self.program())
   }
 }
 
 pub trait TokenExt {
-  fn token_index(&self, module: &Module) -> usize;
+  fn token_index(&self, program: &dyn RootNode) -> usize;
 }
 
 impl TokenExt for TokenAndSpan {
-  fn token_index(&self, module: &Module) -> usize {
-    let token_container = module_to_token_container(module);
+  fn token_index(&self, program: &dyn RootNode) -> usize {
+    let token_container = root_node_to_token_container(program);
     token_container.get_token_index_at_lo(self.span.lo)
   }
 }
 
-pub trait ModuleExt<'a> {
-  fn token_at_index(&self, index: usize) -> Option<&'a TokenAndSpan>;
-}
-
-impl<'a> ModuleExt<'a> for Module<'a> {
-  fn token_at_index(&self, index: usize) -> Option<&'a TokenAndSpan> {
-    let token_container = module_to_token_container(self);
-    token_container.get_token_at_index(index)
-  }
-}
-
-fn module_to_source_file<'a>(module: &Module<'a>) -> &'a swc_common::SourceFile {
-  module
-    .source_file
+fn root_node_to_source_file<'a>(root_node: &dyn RootNode<'a>) -> &'a swc_common::SourceFile {
+  root_node
+    .source_file()
     .expect("The source file must be provided to `with_view` in order to use this method.")
 }
 
-fn module_to_token_container<'a>(module: &Module<'a>) -> &'a TokenContainer<'a> {
-  module
-    .tokens
+fn root_node_to_token_container<'a>(root_node: &dyn RootNode<'a>) -> &'a TokenContainer<'a> {
+  root_node
+    .tokens()
     .as_ref()
     .expect("The tokens must be provided to `with_view` in order to use this method.")
 }
 
-fn module_to_comment_container<'a>(module: &Module<'a>) -> &'a CommentContainer<'a> {
-  module
-    .comments
+fn root_node_to_comment_container<'a>(root_node: &dyn RootNode<'a>) -> &'a CommentContainer<'a> {
+  root_node
+    .comments()
     .as_ref()
     .expect("The comments must be provided to `with_view` in order to use this method.")
 }
 
-fn get_column_at_pos(module: &Module, pos: BytePos) -> usize {
-  let source_file = module_to_source_file(module);
+fn get_column_at_pos(program: &dyn RootNode, pos: BytePos) -> usize {
+  let source_file = root_node_to_source_file(program);
   let text_bytes = source_file.src.as_bytes();
   let pos = pos.0 as usize;
   let mut line_start = 0;
@@ -393,8 +482,22 @@ pub trait CastableNode<'a> {
   fn kind() -> NodeKind;
 }
 
-pub struct SourceFileInfo<'a> {
+pub struct ProgramInfo<'a> {
+  pub program: &'a swc_ecmascript::ast::Program,
+  pub source_file: Option<&'a swc_common::SourceFile>,
+  pub tokens: Option<&'a Vec<TokenAndSpan>>,
+  pub comments: Option<&'a SingleThreadedComments>,
+}
+
+pub struct ModuleInfo<'a> {
   pub module: &'a swc_ecmascript::ast::Module,
+  pub source_file: Option<&'a swc_common::SourceFile>,
+  pub tokens: Option<&'a Vec<TokenAndSpan>>,
+  pub comments: Option<&'a SingleThreadedComments>,
+}
+
+pub struct ScriptInfo<'a> {
+  pub script: &'a swc_ecmascript::ast::Script,
   pub source_file: Option<&'a swc_common::SourceFile>,
   pub tokens: Option<&'a Vec<TokenAndSpan>>,
   pub comments: Option<&'a SingleThreadedComments>,

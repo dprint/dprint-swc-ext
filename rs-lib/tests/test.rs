@@ -1,6 +1,6 @@
 extern crate dprint_swc_ecma_ast_view;
 use dprint_swc_ecma_ast_view::{
-  CastableNode, ClassDecl, Decl, ModuleItem, Node, NodeOrToken, NodeTrait, SourceFileInfo, VarDecl,
+  CastableNode, ClassDecl, Decl, ModuleInfo, ModuleItem, Node, NodeOrToken, NodeTrait, VarDecl,
 };
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
@@ -18,16 +18,16 @@ use swc_ecmascript::parser::{
 fn test_creating_reference() {
   let file_text = "// 1\n// 2\nclass MyClass { prop: string; myMethod() {}}";
   let (module, tokens, source_file, comments) = get_swc_ast(&PathBuf::from("file.ts"), file_text);
-  let info = SourceFileInfo {
+  let info = ModuleInfo {
     module: &module,
     source_file: Some(&source_file),
     tokens: Some(&tokens),
     comments: Some(&comments),
   };
-  dprint_swc_ecma_ast_view::with_ast_view(info, |ast_view| {
-    println!("Test {:?}", ast_view.text());
-    println!("Test 2 {:?}", ast_view.body[0].text());
-    let leading_comments = ast_view.body[0].leading_comments();
+  dprint_swc_ecma_ast_view::with_ast_view_for_module(info, |module| {
+    println!("Test {:?}", module.text());
+    println!("Test 2 {:?}", module.body[0].text());
+    let leading_comments = module.body[0].leading_comments();
     for comment in leading_comments.clone().rev() {
       println!("Comment {:?}", comment);
     }
@@ -35,8 +35,8 @@ fn test_creating_reference() {
       "Leading comments {:?}",
       leading_comments.collect::<Vec<_>>()
     );
-    println!("Test 3 {:?}", ast_view.body[0].children()[0].text());
-    let class = ast_view.body[0].expect::<ClassDecl>().class;
+    println!("Test 3 {:?}", module.body[0].children()[0].text());
+    let class = module.body[0].expect::<ClassDecl>().class;
     println!("{:?}", class.text());
 
     for child in class.children() {

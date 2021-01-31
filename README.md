@@ -14,63 +14,71 @@ The library at `./rs-lib` is code generated from [swc_ecma_ast](https://crates.i
 
 Spanned (All):
 
-- `.lo() -> BytePos`
-- `.hi() -> BytePos`
-- `.text_fast(module: &Module<'a>) -> &'a str` -- Doesn't require going up the tree to the root node
-- `.start_line_fast(module: &Module) -> usize`
-- `.end_line_fast(module: &Module) -> usize`
-- `.start_column_fast(module: &Module) -> usize`
-- `.end_column_fast(module: &Module) -> usize`
-- `.width_fast(module: &Module) -> usize`
-- `.tokens_fast(module: &Module<'a>) -> &'a [TokenAndSpan]`
-- `.leading_comments_fast(module: &Module<'a>) -> CommentsIterator<'a>`
-- `.trailing_comments_fast(module: &Module<'a>) -> CommentsIterator<'a>`
-- `.previous_token_fast(module: &Module) -> Option<&TokenAndSpan>`
-- `.next_token_fast(module: &Module) -> Option<&TokenAndSpan>`
-- `.previous_tokens_fast(module: &Module) -> &'a [TokenAndSpan]`
-- `.next_tokens_fast(module: &Module) -> &'a [TokenAndSpan]`
+- `.lo(&self) -> BytePos`
+- `.hi(&self) -> BytePos`
+- `.text_fast(&self, root_node: &dyn RootNode) -> &'a str` -- Doesn't require going up the tree to the root node
+- `.start_line_fast(&self, root_node: &dyn RootNode) -> usize`
+- `.end_line_fast(&self, root_node: &dyn RootNode) -> usize`
+- `.start_column_fast(&self, root_node: &dyn RootNode) -> usize`
+- `.end_column_fast(&self, root_node: &dyn RootNode) -> usize`
+- `.width_fast(&self, root_node: &dyn RootNode) -> usize`
+- `.tokens_fast(&self, root_node: &dyn RootNode) -> &'a [TokenAndSpan]`
+- `.leading_comments_fast(&self, root_node: &dyn RootNode) -> CommentsIterator<'a>`
+- `.trailing_comments_fast(&self, root_node: &dyn RootNode) -> CommentsIterator<'a>`
+- `.previous_token_fast(&self, root_node: &dyn RootNode) -> Option<&TokenAndSpan>`
+- `.next_token_fast(&self, root_node: &dyn RootNode) -> Option<&TokenAndSpan>`
+- `.previous_tokens_fast(&self, root_node: &dyn RootNode) -> &'a [TokenAndSpan]`
+- `.next_tokens_fast(&self, root_node: &dyn RootNode) -> &'a [TokenAndSpan]`
 
 Node/Enum Node/Nodes:
 
-- `.module() -> &'a Module` - Gets the root node.
-- `.parent() -> Option<Node<'a>>`
-- `.children() -> Vec<Node<'a>>`
-- `.child_index() -> usize`
-- `.ancestors() -> AncestorsIterator<'a>`
-- `.previous_sibling() -> Option<Node<'a>>`
-- `.next_sibling() -> Option<Node<'a>>`
-- `.previous_siblings() -> Vec<Node<'a>>`
-- `.next_siblings() -> Vec<Node<'a>>`
-- `.text() -> &str` - Slightly slower than `.text_fast(module)` because it requires going up the tree to get the root node
-- `.start_line() -> usize`
-- `.end_line() -> usize`
-- `.start_column() -> usize`
-- `.end_column() -> usize`
-- `.width() -> usize`
-- `.tokens() -> &[TokenAndSpan]` - All the descendant tokens within the span of the node.
-- `.children_with_tokens() -> Vec<NodeOrToken<'a>>` - Gets the children with the tokens found between the children
-- `.children_with_tokens_fast(module: &Module<'a>) -> Vec<NodeOrToken<'a>>`
-- `.leading_comments() -> CommentsIterator<'a>`
-- `.trailing_comments() -> CommentsIterator<'a>`
-- `.kind() -> NodeKind` - Gets the "node kind" enum variant associated with the node (ex. `NodeKind::ClassDecl`).
-- `.previous_token() -> Option<&TokenAndSpan>`
-- `.next_token() -> Option<&TokenAndSpan>`
-- `.previous_tokens() -> &'a [TokenAndSpan]`
-- `.next_tokens() -> &'a [TokenAndSpan]`
+- `.module(&self) -> &'a Module` - Gets the root node if the view was created from a `Module`. Otherwise panics.
+- `.script(&self) -> &'a Script` - Gets the root node if the view was created from a `Script`. Otherwise panics.
+- `.program(&self) -> Program<'a>` - Gets the root node whether it be a `Module` or a `Script`.
+- `.parent(&self) -> Option<Node<'a>>`
+- `.children(&self) -> Vec<Node<'a>>`
+- `.child_index(&self) -> usize`
+- `.ancestors(&self) -> AncestorsIterator<'a>`
+- `.previous_sibling(&self) -> Option<Node<'a>>`
+- `.next_sibling(&self) -> Option<Node<'a>>`
+- `.previous_siblings(&self) -> Vec<Node<'a>>`
+- `.next_siblings(&self) -> Vec<Node<'a>>`
+- `.text(&self) -> &str` - Slightly slower than `.text_fast(module)` because it requires going up the tree to get the root node
+- `.start_line(&self) -> usize`
+- `.end_line(&self) -> usize`
+- `.start_column(&self) -> usize`
+- `.end_column(&self) -> usize`
+- `.width(&self) -> usize`
+- `.tokens(&self) -> &[TokenAndSpan]` - All the descendant tokens within the span of the node.
+- `.children_with_tokens(&self) -> Vec<NodeOrToken<'a>>` - Gets the children with the tokens found between the children
+- `.children_with_tokens_fast(&self, root_node: &dyn RootNode) -> Vec<NodeOrToken<'a>>`
+- `.leading_comments(&self) -> CommentsIterator<'a>`
+- `.trailing_comments(&self) -> CommentsIterator<'a>`
+- `.kind(&self) -> NodeKind` - Gets the "node kind" enum variant associated with the node (ex. `NodeKind::ClassDecl`).
+- `.previous_token(&self) -> Option<&TokenAndSpan>`
+- `.next_token(&self) -> Option<&TokenAndSpan>`
+- `.previous_tokens(&self) -> &'a [TokenAndSpan]`
+- `.next_tokens(&self) -> &'a [TokenAndSpan]`
 
 Node/Enum Node:
 
-- `.to::<NodeType>() -> Option<&NodeType>`
-- `.expect::<NodeType>() -> &NodeType`
-- `.is::<NodeType>() -> bool`
+- `.to::<NodeType>(&self) -> Option<&NodeType>`
+- `.expect::<NodeType>(&self) -> &NodeType`
+- `.is::<NodeType>(&self) -> bool`
 
 TokenAndSpan extensions:
 
-- `.token_index(module: &Module) -> usize` - Gets the token index of the specified module.
+- `.token_index(&self, root_node: &dyn RootNode) -> usize` - Gets the token index of the specified module.
 
-Module:
+Root Node (Program/Module/Script):
 
-- `token_at_index(index: &usize) - Option<&TokenAndSpan>`
+- `token_at_index(&self, index: &usize) - Option<&TokenAndSpan>`
+
+## View Construction Functions
+
+- `with_ast_view` - Creates a view from an swc `Program` (either `Module` or `Script`)
+- `with_ast_view_for_module` - Creates a view from an swc `Module`
+- `with_ast_view_for_script` - Creates a view from an swc `Script`
 
 ## TODO
 
@@ -97,7 +105,7 @@ let comments: swc_common::comments::SingleThreadedComments = ...;
 let tokens: Vec<swc_ecmascript::parser::token::TokenAndSpan> = ...;
 
 // setup for creating a view
-let source_file_info = SourceFileInfo {
+let module_info = ModuleInfo {
   module: &module,
   // optionally provide the swc_common::SourceFile for using text related methods
   source_file: Some(&source_file),
@@ -105,10 +113,10 @@ let source_file_info = SourceFileInfo {
   comments: Some(&comments)
   // optionally provide the tokens for token related methods
   tokens: Some(&tokens),
-}
+};
 
 // now create and use the view
-dprint_swc_ecma_ast_view::with_ast_view(source_file_info, |module| {
+dprint_swc_ecma_ast_view::with_ast_view_for_module(module_info, |module| {
   let class = module.body[0].expect::<ClassDecl>().class;
   println!("{:?}", class.text());
 
