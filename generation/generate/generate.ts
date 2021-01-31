@@ -318,7 +318,7 @@ export function generate(analysisResult: AnalysisResult) {
                         writer.newLine();
                     }
                 }).write("}").newLine();
-            }).write("}").newLine().newLine();
+            }).write("}").newLine();
         }
     }
 

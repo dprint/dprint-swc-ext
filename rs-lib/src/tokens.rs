@@ -4,7 +4,7 @@ use swc_ecmascript::parser::token::TokenAndSpan;
 
 pub struct TokenContainer<'a> {
   pub tokens: &'a Vec<TokenAndSpan>,
-  // Uses an FnvHashMap because it has faster lookups for u32 values than the default hasher.
+  // Uses an FnvHashMap because it has faster lookups for u32 keys than the default hasher.
   lo_to_index: FnvHashMap<BytePos, usize>,
   hi_to_index: FnvHashMap<BytePos, usize>,
 }
