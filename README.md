@@ -100,13 +100,13 @@ Code can be written like so:
 ```rust
 // setup swc (parse an AST and optionally get the comments and tokens)
 let source_file: swc_common::SourceFile = ...;
-let module: swc_ecmascript::ast::Module = ...;
+let program: swc_ecmascript::ast::Program = ...;
 let comments: swc_common::comments::SingleThreadedComments = ...;
 let tokens: Vec<swc_ecmascript::parser::token::TokenAndSpan> = ...;
 
 // setup for creating a view
-let module_info = ModuleInfo {
-  module: &module,
+let program_info = ProgramInfo {
+  program: &program,
   // optionally provide the swc_common::SourceFile for using text related methods
   source_file: Some(&source_file),
   // optionally provide the comments for comment related methods
@@ -116,8 +116,8 @@ let module_info = ModuleInfo {
 };
 
 // now create and use the view
-dprint_swc_ecma_ast_view::with_ast_view_for_module(module_info, |module| {
-  let class = module.body[0].expect::<ClassDecl>().class;
+dprint_swc_ecma_ast_view::with_ast_view(program_info, |program| {
+  let class = program.children()[0].expect::<ClassDecl>().class;
   println!("{:?}", class.text());
 
   for child in class.children() {
