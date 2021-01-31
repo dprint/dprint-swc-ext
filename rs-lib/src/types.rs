@@ -55,38 +55,87 @@ pub trait RootNode<'a> {
   }
 }
 
-impl<'a> RootNode<'a> for Module<'a> {
-  fn source_file(&self) -> Option<&'a swc_common::SourceFile> {
-    self.source_file
-  }
+macro_rules! implement_root_node {
+  ($name:ty) => {
+    impl<'a> RootNode<'a> for $name {
+      fn source_file(&self) -> Option<&'a swc_common::SourceFile> {
+        self.source_file
+      }
 
-  fn tokens(&self) -> Option<&'a TokenContainer<'a>> {
-    self.tokens
-  }
+      fn tokens(&self) -> Option<&'a TokenContainer<'a>> {
+        self.tokens
+      }
 
-  fn comments(&self) -> Option<&'a CommentContainer<'a>> {
-    self.comments
-  }
+      fn comments(&self) -> Option<&'a CommentContainer<'a>> {
+        self.comments
+      }
+    }
+  };
 }
 
-impl<'a> RootNode<'a> for Script<'a> {
-  fn source_file(&self) -> Option<&'a swc_common::SourceFile> {
-    self.source_file
-  }
-
-  fn tokens(&self) -> Option<&'a TokenContainer<'a>> {
-    self.tokens
-  }
-
-  fn comments(&self) -> Option<&'a CommentContainer<'a>> {
-    self.comments
-  }
-}
+implement_root_node!(Module<'a>);
+implement_root_node!(&Module<'a>);
+implement_root_node!(Script<'a>);
+implement_root_node!(&Script<'a>);
 
 /// A Module or Script node.
 pub enum Program<'a> {
   Module(&'a Module<'a>),
   Script(&'a Script<'a>),
+}
+
+impl<'a> Spanned for Program<'a> {
+  fn span(&self) -> Span {
+    match self {
+      Program::Module(node) => node.span(),
+      Program::Script(node) => node.span(),
+    }
+  }
+}
+
+impl<'a> NodeTrait<'a> for Program<'a> {
+  fn parent(&self) -> Option<Node<'a>> {
+    None
+  }
+
+  fn children(&self) -> Vec<Node<'a>> {
+    match self {
+      Program::Module(node) => node.children(),
+      Program::Script(node) => node.children(),
+    }
+  }
+
+  fn into_node(&self) -> Node<'a> {
+    match self {
+      Program::Module(node) => node.into_node(),
+      Program::Script(node) => node.into_node(),
+    }
+  }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      Program::Module(node) => node.kind(),
+      Program::Script(node) => node.kind(),
+    }
+  }
+}
+
+impl<'a> From<&Program<'a>> for Node<'a> {
+  fn from(node: &Program<'a>) -> Node<'a> {
+    match node {
+      Program::Module(node) => (*node).into(),
+      Program::Script(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<Program<'a>> for Node<'a> {
+  fn from(node: Program<'a>) -> Node<'a> {
+    match node {
+      Program::Module(node) => node.into(),
+      Program::Script(node) => node.into(),
+    }
+  }
 }
 
 impl<'a> RootNode<'a> for Program<'a> {
@@ -393,7 +442,7 @@ pub trait NodeTrait<'a>: SpannedExt {
     match self.program() {
       Program::Module(module) => module,
       Program::Script(_) => {
-        panic!("The root node was a Module and not a Script. Use .script() or .program() instead.")
+        panic!("The root node was a Script and not a Module. Use .script() or .program() instead.")
       }
     }
   }
@@ -403,7 +452,7 @@ pub trait NodeTrait<'a>: SpannedExt {
     match self.program() {
       Program::Script(script) => script,
       Program::Module(_) => {
-        panic!("The root node was a Script and not a Module. Use .module() or .program() instead.")
+        panic!("The root node was a Module and not a Script. Use .module() or .program() instead.")
       }
     }
   }
