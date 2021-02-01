@@ -1,6 +1,6 @@
 [package]
 name = "dprint-swc-ecma-ast-view"
-version = "0.6.0"
+version = "0.6.1"
 authors = ["David Sherret <dsherret@gmail.com>"]
 description = "View of the swc AST that's easier to navigate."
 edition = "2018"
