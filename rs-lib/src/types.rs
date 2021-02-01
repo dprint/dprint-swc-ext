@@ -531,6 +531,7 @@ pub trait CastableNode<'a> {
   fn kind() -> NodeKind;
 }
 
+#[derive(Clone, Copy)]
 pub struct ProgramInfo<'a> {
   pub program: &'a swc_ecmascript::ast::Program,
   pub source_file: Option<&'a swc_common::SourceFile>,
@@ -538,6 +539,7 @@ pub struct ProgramInfo<'a> {
   pub comments: Option<&'a SingleThreadedComments>,
 }
 
+#[derive(Clone, Copy)]
 pub struct ModuleInfo<'a> {
   pub module: &'a swc_ecmascript::ast::Module,
   pub source_file: Option<&'a swc_common::SourceFile>,
@@ -545,6 +547,7 @@ pub struct ModuleInfo<'a> {
   pub comments: Option<&'a SingleThreadedComments>,
 }
 
+#[derive(Clone, Copy)]
 pub struct ScriptInfo<'a> {
   pub script: &'a swc_ecmascript::ast::Script,
   pub source_file: Option<&'a swc_common::SourceFile>,
