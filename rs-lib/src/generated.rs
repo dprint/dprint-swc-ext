@@ -8352,6 +8352,7 @@ pub struct ExportAll<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::ExportAll,
   pub src: &'a Str<'a>,
+  pub asserts: Option<&'a ObjectLit<'a>>,
 }
 
 impl<'a> Spanned for ExportAll<'a> {
@@ -8373,8 +8374,11 @@ impl<'a> NodeTrait<'a> for &'a ExportAll<'a> {
   }
 
   fn children(&self) -> Vec<Node<'a>> {
-    let mut children = Vec::with_capacity(1);
+    let mut children = Vec::with_capacity(1 + match &self.asserts { Some(_value) => 1, None => 0, });
     children.push(self.src.into());
+    if let Some(child) = self.asserts {
+      children.push(child.into());
+    }
     children
   }
 
@@ -8405,9 +8409,14 @@ fn get_view_for_export_all<'a>(inner: &'a swc_ast::ExportAll, parent: Node<'a>, 
     inner,
     parent,
     src: unsafe { MaybeUninit::uninit().assume_init() },
+    asserts: None,
   });
   let parent: Node<'a> = (&*node).into();
-  node.src = get_view_for_str(&inner.src, parent, bump);
+  node.src = get_view_for_str(&inner.src, parent.clone(), bump);
+  node.asserts = match &inner.asserts {
+    Some(value) => Some(get_view_for_object_lit(value, parent, bump)),
+    None => None,
+  };
   node
 }
 
@@ -11385,6 +11394,7 @@ pub struct NamedExport<'a> {
   pub inner: &'a swc_ast::NamedExport,
   pub specifiers: Vec<ExportSpecifier<'a>>,
   pub src: Option<&'a Str<'a>>,
+  pub asserts: Option<&'a ObjectLit<'a>>,
 }
 
 impl<'a> NamedExport<'a> {
@@ -11412,11 +11422,14 @@ impl<'a> NodeTrait<'a> for &'a NamedExport<'a> {
   }
 
   fn children(&self) -> Vec<Node<'a>> {
-    let mut children = Vec::with_capacity(self.specifiers.len() + match &self.src { Some(_value) => 1, None => 0, });
+    let mut children = Vec::with_capacity(self.specifiers.len() + match &self.src { Some(_value) => 1, None => 0, } + match &self.asserts { Some(_value) => 1, None => 0, });
     for child in self.specifiers.iter() {
       children.push(child.into());
     }
     if let Some(child) = self.src {
+      children.push(child.into());
+    }
+    if let Some(child) = self.asserts {
       children.push(child.into());
     }
     children
@@ -11450,11 +11463,16 @@ fn get_view_for_named_export<'a>(inner: &'a swc_ast::NamedExport, parent: Node<'
     parent,
     specifiers: Vec::with_capacity(inner.specifiers.len()),
     src: None,
+    asserts: None,
   });
   let parent: Node<'a> = (&*node).into();
   node.specifiers.extend(inner.specifiers.iter().map(|value| get_view_for_export_specifier(value, parent.clone(), bump)));
   node.src = match &inner.src {
-    Some(value) => Some(get_view_for_str(value, parent, bump)),
+    Some(value) => Some(get_view_for_str(value, parent.clone(), bump)),
+    None => None,
+  };
+  node.asserts = match &inner.asserts {
+    Some(value) => Some(get_view_for_object_lit(value, parent, bump)),
     None => None,
   };
   node

@@ -1,6 +1,6 @@
 # Ensure cargo-clone is installed (cargo install cargo-clone)
 Remove-Item swc_ecma_ast -Recurse -ErrorAction Ignore
-cargo clone --vers 0.37.3 swc_ecma_ast
+cargo clone --vers 0.38.0 swc_ecma_ast
 cd swc_ecma_ast
 cargo +nightly rustdoc -- --output-format json
 cd ../
