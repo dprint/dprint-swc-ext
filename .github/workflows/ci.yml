@@ -29,6 +29,21 @@ jobs:
           rs-lib/target
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
+    - name: Install bvm binaries
+      if: matrix.config.kind == 'test_debug'
+      uses: bvm/gh-action@v1
+
+    - name: Ensure code generation same
+      if: matrix.config.kind == 'test_debug'
+      run: |
+        . $BVM_INSTALL_DIR/bin/bvm-init
+        cargo install cargo-clone
+        chmod +x setup.sh
+        ./setup.sh
+        chmod +x generate.sh
+        ./generate.sh
+        git diff --no-ext-diff --quiet --exit-code
+
     - name: Build debug
       if: matrix.config.kind == 'test_debug'
       run: cd rs-lib && cargo build --verbose
