@@ -1,0 +1,14 @@
+{
+  "binaries": [
+    {
+      "path": "https://bvm.land/deno/1.7.4.json",
+      "checksum": "fab8c6236e851fd122ef51f6e439d3173168834cf2d58e59471bddc929bf4d45",
+      "version": "^1.7.4"
+    },
+    {
+      "path": "https://github.com/dprint/dprint/releases/download/0.11.1/bvm.json",
+      "checksum": "fb68517ebbaab376b80ed6f81735d168f4c27b710981001b180dc54f94dd46f0",
+      "version": "^0.11.1"
+    }
+  ]
+}
