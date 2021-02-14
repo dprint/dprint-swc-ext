@@ -14,5 +14,5 @@ If you're on Windows, use WSL.
 
 ## Code Generating
 
-1. Run `./setup.sh` once in the root of the repo and whenever swc's version changes.
-2. After that, run `./generate.sh` to code generate (initially and whenever you make changes to the code generation code).
+1. Run `./scripts/setup.sh` once in the root of the repo and whenever swc's version changes.
+2. After that, run `./scripts/generate.sh` to code generate (initially and whenever you make changes to the code generation code).

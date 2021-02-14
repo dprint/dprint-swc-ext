@@ -1,6 +1,6 @@
 name: CI
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   build:
@@ -38,11 +38,13 @@ jobs:
       run: |
         . $BVM_INSTALL_DIR/bin/bvm-init
         cargo install cargo-clone
-        chmod +x setup.sh
-        ./setup.sh
-        chmod +x generate.sh
-        ./generate.sh
-        git diff --no-ext-diff --quiet --exit-code
+        rustup toolchain install nightly
+        chmod +x ./scripts/setup.sh
+        ./scripts/setup.sh
+        chmod +x ./scripts/generate.sh
+        ./scripts/generate.sh
+        echo Checking for git changes...
+        git diff --no-ext-diff --exit-code
 
     - name: Build debug
       if: matrix.config.kind == 'test_debug'
