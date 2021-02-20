@@ -904,166 +904,166 @@ impl<'a> NodeTrait<'a> for Node<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      Node::ArrayLit(node) => node.kind(),
-      Node::ArrayPat(node) => node.kind(),
-      Node::ArrowExpr(node) => node.kind(),
-      Node::AssignExpr(node) => node.kind(),
-      Node::AssignPat(node) => node.kind(),
-      Node::AssignPatProp(node) => node.kind(),
-      Node::AssignProp(node) => node.kind(),
-      Node::AwaitExpr(node) => node.kind(),
-      Node::BigInt(node) => node.kind(),
-      Node::BinExpr(node) => node.kind(),
-      Node::BlockStmt(node) => node.kind(),
-      Node::Bool(node) => node.kind(),
-      Node::BreakStmt(node) => node.kind(),
-      Node::CallExpr(node) => node.kind(),
-      Node::CatchClause(node) => node.kind(),
-      Node::Class(node) => node.kind(),
-      Node::ClassDecl(node) => node.kind(),
-      Node::ClassExpr(node) => node.kind(),
-      Node::ClassMethod(node) => node.kind(),
-      Node::ClassProp(node) => node.kind(),
-      Node::ComputedPropName(node) => node.kind(),
-      Node::CondExpr(node) => node.kind(),
-      Node::Constructor(node) => node.kind(),
-      Node::ContinueStmt(node) => node.kind(),
-      Node::DebuggerStmt(node) => node.kind(),
-      Node::Decorator(node) => node.kind(),
-      Node::DoWhileStmt(node) => node.kind(),
-      Node::EmptyStmt(node) => node.kind(),
-      Node::ExportAll(node) => node.kind(),
-      Node::ExportDecl(node) => node.kind(),
-      Node::ExportDefaultDecl(node) => node.kind(),
-      Node::ExportDefaultExpr(node) => node.kind(),
-      Node::ExportDefaultSpecifier(node) => node.kind(),
-      Node::ExportNamedSpecifier(node) => node.kind(),
-      Node::ExportNamespaceSpecifier(node) => node.kind(),
-      Node::ExprOrSpread(node) => node.kind(),
-      Node::ExprStmt(node) => node.kind(),
-      Node::FnDecl(node) => node.kind(),
-      Node::FnExpr(node) => node.kind(),
-      Node::ForInStmt(node) => node.kind(),
-      Node::ForOfStmt(node) => node.kind(),
-      Node::ForStmt(node) => node.kind(),
-      Node::Function(node) => node.kind(),
-      Node::GetterProp(node) => node.kind(),
-      Node::Ident(node) => node.kind(),
-      Node::IfStmt(node) => node.kind(),
-      Node::ImportDecl(node) => node.kind(),
-      Node::ImportDefaultSpecifier(node) => node.kind(),
-      Node::ImportNamedSpecifier(node) => node.kind(),
-      Node::ImportStarAsSpecifier(node) => node.kind(),
-      Node::Invalid(node) => node.kind(),
-      Node::JSXAttr(node) => node.kind(),
-      Node::JSXClosingElement(node) => node.kind(),
-      Node::JSXClosingFragment(node) => node.kind(),
-      Node::JSXElement(node) => node.kind(),
-      Node::JSXEmptyExpr(node) => node.kind(),
-      Node::JSXExprContainer(node) => node.kind(),
-      Node::JSXFragment(node) => node.kind(),
-      Node::JSXMemberExpr(node) => node.kind(),
-      Node::JSXNamespacedName(node) => node.kind(),
-      Node::JSXOpeningElement(node) => node.kind(),
-      Node::JSXOpeningFragment(node) => node.kind(),
-      Node::JSXSpreadChild(node) => node.kind(),
-      Node::JSXText(node) => node.kind(),
-      Node::KeyValuePatProp(node) => node.kind(),
-      Node::KeyValueProp(node) => node.kind(),
-      Node::LabeledStmt(node) => node.kind(),
-      Node::MemberExpr(node) => node.kind(),
-      Node::MetaPropExpr(node) => node.kind(),
-      Node::MethodProp(node) => node.kind(),
-      Node::Module(node) => node.kind(),
-      Node::NamedExport(node) => node.kind(),
-      Node::NewExpr(node) => node.kind(),
-      Node::Null(node) => node.kind(),
-      Node::Number(node) => node.kind(),
-      Node::ObjectLit(node) => node.kind(),
-      Node::ObjectPat(node) => node.kind(),
-      Node::OptChainExpr(node) => node.kind(),
-      Node::Param(node) => node.kind(),
-      Node::ParenExpr(node) => node.kind(),
-      Node::PrivateMethod(node) => node.kind(),
-      Node::PrivateName(node) => node.kind(),
-      Node::PrivateProp(node) => node.kind(),
-      Node::Regex(node) => node.kind(),
-      Node::RestPat(node) => node.kind(),
-      Node::ReturnStmt(node) => node.kind(),
-      Node::Script(node) => node.kind(),
-      Node::SeqExpr(node) => node.kind(),
-      Node::SetterProp(node) => node.kind(),
-      Node::SpreadElement(node) => node.kind(),
-      Node::Str(node) => node.kind(),
-      Node::Super(node) => node.kind(),
-      Node::SwitchCase(node) => node.kind(),
-      Node::SwitchStmt(node) => node.kind(),
-      Node::TaggedTpl(node) => node.kind(),
-      Node::ThisExpr(node) => node.kind(),
-      Node::ThrowStmt(node) => node.kind(),
-      Node::Tpl(node) => node.kind(),
-      Node::TplElement(node) => node.kind(),
-      Node::TryStmt(node) => node.kind(),
-      Node::TsArrayType(node) => node.kind(),
-      Node::TsAsExpr(node) => node.kind(),
-      Node::TsCallSignatureDecl(node) => node.kind(),
-      Node::TsConditionalType(node) => node.kind(),
-      Node::TsConstAssertion(node) => node.kind(),
-      Node::TsConstructSignatureDecl(node) => node.kind(),
-      Node::TsConstructorType(node) => node.kind(),
-      Node::TsEnumDecl(node) => node.kind(),
-      Node::TsEnumMember(node) => node.kind(),
-      Node::TsExportAssignment(node) => node.kind(),
-      Node::TsExprWithTypeArgs(node) => node.kind(),
-      Node::TsExternalModuleRef(node) => node.kind(),
-      Node::TsFnType(node) => node.kind(),
-      Node::TsImportEqualsDecl(node) => node.kind(),
-      Node::TsImportType(node) => node.kind(),
-      Node::TsIndexSignature(node) => node.kind(),
-      Node::TsIndexedAccessType(node) => node.kind(),
-      Node::TsInferType(node) => node.kind(),
-      Node::TsInterfaceBody(node) => node.kind(),
-      Node::TsInterfaceDecl(node) => node.kind(),
-      Node::TsIntersectionType(node) => node.kind(),
-      Node::TsKeywordType(node) => node.kind(),
-      Node::TsLitType(node) => node.kind(),
-      Node::TsMappedType(node) => node.kind(),
-      Node::TsMethodSignature(node) => node.kind(),
-      Node::TsModuleBlock(node) => node.kind(),
-      Node::TsModuleDecl(node) => node.kind(),
-      Node::TsNamespaceDecl(node) => node.kind(),
-      Node::TsNamespaceExportDecl(node) => node.kind(),
-      Node::TsNonNullExpr(node) => node.kind(),
-      Node::TsOptionalType(node) => node.kind(),
-      Node::TsParamProp(node) => node.kind(),
-      Node::TsParenthesizedType(node) => node.kind(),
-      Node::TsPropertySignature(node) => node.kind(),
-      Node::TsQualifiedName(node) => node.kind(),
-      Node::TsRestType(node) => node.kind(),
-      Node::TsThisType(node) => node.kind(),
-      Node::TsTplLitType(node) => node.kind(),
-      Node::TsTupleElement(node) => node.kind(),
-      Node::TsTupleType(node) => node.kind(),
-      Node::TsTypeAliasDecl(node) => node.kind(),
-      Node::TsTypeAnn(node) => node.kind(),
-      Node::TsTypeAssertion(node) => node.kind(),
-      Node::TsTypeCastExpr(node) => node.kind(),
-      Node::TsTypeLit(node) => node.kind(),
-      Node::TsTypeOperator(node) => node.kind(),
-      Node::TsTypeParam(node) => node.kind(),
-      Node::TsTypeParamDecl(node) => node.kind(),
-      Node::TsTypeParamInstantiation(node) => node.kind(),
-      Node::TsTypePredicate(node) => node.kind(),
-      Node::TsTypeQuery(node) => node.kind(),
-      Node::TsTypeRef(node) => node.kind(),
-      Node::TsUnionType(node) => node.kind(),
-      Node::UnaryExpr(node) => node.kind(),
-      Node::UpdateExpr(node) => node.kind(),
-      Node::VarDecl(node) => node.kind(),
-      Node::VarDeclarator(node) => node.kind(),
-      Node::WhileStmt(node) => node.kind(),
-      Node::WithStmt(node) => node.kind(),
-      Node::YieldExpr(node) => node.kind(),
+      Node::ArrayLit(_) => NodeKind::ArrayLit,
+      Node::ArrayPat(_) => NodeKind::ArrayPat,
+      Node::ArrowExpr(_) => NodeKind::ArrowExpr,
+      Node::AssignExpr(_) => NodeKind::AssignExpr,
+      Node::AssignPat(_) => NodeKind::AssignPat,
+      Node::AssignPatProp(_) => NodeKind::AssignPatProp,
+      Node::AssignProp(_) => NodeKind::AssignProp,
+      Node::AwaitExpr(_) => NodeKind::AwaitExpr,
+      Node::BigInt(_) => NodeKind::BigInt,
+      Node::BinExpr(_) => NodeKind::BinExpr,
+      Node::BlockStmt(_) => NodeKind::BlockStmt,
+      Node::Bool(_) => NodeKind::Bool,
+      Node::BreakStmt(_) => NodeKind::BreakStmt,
+      Node::CallExpr(_) => NodeKind::CallExpr,
+      Node::CatchClause(_) => NodeKind::CatchClause,
+      Node::Class(_) => NodeKind::Class,
+      Node::ClassDecl(_) => NodeKind::ClassDecl,
+      Node::ClassExpr(_) => NodeKind::ClassExpr,
+      Node::ClassMethod(_) => NodeKind::ClassMethod,
+      Node::ClassProp(_) => NodeKind::ClassProp,
+      Node::ComputedPropName(_) => NodeKind::ComputedPropName,
+      Node::CondExpr(_) => NodeKind::CondExpr,
+      Node::Constructor(_) => NodeKind::Constructor,
+      Node::ContinueStmt(_) => NodeKind::ContinueStmt,
+      Node::DebuggerStmt(_) => NodeKind::DebuggerStmt,
+      Node::Decorator(_) => NodeKind::Decorator,
+      Node::DoWhileStmt(_) => NodeKind::DoWhileStmt,
+      Node::EmptyStmt(_) => NodeKind::EmptyStmt,
+      Node::ExportAll(_) => NodeKind::ExportAll,
+      Node::ExportDecl(_) => NodeKind::ExportDecl,
+      Node::ExportDefaultDecl(_) => NodeKind::ExportDefaultDecl,
+      Node::ExportDefaultExpr(_) => NodeKind::ExportDefaultExpr,
+      Node::ExportDefaultSpecifier(_) => NodeKind::ExportDefaultSpecifier,
+      Node::ExportNamedSpecifier(_) => NodeKind::ExportNamedSpecifier,
+      Node::ExportNamespaceSpecifier(_) => NodeKind::ExportNamespaceSpecifier,
+      Node::ExprOrSpread(_) => NodeKind::ExprOrSpread,
+      Node::ExprStmt(_) => NodeKind::ExprStmt,
+      Node::FnDecl(_) => NodeKind::FnDecl,
+      Node::FnExpr(_) => NodeKind::FnExpr,
+      Node::ForInStmt(_) => NodeKind::ForInStmt,
+      Node::ForOfStmt(_) => NodeKind::ForOfStmt,
+      Node::ForStmt(_) => NodeKind::ForStmt,
+      Node::Function(_) => NodeKind::Function,
+      Node::GetterProp(_) => NodeKind::GetterProp,
+      Node::Ident(_) => NodeKind::Ident,
+      Node::IfStmt(_) => NodeKind::IfStmt,
+      Node::ImportDecl(_) => NodeKind::ImportDecl,
+      Node::ImportDefaultSpecifier(_) => NodeKind::ImportDefaultSpecifier,
+      Node::ImportNamedSpecifier(_) => NodeKind::ImportNamedSpecifier,
+      Node::ImportStarAsSpecifier(_) => NodeKind::ImportStarAsSpecifier,
+      Node::Invalid(_) => NodeKind::Invalid,
+      Node::JSXAttr(_) => NodeKind::JSXAttr,
+      Node::JSXClosingElement(_) => NodeKind::JSXClosingElement,
+      Node::JSXClosingFragment(_) => NodeKind::JSXClosingFragment,
+      Node::JSXElement(_) => NodeKind::JSXElement,
+      Node::JSXEmptyExpr(_) => NodeKind::JSXEmptyExpr,
+      Node::JSXExprContainer(_) => NodeKind::JSXExprContainer,
+      Node::JSXFragment(_) => NodeKind::JSXFragment,
+      Node::JSXMemberExpr(_) => NodeKind::JSXMemberExpr,
+      Node::JSXNamespacedName(_) => NodeKind::JSXNamespacedName,
+      Node::JSXOpeningElement(_) => NodeKind::JSXOpeningElement,
+      Node::JSXOpeningFragment(_) => NodeKind::JSXOpeningFragment,
+      Node::JSXSpreadChild(_) => NodeKind::JSXSpreadChild,
+      Node::JSXText(_) => NodeKind::JSXText,
+      Node::KeyValuePatProp(_) => NodeKind::KeyValuePatProp,
+      Node::KeyValueProp(_) => NodeKind::KeyValueProp,
+      Node::LabeledStmt(_) => NodeKind::LabeledStmt,
+      Node::MemberExpr(_) => NodeKind::MemberExpr,
+      Node::MetaPropExpr(_) => NodeKind::MetaPropExpr,
+      Node::MethodProp(_) => NodeKind::MethodProp,
+      Node::Module(_) => NodeKind::Module,
+      Node::NamedExport(_) => NodeKind::NamedExport,
+      Node::NewExpr(_) => NodeKind::NewExpr,
+      Node::Null(_) => NodeKind::Null,
+      Node::Number(_) => NodeKind::Number,
+      Node::ObjectLit(_) => NodeKind::ObjectLit,
+      Node::ObjectPat(_) => NodeKind::ObjectPat,
+      Node::OptChainExpr(_) => NodeKind::OptChainExpr,
+      Node::Param(_) => NodeKind::Param,
+      Node::ParenExpr(_) => NodeKind::ParenExpr,
+      Node::PrivateMethod(_) => NodeKind::PrivateMethod,
+      Node::PrivateName(_) => NodeKind::PrivateName,
+      Node::PrivateProp(_) => NodeKind::PrivateProp,
+      Node::Regex(_) => NodeKind::Regex,
+      Node::RestPat(_) => NodeKind::RestPat,
+      Node::ReturnStmt(_) => NodeKind::ReturnStmt,
+      Node::Script(_) => NodeKind::Script,
+      Node::SeqExpr(_) => NodeKind::SeqExpr,
+      Node::SetterProp(_) => NodeKind::SetterProp,
+      Node::SpreadElement(_) => NodeKind::SpreadElement,
+      Node::Str(_) => NodeKind::Str,
+      Node::Super(_) => NodeKind::Super,
+      Node::SwitchCase(_) => NodeKind::SwitchCase,
+      Node::SwitchStmt(_) => NodeKind::SwitchStmt,
+      Node::TaggedTpl(_) => NodeKind::TaggedTpl,
+      Node::ThisExpr(_) => NodeKind::ThisExpr,
+      Node::ThrowStmt(_) => NodeKind::ThrowStmt,
+      Node::Tpl(_) => NodeKind::Tpl,
+      Node::TplElement(_) => NodeKind::TplElement,
+      Node::TryStmt(_) => NodeKind::TryStmt,
+      Node::TsArrayType(_) => NodeKind::TsArrayType,
+      Node::TsAsExpr(_) => NodeKind::TsAsExpr,
+      Node::TsCallSignatureDecl(_) => NodeKind::TsCallSignatureDecl,
+      Node::TsConditionalType(_) => NodeKind::TsConditionalType,
+      Node::TsConstAssertion(_) => NodeKind::TsConstAssertion,
+      Node::TsConstructSignatureDecl(_) => NodeKind::TsConstructSignatureDecl,
+      Node::TsConstructorType(_) => NodeKind::TsConstructorType,
+      Node::TsEnumDecl(_) => NodeKind::TsEnumDecl,
+      Node::TsEnumMember(_) => NodeKind::TsEnumMember,
+      Node::TsExportAssignment(_) => NodeKind::TsExportAssignment,
+      Node::TsExprWithTypeArgs(_) => NodeKind::TsExprWithTypeArgs,
+      Node::TsExternalModuleRef(_) => NodeKind::TsExternalModuleRef,
+      Node::TsFnType(_) => NodeKind::TsFnType,
+      Node::TsImportEqualsDecl(_) => NodeKind::TsImportEqualsDecl,
+      Node::TsImportType(_) => NodeKind::TsImportType,
+      Node::TsIndexSignature(_) => NodeKind::TsIndexSignature,
+      Node::TsIndexedAccessType(_) => NodeKind::TsIndexedAccessType,
+      Node::TsInferType(_) => NodeKind::TsInferType,
+      Node::TsInterfaceBody(_) => NodeKind::TsInterfaceBody,
+      Node::TsInterfaceDecl(_) => NodeKind::TsInterfaceDecl,
+      Node::TsIntersectionType(_) => NodeKind::TsIntersectionType,
+      Node::TsKeywordType(_) => NodeKind::TsKeywordType,
+      Node::TsLitType(_) => NodeKind::TsLitType,
+      Node::TsMappedType(_) => NodeKind::TsMappedType,
+      Node::TsMethodSignature(_) => NodeKind::TsMethodSignature,
+      Node::TsModuleBlock(_) => NodeKind::TsModuleBlock,
+      Node::TsModuleDecl(_) => NodeKind::TsModuleDecl,
+      Node::TsNamespaceDecl(_) => NodeKind::TsNamespaceDecl,
+      Node::TsNamespaceExportDecl(_) => NodeKind::TsNamespaceExportDecl,
+      Node::TsNonNullExpr(_) => NodeKind::TsNonNullExpr,
+      Node::TsOptionalType(_) => NodeKind::TsOptionalType,
+      Node::TsParamProp(_) => NodeKind::TsParamProp,
+      Node::TsParenthesizedType(_) => NodeKind::TsParenthesizedType,
+      Node::TsPropertySignature(_) => NodeKind::TsPropertySignature,
+      Node::TsQualifiedName(_) => NodeKind::TsQualifiedName,
+      Node::TsRestType(_) => NodeKind::TsRestType,
+      Node::TsThisType(_) => NodeKind::TsThisType,
+      Node::TsTplLitType(_) => NodeKind::TsTplLitType,
+      Node::TsTupleElement(_) => NodeKind::TsTupleElement,
+      Node::TsTupleType(_) => NodeKind::TsTupleType,
+      Node::TsTypeAliasDecl(_) => NodeKind::TsTypeAliasDecl,
+      Node::TsTypeAnn(_) => NodeKind::TsTypeAnn,
+      Node::TsTypeAssertion(_) => NodeKind::TsTypeAssertion,
+      Node::TsTypeCastExpr(_) => NodeKind::TsTypeCastExpr,
+      Node::TsTypeLit(_) => NodeKind::TsTypeLit,
+      Node::TsTypeOperator(_) => NodeKind::TsTypeOperator,
+      Node::TsTypeParam(_) => NodeKind::TsTypeParam,
+      Node::TsTypeParamDecl(_) => NodeKind::TsTypeParamDecl,
+      Node::TsTypeParamInstantiation(_) => NodeKind::TsTypeParamInstantiation,
+      Node::TsTypePredicate(_) => NodeKind::TsTypePredicate,
+      Node::TsTypeQuery(_) => NodeKind::TsTypeQuery,
+      Node::TsTypeRef(_) => NodeKind::TsTypeRef,
+      Node::TsUnionType(_) => NodeKind::TsUnionType,
+      Node::UnaryExpr(_) => NodeKind::UnaryExpr,
+      Node::UpdateExpr(_) => NodeKind::UpdateExpr,
+      Node::VarDecl(_) => NodeKind::VarDecl,
+      Node::VarDeclarator(_) => NodeKind::VarDeclarator,
+      Node::WhileStmt(_) => NodeKind::WhileStmt,
+      Node::WithStmt(_) => NodeKind::WithStmt,
+      Node::YieldExpr(_) => NodeKind::YieldExpr,
     }
   }
 }
@@ -1458,7 +1458,7 @@ impl<'a> NodeTrait<'a> for BlockStmtOrExpr<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      BlockStmtOrExpr::BlockStmt(node) => node.kind(),
+      BlockStmtOrExpr::BlockStmt(_) => NodeKind::BlockStmt,
       BlockStmtOrExpr::Expr(node) => node.kind(),
     }
   }
@@ -1574,13 +1574,13 @@ impl<'a> NodeTrait<'a> for ClassMember<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      ClassMember::Constructor(node) => node.kind(),
-      ClassMember::Method(node) => node.kind(),
-      ClassMember::PrivateMethod(node) => node.kind(),
-      ClassMember::ClassProp(node) => node.kind(),
-      ClassMember::PrivateProp(node) => node.kind(),
-      ClassMember::TsIndexSignature(node) => node.kind(),
-      ClassMember::Empty(node) => node.kind(),
+      ClassMember::Constructor(_) => NodeKind::Constructor,
+      ClassMember::Method(_) => NodeKind::ClassMethod,
+      ClassMember::PrivateMethod(_) => NodeKind::PrivateMethod,
+      ClassMember::ClassProp(_) => NodeKind::ClassProp,
+      ClassMember::PrivateProp(_) => NodeKind::PrivateProp,
+      ClassMember::TsIndexSignature(_) => NodeKind::TsIndexSignature,
+      ClassMember::Empty(_) => NodeKind::EmptyStmt,
     }
   }
 }
@@ -1708,13 +1708,13 @@ impl<'a> NodeTrait<'a> for Decl<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      Decl::Class(node) => node.kind(),
-      Decl::Fn(node) => node.kind(),
-      Decl::Var(node) => node.kind(),
-      Decl::TsInterface(node) => node.kind(),
-      Decl::TsTypeAlias(node) => node.kind(),
-      Decl::TsEnum(node) => node.kind(),
-      Decl::TsModule(node) => node.kind(),
+      Decl::Class(_) => NodeKind::ClassDecl,
+      Decl::Fn(_) => NodeKind::FnDecl,
+      Decl::Var(_) => NodeKind::VarDecl,
+      Decl::TsInterface(_) => NodeKind::TsInterfaceDecl,
+      Decl::TsTypeAlias(_) => NodeKind::TsTypeAliasDecl,
+      Decl::TsEnum(_) => NodeKind::TsEnumDecl,
+      Decl::TsModule(_) => NodeKind::TsModuleDecl,
     }
   }
 }
@@ -1822,9 +1822,9 @@ impl<'a> NodeTrait<'a> for DefaultDecl<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      DefaultDecl::Class(node) => node.kind(),
-      DefaultDecl::Fn(node) => node.kind(),
-      DefaultDecl::TsInterfaceDecl(node) => node.kind(),
+      DefaultDecl::Class(_) => NodeKind::ClassExpr,
+      DefaultDecl::Fn(_) => NodeKind::FnExpr,
+      DefaultDecl::TsInterfaceDecl(_) => NodeKind::TsInterfaceDecl,
     }
   }
 }
@@ -1920,9 +1920,9 @@ impl<'a> NodeTrait<'a> for ExportSpecifier<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      ExportSpecifier::Namespace(node) => node.kind(),
-      ExportSpecifier::Default(node) => node.kind(),
-      ExportSpecifier::Named(node) => node.kind(),
+      ExportSpecifier::Namespace(_) => NodeKind::ExportNamespaceSpecifier,
+      ExportSpecifier::Default(_) => NodeKind::ExportDefaultSpecifier,
+      ExportSpecifier::Named(_) => NodeKind::ExportNamedSpecifier,
     }
   }
 }
@@ -2190,42 +2190,42 @@ impl<'a> NodeTrait<'a> for Expr<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      Expr::This(node) => node.kind(),
-      Expr::Array(node) => node.kind(),
-      Expr::Object(node) => node.kind(),
-      Expr::Fn(node) => node.kind(),
-      Expr::Unary(node) => node.kind(),
-      Expr::Update(node) => node.kind(),
-      Expr::Bin(node) => node.kind(),
-      Expr::Assign(node) => node.kind(),
-      Expr::Member(node) => node.kind(),
-      Expr::Cond(node) => node.kind(),
-      Expr::Call(node) => node.kind(),
-      Expr::New(node) => node.kind(),
-      Expr::Seq(node) => node.kind(),
-      Expr::Ident(node) => node.kind(),
+      Expr::This(_) => NodeKind::ThisExpr,
+      Expr::Array(_) => NodeKind::ArrayLit,
+      Expr::Object(_) => NodeKind::ObjectLit,
+      Expr::Fn(_) => NodeKind::FnExpr,
+      Expr::Unary(_) => NodeKind::UnaryExpr,
+      Expr::Update(_) => NodeKind::UpdateExpr,
+      Expr::Bin(_) => NodeKind::BinExpr,
+      Expr::Assign(_) => NodeKind::AssignExpr,
+      Expr::Member(_) => NodeKind::MemberExpr,
+      Expr::Cond(_) => NodeKind::CondExpr,
+      Expr::Call(_) => NodeKind::CallExpr,
+      Expr::New(_) => NodeKind::NewExpr,
+      Expr::Seq(_) => NodeKind::SeqExpr,
+      Expr::Ident(_) => NodeKind::Ident,
       Expr::Lit(node) => node.kind(),
-      Expr::Tpl(node) => node.kind(),
-      Expr::TaggedTpl(node) => node.kind(),
-      Expr::Arrow(node) => node.kind(),
-      Expr::Class(node) => node.kind(),
-      Expr::Yield(node) => node.kind(),
-      Expr::MetaProp(node) => node.kind(),
-      Expr::Await(node) => node.kind(),
-      Expr::Paren(node) => node.kind(),
-      Expr::JSXMember(node) => node.kind(),
-      Expr::JSXNamespacedName(node) => node.kind(),
-      Expr::JSXEmpty(node) => node.kind(),
-      Expr::JSXElement(node) => node.kind(),
-      Expr::JSXFragment(node) => node.kind(),
-      Expr::TsTypeAssertion(node) => node.kind(),
-      Expr::TsConstAssertion(node) => node.kind(),
-      Expr::TsNonNull(node) => node.kind(),
-      Expr::TsTypeCast(node) => node.kind(),
-      Expr::TsAs(node) => node.kind(),
-      Expr::PrivateName(node) => node.kind(),
-      Expr::OptChain(node) => node.kind(),
-      Expr::Invalid(node) => node.kind(),
+      Expr::Tpl(_) => NodeKind::Tpl,
+      Expr::TaggedTpl(_) => NodeKind::TaggedTpl,
+      Expr::Arrow(_) => NodeKind::ArrowExpr,
+      Expr::Class(_) => NodeKind::ClassExpr,
+      Expr::Yield(_) => NodeKind::YieldExpr,
+      Expr::MetaProp(_) => NodeKind::MetaPropExpr,
+      Expr::Await(_) => NodeKind::AwaitExpr,
+      Expr::Paren(_) => NodeKind::ParenExpr,
+      Expr::JSXMember(_) => NodeKind::JSXMemberExpr,
+      Expr::JSXNamespacedName(_) => NodeKind::JSXNamespacedName,
+      Expr::JSXEmpty(_) => NodeKind::JSXEmptyExpr,
+      Expr::JSXElement(_) => NodeKind::JSXElement,
+      Expr::JSXFragment(_) => NodeKind::JSXFragment,
+      Expr::TsTypeAssertion(_) => NodeKind::TsTypeAssertion,
+      Expr::TsConstAssertion(_) => NodeKind::TsConstAssertion,
+      Expr::TsNonNull(_) => NodeKind::TsNonNullExpr,
+      Expr::TsTypeCast(_) => NodeKind::TsTypeCastExpr,
+      Expr::TsAs(_) => NodeKind::TsAsExpr,
+      Expr::PrivateName(_) => NodeKind::PrivateName,
+      Expr::OptChain(_) => NodeKind::OptChainExpr,
+      Expr::Invalid(_) => NodeKind::Invalid,
     }
   }
 }
@@ -2415,7 +2415,7 @@ impl<'a> NodeTrait<'a> for ExprOrSuper<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      ExprOrSuper::Super(node) => node.kind(),
+      ExprOrSuper::Super(_) => NodeKind::Super,
       ExprOrSuper::Expr(node) => node.kind(),
     }
   }
@@ -2509,9 +2509,9 @@ impl<'a> NodeTrait<'a> for ImportSpecifier<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      ImportSpecifier::Named(node) => node.kind(),
-      ImportSpecifier::Default(node) => node.kind(),
-      ImportSpecifier::Namespace(node) => node.kind(),
+      ImportSpecifier::Named(_) => NodeKind::ImportNamedSpecifier,
+      ImportSpecifier::Default(_) => NodeKind::ImportDefaultSpecifier,
+      ImportSpecifier::Namespace(_) => NodeKind::ImportStarAsSpecifier,
     }
   }
 }
@@ -2602,8 +2602,8 @@ impl<'a> NodeTrait<'a> for JSXAttrName<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      JSXAttrName::Ident(node) => node.kind(),
-      JSXAttrName::JSXNamespacedName(node) => node.kind(),
+      JSXAttrName::Ident(_) => NodeKind::Ident,
+      JSXAttrName::JSXNamespacedName(_) => NodeKind::JSXNamespacedName,
     }
   }
 }
@@ -2691,8 +2691,8 @@ impl<'a> NodeTrait<'a> for JSXAttrOrSpread<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      JSXAttrOrSpread::JSXAttr(node) => node.kind(),
-      JSXAttrOrSpread::SpreadElement(node) => node.kind(),
+      JSXAttrOrSpread::JSXAttr(_) => NodeKind::JSXAttr,
+      JSXAttrOrSpread::SpreadElement(_) => NodeKind::SpreadElement,
     }
   }
 }
@@ -2791,9 +2791,9 @@ impl<'a> NodeTrait<'a> for JSXAttrValue<'a> {
   fn kind(&self) -> NodeKind {
     match self {
       JSXAttrValue::Lit(node) => node.kind(),
-      JSXAttrValue::JSXExprContainer(node) => node.kind(),
-      JSXAttrValue::JSXElement(node) => node.kind(),
-      JSXAttrValue::JSXFragment(node) => node.kind(),
+      JSXAttrValue::JSXExprContainer(_) => NodeKind::JSXExprContainer,
+      JSXAttrValue::JSXElement(_) => NodeKind::JSXElement,
+      JSXAttrValue::JSXFragment(_) => NodeKind::JSXFragment,
     }
   }
 }
@@ -2902,11 +2902,11 @@ impl<'a> NodeTrait<'a> for JSXElementChild<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      JSXElementChild::JSXText(node) => node.kind(),
-      JSXElementChild::JSXExprContainer(node) => node.kind(),
-      JSXElementChild::JSXSpreadChild(node) => node.kind(),
-      JSXElementChild::JSXElement(node) => node.kind(),
-      JSXElementChild::JSXFragment(node) => node.kind(),
+      JSXElementChild::JSXText(_) => NodeKind::JSXText,
+      JSXElementChild::JSXExprContainer(_) => NodeKind::JSXExprContainer,
+      JSXElementChild::JSXSpreadChild(_) => NodeKind::JSXSpreadChild,
+      JSXElementChild::JSXElement(_) => NodeKind::JSXElement,
+      JSXElementChild::JSXFragment(_) => NodeKind::JSXFragment,
     }
   }
 }
@@ -3008,9 +3008,9 @@ impl<'a> NodeTrait<'a> for JSXElementName<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      JSXElementName::Ident(node) => node.kind(),
-      JSXElementName::JSXMemberExpr(node) => node.kind(),
-      JSXElementName::JSXNamespacedName(node) => node.kind(),
+      JSXElementName::Ident(_) => NodeKind::Ident,
+      JSXElementName::JSXMemberExpr(_) => NodeKind::JSXMemberExpr,
+      JSXElementName::JSXNamespacedName(_) => NodeKind::JSXNamespacedName,
     }
   }
 }
@@ -3101,7 +3101,7 @@ impl<'a> NodeTrait<'a> for JSXExpr<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      JSXExpr::JSXEmptyExpr(node) => node.kind(),
+      JSXExpr::JSXEmptyExpr(_) => NodeKind::JSXEmptyExpr,
       JSXExpr::Expr(node) => node.kind(),
     }
   }
@@ -3191,8 +3191,8 @@ impl<'a> NodeTrait<'a> for JSXObject<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      JSXObject::JSXMemberExpr(node) => node.kind(),
-      JSXObject::Ident(node) => node.kind(),
+      JSXObject::JSXMemberExpr(_) => NodeKind::JSXMemberExpr,
+      JSXObject::Ident(_) => NodeKind::Ident,
     }
   }
 }
@@ -3305,13 +3305,13 @@ impl<'a> NodeTrait<'a> for Lit<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      Lit::Str(node) => node.kind(),
-      Lit::Bool(node) => node.kind(),
-      Lit::Null(node) => node.kind(),
-      Lit::Num(node) => node.kind(),
-      Lit::BigInt(node) => node.kind(),
-      Lit::Regex(node) => node.kind(),
-      Lit::JSXText(node) => node.kind(),
+      Lit::Str(_) => NodeKind::Str,
+      Lit::Bool(_) => NodeKind::Bool,
+      Lit::Null(_) => NodeKind::Null,
+      Lit::Num(_) => NodeKind::Number,
+      Lit::BigInt(_) => NodeKind::BigInt,
+      Lit::Regex(_) => NodeKind::Regex,
+      Lit::JSXText(_) => NodeKind::JSXText,
     }
   }
 }
@@ -3449,15 +3449,15 @@ impl<'a> NodeTrait<'a> for ModuleDecl<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      ModuleDecl::Import(node) => node.kind(),
-      ModuleDecl::ExportDecl(node) => node.kind(),
-      ModuleDecl::ExportNamed(node) => node.kind(),
-      ModuleDecl::ExportDefaultDecl(node) => node.kind(),
-      ModuleDecl::ExportDefaultExpr(node) => node.kind(),
-      ModuleDecl::ExportAll(node) => node.kind(),
-      ModuleDecl::TsImportEquals(node) => node.kind(),
-      ModuleDecl::TsExportAssignment(node) => node.kind(),
-      ModuleDecl::TsNamespaceExport(node) => node.kind(),
+      ModuleDecl::Import(_) => NodeKind::ImportDecl,
+      ModuleDecl::ExportDecl(_) => NodeKind::ExportDecl,
+      ModuleDecl::ExportNamed(_) => NodeKind::NamedExport,
+      ModuleDecl::ExportDefaultDecl(_) => NodeKind::ExportDefaultDecl,
+      ModuleDecl::ExportDefaultExpr(_) => NodeKind::ExportDefaultExpr,
+      ModuleDecl::ExportAll(_) => NodeKind::ExportAll,
+      ModuleDecl::TsImportEquals(_) => NodeKind::TsImportEqualsDecl,
+      ModuleDecl::TsExportAssignment(_) => NodeKind::TsExportAssignment,
+      ModuleDecl::TsNamespaceExport(_) => NodeKind::TsNamespaceExportDecl,
     }
   }
 }
@@ -3660,9 +3660,9 @@ impl<'a> NodeTrait<'a> for ObjectPatProp<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      ObjectPatProp::KeyValue(node) => node.kind(),
-      ObjectPatProp::Assign(node) => node.kind(),
-      ObjectPatProp::Rest(node) => node.kind(),
+      ObjectPatProp::KeyValue(_) => NodeKind::KeyValuePatProp,
+      ObjectPatProp::Assign(_) => NodeKind::AssignPatProp,
+      ObjectPatProp::Rest(_) => NodeKind::RestPat,
     }
   }
 }
@@ -3753,8 +3753,8 @@ impl<'a> NodeTrait<'a> for ParamOrTsParamProp<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      ParamOrTsParamProp::TsParamProp(node) => node.kind(),
-      ParamOrTsParamProp::Param(node) => node.kind(),
+      ParamOrTsParamProp::TsParamProp(_) => NodeKind::TsParamProp,
+      ParamOrTsParamProp::Param(_) => NodeKind::Param,
     }
   }
 }
@@ -3868,12 +3868,12 @@ impl<'a> NodeTrait<'a> for Pat<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      Pat::Ident(node) => node.kind(),
-      Pat::Array(node) => node.kind(),
-      Pat::Rest(node) => node.kind(),
-      Pat::Object(node) => node.kind(),
-      Pat::Assign(node) => node.kind(),
-      Pat::Invalid(node) => node.kind(),
+      Pat::Ident(_) => NodeKind::Ident,
+      Pat::Array(_) => NodeKind::ArrayPat,
+      Pat::Rest(_) => NodeKind::RestPat,
+      Pat::Object(_) => NodeKind::ObjectPat,
+      Pat::Assign(_) => NodeKind::AssignPat,
+      Pat::Invalid(_) => NodeKind::Invalid,
       Pat::Expr(node) => node.kind(),
     }
   }
@@ -4089,12 +4089,12 @@ impl<'a> NodeTrait<'a> for Prop<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      Prop::Shorthand(node) => node.kind(),
-      Prop::KeyValue(node) => node.kind(),
-      Prop::Assign(node) => node.kind(),
-      Prop::Getter(node) => node.kind(),
-      Prop::Setter(node) => node.kind(),
-      Prop::Method(node) => node.kind(),
+      Prop::Shorthand(_) => NodeKind::Ident,
+      Prop::KeyValue(_) => NodeKind::KeyValueProp,
+      Prop::Assign(_) => NodeKind::AssignProp,
+      Prop::Getter(_) => NodeKind::GetterProp,
+      Prop::Setter(_) => NodeKind::SetterProp,
+      Prop::Method(_) => NodeKind::MethodProp,
     }
   }
 }
@@ -4211,11 +4211,11 @@ impl<'a> NodeTrait<'a> for PropName<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      PropName::Ident(node) => node.kind(),
-      PropName::Str(node) => node.kind(),
-      PropName::Num(node) => node.kind(),
-      PropName::Computed(node) => node.kind(),
-      PropName::BigInt(node) => node.kind(),
+      PropName::Ident(_) => NodeKind::Ident,
+      PropName::Str(_) => NodeKind::Str,
+      PropName::Num(_) => NodeKind::Number,
+      PropName::Computed(_) => NodeKind::ComputedPropName,
+      PropName::BigInt(_) => NodeKind::BigInt,
     }
   }
 }
@@ -4313,7 +4313,7 @@ impl<'a> NodeTrait<'a> for PropOrSpread<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      PropOrSpread::Spread(node) => node.kind(),
+      PropOrSpread::Spread(_) => NodeKind::SpreadElement,
       PropOrSpread::Prop(node) => node.kind(),
     }
   }
@@ -4488,25 +4488,25 @@ impl<'a> NodeTrait<'a> for Stmt<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      Stmt::Block(node) => node.kind(),
-      Stmt::Empty(node) => node.kind(),
-      Stmt::Debugger(node) => node.kind(),
-      Stmt::With(node) => node.kind(),
-      Stmt::Return(node) => node.kind(),
-      Stmt::Labeled(node) => node.kind(),
-      Stmt::Break(node) => node.kind(),
-      Stmt::Continue(node) => node.kind(),
-      Stmt::If(node) => node.kind(),
-      Stmt::Switch(node) => node.kind(),
-      Stmt::Throw(node) => node.kind(),
-      Stmt::Try(node) => node.kind(),
-      Stmt::While(node) => node.kind(),
-      Stmt::DoWhile(node) => node.kind(),
-      Stmt::For(node) => node.kind(),
-      Stmt::ForIn(node) => node.kind(),
-      Stmt::ForOf(node) => node.kind(),
+      Stmt::Block(_) => NodeKind::BlockStmt,
+      Stmt::Empty(_) => NodeKind::EmptyStmt,
+      Stmt::Debugger(_) => NodeKind::DebuggerStmt,
+      Stmt::With(_) => NodeKind::WithStmt,
+      Stmt::Return(_) => NodeKind::ReturnStmt,
+      Stmt::Labeled(_) => NodeKind::LabeledStmt,
+      Stmt::Break(_) => NodeKind::BreakStmt,
+      Stmt::Continue(_) => NodeKind::ContinueStmt,
+      Stmt::If(_) => NodeKind::IfStmt,
+      Stmt::Switch(_) => NodeKind::SwitchStmt,
+      Stmt::Throw(_) => NodeKind::ThrowStmt,
+      Stmt::Try(_) => NodeKind::TryStmt,
+      Stmt::While(_) => NodeKind::WhileStmt,
+      Stmt::DoWhile(_) => NodeKind::DoWhileStmt,
+      Stmt::For(_) => NodeKind::ForStmt,
+      Stmt::ForIn(_) => NodeKind::ForInStmt,
+      Stmt::ForOf(_) => NodeKind::ForOfStmt,
       Stmt::Decl(node) => node.kind(),
-      Stmt::Expr(node) => node.kind(),
+      Stmt::Expr(_) => NodeKind::ExprStmt,
     }
   }
 }
@@ -4645,8 +4645,8 @@ impl<'a> NodeTrait<'a> for TsEntityName<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      TsEntityName::TsQualifiedName(node) => node.kind(),
-      TsEntityName::Ident(node) => node.kind(),
+      TsEntityName::TsQualifiedName(_) => NodeKind::TsQualifiedName,
+      TsEntityName::Ident(_) => NodeKind::Ident,
     }
   }
 }
@@ -4736,8 +4736,8 @@ impl<'a> NodeTrait<'a> for TsEnumMemberId<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      TsEnumMemberId::Ident(node) => node.kind(),
-      TsEnumMemberId::Str(node) => node.kind(),
+      TsEnumMemberId::Ident(_) => NodeKind::Ident,
+      TsEnumMemberId::Str(_) => NodeKind::Str,
     }
   }
 }
@@ -4825,8 +4825,8 @@ impl<'a> NodeTrait<'a> for TsFnOrConstructorType<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      TsFnOrConstructorType::TsFnType(node) => node.kind(),
-      TsFnOrConstructorType::TsConstructorType(node) => node.kind(),
+      TsFnOrConstructorType::TsFnType(_) => NodeKind::TsFnType,
+      TsFnOrConstructorType::TsConstructorType(_) => NodeKind::TsConstructorType,
     }
   }
 }
@@ -4924,10 +4924,10 @@ impl<'a> NodeTrait<'a> for TsFnParam<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      TsFnParam::Ident(node) => node.kind(),
-      TsFnParam::Array(node) => node.kind(),
-      TsFnParam::Rest(node) => node.kind(),
-      TsFnParam::Object(node) => node.kind(),
+      TsFnParam::Ident(_) => NodeKind::Ident,
+      TsFnParam::Array(_) => NodeKind::ArrayPat,
+      TsFnParam::Rest(_) => NodeKind::RestPat,
+      TsFnParam::Object(_) => NodeKind::ObjectPat,
     }
   }
 }
@@ -5036,11 +5036,11 @@ impl<'a> NodeTrait<'a> for TsLit<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      TsLit::Number(node) => node.kind(),
-      TsLit::Str(node) => node.kind(),
-      TsLit::Bool(node) => node.kind(),
-      TsLit::BigInt(node) => node.kind(),
-      TsLit::Tpl(node) => node.kind(),
+      TsLit::Number(_) => NodeKind::Number,
+      TsLit::Str(_) => NodeKind::Str,
+      TsLit::Bool(_) => NodeKind::Bool,
+      TsLit::BigInt(_) => NodeKind::BigInt,
+      TsLit::Tpl(_) => NodeKind::TsTplLitType,
     }
   }
 }
@@ -5137,8 +5137,8 @@ impl<'a> NodeTrait<'a> for TsModuleName<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      TsModuleName::Ident(node) => node.kind(),
-      TsModuleName::Str(node) => node.kind(),
+      TsModuleName::Ident(_) => NodeKind::Ident,
+      TsModuleName::Str(_) => NodeKind::Str,
     }
   }
 }
@@ -5227,7 +5227,7 @@ impl<'a> NodeTrait<'a> for TsModuleRef<'a> {
   fn kind(&self) -> NodeKind {
     match self {
       TsModuleRef::TsEntityName(node) => node.kind(),
-      TsModuleRef::TsExternalModuleRef(node) => node.kind(),
+      TsModuleRef::TsExternalModuleRef(_) => NodeKind::TsExternalModuleRef,
     }
   }
 }
@@ -5317,8 +5317,8 @@ impl<'a> NodeTrait<'a> for TsNamespaceBody<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      TsNamespaceBody::TsModuleBlock(node) => node.kind(),
-      TsNamespaceBody::TsNamespaceDecl(node) => node.kind(),
+      TsNamespaceBody::TsModuleBlock(_) => NodeKind::TsModuleBlock,
+      TsNamespaceBody::TsNamespaceDecl(_) => NodeKind::TsNamespaceDecl,
     }
   }
 }
@@ -5406,8 +5406,8 @@ impl<'a> NodeTrait<'a> for TsParamPropParam<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      TsParamPropParam::Ident(node) => node.kind(),
-      TsParamPropParam::Assign(node) => node.kind(),
+      TsParamPropParam::Ident(_) => NodeKind::Ident,
+      TsParamPropParam::Assign(_) => NodeKind::AssignPat,
     }
   }
 }
@@ -5495,8 +5495,8 @@ impl<'a> NodeTrait<'a> for TsThisTypeOrIdent<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      TsThisTypeOrIdent::TsThisType(node) => node.kind(),
-      TsThisTypeOrIdent::Ident(node) => node.kind(),
+      TsThisTypeOrIdent::TsThisType(_) => NodeKind::TsThisType,
+      TsThisTypeOrIdent::Ident(_) => NodeKind::Ident,
     }
   }
 }
@@ -5674,26 +5674,26 @@ impl<'a> NodeTrait<'a> for TsType<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      TsType::TsKeywordType(node) => node.kind(),
-      TsType::TsThisType(node) => node.kind(),
+      TsType::TsKeywordType(_) => NodeKind::TsKeywordType,
+      TsType::TsThisType(_) => NodeKind::TsThisType,
       TsType::TsFnOrConstructorType(node) => node.kind(),
-      TsType::TsTypeRef(node) => node.kind(),
-      TsType::TsTypeQuery(node) => node.kind(),
-      TsType::TsTypeLit(node) => node.kind(),
-      TsType::TsArrayType(node) => node.kind(),
-      TsType::TsTupleType(node) => node.kind(),
-      TsType::TsOptionalType(node) => node.kind(),
-      TsType::TsRestType(node) => node.kind(),
+      TsType::TsTypeRef(_) => NodeKind::TsTypeRef,
+      TsType::TsTypeQuery(_) => NodeKind::TsTypeQuery,
+      TsType::TsTypeLit(_) => NodeKind::TsTypeLit,
+      TsType::TsArrayType(_) => NodeKind::TsArrayType,
+      TsType::TsTupleType(_) => NodeKind::TsTupleType,
+      TsType::TsOptionalType(_) => NodeKind::TsOptionalType,
+      TsType::TsRestType(_) => NodeKind::TsRestType,
       TsType::TsUnionOrIntersectionType(node) => node.kind(),
-      TsType::TsConditionalType(node) => node.kind(),
-      TsType::TsInferType(node) => node.kind(),
-      TsType::TsParenthesizedType(node) => node.kind(),
-      TsType::TsTypeOperator(node) => node.kind(),
-      TsType::TsIndexedAccessType(node) => node.kind(),
-      TsType::TsMappedType(node) => node.kind(),
-      TsType::TsLitType(node) => node.kind(),
-      TsType::TsTypePredicate(node) => node.kind(),
-      TsType::TsImportType(node) => node.kind(),
+      TsType::TsConditionalType(_) => NodeKind::TsConditionalType,
+      TsType::TsInferType(_) => NodeKind::TsInferType,
+      TsType::TsParenthesizedType(_) => NodeKind::TsParenthesizedType,
+      TsType::TsTypeOperator(_) => NodeKind::TsTypeOperator,
+      TsType::TsIndexedAccessType(_) => NodeKind::TsIndexedAccessType,
+      TsType::TsMappedType(_) => NodeKind::TsMappedType,
+      TsType::TsLitType(_) => NodeKind::TsLitType,
+      TsType::TsTypePredicate(_) => NodeKind::TsTypePredicate,
+      TsType::TsImportType(_) => NodeKind::TsImportType,
     }
   }
 }
@@ -5850,11 +5850,11 @@ impl<'a> NodeTrait<'a> for TsTypeElement<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      TsTypeElement::TsCallSignatureDecl(node) => node.kind(),
-      TsTypeElement::TsConstructSignatureDecl(node) => node.kind(),
-      TsTypeElement::TsPropertySignature(node) => node.kind(),
-      TsTypeElement::TsMethodSignature(node) => node.kind(),
-      TsTypeElement::TsIndexSignature(node) => node.kind(),
+      TsTypeElement::TsCallSignatureDecl(_) => NodeKind::TsCallSignatureDecl,
+      TsTypeElement::TsConstructSignatureDecl(_) => NodeKind::TsConstructSignatureDecl,
+      TsTypeElement::TsPropertySignature(_) => NodeKind::TsPropertySignature,
+      TsTypeElement::TsMethodSignature(_) => NodeKind::TsMethodSignature,
+      TsTypeElement::TsIndexSignature(_) => NodeKind::TsIndexSignature,
     }
   }
 }
@@ -5952,7 +5952,7 @@ impl<'a> NodeTrait<'a> for TsTypeQueryExpr<'a> {
   fn kind(&self) -> NodeKind {
     match self {
       TsTypeQueryExpr::TsEntityName(node) => node.kind(),
-      TsTypeQueryExpr::Import(node) => node.kind(),
+      TsTypeQueryExpr::Import(_) => NodeKind::TsImportType,
     }
   }
 }
@@ -6040,8 +6040,8 @@ impl<'a> NodeTrait<'a> for TsUnionOrIntersectionType<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      TsUnionOrIntersectionType::TsUnionType(node) => node.kind(),
-      TsUnionOrIntersectionType::TsIntersectionType(node) => node.kind(),
+      TsUnionOrIntersectionType::TsUnionType(_) => NodeKind::TsUnionType,
+      TsUnionOrIntersectionType::TsIntersectionType(_) => NodeKind::TsIntersectionType,
     }
   }
 }
@@ -6129,7 +6129,7 @@ impl<'a> NodeTrait<'a> for VarDeclOrExpr<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      VarDeclOrExpr::VarDecl(node) => node.kind(),
+      VarDeclOrExpr::VarDecl(_) => NodeKind::VarDecl,
       VarDeclOrExpr::Expr(node) => node.kind(),
     }
   }
@@ -6218,7 +6218,7 @@ impl<'a> NodeTrait<'a> for VarDeclOrPat<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      VarDeclOrPat::VarDecl(node) => node.kind(),
+      VarDeclOrPat::VarDecl(_) => NodeKind::VarDecl,
       VarDeclOrPat::Pat(node) => node.kind(),
     }
   }
@@ -6269,7 +6269,7 @@ impl<'a> From<&ArrayLit<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ArrayLit<'a> {
+impl<'a> NodeTrait<'a> for ArrayLit<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -6285,7 +6285,7 @@ impl<'a> NodeTrait<'a> for &'a ArrayLit<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -6347,7 +6347,7 @@ impl<'a> From<&ArrayPat<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ArrayPat<'a> {
+impl<'a> NodeTrait<'a> for ArrayPat<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -6366,7 +6366,7 @@ impl<'a> NodeTrait<'a> for &'a ArrayPat<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -6438,7 +6438,7 @@ impl<'a> From<&ArrowExpr<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ArrowExpr<'a> {
+impl<'a> NodeTrait<'a> for ArrowExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -6459,7 +6459,7 @@ impl<'a> NodeTrait<'a> for &'a ArrowExpr<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -6529,7 +6529,7 @@ impl<'a> From<&AssignExpr<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a AssignExpr<'a> {
+impl<'a> NodeTrait<'a> for AssignExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -6542,7 +6542,7 @@ impl<'a> NodeTrait<'a> for &'a AssignExpr<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -6597,7 +6597,7 @@ impl<'a> From<&AssignPat<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a AssignPat<'a> {
+impl<'a> NodeTrait<'a> for AssignPat<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -6613,7 +6613,7 @@ impl<'a> NodeTrait<'a> for &'a AssignPat<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -6673,7 +6673,7 @@ impl<'a> From<&AssignPatProp<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a AssignPatProp<'a> {
+impl<'a> NodeTrait<'a> for AssignPatProp<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -6688,7 +6688,7 @@ impl<'a> NodeTrait<'a> for &'a AssignPatProp<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -6745,7 +6745,7 @@ impl<'a> From<&AssignProp<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a AssignProp<'a> {
+impl<'a> NodeTrait<'a> for AssignProp<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -6758,7 +6758,7 @@ impl<'a> NodeTrait<'a> for &'a AssignProp<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -6811,7 +6811,7 @@ impl<'a> From<&AwaitExpr<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a AwaitExpr<'a> {
+impl<'a> NodeTrait<'a> for AwaitExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -6823,7 +6823,7 @@ impl<'a> NodeTrait<'a> for &'a AwaitExpr<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -6879,7 +6879,7 @@ impl<'a> From<&BigInt<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a BigInt<'a> {
+impl<'a> NodeTrait<'a> for BigInt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -6889,7 +6889,7 @@ impl<'a> NodeTrait<'a> for &'a BigInt<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -6944,7 +6944,7 @@ impl<'a> From<&BinExpr<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a BinExpr<'a> {
+impl<'a> NodeTrait<'a> for BinExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -6957,7 +6957,7 @@ impl<'a> NodeTrait<'a> for &'a BinExpr<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -7011,7 +7011,7 @@ impl<'a> From<&BlockStmt<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a BlockStmt<'a> {
+impl<'a> NodeTrait<'a> for BlockStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -7025,7 +7025,7 @@ impl<'a> NodeTrait<'a> for &'a BlockStmt<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -7081,7 +7081,7 @@ impl<'a> From<&Bool<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a Bool<'a> {
+impl<'a> NodeTrait<'a> for Bool<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -7091,7 +7091,7 @@ impl<'a> NodeTrait<'a> for &'a Bool<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -7139,7 +7139,7 @@ impl<'a> From<&BreakStmt<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a BreakStmt<'a> {
+impl<'a> NodeTrait<'a> for BreakStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -7153,7 +7153,7 @@ impl<'a> NodeTrait<'a> for &'a BreakStmt<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -7209,7 +7209,7 @@ impl<'a> From<&CallExpr<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a CallExpr<'a> {
+impl<'a> NodeTrait<'a> for CallExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -7227,7 +7227,7 @@ impl<'a> NodeTrait<'a> for &'a CallExpr<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -7290,7 +7290,7 @@ impl<'a> From<&CatchClause<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a CatchClause<'a> {
+impl<'a> NodeTrait<'a> for CatchClause<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -7305,7 +7305,7 @@ impl<'a> NodeTrait<'a> for &'a CatchClause<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -7373,7 +7373,7 @@ impl<'a> From<&Class<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a Class<'a> {
+impl<'a> NodeTrait<'a> for Class<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -7402,7 +7402,7 @@ impl<'a> NodeTrait<'a> for &'a Class<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -7479,7 +7479,7 @@ impl<'a> From<&ClassDecl<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ClassDecl<'a> {
+impl<'a> NodeTrait<'a> for ClassDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -7492,7 +7492,7 @@ impl<'a> NodeTrait<'a> for &'a ClassDecl<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -7547,7 +7547,7 @@ impl<'a> From<&ClassExpr<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ClassExpr<'a> {
+impl<'a> NodeTrait<'a> for ClassExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -7562,7 +7562,7 @@ impl<'a> NodeTrait<'a> for &'a ClassExpr<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -7643,7 +7643,7 @@ impl<'a> From<&ClassMethod<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ClassMethod<'a> {
+impl<'a> NodeTrait<'a> for ClassMethod<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -7656,7 +7656,7 @@ impl<'a> NodeTrait<'a> for &'a ClassMethod<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -7748,7 +7748,7 @@ impl<'a> From<&ClassProp<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ClassProp<'a> {
+impl<'a> NodeTrait<'a> for ClassProp<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -7769,7 +7769,7 @@ impl<'a> NodeTrait<'a> for &'a ClassProp<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -7832,7 +7832,7 @@ impl<'a> From<&ComputedPropName<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ComputedPropName<'a> {
+impl<'a> NodeTrait<'a> for ComputedPropName<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -7844,7 +7844,7 @@ impl<'a> NodeTrait<'a> for &'a ComputedPropName<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -7897,7 +7897,7 @@ impl<'a> From<&CondExpr<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a CondExpr<'a> {
+impl<'a> NodeTrait<'a> for CondExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -7911,7 +7911,7 @@ impl<'a> NodeTrait<'a> for &'a CondExpr<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -7978,7 +7978,7 @@ impl<'a> From<&Constructor<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a Constructor<'a> {
+impl<'a> NodeTrait<'a> for Constructor<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -7996,7 +7996,7 @@ impl<'a> NodeTrait<'a> for &'a Constructor<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -8054,7 +8054,7 @@ impl<'a> From<&ContinueStmt<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ContinueStmt<'a> {
+impl<'a> NodeTrait<'a> for ContinueStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -8068,7 +8068,7 @@ impl<'a> NodeTrait<'a> for &'a ContinueStmt<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -8121,7 +8121,7 @@ impl<'a> From<&DebuggerStmt<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a DebuggerStmt<'a> {
+impl<'a> NodeTrait<'a> for DebuggerStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -8131,7 +8131,7 @@ impl<'a> NodeTrait<'a> for &'a DebuggerStmt<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -8179,7 +8179,7 @@ impl<'a> From<&Decorator<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a Decorator<'a> {
+impl<'a> NodeTrait<'a> for Decorator<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -8191,7 +8191,7 @@ impl<'a> NodeTrait<'a> for &'a Decorator<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -8243,7 +8243,7 @@ impl<'a> From<&DoWhileStmt<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a DoWhileStmt<'a> {
+impl<'a> NodeTrait<'a> for DoWhileStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -8256,7 +8256,7 @@ impl<'a> NodeTrait<'a> for &'a DoWhileStmt<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -8308,7 +8308,7 @@ impl<'a> From<&EmptyStmt<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a EmptyStmt<'a> {
+impl<'a> NodeTrait<'a> for EmptyStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -8318,7 +8318,7 @@ impl<'a> NodeTrait<'a> for &'a EmptyStmt<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -8368,7 +8368,7 @@ impl<'a> From<&ExportAll<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ExportAll<'a> {
+impl<'a> NodeTrait<'a> for ExportAll<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -8383,7 +8383,7 @@ impl<'a> NodeTrait<'a> for &'a ExportAll<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -8439,7 +8439,7 @@ impl<'a> From<&ExportDecl<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ExportDecl<'a> {
+impl<'a> NodeTrait<'a> for ExportDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -8451,7 +8451,7 @@ impl<'a> NodeTrait<'a> for &'a ExportDecl<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -8502,7 +8502,7 @@ impl<'a> From<&ExportDefaultDecl<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ExportDefaultDecl<'a> {
+impl<'a> NodeTrait<'a> for ExportDefaultDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -8514,7 +8514,7 @@ impl<'a> NodeTrait<'a> for &'a ExportDefaultDecl<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -8565,7 +8565,7 @@ impl<'a> From<&ExportDefaultExpr<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ExportDefaultExpr<'a> {
+impl<'a> NodeTrait<'a> for ExportDefaultExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -8577,7 +8577,7 @@ impl<'a> NodeTrait<'a> for &'a ExportDefaultExpr<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -8628,7 +8628,7 @@ impl<'a> From<&ExportDefaultSpecifier<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ExportDefaultSpecifier<'a> {
+impl<'a> NodeTrait<'a> for ExportDefaultSpecifier<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -8640,7 +8640,7 @@ impl<'a> NodeTrait<'a> for &'a ExportDefaultSpecifier<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -8694,7 +8694,7 @@ impl<'a> From<&ExportNamedSpecifier<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ExportNamedSpecifier<'a> {
+impl<'a> NodeTrait<'a> for ExportNamedSpecifier<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -8709,7 +8709,7 @@ impl<'a> NodeTrait<'a> for &'a ExportNamedSpecifier<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -8766,7 +8766,7 @@ impl<'a> From<&ExportNamespaceSpecifier<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ExportNamespaceSpecifier<'a> {
+impl<'a> NodeTrait<'a> for ExportNamespaceSpecifier<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -8778,7 +8778,7 @@ impl<'a> NodeTrait<'a> for &'a ExportNamespaceSpecifier<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -8835,7 +8835,7 @@ impl<'a> From<&ExprOrSpread<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ExprOrSpread<'a> {
+impl<'a> NodeTrait<'a> for ExprOrSpread<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -8847,7 +8847,7 @@ impl<'a> NodeTrait<'a> for &'a ExprOrSpread<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -8898,7 +8898,7 @@ impl<'a> From<&ExprStmt<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ExprStmt<'a> {
+impl<'a> NodeTrait<'a> for ExprStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -8910,7 +8910,7 @@ impl<'a> NodeTrait<'a> for &'a ExprStmt<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -8968,7 +8968,7 @@ impl<'a> From<&FnDecl<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a FnDecl<'a> {
+impl<'a> NodeTrait<'a> for FnDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -8981,7 +8981,7 @@ impl<'a> NodeTrait<'a> for &'a FnDecl<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -9036,7 +9036,7 @@ impl<'a> From<&FnExpr<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a FnExpr<'a> {
+impl<'a> NodeTrait<'a> for FnExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -9051,7 +9051,7 @@ impl<'a> NodeTrait<'a> for &'a FnExpr<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -9109,7 +9109,7 @@ impl<'a> From<&ForInStmt<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ForInStmt<'a> {
+impl<'a> NodeTrait<'a> for ForInStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -9123,7 +9123,7 @@ impl<'a> NodeTrait<'a> for &'a ForInStmt<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -9191,7 +9191,7 @@ impl<'a> From<&ForOfStmt<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ForOfStmt<'a> {
+impl<'a> NodeTrait<'a> for ForOfStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -9205,7 +9205,7 @@ impl<'a> NodeTrait<'a> for &'a ForOfStmt<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -9263,7 +9263,7 @@ impl<'a> From<&ForStmt<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ForStmt<'a> {
+impl<'a> NodeTrait<'a> for ForStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -9284,7 +9284,7 @@ impl<'a> NodeTrait<'a> for &'a ForStmt<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -9367,7 +9367,7 @@ impl<'a> From<&Function<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a Function<'a> {
+impl<'a> NodeTrait<'a> for Function<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -9393,7 +9393,7 @@ impl<'a> NodeTrait<'a> for &'a Function<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -9463,7 +9463,7 @@ impl<'a> From<&GetterProp<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a GetterProp<'a> {
+impl<'a> NodeTrait<'a> for GetterProp<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -9481,7 +9481,7 @@ impl<'a> NodeTrait<'a> for &'a GetterProp<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -9554,7 +9554,7 @@ impl<'a> From<&Ident<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a Ident<'a> {
+impl<'a> NodeTrait<'a> for Ident<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -9568,7 +9568,7 @@ impl<'a> NodeTrait<'a> for &'a Ident<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -9624,7 +9624,7 @@ impl<'a> From<&IfStmt<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a IfStmt<'a> {
+impl<'a> NodeTrait<'a> for IfStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -9640,7 +9640,7 @@ impl<'a> NodeTrait<'a> for &'a IfStmt<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -9706,7 +9706,7 @@ impl<'a> From<&ImportDecl<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ImportDecl<'a> {
+impl<'a> NodeTrait<'a> for ImportDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -9724,7 +9724,7 @@ impl<'a> NodeTrait<'a> for &'a ImportDecl<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -9783,7 +9783,7 @@ impl<'a> From<&ImportDefaultSpecifier<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ImportDefaultSpecifier<'a> {
+impl<'a> NodeTrait<'a> for ImportDefaultSpecifier<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -9795,7 +9795,7 @@ impl<'a> NodeTrait<'a> for &'a ImportDefaultSpecifier<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -9850,7 +9850,7 @@ impl<'a> From<&ImportNamedSpecifier<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ImportNamedSpecifier<'a> {
+impl<'a> NodeTrait<'a> for ImportNamedSpecifier<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -9865,7 +9865,7 @@ impl<'a> NodeTrait<'a> for &'a ImportNamedSpecifier<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -9922,7 +9922,7 @@ impl<'a> From<&ImportStarAsSpecifier<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ImportStarAsSpecifier<'a> {
+impl<'a> NodeTrait<'a> for ImportStarAsSpecifier<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -9934,7 +9934,7 @@ impl<'a> NodeTrait<'a> for &'a ImportStarAsSpecifier<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -9985,7 +9985,7 @@ impl<'a> From<&Invalid<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a Invalid<'a> {
+impl<'a> NodeTrait<'a> for Invalid<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -9995,7 +9995,7 @@ impl<'a> NodeTrait<'a> for &'a Invalid<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -10045,7 +10045,7 @@ impl<'a> From<&JSXAttr<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a JSXAttr<'a> {
+impl<'a> NodeTrait<'a> for JSXAttr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -10060,7 +10060,7 @@ impl<'a> NodeTrait<'a> for &'a JSXAttr<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -10116,7 +10116,7 @@ impl<'a> From<&JSXClosingElement<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a JSXClosingElement<'a> {
+impl<'a> NodeTrait<'a> for JSXClosingElement<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -10128,7 +10128,7 @@ impl<'a> NodeTrait<'a> for &'a JSXClosingElement<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -10178,7 +10178,7 @@ impl<'a> From<&JSXClosingFragment<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a JSXClosingFragment<'a> {
+impl<'a> NodeTrait<'a> for JSXClosingFragment<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -10188,7 +10188,7 @@ impl<'a> NodeTrait<'a> for &'a JSXClosingFragment<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -10238,7 +10238,7 @@ impl<'a> From<&JSXElement<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a JSXElement<'a> {
+impl<'a> NodeTrait<'a> for JSXElement<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -10256,7 +10256,7 @@ impl<'a> NodeTrait<'a> for &'a JSXElement<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -10313,7 +10313,7 @@ impl<'a> From<&JSXEmptyExpr<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a JSXEmptyExpr<'a> {
+impl<'a> NodeTrait<'a> for JSXEmptyExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -10323,7 +10323,7 @@ impl<'a> NodeTrait<'a> for &'a JSXEmptyExpr<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -10371,7 +10371,7 @@ impl<'a> From<&JSXExprContainer<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a JSXExprContainer<'a> {
+impl<'a> NodeTrait<'a> for JSXExprContainer<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -10383,7 +10383,7 @@ impl<'a> NodeTrait<'a> for &'a JSXExprContainer<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -10436,7 +10436,7 @@ impl<'a> From<&JSXFragment<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a JSXFragment<'a> {
+impl<'a> NodeTrait<'a> for JSXFragment<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -10452,7 +10452,7 @@ impl<'a> NodeTrait<'a> for &'a JSXFragment<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -10508,7 +10508,7 @@ impl<'a> From<&JSXMemberExpr<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a JSXMemberExpr<'a> {
+impl<'a> NodeTrait<'a> for JSXMemberExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -10521,7 +10521,7 @@ impl<'a> NodeTrait<'a> for &'a JSXMemberExpr<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -10576,7 +10576,7 @@ impl<'a> From<&JSXNamespacedName<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a JSXNamespacedName<'a> {
+impl<'a> NodeTrait<'a> for JSXNamespacedName<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -10589,7 +10589,7 @@ impl<'a> NodeTrait<'a> for &'a JSXNamespacedName<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -10652,7 +10652,7 @@ impl<'a> From<&JSXOpeningElement<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a JSXOpeningElement<'a> {
+impl<'a> NodeTrait<'a> for JSXOpeningElement<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -10670,7 +10670,7 @@ impl<'a> NodeTrait<'a> for &'a JSXOpeningElement<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -10727,7 +10727,7 @@ impl<'a> From<&JSXOpeningFragment<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a JSXOpeningFragment<'a> {
+impl<'a> NodeTrait<'a> for JSXOpeningFragment<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -10737,7 +10737,7 @@ impl<'a> NodeTrait<'a> for &'a JSXOpeningFragment<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -10785,7 +10785,7 @@ impl<'a> From<&JSXSpreadChild<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a JSXSpreadChild<'a> {
+impl<'a> NodeTrait<'a> for JSXSpreadChild<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -10797,7 +10797,7 @@ impl<'a> NodeTrait<'a> for &'a JSXSpreadChild<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -10857,7 +10857,7 @@ impl<'a> From<&JSXText<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a JSXText<'a> {
+impl<'a> NodeTrait<'a> for JSXText<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -10867,7 +10867,7 @@ impl<'a> NodeTrait<'a> for &'a JSXText<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -10917,7 +10917,7 @@ impl<'a> From<&KeyValuePatProp<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a KeyValuePatProp<'a> {
+impl<'a> NodeTrait<'a> for KeyValuePatProp<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -10930,7 +10930,7 @@ impl<'a> NodeTrait<'a> for &'a KeyValuePatProp<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -10984,7 +10984,7 @@ impl<'a> From<&KeyValueProp<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a KeyValueProp<'a> {
+impl<'a> NodeTrait<'a> for KeyValueProp<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -10997,7 +10997,7 @@ impl<'a> NodeTrait<'a> for &'a KeyValueProp<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -11051,7 +11051,7 @@ impl<'a> From<&LabeledStmt<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a LabeledStmt<'a> {
+impl<'a> NodeTrait<'a> for LabeledStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -11064,7 +11064,7 @@ impl<'a> NodeTrait<'a> for &'a LabeledStmt<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -11124,7 +11124,7 @@ impl<'a> From<&MemberExpr<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a MemberExpr<'a> {
+impl<'a> NodeTrait<'a> for MemberExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -11137,7 +11137,7 @@ impl<'a> NodeTrait<'a> for &'a MemberExpr<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -11191,7 +11191,7 @@ impl<'a> From<&MetaPropExpr<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a MetaPropExpr<'a> {
+impl<'a> NodeTrait<'a> for MetaPropExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -11204,7 +11204,7 @@ impl<'a> NodeTrait<'a> for &'a MetaPropExpr<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -11258,7 +11258,7 @@ impl<'a> From<&MethodProp<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a MethodProp<'a> {
+impl<'a> NodeTrait<'a> for MethodProp<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -11271,7 +11271,7 @@ impl<'a> NodeTrait<'a> for &'a MethodProp<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -11332,7 +11332,7 @@ impl<'a> From<&Module<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a Module<'a> {
+impl<'a> NodeTrait<'a> for Module<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     None
   }
@@ -11346,7 +11346,7 @@ impl<'a> NodeTrait<'a> for &'a Module<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -11416,7 +11416,7 @@ impl<'a> From<&NamedExport<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a NamedExport<'a> {
+impl<'a> NodeTrait<'a> for NamedExport<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -11436,7 +11436,7 @@ impl<'a> NodeTrait<'a> for &'a NamedExport<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -11499,7 +11499,7 @@ impl<'a> From<&NewExpr<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a NewExpr<'a> {
+impl<'a> NodeTrait<'a> for NewExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -11519,7 +11519,7 @@ impl<'a> NodeTrait<'a> for &'a NewExpr<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -11579,7 +11579,7 @@ impl<'a> From<&Null<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a Null<'a> {
+impl<'a> NodeTrait<'a> for Null<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -11589,7 +11589,7 @@ impl<'a> NodeTrait<'a> for &'a Null<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -11645,7 +11645,7 @@ impl<'a> From<&Number<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a Number<'a> {
+impl<'a> NodeTrait<'a> for Number<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -11655,7 +11655,7 @@ impl<'a> NodeTrait<'a> for &'a Number<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -11704,7 +11704,7 @@ impl<'a> From<&ObjectLit<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ObjectLit<'a> {
+impl<'a> NodeTrait<'a> for ObjectLit<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -11718,7 +11718,7 @@ impl<'a> NodeTrait<'a> for &'a ObjectLit<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -11777,7 +11777,7 @@ impl<'a> From<&ObjectPat<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ObjectPat<'a> {
+impl<'a> NodeTrait<'a> for ObjectPat<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -11794,7 +11794,7 @@ impl<'a> NodeTrait<'a> for &'a ObjectPat<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -11856,7 +11856,7 @@ impl<'a> From<&OptChainExpr<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a OptChainExpr<'a> {
+impl<'a> NodeTrait<'a> for OptChainExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -11868,7 +11868,7 @@ impl<'a> NodeTrait<'a> for &'a OptChainExpr<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -11920,7 +11920,7 @@ impl<'a> From<&Param<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a Param<'a> {
+impl<'a> NodeTrait<'a> for Param<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -11935,7 +11935,7 @@ impl<'a> NodeTrait<'a> for &'a Param<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -11988,7 +11988,7 @@ impl<'a> From<&ParenExpr<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ParenExpr<'a> {
+impl<'a> NodeTrait<'a> for ParenExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -12000,7 +12000,7 @@ impl<'a> NodeTrait<'a> for &'a ParenExpr<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -12076,7 +12076,7 @@ impl<'a> From<&PrivateMethod<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a PrivateMethod<'a> {
+impl<'a> NodeTrait<'a> for PrivateMethod<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -12089,7 +12089,7 @@ impl<'a> NodeTrait<'a> for &'a PrivateMethod<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -12142,7 +12142,7 @@ impl<'a> From<&PrivateName<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a PrivateName<'a> {
+impl<'a> NodeTrait<'a> for PrivateName<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -12154,7 +12154,7 @@ impl<'a> NodeTrait<'a> for &'a PrivateName<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -12240,7 +12240,7 @@ impl<'a> From<&PrivateProp<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a PrivateProp<'a> {
+impl<'a> NodeTrait<'a> for PrivateProp<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -12261,7 +12261,7 @@ impl<'a> NodeTrait<'a> for &'a PrivateProp<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -12333,7 +12333,7 @@ impl<'a> From<&Regex<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a Regex<'a> {
+impl<'a> NodeTrait<'a> for Regex<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -12343,7 +12343,7 @@ impl<'a> NodeTrait<'a> for &'a Regex<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -12399,7 +12399,7 @@ impl<'a> From<&RestPat<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a RestPat<'a> {
+impl<'a> NodeTrait<'a> for RestPat<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -12414,7 +12414,7 @@ impl<'a> NodeTrait<'a> for &'a RestPat<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -12470,7 +12470,7 @@ impl<'a> From<&ReturnStmt<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ReturnStmt<'a> {
+impl<'a> NodeTrait<'a> for ReturnStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -12484,7 +12484,7 @@ impl<'a> NodeTrait<'a> for &'a ReturnStmt<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -12546,7 +12546,7 @@ impl<'a> From<&Script<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a Script<'a> {
+impl<'a> NodeTrait<'a> for Script<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     None
   }
@@ -12560,7 +12560,7 @@ impl<'a> NodeTrait<'a> for &'a Script<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -12620,7 +12620,7 @@ impl<'a> From<&SeqExpr<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a SeqExpr<'a> {
+impl<'a> NodeTrait<'a> for SeqExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -12634,7 +12634,7 @@ impl<'a> NodeTrait<'a> for &'a SeqExpr<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -12687,7 +12687,7 @@ impl<'a> From<&SetterProp<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a SetterProp<'a> {
+impl<'a> NodeTrait<'a> for SetterProp<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -12703,7 +12703,7 @@ impl<'a> NodeTrait<'a> for &'a SetterProp<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -12767,7 +12767,7 @@ impl<'a> From<&SpreadElement<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a SpreadElement<'a> {
+impl<'a> NodeTrait<'a> for SpreadElement<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -12779,7 +12779,7 @@ impl<'a> NodeTrait<'a> for &'a SpreadElement<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -12844,7 +12844,7 @@ impl<'a> From<&Str<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a Str<'a> {
+impl<'a> NodeTrait<'a> for Str<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -12854,7 +12854,7 @@ impl<'a> NodeTrait<'a> for &'a Str<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -12901,7 +12901,7 @@ impl<'a> From<&Super<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a Super<'a> {
+impl<'a> NodeTrait<'a> for Super<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -12911,7 +12911,7 @@ impl<'a> NodeTrait<'a> for &'a Super<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -12961,7 +12961,7 @@ impl<'a> From<&SwitchCase<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a SwitchCase<'a> {
+impl<'a> NodeTrait<'a> for SwitchCase<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -12978,7 +12978,7 @@ impl<'a> NodeTrait<'a> for &'a SwitchCase<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -13035,7 +13035,7 @@ impl<'a> From<&SwitchStmt<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a SwitchStmt<'a> {
+impl<'a> NodeTrait<'a> for SwitchStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -13050,7 +13050,7 @@ impl<'a> NodeTrait<'a> for &'a SwitchStmt<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -13106,7 +13106,7 @@ impl<'a> From<&TaggedTpl<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TaggedTpl<'a> {
+impl<'a> NodeTrait<'a> for TaggedTpl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -13127,7 +13127,7 @@ impl<'a> NodeTrait<'a> for &'a TaggedTpl<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -13186,7 +13186,7 @@ impl<'a> From<&ThisExpr<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ThisExpr<'a> {
+impl<'a> NodeTrait<'a> for ThisExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -13196,7 +13196,7 @@ impl<'a> NodeTrait<'a> for &'a ThisExpr<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -13244,7 +13244,7 @@ impl<'a> From<&ThrowStmt<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a ThrowStmt<'a> {
+impl<'a> NodeTrait<'a> for ThrowStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -13256,7 +13256,7 @@ impl<'a> NodeTrait<'a> for &'a ThrowStmt<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -13308,7 +13308,7 @@ impl<'a> From<&Tpl<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a Tpl<'a> {
+impl<'a> NodeTrait<'a> for Tpl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -13325,7 +13325,7 @@ impl<'a> NodeTrait<'a> for &'a Tpl<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -13385,7 +13385,7 @@ impl<'a> From<&TplElement<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TplElement<'a> {
+impl<'a> NodeTrait<'a> for TplElement<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -13400,7 +13400,7 @@ impl<'a> NodeTrait<'a> for &'a TplElement<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -13458,7 +13458,7 @@ impl<'a> From<&TryStmt<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TryStmt<'a> {
+impl<'a> NodeTrait<'a> for TryStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -13476,7 +13476,7 @@ impl<'a> NodeTrait<'a> for &'a TryStmt<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -13537,7 +13537,7 @@ impl<'a> From<&TsArrayType<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsArrayType<'a> {
+impl<'a> NodeTrait<'a> for TsArrayType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -13549,7 +13549,7 @@ impl<'a> NodeTrait<'a> for &'a TsArrayType<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -13601,7 +13601,7 @@ impl<'a> From<&TsAsExpr<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsAsExpr<'a> {
+impl<'a> NodeTrait<'a> for TsAsExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -13614,7 +13614,7 @@ impl<'a> NodeTrait<'a> for &'a TsAsExpr<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -13669,7 +13669,7 @@ impl<'a> From<&TsCallSignatureDecl<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsCallSignatureDecl<'a> {
+impl<'a> NodeTrait<'a> for TsCallSignatureDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -13689,7 +13689,7 @@ impl<'a> NodeTrait<'a> for &'a TsCallSignatureDecl<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -13753,7 +13753,7 @@ impl<'a> From<&TsConditionalType<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsConditionalType<'a> {
+impl<'a> NodeTrait<'a> for TsConditionalType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -13768,7 +13768,7 @@ impl<'a> NodeTrait<'a> for &'a TsConditionalType<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -13825,7 +13825,7 @@ impl<'a> From<&TsConstAssertion<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsConstAssertion<'a> {
+impl<'a> NodeTrait<'a> for TsConstAssertion<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -13837,7 +13837,7 @@ impl<'a> NodeTrait<'a> for &'a TsConstAssertion<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -13890,7 +13890,7 @@ impl<'a> From<&TsConstructSignatureDecl<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsConstructSignatureDecl<'a> {
+impl<'a> NodeTrait<'a> for TsConstructSignatureDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -13910,7 +13910,7 @@ impl<'a> NodeTrait<'a> for &'a TsConstructSignatureDecl<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -13979,7 +13979,7 @@ impl<'a> From<&TsConstructorType<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsConstructorType<'a> {
+impl<'a> NodeTrait<'a> for TsConstructorType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -13997,7 +13997,7 @@ impl<'a> NodeTrait<'a> for &'a TsConstructorType<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -14066,7 +14066,7 @@ impl<'a> From<&TsEnumDecl<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsEnumDecl<'a> {
+impl<'a> NodeTrait<'a> for TsEnumDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -14081,7 +14081,7 @@ impl<'a> NodeTrait<'a> for &'a TsEnumDecl<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -14135,7 +14135,7 @@ impl<'a> From<&TsEnumMember<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsEnumMember<'a> {
+impl<'a> NodeTrait<'a> for TsEnumMember<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -14150,7 +14150,7 @@ impl<'a> NodeTrait<'a> for &'a TsEnumMember<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -14209,7 +14209,7 @@ impl<'a> From<&TsExportAssignment<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsExportAssignment<'a> {
+impl<'a> NodeTrait<'a> for TsExportAssignment<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -14221,7 +14221,7 @@ impl<'a> NodeTrait<'a> for &'a TsExportAssignment<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -14273,7 +14273,7 @@ impl<'a> From<&TsExprWithTypeArgs<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsExprWithTypeArgs<'a> {
+impl<'a> NodeTrait<'a> for TsExprWithTypeArgs<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -14288,7 +14288,7 @@ impl<'a> NodeTrait<'a> for &'a TsExprWithTypeArgs<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -14344,7 +14344,7 @@ impl<'a> From<&TsExternalModuleRef<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsExternalModuleRef<'a> {
+impl<'a> NodeTrait<'a> for TsExternalModuleRef<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -14356,7 +14356,7 @@ impl<'a> NodeTrait<'a> for &'a TsExternalModuleRef<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -14409,7 +14409,7 @@ impl<'a> From<&TsFnType<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsFnType<'a> {
+impl<'a> NodeTrait<'a> for TsFnType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -14427,7 +14427,7 @@ impl<'a> NodeTrait<'a> for &'a TsFnType<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -14496,7 +14496,7 @@ impl<'a> From<&TsImportEqualsDecl<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsImportEqualsDecl<'a> {
+impl<'a> NodeTrait<'a> for TsImportEqualsDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -14509,7 +14509,7 @@ impl<'a> NodeTrait<'a> for &'a TsImportEqualsDecl<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -14564,7 +14564,7 @@ impl<'a> From<&TsImportType<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsImportType<'a> {
+impl<'a> NodeTrait<'a> for TsImportType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -14582,7 +14582,7 @@ impl<'a> NodeTrait<'a> for &'a TsImportType<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -14650,7 +14650,7 @@ impl<'a> From<&TsIndexSignature<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsIndexSignature<'a> {
+impl<'a> NodeTrait<'a> for TsIndexSignature<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -14667,7 +14667,7 @@ impl<'a> NodeTrait<'a> for &'a TsIndexSignature<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -14730,7 +14730,7 @@ impl<'a> From<&TsIndexedAccessType<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsIndexedAccessType<'a> {
+impl<'a> NodeTrait<'a> for TsIndexedAccessType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -14743,7 +14743,7 @@ impl<'a> NodeTrait<'a> for &'a TsIndexedAccessType<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -14796,7 +14796,7 @@ impl<'a> From<&TsInferType<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsInferType<'a> {
+impl<'a> NodeTrait<'a> for TsInferType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -14808,7 +14808,7 @@ impl<'a> NodeTrait<'a> for &'a TsInferType<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -14859,7 +14859,7 @@ impl<'a> From<&TsInterfaceBody<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsInterfaceBody<'a> {
+impl<'a> NodeTrait<'a> for TsInterfaceBody<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -14873,7 +14873,7 @@ impl<'a> NodeTrait<'a> for &'a TsInterfaceBody<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -14933,7 +14933,7 @@ impl<'a> From<&TsInterfaceDecl<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsInterfaceDecl<'a> {
+impl<'a> NodeTrait<'a> for TsInterfaceDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -14952,7 +14952,7 @@ impl<'a> NodeTrait<'a> for &'a TsInterfaceDecl<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -15012,7 +15012,7 @@ impl<'a> From<&TsIntersectionType<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsIntersectionType<'a> {
+impl<'a> NodeTrait<'a> for TsIntersectionType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -15026,7 +15026,7 @@ impl<'a> NodeTrait<'a> for &'a TsIntersectionType<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -15082,7 +15082,7 @@ impl<'a> From<&TsKeywordType<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsKeywordType<'a> {
+impl<'a> NodeTrait<'a> for TsKeywordType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -15092,7 +15092,7 @@ impl<'a> NodeTrait<'a> for &'a TsKeywordType<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -15140,7 +15140,7 @@ impl<'a> From<&TsLitType<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsLitType<'a> {
+impl<'a> NodeTrait<'a> for TsLitType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -15152,7 +15152,7 @@ impl<'a> NodeTrait<'a> for &'a TsLitType<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -15215,7 +15215,7 @@ impl<'a> From<&TsMappedType<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsMappedType<'a> {
+impl<'a> NodeTrait<'a> for TsMappedType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -15233,7 +15233,7 @@ impl<'a> NodeTrait<'a> for &'a TsMappedType<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -15311,7 +15311,7 @@ impl<'a> From<&TsMethodSignature<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsMethodSignature<'a> {
+impl<'a> NodeTrait<'a> for TsMethodSignature<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -15332,7 +15332,7 @@ impl<'a> NodeTrait<'a> for &'a TsMethodSignature<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -15395,7 +15395,7 @@ impl<'a> From<&TsModuleBlock<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsModuleBlock<'a> {
+impl<'a> NodeTrait<'a> for TsModuleBlock<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -15409,7 +15409,7 @@ impl<'a> NodeTrait<'a> for &'a TsModuleBlock<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -15472,7 +15472,7 @@ impl<'a> From<&TsModuleDecl<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsModuleDecl<'a> {
+impl<'a> NodeTrait<'a> for TsModuleDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -15487,7 +15487,7 @@ impl<'a> NodeTrait<'a> for &'a TsModuleDecl<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -15555,7 +15555,7 @@ impl<'a> From<&TsNamespaceDecl<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsNamespaceDecl<'a> {
+impl<'a> NodeTrait<'a> for TsNamespaceDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -15568,7 +15568,7 @@ impl<'a> NodeTrait<'a> for &'a TsNamespaceDecl<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -15621,7 +15621,7 @@ impl<'a> From<&TsNamespaceExportDecl<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsNamespaceExportDecl<'a> {
+impl<'a> NodeTrait<'a> for TsNamespaceExportDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -15633,7 +15633,7 @@ impl<'a> NodeTrait<'a> for &'a TsNamespaceExportDecl<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -15684,7 +15684,7 @@ impl<'a> From<&TsNonNullExpr<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsNonNullExpr<'a> {
+impl<'a> NodeTrait<'a> for TsNonNullExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -15696,7 +15696,7 @@ impl<'a> NodeTrait<'a> for &'a TsNonNullExpr<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -15747,7 +15747,7 @@ impl<'a> From<&TsOptionalType<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsOptionalType<'a> {
+impl<'a> NodeTrait<'a> for TsOptionalType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -15759,7 +15759,7 @@ impl<'a> NodeTrait<'a> for &'a TsOptionalType<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -15822,7 +15822,7 @@ impl<'a> From<&TsParamProp<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsParamProp<'a> {
+impl<'a> NodeTrait<'a> for TsParamProp<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -15837,7 +15837,7 @@ impl<'a> NodeTrait<'a> for &'a TsParamProp<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -15890,7 +15890,7 @@ impl<'a> From<&TsParenthesizedType<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsParenthesizedType<'a> {
+impl<'a> NodeTrait<'a> for TsParenthesizedType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -15902,7 +15902,7 @@ impl<'a> NodeTrait<'a> for &'a TsParenthesizedType<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -15971,7 +15971,7 @@ impl<'a> From<&TsPropertySignature<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsPropertySignature<'a> {
+impl<'a> NodeTrait<'a> for TsPropertySignature<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -15995,7 +15995,7 @@ impl<'a> NodeTrait<'a> for &'a TsPropertySignature<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -16064,7 +16064,7 @@ impl<'a> From<&TsQualifiedName<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsQualifiedName<'a> {
+impl<'a> NodeTrait<'a> for TsQualifiedName<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -16077,7 +16077,7 @@ impl<'a> NodeTrait<'a> for &'a TsQualifiedName<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -16130,7 +16130,7 @@ impl<'a> From<&TsRestType<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsRestType<'a> {
+impl<'a> NodeTrait<'a> for TsRestType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -16142,7 +16142,7 @@ impl<'a> NodeTrait<'a> for &'a TsRestType<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -16192,7 +16192,7 @@ impl<'a> From<&TsThisType<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsThisType<'a> {
+impl<'a> NodeTrait<'a> for TsThisType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -16202,7 +16202,7 @@ impl<'a> NodeTrait<'a> for &'a TsThisType<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -16251,7 +16251,7 @@ impl<'a> From<&TsTplLitType<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsTplLitType<'a> {
+impl<'a> NodeTrait<'a> for TsTplLitType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -16268,7 +16268,7 @@ impl<'a> NodeTrait<'a> for &'a TsTplLitType<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -16323,7 +16323,7 @@ impl<'a> From<&TsTupleElement<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsTupleElement<'a> {
+impl<'a> NodeTrait<'a> for TsTupleElement<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -16338,7 +16338,7 @@ impl<'a> NodeTrait<'a> for &'a TsTupleElement<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -16394,7 +16394,7 @@ impl<'a> From<&TsTupleType<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsTupleType<'a> {
+impl<'a> NodeTrait<'a> for TsTupleType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -16408,7 +16408,7 @@ impl<'a> NodeTrait<'a> for &'a TsTupleType<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -16467,7 +16467,7 @@ impl<'a> From<&TsTypeAliasDecl<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsTypeAliasDecl<'a> {
+impl<'a> NodeTrait<'a> for TsTypeAliasDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -16483,7 +16483,7 @@ impl<'a> NodeTrait<'a> for &'a TsTypeAliasDecl<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -16541,7 +16541,7 @@ impl<'a> From<&TsTypeAnn<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsTypeAnn<'a> {
+impl<'a> NodeTrait<'a> for TsTypeAnn<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -16553,7 +16553,7 @@ impl<'a> NodeTrait<'a> for &'a TsTypeAnn<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -16605,7 +16605,7 @@ impl<'a> From<&TsTypeAssertion<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsTypeAssertion<'a> {
+impl<'a> NodeTrait<'a> for TsTypeAssertion<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -16618,7 +16618,7 @@ impl<'a> NodeTrait<'a> for &'a TsTypeAssertion<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -16672,7 +16672,7 @@ impl<'a> From<&TsTypeCastExpr<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsTypeCastExpr<'a> {
+impl<'a> NodeTrait<'a> for TsTypeCastExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -16685,7 +16685,7 @@ impl<'a> NodeTrait<'a> for &'a TsTypeCastExpr<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -16738,7 +16738,7 @@ impl<'a> From<&TsTypeLit<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsTypeLit<'a> {
+impl<'a> NodeTrait<'a> for TsTypeLit<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -16752,7 +16752,7 @@ impl<'a> NodeTrait<'a> for &'a TsTypeLit<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -16809,7 +16809,7 @@ impl<'a> From<&TsTypeOperator<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsTypeOperator<'a> {
+impl<'a> NodeTrait<'a> for TsTypeOperator<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -16821,7 +16821,7 @@ impl<'a> NodeTrait<'a> for &'a TsTypeOperator<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -16874,7 +16874,7 @@ impl<'a> From<&TsTypeParam<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsTypeParam<'a> {
+impl<'a> NodeTrait<'a> for TsTypeParam<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -16892,7 +16892,7 @@ impl<'a> NodeTrait<'a> for &'a TsTypeParam<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -16953,7 +16953,7 @@ impl<'a> From<&TsTypeParamDecl<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsTypeParamDecl<'a> {
+impl<'a> NodeTrait<'a> for TsTypeParamDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -16967,7 +16967,7 @@ impl<'a> NodeTrait<'a> for &'a TsTypeParamDecl<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -17018,7 +17018,7 @@ impl<'a> From<&TsTypeParamInstantiation<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsTypeParamInstantiation<'a> {
+impl<'a> NodeTrait<'a> for TsTypeParamInstantiation<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -17032,7 +17032,7 @@ impl<'a> NodeTrait<'a> for &'a TsTypeParamInstantiation<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -17090,7 +17090,7 @@ impl<'a> From<&TsTypePredicate<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsTypePredicate<'a> {
+impl<'a> NodeTrait<'a> for TsTypePredicate<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -17105,7 +17105,7 @@ impl<'a> NodeTrait<'a> for &'a TsTypePredicate<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -17162,7 +17162,7 @@ impl<'a> From<&TsTypeQuery<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsTypeQuery<'a> {
+impl<'a> NodeTrait<'a> for TsTypeQuery<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -17174,7 +17174,7 @@ impl<'a> NodeTrait<'a> for &'a TsTypeQuery<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -17226,7 +17226,7 @@ impl<'a> From<&TsTypeRef<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsTypeRef<'a> {
+impl<'a> NodeTrait<'a> for TsTypeRef<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -17241,7 +17241,7 @@ impl<'a> NodeTrait<'a> for &'a TsTypeRef<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -17297,7 +17297,7 @@ impl<'a> From<&TsUnionType<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a TsUnionType<'a> {
+impl<'a> NodeTrait<'a> for TsUnionType<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -17311,7 +17311,7 @@ impl<'a> NodeTrait<'a> for &'a TsUnionType<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -17368,7 +17368,7 @@ impl<'a> From<&UnaryExpr<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a UnaryExpr<'a> {
+impl<'a> NodeTrait<'a> for UnaryExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -17380,7 +17380,7 @@ impl<'a> NodeTrait<'a> for &'a UnaryExpr<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -17441,7 +17441,7 @@ impl<'a> From<&UpdateExpr<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a UpdateExpr<'a> {
+impl<'a> NodeTrait<'a> for UpdateExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -17453,7 +17453,7 @@ impl<'a> NodeTrait<'a> for &'a UpdateExpr<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -17514,7 +17514,7 @@ impl<'a> From<&VarDecl<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a VarDecl<'a> {
+impl<'a> NodeTrait<'a> for VarDecl<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -17528,7 +17528,7 @@ impl<'a> NodeTrait<'a> for &'a VarDecl<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -17588,7 +17588,7 @@ impl<'a> From<&VarDeclarator<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a VarDeclarator<'a> {
+impl<'a> NodeTrait<'a> for VarDeclarator<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.into())
   }
@@ -17603,7 +17603,7 @@ impl<'a> NodeTrait<'a> for &'a VarDeclarator<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -17660,7 +17660,7 @@ impl<'a> From<&WhileStmt<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a WhileStmt<'a> {
+impl<'a> NodeTrait<'a> for WhileStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -17673,7 +17673,7 @@ impl<'a> NodeTrait<'a> for &'a WhileStmt<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -17727,7 +17727,7 @@ impl<'a> From<&WithStmt<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a WithStmt<'a> {
+impl<'a> NodeTrait<'a> for WithStmt<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -17740,7 +17740,7 @@ impl<'a> NodeTrait<'a> for &'a WithStmt<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {
@@ -17799,7 +17799,7 @@ impl<'a> From<&YieldExpr<'a>> for Node<'a> {
   }
 }
 
-impl<'a> NodeTrait<'a> for &'a YieldExpr<'a> {
+impl<'a> NodeTrait<'a> for YieldExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.clone())
   }
@@ -17813,7 +17813,7 @@ impl<'a> NodeTrait<'a> for &'a YieldExpr<'a> {
   }
 
   fn into_node(&self) -> Node<'a> {
-    (*self).into()
+    self.into()
   }
 
   fn kind(&self) -> NodeKind {

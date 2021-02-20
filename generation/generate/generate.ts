@@ -1,6 +1,7 @@
 import {
     AnalysisResult,
     EnumDefinition,
+    EnumVariantDefinition,
     PrimitiveTypeDefinition,
     StructDefinition,
     TypeDefinition,
@@ -165,7 +166,10 @@ export function generate(analysisResult: AnalysisResult) {
             writer.newLine();
             implementTraitMethod("into_node", "Node<'a>");
             writer.newLine();
-            implementTraitMethod("kind", "NodeKind");
+
+            implementTraitMethod("kind", "NodeKind", false, (fullName, struct) => {
+                writer.write(`${fullName}(_) => NodeKind::${struct.name}`);
+            });
         });
         writer.newLine();
 
@@ -192,7 +196,12 @@ export function generate(analysisResult: AnalysisResult) {
         });
         writer.writeLine("}").newLine();
 
-        function implementTraitMethod(methodName: string, returnType: string, hasLifetime = false) {
+        function implementTraitMethod(
+            methodName: string,
+            returnType: string,
+            hasLifetime = false,
+            customMatchWrite?: (fullName: string, struct: StructDefinition) => void,
+        ) {
             writer.write(`fn ${methodName}`);
             if (hasLifetime) {
                 writer.write("<'a>");
@@ -207,7 +216,12 @@ export function generate(analysisResult: AnalysisResult) {
                 writer.indent(() => {
                     for (const struct of analysisResult.structs) {
                         const fullName = `Node::${struct.name}`;
-                        writer.write(`${fullName}(node) => node.${methodName}(),`);
+                        if (customMatchWrite != null) {
+                            customMatchWrite(fullName, struct);
+                        } else {
+                            writer.write(`${fullName}(node) => node.${methodName}()`);
+                        }
+                        writer.write(",");
                         writer.newLine();
                     }
                 }).write("}").newLine();
@@ -280,7 +294,17 @@ export function generate(analysisResult: AnalysisResult) {
                 writer.newLine();
                 implementTraitMethod("into_node", "Node<'a>", false);
                 writer.newLine();
-                implementTraitMethod("kind", "NodeKind", false);
+                implementTraitMethod("kind", "NodeKind", false, (fullName, variant) => {
+                    if (variant.tuple_args?.length === 1 && isSwcStructType(variant.tuple_args[0])) {
+                        const variantType = variant.tuple_args[0];
+                        if (variantType.kind !== "reference") {
+                            throw new Error("Unhandled.");
+                        }
+                        writer.write(`${fullName}(_) => NodeKind::${variantType.name}`);
+                    } else {
+                        writer.write(`${fullName}(node) => node.kind()`);
+                    }
+                });
             });
             writer.newLine();
 
@@ -318,7 +342,12 @@ export function generate(analysisResult: AnalysisResult) {
                 }).write("}").newLine();
             });
 
-            function implementTraitMethod(methodName: string, returnType: string, hasSelfLifetime = false) {
+            function implementTraitMethod(
+                methodName: string,
+                returnType: string,
+                hasSelfLifetime = false,
+                customMatchWrite?: (fullName: string, variant: EnumVariantDefinition) => void,
+            ) {
                 writer.write(`fn ${methodName}`);
                 if (hasSelfLifetime) {
                     writer.write("<'a>");
@@ -333,7 +362,12 @@ export function generate(analysisResult: AnalysisResult) {
                     writer.indent(() => {
                         for (const variant of enumDef.variants) {
                             const fullName = `${enumDef.name}::${variant.name}`;
-                            writer.write(`${fullName}(node) => node.${methodName}(),`);
+                            if (customMatchWrite != null) {
+                                customMatchWrite(fullName, variant);
+                            } else {
+                                writer.write(`${fullName}(node) => node.${methodName}()`);
+                            }
+                            writer.write(",");
                             writer.newLine();
                         }
                     }).write("}").newLine();
@@ -446,7 +480,7 @@ export function generate(analysisResult: AnalysisResult) {
             });
 
             writer.newLine();
-            writeTrait("NodeTrait<'a>", `&'a ${struct.name}<'a>`, () => {
+            writeTrait("NodeTrait<'a>", `${struct.name}<'a>`, () => {
                 writer.writeLine("fn parent(&self) -> Option<Node<'a>> {");
                 writer.indent(() => {
                     if (struct.parents.length === 0) {
@@ -479,7 +513,7 @@ export function generate(analysisResult: AnalysisResult) {
 
                 writer.writeLine("fn into_node(&self) -> Node<'a> {");
                 writer.indent(() => {
-                    writer.writeLine("(*self).into()");
+                    writer.writeLine("self.into()");
                 }).write("}").newLine();
                 writer.newLine();
 
