@@ -69,6 +69,7 @@ pub enum Node<'a> {
   AwaitExpr(&'a AwaitExpr<'a>),
   BigInt(&'a BigInt<'a>),
   BinExpr(&'a BinExpr<'a>),
+  BindingIdent(&'a BindingIdent<'a>),
   BlockStmt(&'a BlockStmt<'a>),
   Bool(&'a Bool<'a>),
   BreakStmt(&'a BreakStmt<'a>),
@@ -252,6 +253,7 @@ impl<'a> Spanned for Node<'a> {
       Node::AwaitExpr(node) => node.span(),
       Node::BigInt(node) => node.span(),
       Node::BinExpr(node) => node.span(),
+      Node::BindingIdent(node) => node.span(),
       Node::BlockStmt(node) => node.span(),
       Node::Bool(node) => node.span(),
       Node::BreakStmt(node) => node.span(),
@@ -419,6 +421,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::AwaitExpr(node) => node.parent(),
       Node::BigInt(node) => node.parent(),
       Node::BinExpr(node) => node.parent(),
+      Node::BindingIdent(node) => node.parent(),
       Node::BlockStmt(node) => node.parent(),
       Node::Bool(node) => node.parent(),
       Node::BreakStmt(node) => node.parent(),
@@ -584,6 +587,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::AwaitExpr(node) => node.children(),
       Node::BigInt(node) => node.children(),
       Node::BinExpr(node) => node.children(),
+      Node::BindingIdent(node) => node.children(),
       Node::BlockStmt(node) => node.children(),
       Node::Bool(node) => node.children(),
       Node::BreakStmt(node) => node.children(),
@@ -749,6 +753,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::AwaitExpr(node) => node.into_node(),
       Node::BigInt(node) => node.into_node(),
       Node::BinExpr(node) => node.into_node(),
+      Node::BindingIdent(node) => node.into_node(),
       Node::BlockStmt(node) => node.into_node(),
       Node::Bool(node) => node.into_node(),
       Node::BreakStmt(node) => node.into_node(),
@@ -914,6 +919,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::AwaitExpr(_) => NodeKind::AwaitExpr,
       Node::BigInt(_) => NodeKind::BigInt,
       Node::BinExpr(_) => NodeKind::BinExpr,
+      Node::BindingIdent(_) => NodeKind::BindingIdent,
       Node::BlockStmt(_) => NodeKind::BlockStmt,
       Node::Bool(_) => NodeKind::Bool,
       Node::BreakStmt(_) => NodeKind::BreakStmt,
@@ -1080,6 +1086,7 @@ pub enum NodeKind {
   AwaitExpr,
   BigInt,
   BinExpr,
+  BindingIdent,
   BlockStmt,
   Bool,
   BreakStmt,
@@ -1245,6 +1252,7 @@ impl std::fmt::Display for NodeKind {
       NodeKind::AwaitExpr => "AwaitExpr",
       NodeKind::BigInt => "BigInt",
       NodeKind::BinExpr => "BinExpr",
+      NodeKind::BindingIdent => "BindingIdent",
       NodeKind::BlockStmt => "BlockStmt",
       NodeKind::Bool => "Bool",
       NodeKind::BreakStmt => "BreakStmt",
@@ -3786,13 +3794,13 @@ fn get_view_for_param_or_ts_param_prop<'a>(inner: &'a swc_ast::ParamOrTsParamPro
 
 #[derive(Copy, Clone)]
 pub enum Pat<'a> {
-  Ident(&'a Ident<'a>),
+  Ident(&'a BindingIdent<'a>),
   Array(&'a ArrayPat<'a>),
   Rest(&'a RestPat<'a>),
   Object(&'a ObjectPat<'a>),
   Assign(&'a AssignPat<'a>),
   Invalid(&'a Invalid<'a>),
-  /// Only for for-in / for-of loops. This is *syntatically* valid.
+  /// Only for for-in / for-of loops. This is *syntactically* valid.
   Expr(Expr<'a>),
 }
 
@@ -3868,7 +3876,7 @@ impl<'a> NodeTrait<'a> for Pat<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      Pat::Ident(_) => NodeKind::Ident,
+      Pat::Ident(_) => NodeKind::BindingIdent,
       Pat::Array(_) => NodeKind::ArrayPat,
       Pat::Rest(_) => NodeKind::RestPat,
       Pat::Object(_) => NodeKind::ObjectPat,
@@ -3909,7 +3917,7 @@ impl<'a> From<Pat<'a>> for Node<'a> {
 
 fn get_view_for_pat<'a>(inner: &'a swc_ast::Pat, parent: Node<'a>, bump: &'a Bump) -> Pat<'a> {
   match inner {
-    swc_ast::Pat::Ident(value) => Pat::Ident(get_view_for_ident(value, parent, bump)),
+    swc_ast::Pat::Ident(value) => Pat::Ident(get_view_for_binding_ident(value, parent, bump)),
     swc_ast::Pat::Array(value) => Pat::Array(get_view_for_array_pat(value, parent, bump)),
     swc_ast::Pat::Rest(value) => Pat::Rest(get_view_for_rest_pat(value, parent, bump)),
     swc_ast::Pat::Object(value) => Pat::Object(get_view_for_object_pat(value, parent, bump)),
@@ -4858,7 +4866,7 @@ fn get_view_for_ts_fn_or_constructor_type<'a>(inner: &'a swc_ast::TsFnOrConstruc
 
 #[derive(Copy, Clone)]
 pub enum TsFnParam<'a> {
-  Ident(&'a Ident<'a>),
+  Ident(&'a BindingIdent<'a>),
   Array(&'a ArrayPat<'a>),
   Rest(&'a RestPat<'a>),
   Object(&'a ObjectPat<'a>),
@@ -4924,7 +4932,7 @@ impl<'a> NodeTrait<'a> for TsFnParam<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      TsFnParam::Ident(_) => NodeKind::Ident,
+      TsFnParam::Ident(_) => NodeKind::BindingIdent,
       TsFnParam::Array(_) => NodeKind::ArrayPat,
       TsFnParam::Rest(_) => NodeKind::RestPat,
       TsFnParam::Object(_) => NodeKind::ObjectPat,
@@ -4956,7 +4964,7 @@ impl<'a> From<TsFnParam<'a>> for Node<'a> {
 
 fn get_view_for_ts_fn_param<'a>(inner: &'a swc_ast::TsFnParam, parent: Node<'a>, bump: &'a Bump) -> TsFnParam<'a> {
   match inner {
-    swc_ast::TsFnParam::Ident(value) => TsFnParam::Ident(get_view_for_ident(value, parent, bump)),
+    swc_ast::TsFnParam::Ident(value) => TsFnParam::Ident(get_view_for_binding_ident(value, parent, bump)),
     swc_ast::TsFnParam::Array(value) => TsFnParam::Array(get_view_for_array_pat(value, parent, bump)),
     swc_ast::TsFnParam::Rest(value) => TsFnParam::Rest(get_view_for_rest_pat(value, parent, bump)),
     swc_ast::TsFnParam::Object(value) => TsFnParam::Object(get_view_for_object_pat(value, parent, bump)),
@@ -5350,7 +5358,7 @@ fn get_view_for_ts_namespace_body<'a>(inner: &'a swc_ast::TsNamespaceBody, paren
 
 #[derive(Copy, Clone)]
 pub enum TsParamPropParam<'a> {
-  Ident(&'a Ident<'a>),
+  Ident(&'a BindingIdent<'a>),
   Assign(&'a AssignPat<'a>),
 }
 
@@ -5406,7 +5414,7 @@ impl<'a> NodeTrait<'a> for TsParamPropParam<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      TsParamPropParam::Ident(_) => NodeKind::Ident,
+      TsParamPropParam::Ident(_) => NodeKind::BindingIdent,
       TsParamPropParam::Assign(_) => NodeKind::AssignPat,
     }
   }
@@ -5432,7 +5440,7 @@ impl<'a> From<TsParamPropParam<'a>> for Node<'a> {
 
 fn get_view_for_ts_param_prop_param<'a>(inner: &'a swc_ast::TsParamPropParam, parent: Node<'a>, bump: &'a Bump) -> TsParamPropParam<'a> {
   match inner {
-    swc_ast::TsParamPropParam::Ident(value) => TsParamPropParam::Ident(get_view_for_ident(value, parent, bump)),
+    swc_ast::TsParamPropParam::Ident(value) => TsParamPropParam::Ident(get_view_for_binding_ident(value, parent, bump)),
     swc_ast::TsParamPropParam::Assign(value) => TsParamPropParam::Assign(get_view_for_assign_pat(value, parent, bump)),
   }
 }
@@ -6988,6 +6996,79 @@ fn get_view_for_bin_expr<'a>(inner: &'a swc_ast::BinExpr, parent: Node<'a>, bump
   let parent: Node<'a> = (&*node).into();
   node.left = get_view_for_expr(&inner.left, parent.clone(), bump);
   node.right = get_view_for_expr(&inner.right, parent, bump);
+  node
+}
+
+/// Identifer used as a pattern.
+pub struct BindingIdent<'a> {
+  pub parent: Node<'a>,
+  pub inner: &'a swc_ast::BindingIdent,
+  pub id: &'a Ident<'a>,
+  pub type_ann: Option<&'a TsTypeAnn<'a>>,
+}
+
+impl<'a> Spanned for BindingIdent<'a> {
+  fn span(&self) -> Span {
+    self.inner.span()
+  }
+}
+
+impl<'a> From<&BindingIdent<'a>> for Node<'a> {
+  fn from(node: &BindingIdent<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&BindingIdent<'a>, &'a BindingIdent<'a>>(node) };
+    Node::BindingIdent(node)
+  }
+}
+
+impl<'a> NodeTrait<'a> for BindingIdent<'a> {
+  fn parent(&self) -> Option<Node<'a>> {
+    Some(self.parent.clone())
+  }
+
+  fn children(&self) -> Vec<Node<'a>> {
+    let mut children = Vec::with_capacity(1 + match &self.type_ann { Some(_value) => 1, None => 0, });
+    children.push(self.id.into());
+    if let Some(child) = self.type_ann {
+      children.push(child.into());
+    }
+    children
+  }
+
+  fn into_node(&self) -> Node<'a> {
+    self.into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::BindingIdent
+  }
+}
+
+impl<'a> CastableNode<'a> for BindingIdent<'a> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
+    if let Node::BindingIdent(node) = node {
+      Some(node)
+    } else {
+      None
+    }
+  }
+  fn kind() -> NodeKind {
+    NodeKind::BindingIdent
+  }
+}
+
+fn get_view_for_binding_ident<'a>(inner: &'a swc_ast::BindingIdent, parent: Node<'a>, bump: &'a Bump) -> &'a BindingIdent<'a> {
+  let node = bump.alloc(BindingIdent {
+    inner,
+    parent,
+    id: unsafe { MaybeUninit::uninit().assume_init() },
+    type_ann: None,
+  });
+  let parent: Node<'a> = (&*node).into();
+  node.id = get_view_for_ident(&inner.id, parent.clone(), bump);
+  node.type_ann = match &inner.type_ann {
+    Some(value) => Some(get_view_for_ts_type_ann(value, parent, bump)),
+    None => None,
+  };
   node
 }
 
@@ -9527,7 +9608,6 @@ fn get_view_for_getter_prop<'a>(inner: &'a swc_ast::GetterProp, parent: Node<'a>
 pub struct Ident<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::Ident,
-  pub type_ann: Option<&'a TsTypeAnn<'a>>,
 }
 
 impl<'a> Ident<'a> {
@@ -9560,11 +9640,7 @@ impl<'a> NodeTrait<'a> for Ident<'a> {
   }
 
   fn children(&self) -> Vec<Node<'a>> {
-    let mut children = Vec::with_capacity(match &self.type_ann { Some(_value) => 1, None => 0, });
-    if let Some(child) = self.type_ann {
-      children.push(child.into());
-    }
-    children
+    Vec::with_capacity(0)
   }
 
   fn into_node(&self) -> Node<'a> {
@@ -9593,13 +9669,7 @@ fn get_view_for_ident<'a>(inner: &'a swc_ast::Ident, parent: Node<'a>, bump: &'a
   let node = bump.alloc(Ident {
     inner,
     parent,
-    type_ann: None,
   });
-  let parent: Node<'a> = (&*node).into();
-  node.type_ann = match &inner.type_ann {
-    Some(value) => Some(get_view_for_ts_type_ann(value, parent, bump)),
-    None => None,
-  };
   node
 }
 
@@ -10628,7 +10698,7 @@ pub struct JSXOpeningElement<'a> {
   pub inner: &'a swc_ast::JSXOpeningElement,
   pub name: JSXElementName<'a>,
   pub attrs: Vec<JSXAttrOrSpread<'a>>,
-  /// Note: This field's name is differrent from one from babel because it is
+  /// Note: This field's name is different from one from babel because it is
   /// misleading
   pub type_args: Option<&'a TsTypeParamInstantiation<'a>>,
 }
@@ -17564,7 +17634,7 @@ pub struct VarDeclarator<'a> {
   pub parent: &'a VarDecl<'a>,
   pub inner: &'a swc_ast::VarDeclarator,
   pub name: Pat<'a>,
-  /// Initialization expresion.
+  /// Initialization expression.
   pub init: Option<Expr<'a>>,
 }
 
