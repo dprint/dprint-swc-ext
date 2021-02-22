@@ -79,6 +79,7 @@ implement_root_node!(Script<'a>);
 implement_root_node!(&Script<'a>);
 
 /// A Module or Script node.
+#[derive(Clone, Copy)]
 pub enum Program<'a> {
   Module(&'a Module<'a>),
   Script(&'a Script<'a>),
