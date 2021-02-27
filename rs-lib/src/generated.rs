@@ -203,7 +203,6 @@ pub enum Node<'a> {
   TsTypeAliasDecl(&'a TsTypeAliasDecl<'a>),
   TsTypeAnn(&'a TsTypeAnn<'a>),
   TsTypeAssertion(&'a TsTypeAssertion<'a>),
-  TsTypeCastExpr(&'a TsTypeCastExpr<'a>),
   TsTypeLit(&'a TsTypeLit<'a>),
   TsTypeOperator(&'a TsTypeOperator<'a>),
   TsTypeParam(&'a TsTypeParam<'a>),
@@ -387,7 +386,6 @@ impl<'a> Spanned for Node<'a> {
       Node::TsTypeAliasDecl(node) => node.span(),
       Node::TsTypeAnn(node) => node.span(),
       Node::TsTypeAssertion(node) => node.span(),
-      Node::TsTypeCastExpr(node) => node.span(),
       Node::TsTypeLit(node) => node.span(),
       Node::TsTypeOperator(node) => node.span(),
       Node::TsTypeParam(node) => node.span(),
@@ -555,7 +553,6 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsTypeAliasDecl(node) => node.parent(),
       Node::TsTypeAnn(node) => node.parent(),
       Node::TsTypeAssertion(node) => node.parent(),
-      Node::TsTypeCastExpr(node) => node.parent(),
       Node::TsTypeLit(node) => node.parent(),
       Node::TsTypeOperator(node) => node.parent(),
       Node::TsTypeParam(node) => node.parent(),
@@ -721,7 +718,6 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsTypeAliasDecl(node) => node.children(),
       Node::TsTypeAnn(node) => node.children(),
       Node::TsTypeAssertion(node) => node.children(),
-      Node::TsTypeCastExpr(node) => node.children(),
       Node::TsTypeLit(node) => node.children(),
       Node::TsTypeOperator(node) => node.children(),
       Node::TsTypeParam(node) => node.children(),
@@ -887,7 +883,6 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsTypeAliasDecl(node) => node.into_node(),
       Node::TsTypeAnn(node) => node.into_node(),
       Node::TsTypeAssertion(node) => node.into_node(),
-      Node::TsTypeCastExpr(node) => node.into_node(),
       Node::TsTypeLit(node) => node.into_node(),
       Node::TsTypeOperator(node) => node.into_node(),
       Node::TsTypeParam(node) => node.into_node(),
@@ -1053,7 +1048,6 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsTypeAliasDecl(_) => NodeKind::TsTypeAliasDecl,
       Node::TsTypeAnn(_) => NodeKind::TsTypeAnn,
       Node::TsTypeAssertion(_) => NodeKind::TsTypeAssertion,
-      Node::TsTypeCastExpr(_) => NodeKind::TsTypeCastExpr,
       Node::TsTypeLit(_) => NodeKind::TsTypeLit,
       Node::TsTypeOperator(_) => NodeKind::TsTypeOperator,
       Node::TsTypeParam(_) => NodeKind::TsTypeParam,
@@ -1220,7 +1214,6 @@ pub enum NodeKind {
   TsTypeAliasDecl,
   TsTypeAnn,
   TsTypeAssertion,
-  TsTypeCastExpr,
   TsTypeLit,
   TsTypeOperator,
   TsTypeParam,
@@ -1386,7 +1379,6 @@ impl std::fmt::Display for NodeKind {
       NodeKind::TsTypeAliasDecl => "TsTypeAliasDecl",
       NodeKind::TsTypeAnn => "TsTypeAnn",
       NodeKind::TsTypeAssertion => "TsTypeAssertion",
-      NodeKind::TsTypeCastExpr => "TsTypeCastExpr",
       NodeKind::TsTypeLit => "TsTypeLit",
       NodeKind::TsTypeOperator => "TsTypeOperator",
       NodeKind::TsTypeParam => "TsTypeParam",
@@ -2003,7 +1995,6 @@ pub enum Expr<'a> {
   TsTypeAssertion(&'a TsTypeAssertion<'a>),
   TsConstAssertion(&'a TsConstAssertion<'a>),
   TsNonNull(&'a TsNonNullExpr<'a>),
-  TsTypeCast(&'a TsTypeCastExpr<'a>),
   TsAs(&'a TsAsExpr<'a>),
   PrivateName(&'a PrivateName<'a>),
   OptChain(&'a OptChainExpr<'a>),
@@ -2063,7 +2054,6 @@ impl<'a> Spanned for Expr<'a> {
       Expr::TsTypeAssertion(node) => node.span(),
       Expr::TsConstAssertion(node) => node.span(),
       Expr::TsNonNull(node) => node.span(),
-      Expr::TsTypeCast(node) => node.span(),
       Expr::TsAs(node) => node.span(),
       Expr::PrivateName(node) => node.span(),
       Expr::OptChain(node) => node.span(),
@@ -2106,7 +2096,6 @@ impl<'a> NodeTrait<'a> for Expr<'a> {
       Expr::TsTypeAssertion(node) => node.parent(),
       Expr::TsConstAssertion(node) => node.parent(),
       Expr::TsNonNull(node) => node.parent(),
-      Expr::TsTypeCast(node) => node.parent(),
       Expr::TsAs(node) => node.parent(),
       Expr::PrivateName(node) => node.parent(),
       Expr::OptChain(node) => node.parent(),
@@ -2147,7 +2136,6 @@ impl<'a> NodeTrait<'a> for Expr<'a> {
       Expr::TsTypeAssertion(node) => node.children(),
       Expr::TsConstAssertion(node) => node.children(),
       Expr::TsNonNull(node) => node.children(),
-      Expr::TsTypeCast(node) => node.children(),
       Expr::TsAs(node) => node.children(),
       Expr::PrivateName(node) => node.children(),
       Expr::OptChain(node) => node.children(),
@@ -2188,7 +2176,6 @@ impl<'a> NodeTrait<'a> for Expr<'a> {
       Expr::TsTypeAssertion(node) => node.into_node(),
       Expr::TsConstAssertion(node) => node.into_node(),
       Expr::TsNonNull(node) => node.into_node(),
-      Expr::TsTypeCast(node) => node.into_node(),
       Expr::TsAs(node) => node.into_node(),
       Expr::PrivateName(node) => node.into_node(),
       Expr::OptChain(node) => node.into_node(),
@@ -2229,7 +2216,6 @@ impl<'a> NodeTrait<'a> for Expr<'a> {
       Expr::TsTypeAssertion(_) => NodeKind::TsTypeAssertion,
       Expr::TsConstAssertion(_) => NodeKind::TsConstAssertion,
       Expr::TsNonNull(_) => NodeKind::TsNonNullExpr,
-      Expr::TsTypeCast(_) => NodeKind::TsTypeCastExpr,
       Expr::TsAs(_) => NodeKind::TsAsExpr,
       Expr::PrivateName(_) => NodeKind::PrivateName,
       Expr::OptChain(_) => NodeKind::OptChainExpr,
@@ -2272,7 +2258,6 @@ impl<'a> From<&Expr<'a>> for Node<'a> {
       Expr::TsTypeAssertion(node) => (*node).into(),
       Expr::TsConstAssertion(node) => (*node).into(),
       Expr::TsNonNull(node) => (*node).into(),
-      Expr::TsTypeCast(node) => (*node).into(),
       Expr::TsAs(node) => (*node).into(),
       Expr::PrivateName(node) => (*node).into(),
       Expr::OptChain(node) => (*node).into(),
@@ -2315,7 +2300,6 @@ impl<'a> From<Expr<'a>> for Node<'a> {
       Expr::TsTypeAssertion(node) => node.into(),
       Expr::TsConstAssertion(node) => node.into(),
       Expr::TsNonNull(node) => node.into(),
-      Expr::TsTypeCast(node) => node.into(),
       Expr::TsAs(node) => node.into(),
       Expr::PrivateName(node) => node.into(),
       Expr::OptChain(node) => node.into(),
@@ -2357,7 +2341,6 @@ fn get_view_for_expr<'a>(inner: &'a swc_ast::Expr, parent: Node<'a>, bump: &'a B
     swc_ast::Expr::TsTypeAssertion(value) => Expr::TsTypeAssertion(get_view_for_ts_type_assertion(value, parent, bump)),
     swc_ast::Expr::TsConstAssertion(value) => Expr::TsConstAssertion(get_view_for_ts_const_assertion(value, parent, bump)),
     swc_ast::Expr::TsNonNull(value) => Expr::TsNonNull(get_view_for_ts_non_null_expr(value, parent, bump)),
-    swc_ast::Expr::TsTypeCast(value) => Expr::TsTypeCast(get_view_for_ts_type_cast_expr(value, parent, bump)),
     swc_ast::Expr::TsAs(value) => Expr::TsAs(get_view_for_ts_as_expr(value, parent, bump)),
     swc_ast::Expr::PrivateName(value) => Expr::PrivateName(get_view_for_private_name(value, parent, bump)),
     swc_ast::Expr::OptChain(value) => Expr::OptChain(get_view_for_opt_chain_expr(value, parent, bump)),
@@ -16719,73 +16702,6 @@ fn get_view_for_ts_type_assertion<'a>(inner: &'a swc_ast::TsTypeAssertion, paren
   let parent: Node<'a> = (&*node).into();
   node.expr = get_view_for_expr(&inner.expr, parent.clone(), bump);
   node.type_ann = get_view_for_ts_type(&inner.type_ann, parent, bump);
-  node
-}
-
-pub struct TsTypeCastExpr<'a> {
-  pub parent: Node<'a>,
-  pub inner: &'a swc_ast::TsTypeCastExpr,
-  pub expr: Expr<'a>,
-  pub type_ann: &'a TsTypeAnn<'a>,
-}
-
-impl<'a> Spanned for TsTypeCastExpr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
-  }
-}
-
-impl<'a> From<&TsTypeCastExpr<'a>> for Node<'a> {
-  fn from(node: &TsTypeCastExpr<'a>) -> Node<'a> {
-    let node = unsafe { mem::transmute::<&TsTypeCastExpr<'a>, &'a TsTypeCastExpr<'a>>(node) };
-    Node::TsTypeCastExpr(node)
-  }
-}
-
-impl<'a> NodeTrait<'a> for TsTypeCastExpr<'a> {
-  fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.clone())
-  }
-
-  fn children(&self) -> Vec<Node<'a>> {
-    let mut children = Vec::with_capacity(2);
-    children.push((&self.expr).into());
-    children.push(self.type_ann.into());
-    children
-  }
-
-  fn into_node(&self) -> Node<'a> {
-    self.into()
-  }
-
-  fn kind(&self) -> NodeKind {
-    NodeKind::TsTypeCastExpr
-  }
-}
-
-impl<'a> CastableNode<'a> for TsTypeCastExpr<'a> {
-  fn to(node: &Node<'a>) -> Option<&'a Self> {
-    if let Node::TsTypeCastExpr(node) = node {
-      Some(node)
-    } else {
-      None
-    }
-  }
-  fn kind() -> NodeKind {
-    NodeKind::TsTypeCastExpr
-  }
-}
-
-fn get_view_for_ts_type_cast_expr<'a>(inner: &'a swc_ast::TsTypeCastExpr, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeCastExpr<'a> {
-  let node = bump.alloc(TsTypeCastExpr {
-    inner,
-    parent,
-    expr: unsafe { MaybeUninit::uninit().assume_init() },
-    type_ann: unsafe { MaybeUninit::uninit().assume_init() },
-  });
-  let parent: Node<'a> = (&*node).into();
-  node.expr = get_view_for_expr(&inner.expr, parent.clone(), bump);
-  node.type_ann = get_view_for_ts_type_ann(&inner.type_ann, parent, bump);
   node
 }
 
