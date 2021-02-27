@@ -2,7 +2,7 @@
   "binaries": [
     {
       "path": "https://bvm.land/deno/1.7.4.json",
-      "checksum": "fab8c6236e851fd122ef51f6e439d3173168834cf2d58e59471bddc929bf4d45",
+      "checksum": "553f05a6d94a13fc20b2bb16298bc8efa80b08241f4258754a68bbea5c5026b7",
       "version": "^1.7.4"
     },
     {
