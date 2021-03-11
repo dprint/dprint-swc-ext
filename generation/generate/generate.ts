@@ -435,6 +435,7 @@ export function generate(analysisResult: AnalysisResult) {
                 }
                 writer.writeLine("#[serde(skip)]");
                 writer.writeLine(`pub inner: &'a swc_ast::${struct.name},`);
+                writer.writeLine(`pub span: Span,`);
 
                 for (const field of structFields) {
                     writeDocs(field.docs);
@@ -656,6 +657,7 @@ export function generate(analysisResult: AnalysisResult) {
                 writer.write(`let node = bump.alloc(${struct.name} {`).newLine();
                 writer.indent(() => {
                     writer.write("inner,").newLine();
+                    writer.write("span: inner.span(),").newLine();
                     if (struct.parents.length > 0) {
                         if (struct.parents.length === 1) {
                             writer.write(`parent: parent.expect::<${struct.parents[0].name}>()`);

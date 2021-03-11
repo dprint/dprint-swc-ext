@@ -6291,6 +6291,7 @@ pub struct ArrayLit<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ArrayLit,
+  pub span: Span,
   pub elems: Vec<Option<&'a ExprOrSpread<'a>>>,
 }
 
@@ -6347,6 +6348,7 @@ impl<'a> CastableNode<'a> for ArrayLit<'a> {
 fn get_view_for_array_lit<'a>(inner: &'a swc_ast::ArrayLit, parent: Node<'a>, bump: &'a Bump) -> &'a ArrayLit<'a> {
   let node = bump.alloc(ArrayLit {
     inner,
+    span: inner.span(),
     parent,
     elems: Vec::with_capacity(inner.elems.len()),
   });
@@ -6365,6 +6367,7 @@ pub struct ArrayPat<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ArrayPat,
+  pub span: Span,
   pub elems: Vec<Option<Pat<'a>>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
   /// Only in an ambient context
@@ -6427,6 +6430,7 @@ impl<'a> CastableNode<'a> for ArrayPat<'a> {
 fn get_view_for_array_pat<'a>(inner: &'a swc_ast::ArrayPat, parent: Node<'a>, bump: &'a Bump) -> &'a ArrayPat<'a> {
   let node = bump.alloc(ArrayPat {
     inner,
+    span: inner.span(),
     parent,
     elems: Vec::with_capacity(inner.elems.len()),
     type_ann: None,
@@ -6451,6 +6455,7 @@ pub struct ArrowExpr<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ArrowExpr,
+  pub span: Span,
   pub params: Vec<Pat<'a>>,
   pub body: BlockStmtOrExpr<'a>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
@@ -6517,6 +6522,7 @@ impl<'a> CastableNode<'a> for ArrowExpr<'a> {
 fn get_view_for_arrow_expr<'a>(inner: &'a swc_ast::ArrowExpr, parent: Node<'a>, bump: &'a Bump) -> &'a ArrowExpr<'a> {
   let node = bump.alloc(ArrowExpr {
     inner,
+    span: inner.span(),
     parent,
     params: Vec::with_capacity(inner.params.len()),
     body: unsafe { MaybeUninit::uninit().assume_init() },
@@ -6546,6 +6552,7 @@ pub struct AssignExpr<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::AssignExpr,
+  pub span: Span,
   pub left: PatOrExpr<'a>,
   pub right: Expr<'a>,
   pub op: AssignOp,
@@ -6601,6 +6608,7 @@ impl<'a> CastableNode<'a> for AssignExpr<'a> {
 fn get_view_for_assign_expr<'a>(inner: &'a swc_ast::AssignExpr, parent: Node<'a>, bump: &'a Bump) -> &'a AssignExpr<'a> {
   let node = bump.alloc(AssignExpr {
     inner,
+    span: inner.span(),
     parent,
     left: unsafe { MaybeUninit::uninit().assume_init() },
     right: unsafe { MaybeUninit::uninit().assume_init() },
@@ -6619,6 +6627,7 @@ pub struct AssignPat<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::AssignPat,
+  pub span: Span,
   pub left: Pat<'a>,
   pub right: Expr<'a>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
@@ -6677,6 +6686,7 @@ impl<'a> CastableNode<'a> for AssignPat<'a> {
 fn get_view_for_assign_pat<'a>(inner: &'a swc_ast::AssignPat, parent: Node<'a>, bump: &'a Bump) -> &'a AssignPat<'a> {
   let node = bump.alloc(AssignPat {
     inner,
+    span: inner.span(),
     parent,
     left: unsafe { MaybeUninit::uninit().assume_init() },
     right: unsafe { MaybeUninit::uninit().assume_init() },
@@ -6700,6 +6710,7 @@ pub struct AssignPatProp<'a> {
   pub parent: &'a ObjectPat<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::AssignPatProp,
+  pub span: Span,
   pub key: &'a Ident<'a>,
   pub value: Option<Expr<'a>>,
 }
@@ -6756,6 +6767,7 @@ impl<'a> CastableNode<'a> for AssignPatProp<'a> {
 fn get_view_for_assign_pat_prop<'a>(inner: &'a swc_ast::AssignPatProp, parent: Node<'a>, bump: &'a Bump) -> &'a AssignPatProp<'a> {
   let node = bump.alloc(AssignPatProp {
     inner,
+    span: inner.span(),
     parent: parent.expect::<ObjectPat>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     value: None,
@@ -6776,6 +6788,7 @@ pub struct AssignProp<'a> {
   pub parent: &'a ObjectLit<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::AssignProp,
+  pub span: Span,
   pub key: &'a Ident<'a>,
   pub value: Expr<'a>,
 }
@@ -6830,6 +6843,7 @@ impl<'a> CastableNode<'a> for AssignProp<'a> {
 fn get_view_for_assign_prop<'a>(inner: &'a swc_ast::AssignProp, parent: Node<'a>, bump: &'a Bump) -> &'a AssignProp<'a> {
   let node = bump.alloc(AssignProp {
     inner,
+    span: inner.span(),
     parent: parent.expect::<ObjectLit>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     value: unsafe { MaybeUninit::uninit().assume_init() },
@@ -6847,6 +6861,7 @@ pub struct AwaitExpr<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::AwaitExpr,
+  pub span: Span,
   pub arg: Expr<'a>,
 }
 
@@ -6899,6 +6914,7 @@ impl<'a> CastableNode<'a> for AwaitExpr<'a> {
 fn get_view_for_await_expr<'a>(inner: &'a swc_ast::AwaitExpr, parent: Node<'a>, bump: &'a Bump) -> &'a AwaitExpr<'a> {
   let node = bump.alloc(AwaitExpr {
     inner,
+    span: inner.span(),
     parent,
     arg: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -6914,6 +6930,7 @@ pub struct BigInt<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::BigInt,
+  pub span: Span,
   pub value: &'a num_bigint::BigInt,
 }
 
@@ -6964,6 +6981,7 @@ impl<'a> CastableNode<'a> for BigInt<'a> {
 fn get_view_for_big_int<'a>(inner: &'a swc_ast::BigInt, parent: Node<'a>, bump: &'a Bump) -> &'a BigInt<'a> {
   let node = bump.alloc(BigInt {
     inner,
+    span: inner.span(),
     parent,
     value: &inner.value,
   });
@@ -6977,6 +6995,7 @@ pub struct BinExpr<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::BinExpr,
+  pub span: Span,
   pub left: Expr<'a>,
   pub right: Expr<'a>,
   pub op: BinaryOp,
@@ -7032,6 +7051,7 @@ impl<'a> CastableNode<'a> for BinExpr<'a> {
 fn get_view_for_bin_expr<'a>(inner: &'a swc_ast::BinExpr, parent: Node<'a>, bump: &'a Bump) -> &'a BinExpr<'a> {
   let node = bump.alloc(BinExpr {
     inner,
+    span: inner.span(),
     parent,
     left: unsafe { MaybeUninit::uninit().assume_init() },
     right: unsafe { MaybeUninit::uninit().assume_init() },
@@ -7051,6 +7071,7 @@ pub struct BindingIdent<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::BindingIdent,
+  pub span: Span,
   pub id: &'a Ident<'a>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
 }
@@ -7107,6 +7128,7 @@ impl<'a> CastableNode<'a> for BindingIdent<'a> {
 fn get_view_for_binding_ident<'a>(inner: &'a swc_ast::BindingIdent, parent: Node<'a>, bump: &'a Bump) -> &'a BindingIdent<'a> {
   let node = bump.alloc(BindingIdent {
     inner,
+    span: inner.span(),
     parent,
     id: unsafe { MaybeUninit::uninit().assume_init() },
     type_ann: None,
@@ -7128,6 +7150,7 @@ pub struct BlockStmt<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::BlockStmt,
+  pub span: Span,
   pub stmts: Vec<Stmt<'a>>,
 }
 
@@ -7182,6 +7205,7 @@ impl<'a> CastableNode<'a> for BlockStmt<'a> {
 fn get_view_for_block_stmt<'a>(inner: &'a swc_ast::BlockStmt, parent: Node<'a>, bump: &'a Bump) -> &'a BlockStmt<'a> {
   let node = bump.alloc(BlockStmt {
     inner,
+    span: inner.span(),
     parent,
     stmts: Vec::with_capacity(inner.stmts.len()),
   });
@@ -7197,6 +7221,7 @@ pub struct Bool<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::Bool,
+  pub span: Span,
   pub value: bool,
 }
 
@@ -7247,6 +7272,7 @@ impl<'a> CastableNode<'a> for Bool<'a> {
 fn get_view_for_bool<'a>(inner: &'a swc_ast::Bool, parent: Node<'a>, bump: &'a Bump) -> &'a Bool<'a> {
   let node = bump.alloc(Bool {
     inner,
+    span: inner.span(),
     parent,
     value: inner.value,
   });
@@ -7260,6 +7286,7 @@ pub struct BreakStmt<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::BreakStmt,
+  pub span: Span,
   pub label: Option<&'a Ident<'a>>,
 }
 
@@ -7314,6 +7341,7 @@ impl<'a> CastableNode<'a> for BreakStmt<'a> {
 fn get_view_for_break_stmt<'a>(inner: &'a swc_ast::BreakStmt, parent: Node<'a>, bump: &'a Bump) -> &'a BreakStmt<'a> {
   let node = bump.alloc(BreakStmt {
     inner,
+    span: inner.span(),
     parent,
     label: None,
   });
@@ -7332,6 +7360,7 @@ pub struct CallExpr<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::CallExpr,
+  pub span: Span,
   pub callee: ExprOrSuper<'a>,
   pub args: Vec<&'a ExprOrSpread<'a>>,
   pub type_args: Option<&'a TsTypeParamInstantiation<'a>>,
@@ -7392,6 +7421,7 @@ impl<'a> CastableNode<'a> for CallExpr<'a> {
 fn get_view_for_call_expr<'a>(inner: &'a swc_ast::CallExpr, parent: Node<'a>, bump: &'a Bump) -> &'a CallExpr<'a> {
   let node = bump.alloc(CallExpr {
     inner,
+    span: inner.span(),
     parent,
     callee: unsafe { MaybeUninit::uninit().assume_init() },
     args: Vec::with_capacity(inner.args.len()),
@@ -7414,6 +7444,7 @@ pub struct CatchClause<'a> {
   pub parent: &'a TryStmt<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::CatchClause,
+  pub span: Span,
   /// es2019
   ///
   /// The param is null if the catch binding is omitted. E.g., try { foo() }
@@ -7474,6 +7505,7 @@ impl<'a> CastableNode<'a> for CatchClause<'a> {
 fn get_view_for_catch_clause<'a>(inner: &'a swc_ast::CatchClause, parent: Node<'a>, bump: &'a Bump) -> &'a CatchClause<'a> {
   let node = bump.alloc(CatchClause {
     inner,
+    span: inner.span(),
     parent: parent.expect::<TryStmt>(),
     param: None,
     body: unsafe { MaybeUninit::uninit().assume_init() },
@@ -7494,6 +7526,7 @@ pub struct Class<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::Class,
+  pub span: Span,
   pub decorators: Vec<&'a Decorator<'a>>,
   pub body: Vec<ClassMember<'a>>,
   pub super_class: Option<Expr<'a>>,
@@ -7570,6 +7603,7 @@ impl<'a> CastableNode<'a> for Class<'a> {
 fn get_view_for_class<'a>(inner: &'a swc_ast::Class, parent: Node<'a>, bump: &'a Bump) -> &'a Class<'a> {
   let node = bump.alloc(Class {
     inner,
+    span: inner.span(),
     parent,
     decorators: Vec::with_capacity(inner.decorators.len()),
     body: Vec::with_capacity(inner.body.len()),
@@ -7605,6 +7639,7 @@ pub struct ClassDecl<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ClassDecl,
+  pub span: Span,
   pub ident: &'a Ident<'a>,
   pub class: &'a Class<'a>,
   pub declare: bool,
@@ -7660,6 +7695,7 @@ impl<'a> CastableNode<'a> for ClassDecl<'a> {
 fn get_view_for_class_decl<'a>(inner: &'a swc_ast::ClassDecl, parent: Node<'a>, bump: &'a Bump) -> &'a ClassDecl<'a> {
   let node = bump.alloc(ClassDecl {
     inner,
+    span: inner.span(),
     parent,
     ident: unsafe { MaybeUninit::uninit().assume_init() },
     class: unsafe { MaybeUninit::uninit().assume_init() },
@@ -7679,6 +7715,7 @@ pub struct ClassExpr<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ClassExpr,
+  pub span: Span,
   pub ident: Option<&'a Ident<'a>>,
   pub class: &'a Class<'a>,
 }
@@ -7735,6 +7772,7 @@ impl<'a> CastableNode<'a> for ClassExpr<'a> {
 fn get_view_for_class_expr<'a>(inner: &'a swc_ast::ClassExpr, parent: Node<'a>, bump: &'a Bump) -> &'a ClassExpr<'a> {
   let node = bump.alloc(ClassExpr {
     inner,
+    span: inner.span(),
     parent,
     ident: None,
     class: unsafe { MaybeUninit::uninit().assume_init() },
@@ -7755,6 +7793,7 @@ pub struct ClassMethod<'a> {
   pub parent: &'a Class<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ClassMethod,
+  pub span: Span,
   pub key: PropName<'a>,
   pub function: &'a Function<'a>,
   pub kind: MethodKind,
@@ -7816,6 +7855,7 @@ impl<'a> CastableNode<'a> for ClassMethod<'a> {
 fn get_view_for_class_method<'a>(inner: &'a swc_ast::ClassMethod, parent: Node<'a>, bump: &'a Bump) -> &'a ClassMethod<'a> {
   let node = bump.alloc(ClassMethod {
     inner,
+    span: inner.span(),
     parent: parent.expect::<Class>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     function: unsafe { MaybeUninit::uninit().assume_init() },
@@ -7838,6 +7878,7 @@ pub struct ClassProp<'a> {
   pub parent: &'a Class<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ClassProp,
+  pub span: Span,
   pub key: Expr<'a>,
   pub value: Option<Expr<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
@@ -7912,6 +7953,7 @@ impl<'a> CastableNode<'a> for ClassProp<'a> {
 fn get_view_for_class_prop<'a>(inner: &'a swc_ast::ClassProp, parent: Node<'a>, bump: &'a Bump) -> &'a ClassProp<'a> {
   let node = bump.alloc(ClassProp {
     inner,
+    span: inner.span(),
     parent: parent.expect::<Class>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     value: None,
@@ -7947,6 +7989,7 @@ pub struct ComputedPropName<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ComputedPropName,
+  pub span: Span,
   pub expr: Expr<'a>,
 }
 
@@ -7999,6 +8042,7 @@ impl<'a> CastableNode<'a> for ComputedPropName<'a> {
 fn get_view_for_computed_prop_name<'a>(inner: &'a swc_ast::ComputedPropName, parent: Node<'a>, bump: &'a Bump) -> &'a ComputedPropName<'a> {
   let node = bump.alloc(ComputedPropName {
     inner,
+    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -8014,6 +8058,7 @@ pub struct CondExpr<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::CondExpr,
+  pub span: Span,
   pub test: Expr<'a>,
   pub cons: Expr<'a>,
   pub alt: Expr<'a>,
@@ -8070,6 +8115,7 @@ impl<'a> CastableNode<'a> for CondExpr<'a> {
 fn get_view_for_cond_expr<'a>(inner: &'a swc_ast::CondExpr, parent: Node<'a>, bump: &'a Bump) -> &'a CondExpr<'a> {
   let node = bump.alloc(CondExpr {
     inner,
+    span: inner.span(),
     parent,
     test: unsafe { MaybeUninit::uninit().assume_init() },
     cons: unsafe { MaybeUninit::uninit().assume_init() },
@@ -8089,6 +8135,7 @@ pub struct Constructor<'a> {
   pub parent: &'a Class<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::Constructor,
+  pub span: Span,
   pub key: PropName<'a>,
   pub params: Vec<ParamOrTsParamProp<'a>>,
   pub body: Option<&'a BlockStmt<'a>>,
@@ -8151,6 +8198,7 @@ impl<'a> CastableNode<'a> for Constructor<'a> {
 fn get_view_for_constructor<'a>(inner: &'a swc_ast::Constructor, parent: Node<'a>, bump: &'a Bump) -> &'a Constructor<'a> {
   let node = bump.alloc(Constructor {
     inner,
+    span: inner.span(),
     parent: parent.expect::<Class>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     params: Vec::with_capacity(inner.params.len()),
@@ -8175,6 +8223,7 @@ pub struct ContinueStmt<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ContinueStmt,
+  pub span: Span,
   pub label: Option<&'a Ident<'a>>,
 }
 
@@ -8229,6 +8278,7 @@ impl<'a> CastableNode<'a> for ContinueStmt<'a> {
 fn get_view_for_continue_stmt<'a>(inner: &'a swc_ast::ContinueStmt, parent: Node<'a>, bump: &'a Bump) -> &'a ContinueStmt<'a> {
   let node = bump.alloc(ContinueStmt {
     inner,
+    span: inner.span(),
     parent,
     label: None,
   });
@@ -8247,6 +8297,7 @@ pub struct DebuggerStmt<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::DebuggerStmt,
+  pub span: Span,
 }
 
 impl<'a> Spanned for DebuggerStmt<'a> {
@@ -8296,6 +8347,7 @@ impl<'a> CastableNode<'a> for DebuggerStmt<'a> {
 fn get_view_for_debugger_stmt<'a>(inner: &'a swc_ast::DebuggerStmt, parent: Node<'a>, bump: &'a Bump) -> &'a DebuggerStmt<'a> {
   let node = bump.alloc(DebuggerStmt {
     inner,
+    span: inner.span(),
     parent,
   });
   node
@@ -8308,6 +8360,7 @@ pub struct Decorator<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::Decorator,
+  pub span: Span,
   pub expr: Expr<'a>,
 }
 
@@ -8360,6 +8413,7 @@ impl<'a> CastableNode<'a> for Decorator<'a> {
 fn get_view_for_decorator<'a>(inner: &'a swc_ast::Decorator, parent: Node<'a>, bump: &'a Bump) -> &'a Decorator<'a> {
   let node = bump.alloc(Decorator {
     inner,
+    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -8375,6 +8429,7 @@ pub struct DoWhileStmt<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::DoWhileStmt,
+  pub span: Span,
   pub test: Expr<'a>,
   pub body: Stmt<'a>,
 }
@@ -8429,6 +8484,7 @@ impl<'a> CastableNode<'a> for DoWhileStmt<'a> {
 fn get_view_for_do_while_stmt<'a>(inner: &'a swc_ast::DoWhileStmt, parent: Node<'a>, bump: &'a Bump) -> &'a DoWhileStmt<'a> {
   let node = bump.alloc(DoWhileStmt {
     inner,
+    span: inner.span(),
     parent,
     test: unsafe { MaybeUninit::uninit().assume_init() },
     body: unsafe { MaybeUninit::uninit().assume_init() },
@@ -8446,6 +8502,7 @@ pub struct EmptyStmt<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::EmptyStmt,
+  pub span: Span,
 }
 
 impl<'a> Spanned for EmptyStmt<'a> {
@@ -8495,6 +8552,7 @@ impl<'a> CastableNode<'a> for EmptyStmt<'a> {
 fn get_view_for_empty_stmt<'a>(inner: &'a swc_ast::EmptyStmt, parent: Node<'a>, bump: &'a Bump) -> &'a EmptyStmt<'a> {
   let node = bump.alloc(EmptyStmt {
     inner,
+    span: inner.span(),
     parent,
   });
   node
@@ -8508,6 +8566,7 @@ pub struct ExportAll<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ExportAll,
+  pub span: Span,
   pub src: &'a Str<'a>,
   pub asserts: Option<&'a ObjectLit<'a>>,
 }
@@ -8564,6 +8623,7 @@ impl<'a> CastableNode<'a> for ExportAll<'a> {
 fn get_view_for_export_all<'a>(inner: &'a swc_ast::ExportAll, parent: Node<'a>, bump: &'a Bump) -> &'a ExportAll<'a> {
   let node = bump.alloc(ExportAll {
     inner,
+    span: inner.span(),
     parent,
     src: unsafe { MaybeUninit::uninit().assume_init() },
     asserts: None,
@@ -8584,6 +8644,7 @@ pub struct ExportDecl<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ExportDecl,
+  pub span: Span,
   pub decl: Decl<'a>,
 }
 
@@ -8636,6 +8697,7 @@ impl<'a> CastableNode<'a> for ExportDecl<'a> {
 fn get_view_for_export_decl<'a>(inner: &'a swc_ast::ExportDecl, parent: Node<'a>, bump: &'a Bump) -> &'a ExportDecl<'a> {
   let node = bump.alloc(ExportDecl {
     inner,
+    span: inner.span(),
     parent,
     decl: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -8651,6 +8713,7 @@ pub struct ExportDefaultDecl<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ExportDefaultDecl,
+  pub span: Span,
   pub decl: DefaultDecl<'a>,
 }
 
@@ -8703,6 +8766,7 @@ impl<'a> CastableNode<'a> for ExportDefaultDecl<'a> {
 fn get_view_for_export_default_decl<'a>(inner: &'a swc_ast::ExportDefaultDecl, parent: Node<'a>, bump: &'a Bump) -> &'a ExportDefaultDecl<'a> {
   let node = bump.alloc(ExportDefaultDecl {
     inner,
+    span: inner.span(),
     parent,
     decl: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -8718,6 +8782,7 @@ pub struct ExportDefaultExpr<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ExportDefaultExpr,
+  pub span: Span,
   pub expr: Expr<'a>,
 }
 
@@ -8770,6 +8835,7 @@ impl<'a> CastableNode<'a> for ExportDefaultExpr<'a> {
 fn get_view_for_export_default_expr<'a>(inner: &'a swc_ast::ExportDefaultExpr, parent: Node<'a>, bump: &'a Bump) -> &'a ExportDefaultExpr<'a> {
   let node = bump.alloc(ExportDefaultExpr {
     inner,
+    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -8785,6 +8851,7 @@ pub struct ExportDefaultSpecifier<'a> {
   pub parent: &'a NamedExport<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ExportDefaultSpecifier,
+  pub span: Span,
   pub exported: &'a Ident<'a>,
 }
 
@@ -8837,6 +8904,7 @@ impl<'a> CastableNode<'a> for ExportDefaultSpecifier<'a> {
 fn get_view_for_export_default_specifier<'a>(inner: &'a swc_ast::ExportDefaultSpecifier, parent: Node<'a>, bump: &'a Bump) -> &'a ExportDefaultSpecifier<'a> {
   let node = bump.alloc(ExportDefaultSpecifier {
     inner,
+    span: inner.span(),
     parent: parent.expect::<NamedExport>(),
     exported: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -8852,6 +8920,7 @@ pub struct ExportNamedSpecifier<'a> {
   pub parent: &'a NamedExport<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ExportNamedSpecifier,
+  pub span: Span,
   /// `foo` in `export { foo as bar }`
   pub orig: &'a Ident<'a>,
   /// `Some(bar)` in `export { foo as bar }`
@@ -8910,6 +8979,7 @@ impl<'a> CastableNode<'a> for ExportNamedSpecifier<'a> {
 fn get_view_for_export_named_specifier<'a>(inner: &'a swc_ast::ExportNamedSpecifier, parent: Node<'a>, bump: &'a Bump) -> &'a ExportNamedSpecifier<'a> {
   let node = bump.alloc(ExportNamedSpecifier {
     inner,
+    span: inner.span(),
     parent: parent.expect::<NamedExport>(),
     orig: unsafe { MaybeUninit::uninit().assume_init() },
     exported: None,
@@ -8931,6 +9001,7 @@ pub struct ExportNamespaceSpecifier<'a> {
   pub parent: &'a NamedExport<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ExportNamespaceSpecifier,
+  pub span: Span,
   pub name: &'a Ident<'a>,
 }
 
@@ -8983,6 +9054,7 @@ impl<'a> CastableNode<'a> for ExportNamespaceSpecifier<'a> {
 fn get_view_for_export_namespace_specifier<'a>(inner: &'a swc_ast::ExportNamespaceSpecifier, parent: Node<'a>, bump: &'a Bump) -> &'a ExportNamespaceSpecifier<'a> {
   let node = bump.alloc(ExportNamespaceSpecifier {
     inner,
+    span: inner.span(),
     parent: parent.expect::<NamedExport>(),
     name: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -8998,6 +9070,7 @@ pub struct ExprOrSpread<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ExprOrSpread,
+  pub span: Span,
   pub expr: Expr<'a>,
   pub spread: &'a Option<swc_common::Span>,
 }
@@ -9051,6 +9124,7 @@ impl<'a> CastableNode<'a> for ExprOrSpread<'a> {
 fn get_view_for_expr_or_spread<'a>(inner: &'a swc_ast::ExprOrSpread, parent: Node<'a>, bump: &'a Bump) -> &'a ExprOrSpread<'a> {
   let node = bump.alloc(ExprOrSpread {
     inner,
+    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
     spread: &inner.spread,
@@ -9067,6 +9141,7 @@ pub struct ExprStmt<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ExprStmt,
+  pub span: Span,
   pub expr: Expr<'a>,
 }
 
@@ -9119,6 +9194,7 @@ impl<'a> CastableNode<'a> for ExprStmt<'a> {
 fn get_view_for_expr_stmt<'a>(inner: &'a swc_ast::ExprStmt, parent: Node<'a>, bump: &'a Bump) -> &'a ExprStmt<'a> {
   let node = bump.alloc(ExprStmt {
     inner,
+    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -9134,6 +9210,7 @@ pub struct FnDecl<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::FnDecl,
+  pub span: Span,
   pub ident: &'a Ident<'a>,
   pub function: &'a Function<'a>,
   pub declare: bool,
@@ -9189,6 +9266,7 @@ impl<'a> CastableNode<'a> for FnDecl<'a> {
 fn get_view_for_fn_decl<'a>(inner: &'a swc_ast::FnDecl, parent: Node<'a>, bump: &'a Bump) -> &'a FnDecl<'a> {
   let node = bump.alloc(FnDecl {
     inner,
+    span: inner.span(),
     parent,
     ident: unsafe { MaybeUninit::uninit().assume_init() },
     function: unsafe { MaybeUninit::uninit().assume_init() },
@@ -9208,6 +9286,7 @@ pub struct FnExpr<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::FnExpr,
+  pub span: Span,
   pub ident: Option<&'a Ident<'a>>,
   pub function: &'a Function<'a>,
 }
@@ -9264,6 +9343,7 @@ impl<'a> CastableNode<'a> for FnExpr<'a> {
 fn get_view_for_fn_expr<'a>(inner: &'a swc_ast::FnExpr, parent: Node<'a>, bump: &'a Bump) -> &'a FnExpr<'a> {
   let node = bump.alloc(FnExpr {
     inner,
+    span: inner.span(),
     parent,
     ident: None,
     function: unsafe { MaybeUninit::uninit().assume_init() },
@@ -9284,6 +9364,7 @@ pub struct ForInStmt<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ForInStmt,
+  pub span: Span,
   pub left: VarDeclOrPat<'a>,
   pub right: Expr<'a>,
   pub body: Stmt<'a>,
@@ -9340,6 +9421,7 @@ impl<'a> CastableNode<'a> for ForInStmt<'a> {
 fn get_view_for_for_in_stmt<'a>(inner: &'a swc_ast::ForInStmt, parent: Node<'a>, bump: &'a Bump) -> &'a ForInStmt<'a> {
   let node = bump.alloc(ForInStmt {
     inner,
+    span: inner.span(),
     parent,
     left: unsafe { MaybeUninit::uninit().assume_init() },
     right: unsafe { MaybeUninit::uninit().assume_init() },
@@ -9359,6 +9441,7 @@ pub struct ForOfStmt<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ForOfStmt,
+  pub span: Span,
   pub left: VarDeclOrPat<'a>,
   pub right: Expr<'a>,
   pub body: Stmt<'a>,
@@ -9421,6 +9504,7 @@ impl<'a> CastableNode<'a> for ForOfStmt<'a> {
 fn get_view_for_for_of_stmt<'a>(inner: &'a swc_ast::ForOfStmt, parent: Node<'a>, bump: &'a Bump) -> &'a ForOfStmt<'a> {
   let node = bump.alloc(ForOfStmt {
     inner,
+    span: inner.span(),
     parent,
     left: unsafe { MaybeUninit::uninit().assume_init() },
     right: unsafe { MaybeUninit::uninit().assume_init() },
@@ -9441,6 +9525,7 @@ pub struct ForStmt<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ForStmt,
+  pub span: Span,
   pub init: Option<VarDeclOrExpr<'a>>,
   pub test: Option<Expr<'a>>,
   pub update: Option<Expr<'a>>,
@@ -9505,6 +9590,7 @@ impl<'a> CastableNode<'a> for ForStmt<'a> {
 fn get_view_for_for_stmt<'a>(inner: &'a swc_ast::ForStmt, parent: Node<'a>, bump: &'a Bump) -> &'a ForStmt<'a> {
   let node = bump.alloc(ForStmt {
     inner,
+    span: inner.span(),
     parent,
     init: None,
     test: None,
@@ -9536,6 +9622,7 @@ pub struct Function<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::Function,
+  pub span: Span,
   pub params: Vec<&'a Param<'a>>,
   pub decorators: Vec<&'a Decorator<'a>>,
   pub body: Option<&'a BlockStmt<'a>>,
@@ -9610,6 +9697,7 @@ impl<'a> CastableNode<'a> for Function<'a> {
 fn get_view_for_function<'a>(inner: &'a swc_ast::Function, parent: Node<'a>, bump: &'a Bump) -> &'a Function<'a> {
   let node = bump.alloc(Function {
     inner,
+    span: inner.span(),
     parent,
     params: Vec::with_capacity(inner.params.len()),
     decorators: Vec::with_capacity(inner.decorators.len()),
@@ -9644,6 +9732,7 @@ pub struct GetterProp<'a> {
   pub parent: &'a ObjectLit<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::GetterProp,
+  pub span: Span,
   pub key: PropName<'a>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
   pub body: Option<&'a BlockStmt<'a>>,
@@ -9704,6 +9793,7 @@ impl<'a> CastableNode<'a> for GetterProp<'a> {
 fn get_view_for_getter_prop<'a>(inner: &'a swc_ast::GetterProp, parent: Node<'a>, bump: &'a Bump) -> &'a GetterProp<'a> {
   let node = bump.alloc(GetterProp {
     inner,
+    span: inner.span(),
     parent: parent.expect::<ObjectLit>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     type_ann: None,
@@ -9730,6 +9820,7 @@ pub struct Ident<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::Ident,
+  pub span: Span,
   pub sym: &'a swc_atoms::JsWord,
   /// TypeScript only. Used in case of an optional parameter.
   pub optional: bool,
@@ -9782,6 +9873,7 @@ impl<'a> CastableNode<'a> for Ident<'a> {
 fn get_view_for_ident<'a>(inner: &'a swc_ast::Ident, parent: Node<'a>, bump: &'a Bump) -> &'a Ident<'a> {
   let node = bump.alloc(Ident {
     inner,
+    span: inner.span(),
     parent,
     sym: &inner.sym,
     optional: inner.optional,
@@ -9796,6 +9888,7 @@ pub struct IfStmt<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::IfStmt,
+  pub span: Span,
   pub test: Expr<'a>,
   pub cons: Stmt<'a>,
   pub alt: Option<Stmt<'a>>,
@@ -9854,6 +9947,7 @@ impl<'a> CastableNode<'a> for IfStmt<'a> {
 fn get_view_for_if_stmt<'a>(inner: &'a swc_ast::IfStmt, parent: Node<'a>, bump: &'a Bump) -> &'a IfStmt<'a> {
   let node = bump.alloc(IfStmt {
     inner,
+    span: inner.span(),
     parent,
     test: unsafe { MaybeUninit::uninit().assume_init() },
     cons: unsafe { MaybeUninit::uninit().assume_init() },
@@ -9876,6 +9970,7 @@ pub struct ImportDecl<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ImportDecl,
+  pub span: Span,
   pub specifiers: Vec<ImportSpecifier<'a>>,
   pub src: &'a Str<'a>,
   pub asserts: Option<&'a ObjectLit<'a>>,
@@ -9937,6 +10032,7 @@ impl<'a> CastableNode<'a> for ImportDecl<'a> {
 fn get_view_for_import_decl<'a>(inner: &'a swc_ast::ImportDecl, parent: Node<'a>, bump: &'a Bump) -> &'a ImportDecl<'a> {
   let node = bump.alloc(ImportDecl {
     inner,
+    span: inner.span(),
     parent,
     specifiers: Vec::with_capacity(inner.specifiers.len()),
     src: unsafe { MaybeUninit::uninit().assume_init() },
@@ -9961,6 +10057,7 @@ pub struct ImportDefaultSpecifier<'a> {
   pub parent: &'a ImportDecl<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ImportDefaultSpecifier,
+  pub span: Span,
   pub local: &'a Ident<'a>,
 }
 
@@ -10013,6 +10110,7 @@ impl<'a> CastableNode<'a> for ImportDefaultSpecifier<'a> {
 fn get_view_for_import_default_specifier<'a>(inner: &'a swc_ast::ImportDefaultSpecifier, parent: Node<'a>, bump: &'a Bump) -> &'a ImportDefaultSpecifier<'a> {
   let node = bump.alloc(ImportDefaultSpecifier {
     inner,
+    span: inner.span(),
     parent: parent.expect::<ImportDecl>(),
     local: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -10031,6 +10129,7 @@ pub struct ImportNamedSpecifier<'a> {
   pub parent: &'a ImportDecl<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ImportNamedSpecifier,
+  pub span: Span,
   pub local: &'a Ident<'a>,
   pub imported: Option<&'a Ident<'a>>,
 }
@@ -10087,6 +10186,7 @@ impl<'a> CastableNode<'a> for ImportNamedSpecifier<'a> {
 fn get_view_for_import_named_specifier<'a>(inner: &'a swc_ast::ImportNamedSpecifier, parent: Node<'a>, bump: &'a Bump) -> &'a ImportNamedSpecifier<'a> {
   let node = bump.alloc(ImportNamedSpecifier {
     inner,
+    span: inner.span(),
     parent: parent.expect::<ImportDecl>(),
     local: unsafe { MaybeUninit::uninit().assume_init() },
     imported: None,
@@ -10108,6 +10208,7 @@ pub struct ImportStarAsSpecifier<'a> {
   pub parent: &'a ImportDecl<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ImportStarAsSpecifier,
+  pub span: Span,
   pub local: &'a Ident<'a>,
 }
 
@@ -10160,6 +10261,7 @@ impl<'a> CastableNode<'a> for ImportStarAsSpecifier<'a> {
 fn get_view_for_import_star_as_specifier<'a>(inner: &'a swc_ast::ImportStarAsSpecifier, parent: Node<'a>, bump: &'a Bump) -> &'a ImportStarAsSpecifier<'a> {
   let node = bump.alloc(ImportStarAsSpecifier {
     inner,
+    span: inner.span(),
     parent: parent.expect::<ImportDecl>(),
     local: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -10176,6 +10278,7 @@ pub struct Invalid<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::Invalid,
+  pub span: Span,
 }
 
 impl<'a> Spanned for Invalid<'a> {
@@ -10225,6 +10328,7 @@ impl<'a> CastableNode<'a> for Invalid<'a> {
 fn get_view_for_invalid<'a>(inner: &'a swc_ast::Invalid, parent: Node<'a>, bump: &'a Bump) -> &'a Invalid<'a> {
   let node = bump.alloc(Invalid {
     inner,
+    span: inner.span(),
     parent,
   });
   node
@@ -10237,6 +10341,7 @@ pub struct JSXAttr<'a> {
   pub parent: &'a JSXOpeningElement<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::JSXAttr,
+  pub span: Span,
   pub name: JSXAttrName<'a>,
   /// Babel uses Expr instead of JSXAttrValue
   pub value: Option<JSXAttrValue<'a>>,
@@ -10294,6 +10399,7 @@ impl<'a> CastableNode<'a> for JSXAttr<'a> {
 fn get_view_for_jsxattr<'a>(inner: &'a swc_ast::JSXAttr, parent: Node<'a>, bump: &'a Bump) -> &'a JSXAttr<'a> {
   let node = bump.alloc(JSXAttr {
     inner,
+    span: inner.span(),
     parent: parent.expect::<JSXOpeningElement>(),
     name: unsafe { MaybeUninit::uninit().assume_init() },
     value: None,
@@ -10314,6 +10420,7 @@ pub struct JSXClosingElement<'a> {
   pub parent: &'a JSXElement<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::JSXClosingElement,
+  pub span: Span,
   pub name: JSXElementName<'a>,
 }
 
@@ -10366,6 +10473,7 @@ impl<'a> CastableNode<'a> for JSXClosingElement<'a> {
 fn get_view_for_jsxclosing_element<'a>(inner: &'a swc_ast::JSXClosingElement, parent: Node<'a>, bump: &'a Bump) -> &'a JSXClosingElement<'a> {
   let node = bump.alloc(JSXClosingElement {
     inner,
+    span: inner.span(),
     parent: parent.expect::<JSXElement>(),
     name: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -10381,6 +10489,7 @@ pub struct JSXClosingFragment<'a> {
   pub parent: &'a JSXFragment<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::JSXClosingFragment,
+  pub span: Span,
 }
 
 impl<'a> Spanned for JSXClosingFragment<'a> {
@@ -10430,6 +10539,7 @@ impl<'a> CastableNode<'a> for JSXClosingFragment<'a> {
 fn get_view_for_jsxclosing_fragment<'a>(inner: &'a swc_ast::JSXClosingFragment, parent: Node<'a>, bump: &'a Bump) -> &'a JSXClosingFragment<'a> {
   let node = bump.alloc(JSXClosingFragment {
     inner,
+    span: inner.span(),
     parent: parent.expect::<JSXFragment>(),
   });
   node
@@ -10442,6 +10552,7 @@ pub struct JSXElement<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::JSXElement,
+  pub span: Span,
   pub opening: &'a JSXOpeningElement<'a>,
   pub children: Vec<JSXElementChild<'a>>,
   pub closing: Option<&'a JSXClosingElement<'a>>,
@@ -10502,6 +10613,7 @@ impl<'a> CastableNode<'a> for JSXElement<'a> {
 fn get_view_for_jsxelement<'a>(inner: &'a swc_ast::JSXElement, parent: Node<'a>, bump: &'a Bump) -> &'a JSXElement<'a> {
   let node = bump.alloc(JSXElement {
     inner,
+    span: inner.span(),
     parent,
     opening: unsafe { MaybeUninit::uninit().assume_init() },
     children: Vec::with_capacity(inner.children.len()),
@@ -10524,6 +10636,7 @@ pub struct JSXEmptyExpr<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::JSXEmptyExpr,
+  pub span: Span,
 }
 
 impl<'a> Spanned for JSXEmptyExpr<'a> {
@@ -10573,6 +10686,7 @@ impl<'a> CastableNode<'a> for JSXEmptyExpr<'a> {
 fn get_view_for_jsxempty_expr<'a>(inner: &'a swc_ast::JSXEmptyExpr, parent: Node<'a>, bump: &'a Bump) -> &'a JSXEmptyExpr<'a> {
   let node = bump.alloc(JSXEmptyExpr {
     inner,
+    span: inner.span(),
     parent,
   });
   node
@@ -10585,6 +10699,7 @@ pub struct JSXExprContainer<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::JSXExprContainer,
+  pub span: Span,
   pub expr: JSXExpr<'a>,
 }
 
@@ -10637,6 +10752,7 @@ impl<'a> CastableNode<'a> for JSXExprContainer<'a> {
 fn get_view_for_jsxexpr_container<'a>(inner: &'a swc_ast::JSXExprContainer, parent: Node<'a>, bump: &'a Bump) -> &'a JSXExprContainer<'a> {
   let node = bump.alloc(JSXExprContainer {
     inner,
+    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -10652,6 +10768,7 @@ pub struct JSXFragment<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::JSXFragment,
+  pub span: Span,
   pub opening: &'a JSXOpeningFragment<'a>,
   pub children: Vec<JSXElementChild<'a>>,
   pub closing: &'a JSXClosingFragment<'a>,
@@ -10710,6 +10827,7 @@ impl<'a> CastableNode<'a> for JSXFragment<'a> {
 fn get_view_for_jsxfragment<'a>(inner: &'a swc_ast::JSXFragment, parent: Node<'a>, bump: &'a Bump) -> &'a JSXFragment<'a> {
   let node = bump.alloc(JSXFragment {
     inner,
+    span: inner.span(),
     parent,
     opening: unsafe { MaybeUninit::uninit().assume_init() },
     children: Vec::with_capacity(inner.children.len()),
@@ -10729,6 +10847,7 @@ pub struct JSXMemberExpr<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::JSXMemberExpr,
+  pub span: Span,
   pub obj: JSXObject<'a>,
   pub prop: &'a Ident<'a>,
 }
@@ -10783,6 +10902,7 @@ impl<'a> CastableNode<'a> for JSXMemberExpr<'a> {
 fn get_view_for_jsxmember_expr<'a>(inner: &'a swc_ast::JSXMemberExpr, parent: Node<'a>, bump: &'a Bump) -> &'a JSXMemberExpr<'a> {
   let node = bump.alloc(JSXMemberExpr {
     inner,
+    span: inner.span(),
     parent,
     obj: unsafe { MaybeUninit::uninit().assume_init() },
     prop: unsafe { MaybeUninit::uninit().assume_init() },
@@ -10801,6 +10921,7 @@ pub struct JSXNamespacedName<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::JSXNamespacedName,
+  pub span: Span,
   pub ns: &'a Ident<'a>,
   pub name: &'a Ident<'a>,
 }
@@ -10855,6 +10976,7 @@ impl<'a> CastableNode<'a> for JSXNamespacedName<'a> {
 fn get_view_for_jsxnamespaced_name<'a>(inner: &'a swc_ast::JSXNamespacedName, parent: Node<'a>, bump: &'a Bump) -> &'a JSXNamespacedName<'a> {
   let node = bump.alloc(JSXNamespacedName {
     inner,
+    span: inner.span(),
     parent,
     ns: unsafe { MaybeUninit::uninit().assume_init() },
     name: unsafe { MaybeUninit::uninit().assume_init() },
@@ -10872,6 +10994,7 @@ pub struct JSXOpeningElement<'a> {
   pub parent: &'a JSXElement<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::JSXOpeningElement,
+  pub span: Span,
   pub name: JSXElementName<'a>,
   pub attrs: Vec<JSXAttrOrSpread<'a>>,
   /// Note: This field's name is different from one from babel because it is
@@ -10935,6 +11058,7 @@ impl<'a> CastableNode<'a> for JSXOpeningElement<'a> {
 fn get_view_for_jsxopening_element<'a>(inner: &'a swc_ast::JSXOpeningElement, parent: Node<'a>, bump: &'a Bump) -> &'a JSXOpeningElement<'a> {
   let node = bump.alloc(JSXOpeningElement {
     inner,
+    span: inner.span(),
     parent: parent.expect::<JSXElement>(),
     name: unsafe { MaybeUninit::uninit().assume_init() },
     attrs: Vec::with_capacity(inner.attrs.len()),
@@ -10958,6 +11082,7 @@ pub struct JSXOpeningFragment<'a> {
   pub parent: &'a JSXFragment<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::JSXOpeningFragment,
+  pub span: Span,
 }
 
 impl<'a> Spanned for JSXOpeningFragment<'a> {
@@ -11007,6 +11132,7 @@ impl<'a> CastableNode<'a> for JSXOpeningFragment<'a> {
 fn get_view_for_jsxopening_fragment<'a>(inner: &'a swc_ast::JSXOpeningFragment, parent: Node<'a>, bump: &'a Bump) -> &'a JSXOpeningFragment<'a> {
   let node = bump.alloc(JSXOpeningFragment {
     inner,
+    span: inner.span(),
     parent: parent.expect::<JSXFragment>(),
   });
   node
@@ -11019,6 +11145,7 @@ pub struct JSXSpreadChild<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::JSXSpreadChild,
+  pub span: Span,
   pub expr: Expr<'a>,
 }
 
@@ -11071,6 +11198,7 @@ impl<'a> CastableNode<'a> for JSXSpreadChild<'a> {
 fn get_view_for_jsxspread_child<'a>(inner: &'a swc_ast::JSXSpreadChild, parent: Node<'a>, bump: &'a Bump) -> &'a JSXSpreadChild<'a> {
   let node = bump.alloc(JSXSpreadChild {
     inner,
+    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -11086,6 +11214,7 @@ pub struct JSXText<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::JSXText,
+  pub span: Span,
   pub value: &'a swc_atoms::JsWord,
   pub raw: &'a swc_atoms::JsWord,
 }
@@ -11137,6 +11266,7 @@ impl<'a> CastableNode<'a> for JSXText<'a> {
 fn get_view_for_jsxtext<'a>(inner: &'a swc_ast::JSXText, parent: Node<'a>, bump: &'a Bump) -> &'a JSXText<'a> {
   let node = bump.alloc(JSXText {
     inner,
+    span: inner.span(),
     parent,
     value: &inner.value,
     raw: &inner.raw,
@@ -11152,6 +11282,7 @@ pub struct KeyValuePatProp<'a> {
   pub parent: &'a ObjectPat<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::KeyValuePatProp,
+  pub span: Span,
   pub key: PropName<'a>,
   pub value: Pat<'a>,
 }
@@ -11206,6 +11337,7 @@ impl<'a> CastableNode<'a> for KeyValuePatProp<'a> {
 fn get_view_for_key_value_pat_prop<'a>(inner: &'a swc_ast::KeyValuePatProp, parent: Node<'a>, bump: &'a Bump) -> &'a KeyValuePatProp<'a> {
   let node = bump.alloc(KeyValuePatProp {
     inner,
+    span: inner.span(),
     parent: parent.expect::<ObjectPat>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     value: unsafe { MaybeUninit::uninit().assume_init() },
@@ -11223,6 +11355,7 @@ pub struct KeyValueProp<'a> {
   pub parent: &'a ObjectLit<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::KeyValueProp,
+  pub span: Span,
   pub key: PropName<'a>,
   pub value: Expr<'a>,
 }
@@ -11277,6 +11410,7 @@ impl<'a> CastableNode<'a> for KeyValueProp<'a> {
 fn get_view_for_key_value_prop<'a>(inner: &'a swc_ast::KeyValueProp, parent: Node<'a>, bump: &'a Bump) -> &'a KeyValueProp<'a> {
   let node = bump.alloc(KeyValueProp {
     inner,
+    span: inner.span(),
     parent: parent.expect::<ObjectLit>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     value: unsafe { MaybeUninit::uninit().assume_init() },
@@ -11294,6 +11428,7 @@ pub struct LabeledStmt<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::LabeledStmt,
+  pub span: Span,
   pub label: &'a Ident<'a>,
   pub body: Stmt<'a>,
 }
@@ -11348,6 +11483,7 @@ impl<'a> CastableNode<'a> for LabeledStmt<'a> {
 fn get_view_for_labeled_stmt<'a>(inner: &'a swc_ast::LabeledStmt, parent: Node<'a>, bump: &'a Bump) -> &'a LabeledStmt<'a> {
   let node = bump.alloc(LabeledStmt {
     inner,
+    span: inner.span(),
     parent,
     label: unsafe { MaybeUninit::uninit().assume_init() },
     body: unsafe { MaybeUninit::uninit().assume_init() },
@@ -11365,6 +11501,7 @@ pub struct MemberExpr<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::MemberExpr,
+  pub span: Span,
   pub obj: ExprOrSuper<'a>,
   pub prop: Expr<'a>,
   pub computed: bool,
@@ -11420,6 +11557,7 @@ impl<'a> CastableNode<'a> for MemberExpr<'a> {
 fn get_view_for_member_expr<'a>(inner: &'a swc_ast::MemberExpr, parent: Node<'a>, bump: &'a Bump) -> &'a MemberExpr<'a> {
   let node = bump.alloc(MemberExpr {
     inner,
+    span: inner.span(),
     parent,
     obj: unsafe { MaybeUninit::uninit().assume_init() },
     prop: unsafe { MaybeUninit::uninit().assume_init() },
@@ -11438,6 +11576,7 @@ pub struct MetaPropExpr<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::MetaPropExpr,
+  pub span: Span,
   pub meta: &'a Ident<'a>,
   pub prop: &'a Ident<'a>,
 }
@@ -11492,6 +11631,7 @@ impl<'a> CastableNode<'a> for MetaPropExpr<'a> {
 fn get_view_for_meta_prop_expr<'a>(inner: &'a swc_ast::MetaPropExpr, parent: Node<'a>, bump: &'a Bump) -> &'a MetaPropExpr<'a> {
   let node = bump.alloc(MetaPropExpr {
     inner,
+    span: inner.span(),
     parent,
     meta: unsafe { MaybeUninit::uninit().assume_init() },
     prop: unsafe { MaybeUninit::uninit().assume_init() },
@@ -11509,6 +11649,7 @@ pub struct MethodProp<'a> {
   pub parent: &'a ObjectLit<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::MethodProp,
+  pub span: Span,
   pub key: PropName<'a>,
   pub function: &'a Function<'a>,
 }
@@ -11563,6 +11704,7 @@ impl<'a> CastableNode<'a> for MethodProp<'a> {
 fn get_view_for_method_prop<'a>(inner: &'a swc_ast::MethodProp, parent: Node<'a>, bump: &'a Bump) -> &'a MethodProp<'a> {
   let node = bump.alloc(MethodProp {
     inner,
+    span: inner.span(),
     parent: parent.expect::<ObjectLit>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     function: unsafe { MaybeUninit::uninit().assume_init() },
@@ -11584,6 +11726,7 @@ pub struct Module<'a> {
   pub comments: Option<&'a CommentContainer<'a>>,
   #[serde(skip)]
   pub inner: &'a swc_ast::Module,
+  pub span: Span,
   pub body: Vec<ModuleItem<'a>>,
   pub shebang: &'a Option<swc_atoms::JsWord>,
 }
@@ -11646,6 +11789,7 @@ fn get_view_for_module<'a>(source_file_info: &'a ModuleInfo<'a>, bump: &'a Bump)
   )));
   let node = bump.alloc(Module {
     inner,
+    span: inner.span(),
     source_file: source_file_info.source_file,
     tokens,
     comments,
@@ -11666,6 +11810,7 @@ pub struct NamedExport<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::NamedExport,
+  pub span: Span,
   pub specifiers: Vec<ExportSpecifier<'a>>,
   pub src: Option<&'a Str<'a>>,
   pub asserts: Option<&'a ObjectLit<'a>>,
@@ -11729,6 +11874,7 @@ impl<'a> CastableNode<'a> for NamedExport<'a> {
 fn get_view_for_named_export<'a>(inner: &'a swc_ast::NamedExport, parent: Node<'a>, bump: &'a Bump) -> &'a NamedExport<'a> {
   let node = bump.alloc(NamedExport {
     inner,
+    span: inner.span(),
     parent,
     specifiers: Vec::with_capacity(inner.specifiers.len()),
     src: None,
@@ -11755,6 +11901,7 @@ pub struct NewExpr<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::NewExpr,
+  pub span: Span,
   pub callee: Expr<'a>,
   pub args: Option<Vec<&'a ExprOrSpread<'a>>>,
   pub type_args: Option<&'a TsTypeParamInstantiation<'a>>,
@@ -11817,6 +11964,7 @@ impl<'a> CastableNode<'a> for NewExpr<'a> {
 fn get_view_for_new_expr<'a>(inner: &'a swc_ast::NewExpr, parent: Node<'a>, bump: &'a Bump) -> &'a NewExpr<'a> {
   let node = bump.alloc(NewExpr {
     inner,
+    span: inner.span(),
     parent,
     callee: unsafe { MaybeUninit::uninit().assume_init() },
     args: None,
@@ -11842,6 +11990,7 @@ pub struct Null<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::Null,
+  pub span: Span,
 }
 
 impl<'a> Spanned for Null<'a> {
@@ -11891,6 +12040,7 @@ impl<'a> CastableNode<'a> for Null<'a> {
 fn get_view_for_null<'a>(inner: &'a swc_ast::Null, parent: Node<'a>, bump: &'a Bump) -> &'a Null<'a> {
   let node = bump.alloc(Null {
     inner,
+    span: inner.span(),
     parent,
   });
   node
@@ -11903,6 +12053,7 @@ pub struct Number<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::Number,
+  pub span: Span,
   /// **Note**: This should not be `NaN`. Use [crate::Ident] to represent NaN.
   ///
   /// If you store `NaN` in this field, a hash map will behave strangely.
@@ -11956,6 +12107,7 @@ impl<'a> CastableNode<'a> for Number<'a> {
 fn get_view_for_number<'a>(inner: &'a swc_ast::Number, parent: Node<'a>, bump: &'a Bump) -> &'a Number<'a> {
   let node = bump.alloc(Number {
     inner,
+    span: inner.span(),
     parent,
     value: inner.value,
   });
@@ -11970,6 +12122,7 @@ pub struct ObjectLit<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ObjectLit,
+  pub span: Span,
   pub props: Vec<PropOrSpread<'a>>,
 }
 
@@ -12024,6 +12177,7 @@ impl<'a> CastableNode<'a> for ObjectLit<'a> {
 fn get_view_for_object_lit<'a>(inner: &'a swc_ast::ObjectLit, parent: Node<'a>, bump: &'a Bump) -> &'a ObjectLit<'a> {
   let node = bump.alloc(ObjectLit {
     inner,
+    span: inner.span(),
     parent,
     props: Vec::with_capacity(inner.props.len()),
   });
@@ -12039,6 +12193,7 @@ pub struct ObjectPat<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ObjectPat,
+  pub span: Span,
   pub props: Vec<ObjectPatProp<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
   /// Only in an ambient context
@@ -12099,6 +12254,7 @@ impl<'a> CastableNode<'a> for ObjectPat<'a> {
 fn get_view_for_object_pat<'a>(inner: &'a swc_ast::ObjectPat, parent: Node<'a>, bump: &'a Bump) -> &'a ObjectPat<'a> {
   let node = bump.alloc(ObjectPat {
     inner,
+    span: inner.span(),
     parent,
     props: Vec::with_capacity(inner.props.len()),
     type_ann: None,
@@ -12120,6 +12276,7 @@ pub struct OptChainExpr<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::OptChainExpr,
+  pub span: Span,
   pub expr: Expr<'a>,
   pub question_dot_token: &'a swc_common::Span,
 }
@@ -12173,6 +12330,7 @@ impl<'a> CastableNode<'a> for OptChainExpr<'a> {
 fn get_view_for_opt_chain_expr<'a>(inner: &'a swc_ast::OptChainExpr, parent: Node<'a>, bump: &'a Bump) -> &'a OptChainExpr<'a> {
   let node = bump.alloc(OptChainExpr {
     inner,
+    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
     question_dot_token: &inner.question_dot_token,
@@ -12189,6 +12347,7 @@ pub struct Param<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::Param,
+  pub span: Span,
   pub decorators: Vec<&'a Decorator<'a>>,
   pub pat: Pat<'a>,
 }
@@ -12245,6 +12404,7 @@ impl<'a> CastableNode<'a> for Param<'a> {
 fn get_view_for_param<'a>(inner: &'a swc_ast::Param, parent: Node<'a>, bump: &'a Bump) -> &'a Param<'a> {
   let node = bump.alloc(Param {
     inner,
+    span: inner.span(),
     parent,
     decorators: Vec::with_capacity(inner.decorators.len()),
     pat: unsafe { MaybeUninit::uninit().assume_init() },
@@ -12262,6 +12422,7 @@ pub struct ParenExpr<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ParenExpr,
+  pub span: Span,
   pub expr: Expr<'a>,
 }
 
@@ -12314,6 +12475,7 @@ impl<'a> CastableNode<'a> for ParenExpr<'a> {
 fn get_view_for_paren_expr<'a>(inner: &'a swc_ast::ParenExpr, parent: Node<'a>, bump: &'a Bump) -> &'a ParenExpr<'a> {
   let node = bump.alloc(ParenExpr {
     inner,
+    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -12329,6 +12491,7 @@ pub struct PrivateMethod<'a> {
   pub parent: &'a Class<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::PrivateMethod,
+  pub span: Span,
   pub key: &'a PrivateName<'a>,
   pub function: &'a Function<'a>,
   pub kind: MethodKind,
@@ -12390,6 +12553,7 @@ impl<'a> CastableNode<'a> for PrivateMethod<'a> {
 fn get_view_for_private_method<'a>(inner: &'a swc_ast::PrivateMethod, parent: Node<'a>, bump: &'a Bump) -> &'a PrivateMethod<'a> {
   let node = bump.alloc(PrivateMethod {
     inner,
+    span: inner.span(),
     parent: parent.expect::<Class>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     function: unsafe { MaybeUninit::uninit().assume_init() },
@@ -12412,6 +12576,7 @@ pub struct PrivateName<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::PrivateName,
+  pub span: Span,
   pub id: &'a Ident<'a>,
 }
 
@@ -12464,6 +12629,7 @@ impl<'a> CastableNode<'a> for PrivateName<'a> {
 fn get_view_for_private_name<'a>(inner: &'a swc_ast::PrivateName, parent: Node<'a>, bump: &'a Bump) -> &'a PrivateName<'a> {
   let node = bump.alloc(PrivateName {
     inner,
+    span: inner.span(),
     parent,
     id: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -12479,6 +12645,7 @@ pub struct PrivateProp<'a> {
   pub parent: &'a Class<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::PrivateProp,
+  pub span: Span,
   pub key: &'a PrivateName<'a>,
   pub value: Option<Expr<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
@@ -12552,6 +12719,7 @@ impl<'a> CastableNode<'a> for PrivateProp<'a> {
 fn get_view_for_private_prop<'a>(inner: &'a swc_ast::PrivateProp, parent: Node<'a>, bump: &'a Bump) -> &'a PrivateProp<'a> {
   let node = bump.alloc(PrivateProp {
     inner,
+    span: inner.span(),
     parent: parent.expect::<Class>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     value: None,
@@ -12586,6 +12754,7 @@ pub struct Regex<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::Regex,
+  pub span: Span,
   pub exp: &'a swc_atoms::JsWord,
   pub flags: &'a swc_atoms::JsWord,
 }
@@ -12637,6 +12806,7 @@ impl<'a> CastableNode<'a> for Regex<'a> {
 fn get_view_for_regex<'a>(inner: &'a swc_ast::Regex, parent: Node<'a>, bump: &'a Bump) -> &'a Regex<'a> {
   let node = bump.alloc(Regex {
     inner,
+    span: inner.span(),
     parent,
     exp: &inner.exp,
     flags: &inner.flags,
@@ -12652,6 +12822,7 @@ pub struct RestPat<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::RestPat,
+  pub span: Span,
   pub arg: Pat<'a>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
   pub dot3_token: &'a swc_common::Span,
@@ -12709,6 +12880,7 @@ impl<'a> CastableNode<'a> for RestPat<'a> {
 fn get_view_for_rest_pat<'a>(inner: &'a swc_ast::RestPat, parent: Node<'a>, bump: &'a Bump) -> &'a RestPat<'a> {
   let node = bump.alloc(RestPat {
     inner,
+    span: inner.span(),
     parent,
     arg: unsafe { MaybeUninit::uninit().assume_init() },
     type_ann: None,
@@ -12730,6 +12902,7 @@ pub struct ReturnStmt<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ReturnStmt,
+  pub span: Span,
   pub arg: Option<Expr<'a>>,
 }
 
@@ -12784,6 +12957,7 @@ impl<'a> CastableNode<'a> for ReturnStmt<'a> {
 fn get_view_for_return_stmt<'a>(inner: &'a swc_ast::ReturnStmt, parent: Node<'a>, bump: &'a Bump) -> &'a ReturnStmt<'a> {
   let node = bump.alloc(ReturnStmt {
     inner,
+    span: inner.span(),
     parent,
     arg: None,
   });
@@ -12806,6 +12980,7 @@ pub struct Script<'a> {
   pub comments: Option<&'a CommentContainer<'a>>,
   #[serde(skip)]
   pub inner: &'a swc_ast::Script,
+  pub span: Span,
   pub body: Vec<Stmt<'a>>,
   pub shebang: &'a Option<swc_atoms::JsWord>,
 }
@@ -12868,6 +13043,7 @@ fn get_view_for_script<'a>(source_file_info: &'a ScriptInfo<'a>, bump: &'a Bump)
   )));
   let node = bump.alloc(Script {
     inner,
+    span: inner.span(),
     source_file: source_file_info.source_file,
     tokens,
     comments,
@@ -12886,6 +13062,7 @@ pub struct SeqExpr<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::SeqExpr,
+  pub span: Span,
   pub exprs: Vec<Expr<'a>>,
 }
 
@@ -12940,6 +13117,7 @@ impl<'a> CastableNode<'a> for SeqExpr<'a> {
 fn get_view_for_seq_expr<'a>(inner: &'a swc_ast::SeqExpr, parent: Node<'a>, bump: &'a Bump) -> &'a SeqExpr<'a> {
   let node = bump.alloc(SeqExpr {
     inner,
+    span: inner.span(),
     parent,
     exprs: Vec::with_capacity(inner.exprs.len()),
   });
@@ -12955,6 +13133,7 @@ pub struct SetterProp<'a> {
   pub parent: &'a ObjectLit<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::SetterProp,
+  pub span: Span,
   pub key: PropName<'a>,
   pub param: Pat<'a>,
   pub body: Option<&'a BlockStmt<'a>>,
@@ -13013,6 +13192,7 @@ impl<'a> CastableNode<'a> for SetterProp<'a> {
 fn get_view_for_setter_prop<'a>(inner: &'a swc_ast::SetterProp, parent: Node<'a>, bump: &'a Bump) -> &'a SetterProp<'a> {
   let node = bump.alloc(SetterProp {
     inner,
+    span: inner.span(),
     parent: parent.expect::<ObjectLit>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     param: unsafe { MaybeUninit::uninit().assume_init() },
@@ -13035,6 +13215,7 @@ pub struct SpreadElement<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::SpreadElement,
+  pub span: Span,
   pub expr: Expr<'a>,
   pub dot3_token: &'a swc_common::Span,
 }
@@ -13088,6 +13269,7 @@ impl<'a> CastableNode<'a> for SpreadElement<'a> {
 fn get_view_for_spread_element<'a>(inner: &'a swc_ast::SpreadElement, parent: Node<'a>, bump: &'a Bump) -> &'a SpreadElement<'a> {
   let node = bump.alloc(SpreadElement {
     inner,
+    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
     dot3_token: &inner.dot3_token,
@@ -13104,6 +13286,7 @@ pub struct Str<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::Str,
+  pub span: Span,
   pub value: &'a swc_atoms::JsWord,
   /// This includes line escape.
   pub has_escape: bool,
@@ -13157,6 +13340,7 @@ impl<'a> CastableNode<'a> for Str<'a> {
 fn get_view_for_str<'a>(inner: &'a swc_ast::Str, parent: Node<'a>, bump: &'a Bump) -> &'a Str<'a> {
   let node = bump.alloc(Str {
     inner,
+    span: inner.span(),
     parent,
     value: &inner.value,
     has_escape: inner.has_escape,
@@ -13172,6 +13356,7 @@ pub struct Super<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::Super,
+  pub span: Span,
 }
 
 impl<'a> Spanned for Super<'a> {
@@ -13221,6 +13406,7 @@ impl<'a> CastableNode<'a> for Super<'a> {
 fn get_view_for_super<'a>(inner: &'a swc_ast::Super, parent: Node<'a>, bump: &'a Bump) -> &'a Super<'a> {
   let node = bump.alloc(Super {
     inner,
+    span: inner.span(),
     parent,
   });
   node
@@ -13233,6 +13419,7 @@ pub struct SwitchCase<'a> {
   pub parent: &'a SwitchStmt<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::SwitchCase,
+  pub span: Span,
   /// None for `default:`
   pub test: Option<Expr<'a>>,
   pub cons: Vec<Stmt<'a>>,
@@ -13292,6 +13479,7 @@ impl<'a> CastableNode<'a> for SwitchCase<'a> {
 fn get_view_for_switch_case<'a>(inner: &'a swc_ast::SwitchCase, parent: Node<'a>, bump: &'a Bump) -> &'a SwitchCase<'a> {
   let node = bump.alloc(SwitchCase {
     inner,
+    span: inner.span(),
     parent: parent.expect::<SwitchStmt>(),
     test: None,
     cons: Vec::with_capacity(inner.cons.len()),
@@ -13312,6 +13500,7 @@ pub struct SwitchStmt<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::SwitchStmt,
+  pub span: Span,
   pub discriminant: Expr<'a>,
   pub cases: Vec<&'a SwitchCase<'a>>,
 }
@@ -13368,6 +13557,7 @@ impl<'a> CastableNode<'a> for SwitchStmt<'a> {
 fn get_view_for_switch_stmt<'a>(inner: &'a swc_ast::SwitchStmt, parent: Node<'a>, bump: &'a Bump) -> &'a SwitchStmt<'a> {
   let node = bump.alloc(SwitchStmt {
     inner,
+    span: inner.span(),
     parent,
     discriminant: unsafe { MaybeUninit::uninit().assume_init() },
     cases: Vec::with_capacity(inner.cases.len()),
@@ -13385,6 +13575,7 @@ pub struct TaggedTpl<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TaggedTpl,
+  pub span: Span,
   pub tag: Expr<'a>,
   pub exprs: Vec<Expr<'a>>,
   pub quasis: Vec<&'a TplElement<'a>>,
@@ -13449,6 +13640,7 @@ impl<'a> CastableNode<'a> for TaggedTpl<'a> {
 fn get_view_for_tagged_tpl<'a>(inner: &'a swc_ast::TaggedTpl, parent: Node<'a>, bump: &'a Bump) -> &'a TaggedTpl<'a> {
   let node = bump.alloc(TaggedTpl {
     inner,
+    span: inner.span(),
     parent,
     tag: unsafe { MaybeUninit::uninit().assume_init() },
     exprs: Vec::with_capacity(inner.exprs.len()),
@@ -13473,6 +13665,7 @@ pub struct ThisExpr<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ThisExpr,
+  pub span: Span,
 }
 
 impl<'a> Spanned for ThisExpr<'a> {
@@ -13522,6 +13715,7 @@ impl<'a> CastableNode<'a> for ThisExpr<'a> {
 fn get_view_for_this_expr<'a>(inner: &'a swc_ast::ThisExpr, parent: Node<'a>, bump: &'a Bump) -> &'a ThisExpr<'a> {
   let node = bump.alloc(ThisExpr {
     inner,
+    span: inner.span(),
     parent,
   });
   node
@@ -13534,6 +13728,7 @@ pub struct ThrowStmt<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::ThrowStmt,
+  pub span: Span,
   pub arg: Expr<'a>,
 }
 
@@ -13586,6 +13781,7 @@ impl<'a> CastableNode<'a> for ThrowStmt<'a> {
 fn get_view_for_throw_stmt<'a>(inner: &'a swc_ast::ThrowStmt, parent: Node<'a>, bump: &'a Bump) -> &'a ThrowStmt<'a> {
   let node = bump.alloc(ThrowStmt {
     inner,
+    span: inner.span(),
     parent,
     arg: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -13601,6 +13797,7 @@ pub struct Tpl<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::Tpl,
+  pub span: Span,
   pub exprs: Vec<Expr<'a>>,
   pub quasis: Vec<&'a TplElement<'a>>,
 }
@@ -13659,6 +13856,7 @@ impl<'a> CastableNode<'a> for Tpl<'a> {
 fn get_view_for_tpl<'a>(inner: &'a swc_ast::Tpl, parent: Node<'a>, bump: &'a Bump) -> &'a Tpl<'a> {
   let node = bump.alloc(Tpl {
     inner,
+    span: inner.span(),
     parent,
     exprs: Vec::with_capacity(inner.exprs.len()),
     quasis: Vec::with_capacity(inner.quasis.len()),
@@ -13676,6 +13874,7 @@ pub struct TplElement<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TplElement,
+  pub span: Span,
   pub cooked: Option<&'a Str<'a>>,
   pub raw: &'a Str<'a>,
   pub tail: bool,
@@ -13733,6 +13932,7 @@ impl<'a> CastableNode<'a> for TplElement<'a> {
 fn get_view_for_tpl_element<'a>(inner: &'a swc_ast::TplElement, parent: Node<'a>, bump: &'a Bump) -> &'a TplElement<'a> {
   let node = bump.alloc(TplElement {
     inner,
+    span: inner.span(),
     parent,
     cooked: None,
     raw: unsafe { MaybeUninit::uninit().assume_init() },
@@ -13754,6 +13954,7 @@ pub struct TryStmt<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TryStmt,
+  pub span: Span,
   pub block: &'a BlockStmt<'a>,
   pub handler: Option<&'a CatchClause<'a>>,
   pub finalizer: Option<&'a BlockStmt<'a>>,
@@ -13814,6 +14015,7 @@ impl<'a> CastableNode<'a> for TryStmt<'a> {
 fn get_view_for_try_stmt<'a>(inner: &'a swc_ast::TryStmt, parent: Node<'a>, bump: &'a Bump) -> &'a TryStmt<'a> {
   let node = bump.alloc(TryStmt {
     inner,
+    span: inner.span(),
     parent,
     block: unsafe { MaybeUninit::uninit().assume_init() },
     handler: None,
@@ -13839,6 +14041,7 @@ pub struct TsArrayType<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsArrayType,
+  pub span: Span,
   pub elem_type: TsType<'a>,
 }
 
@@ -13891,6 +14094,7 @@ impl<'a> CastableNode<'a> for TsArrayType<'a> {
 fn get_view_for_ts_array_type<'a>(inner: &'a swc_ast::TsArrayType, parent: Node<'a>, bump: &'a Bump) -> &'a TsArrayType<'a> {
   let node = bump.alloc(TsArrayType {
     inner,
+    span: inner.span(),
     parent,
     elem_type: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -13906,6 +14110,7 @@ pub struct TsAsExpr<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsAsExpr,
+  pub span: Span,
   pub expr: Expr<'a>,
   pub type_ann: TsType<'a>,
 }
@@ -13960,6 +14165,7 @@ impl<'a> CastableNode<'a> for TsAsExpr<'a> {
 fn get_view_for_ts_as_expr<'a>(inner: &'a swc_ast::TsAsExpr, parent: Node<'a>, bump: &'a Bump) -> &'a TsAsExpr<'a> {
   let node = bump.alloc(TsAsExpr {
     inner,
+    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
     type_ann: unsafe { MaybeUninit::uninit().assume_init() },
@@ -13977,6 +14183,7 @@ pub struct TsCallSignatureDecl<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsCallSignatureDecl,
+  pub span: Span,
   pub params: Vec<TsFnParam<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
@@ -14039,6 +14246,7 @@ impl<'a> CastableNode<'a> for TsCallSignatureDecl<'a> {
 fn get_view_for_ts_call_signature_decl<'a>(inner: &'a swc_ast::TsCallSignatureDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsCallSignatureDecl<'a> {
   let node = bump.alloc(TsCallSignatureDecl {
     inner,
+    span: inner.span(),
     parent,
     params: Vec::with_capacity(inner.params.len()),
     type_ann: None,
@@ -14064,6 +14272,7 @@ pub struct TsConditionalType<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsConditionalType,
+  pub span: Span,
   pub check_type: TsType<'a>,
   pub extends_type: TsType<'a>,
   pub true_type: TsType<'a>,
@@ -14122,6 +14331,7 @@ impl<'a> CastableNode<'a> for TsConditionalType<'a> {
 fn get_view_for_ts_conditional_type<'a>(inner: &'a swc_ast::TsConditionalType, parent: Node<'a>, bump: &'a Bump) -> &'a TsConditionalType<'a> {
   let node = bump.alloc(TsConditionalType {
     inner,
+    span: inner.span(),
     parent,
     check_type: unsafe { MaybeUninit::uninit().assume_init() },
     extends_type: unsafe { MaybeUninit::uninit().assume_init() },
@@ -14143,6 +14353,7 @@ pub struct TsConstAssertion<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsConstAssertion,
+  pub span: Span,
   pub expr: Expr<'a>,
 }
 
@@ -14195,6 +14406,7 @@ impl<'a> CastableNode<'a> for TsConstAssertion<'a> {
 fn get_view_for_ts_const_assertion<'a>(inner: &'a swc_ast::TsConstAssertion, parent: Node<'a>, bump: &'a Bump) -> &'a TsConstAssertion<'a> {
   let node = bump.alloc(TsConstAssertion {
     inner,
+    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -14210,6 +14422,7 @@ pub struct TsConstructSignatureDecl<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsConstructSignatureDecl,
+  pub span: Span,
   pub params: Vec<TsFnParam<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
@@ -14272,6 +14485,7 @@ impl<'a> CastableNode<'a> for TsConstructSignatureDecl<'a> {
 fn get_view_for_ts_construct_signature_decl<'a>(inner: &'a swc_ast::TsConstructSignatureDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsConstructSignatureDecl<'a> {
   let node = bump.alloc(TsConstructSignatureDecl {
     inner,
+    span: inner.span(),
     parent,
     params: Vec::with_capacity(inner.params.len()),
     type_ann: None,
@@ -14297,6 +14511,7 @@ pub struct TsConstructorType<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsConstructorType,
+  pub span: Span,
   pub params: Vec<TsFnParam<'a>>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
   pub type_ann: &'a TsTypeAnn<'a>,
@@ -14358,6 +14573,7 @@ impl<'a> CastableNode<'a> for TsConstructorType<'a> {
 fn get_view_for_ts_constructor_type<'a>(inner: &'a swc_ast::TsConstructorType, parent: Node<'a>, bump: &'a Bump) -> &'a TsConstructorType<'a> {
   let node = bump.alloc(TsConstructorType {
     inner,
+    span: inner.span(),
     parent,
     params: Vec::with_capacity(inner.params.len()),
     type_params: None,
@@ -14381,6 +14597,7 @@ pub struct TsEnumDecl<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsEnumDecl,
+  pub span: Span,
   pub id: &'a Ident<'a>,
   pub members: Vec<&'a TsEnumMember<'a>>,
   pub declare: bool,
@@ -14439,6 +14656,7 @@ impl<'a> CastableNode<'a> for TsEnumDecl<'a> {
 fn get_view_for_ts_enum_decl<'a>(inner: &'a swc_ast::TsEnumDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsEnumDecl<'a> {
   let node = bump.alloc(TsEnumDecl {
     inner,
+    span: inner.span(),
     parent,
     id: unsafe { MaybeUninit::uninit().assume_init() },
     members: Vec::with_capacity(inner.members.len()),
@@ -14458,6 +14676,7 @@ pub struct TsEnumMember<'a> {
   pub parent: &'a TsEnumDecl<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsEnumMember,
+  pub span: Span,
   pub id: TsEnumMemberId<'a>,
   pub init: Option<Expr<'a>>,
 }
@@ -14514,6 +14733,7 @@ impl<'a> CastableNode<'a> for TsEnumMember<'a> {
 fn get_view_for_ts_enum_member<'a>(inner: &'a swc_ast::TsEnumMember, parent: Node<'a>, bump: &'a Bump) -> &'a TsEnumMember<'a> {
   let node = bump.alloc(TsEnumMember {
     inner,
+    span: inner.span(),
     parent: parent.expect::<TsEnumDecl>(),
     id: unsafe { MaybeUninit::uninit().assume_init() },
     init: None,
@@ -14537,6 +14757,7 @@ pub struct TsExportAssignment<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsExportAssignment,
+  pub span: Span,
   pub expr: Expr<'a>,
 }
 
@@ -14589,6 +14810,7 @@ impl<'a> CastableNode<'a> for TsExportAssignment<'a> {
 fn get_view_for_ts_export_assignment<'a>(inner: &'a swc_ast::TsExportAssignment, parent: Node<'a>, bump: &'a Bump) -> &'a TsExportAssignment<'a> {
   let node = bump.alloc(TsExportAssignment {
     inner,
+    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -14604,6 +14826,7 @@ pub struct TsExprWithTypeArgs<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsExprWithTypeArgs,
+  pub span: Span,
   pub expr: TsEntityName<'a>,
   pub type_args: Option<&'a TsTypeParamInstantiation<'a>>,
 }
@@ -14660,6 +14883,7 @@ impl<'a> CastableNode<'a> for TsExprWithTypeArgs<'a> {
 fn get_view_for_ts_expr_with_type_args<'a>(inner: &'a swc_ast::TsExprWithTypeArgs, parent: Node<'a>, bump: &'a Bump) -> &'a TsExprWithTypeArgs<'a> {
   let node = bump.alloc(TsExprWithTypeArgs {
     inner,
+    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
     type_args: None,
@@ -14680,6 +14904,7 @@ pub struct TsExternalModuleRef<'a> {
   pub parent: &'a TsImportEqualsDecl<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsExternalModuleRef,
+  pub span: Span,
   pub expr: &'a Str<'a>,
 }
 
@@ -14732,6 +14957,7 @@ impl<'a> CastableNode<'a> for TsExternalModuleRef<'a> {
 fn get_view_for_ts_external_module_ref<'a>(inner: &'a swc_ast::TsExternalModuleRef, parent: Node<'a>, bump: &'a Bump) -> &'a TsExternalModuleRef<'a> {
   let node = bump.alloc(TsExternalModuleRef {
     inner,
+    span: inner.span(),
     parent: parent.expect::<TsImportEqualsDecl>(),
     expr: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -14747,6 +14973,7 @@ pub struct TsFnType<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsFnType,
+  pub span: Span,
   pub params: Vec<TsFnParam<'a>>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
   pub type_ann: &'a TsTypeAnn<'a>,
@@ -14807,6 +15034,7 @@ impl<'a> CastableNode<'a> for TsFnType<'a> {
 fn get_view_for_ts_fn_type<'a>(inner: &'a swc_ast::TsFnType, parent: Node<'a>, bump: &'a Bump) -> &'a TsFnType<'a> {
   let node = bump.alloc(TsFnType {
     inner,
+    span: inner.span(),
     parent,
     params: Vec::with_capacity(inner.params.len()),
     type_params: None,
@@ -14829,6 +15057,7 @@ pub struct TsImportEqualsDecl<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsImportEqualsDecl,
+  pub span: Span,
   pub id: &'a Ident<'a>,
   pub module_ref: TsModuleRef<'a>,
   pub declare: bool,
@@ -14885,6 +15114,7 @@ impl<'a> CastableNode<'a> for TsImportEqualsDecl<'a> {
 fn get_view_for_ts_import_equals_decl<'a>(inner: &'a swc_ast::TsImportEqualsDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsImportEqualsDecl<'a> {
   let node = bump.alloc(TsImportEqualsDecl {
     inner,
+    span: inner.span(),
     parent,
     id: unsafe { MaybeUninit::uninit().assume_init() },
     module_ref: unsafe { MaybeUninit::uninit().assume_init() },
@@ -14904,6 +15134,7 @@ pub struct TsImportType<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsImportType,
+  pub span: Span,
   pub arg: &'a Str<'a>,
   pub qualifier: Option<TsEntityName<'a>>,
   pub type_args: Option<&'a TsTypeParamInstantiation<'a>>,
@@ -14964,6 +15195,7 @@ impl<'a> CastableNode<'a> for TsImportType<'a> {
 fn get_view_for_ts_import_type<'a>(inner: &'a swc_ast::TsImportType, parent: Node<'a>, bump: &'a Bump) -> &'a TsImportType<'a> {
   let node = bump.alloc(TsImportType {
     inner,
+    span: inner.span(),
     parent,
     arg: unsafe { MaybeUninit::uninit().assume_init() },
     qualifier: None,
@@ -14989,6 +15221,7 @@ pub struct TsIndexSignature<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsIndexSignature,
+  pub span: Span,
   pub params: Vec<TsFnParam<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
   pub readonly: bool,
@@ -15048,6 +15281,7 @@ impl<'a> CastableNode<'a> for TsIndexSignature<'a> {
 fn get_view_for_ts_index_signature<'a>(inner: &'a swc_ast::TsIndexSignature, parent: Node<'a>, bump: &'a Bump) -> &'a TsIndexSignature<'a> {
   let node = bump.alloc(TsIndexSignature {
     inner,
+    span: inner.span(),
     parent,
     params: Vec::with_capacity(inner.params.len()),
     type_ann: None,
@@ -15069,6 +15303,7 @@ pub struct TsIndexedAccessType<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsIndexedAccessType,
+  pub span: Span,
   pub obj_type: TsType<'a>,
   pub index_type: TsType<'a>,
   pub readonly: bool,
@@ -15124,6 +15359,7 @@ impl<'a> CastableNode<'a> for TsIndexedAccessType<'a> {
 fn get_view_for_ts_indexed_access_type<'a>(inner: &'a swc_ast::TsIndexedAccessType, parent: Node<'a>, bump: &'a Bump) -> &'a TsIndexedAccessType<'a> {
   let node = bump.alloc(TsIndexedAccessType {
     inner,
+    span: inner.span(),
     parent,
     obj_type: unsafe { MaybeUninit::uninit().assume_init() },
     index_type: unsafe { MaybeUninit::uninit().assume_init() },
@@ -15142,6 +15378,7 @@ pub struct TsInferType<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsInferType,
+  pub span: Span,
   pub type_param: &'a TsTypeParam<'a>,
 }
 
@@ -15194,6 +15431,7 @@ impl<'a> CastableNode<'a> for TsInferType<'a> {
 fn get_view_for_ts_infer_type<'a>(inner: &'a swc_ast::TsInferType, parent: Node<'a>, bump: &'a Bump) -> &'a TsInferType<'a> {
   let node = bump.alloc(TsInferType {
     inner,
+    span: inner.span(),
     parent,
     type_param: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -15209,6 +15447,7 @@ pub struct TsInterfaceBody<'a> {
   pub parent: &'a TsInterfaceDecl<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsInterfaceBody,
+  pub span: Span,
   pub body: Vec<TsTypeElement<'a>>,
 }
 
@@ -15263,6 +15502,7 @@ impl<'a> CastableNode<'a> for TsInterfaceBody<'a> {
 fn get_view_for_ts_interface_body<'a>(inner: &'a swc_ast::TsInterfaceBody, parent: Node<'a>, bump: &'a Bump) -> &'a TsInterfaceBody<'a> {
   let node = bump.alloc(TsInterfaceBody {
     inner,
+    span: inner.span(),
     parent: parent.expect::<TsInterfaceDecl>(),
     body: Vec::with_capacity(inner.body.len()),
   });
@@ -15278,6 +15518,7 @@ pub struct TsInterfaceDecl<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsInterfaceDecl,
+  pub span: Span,
   pub id: &'a Ident<'a>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
   pub extends: Vec<&'a TsExprWithTypeArgs<'a>>,
@@ -15341,6 +15582,7 @@ impl<'a> CastableNode<'a> for TsInterfaceDecl<'a> {
 fn get_view_for_ts_interface_decl<'a>(inner: &'a swc_ast::TsInterfaceDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsInterfaceDecl<'a> {
   let node = bump.alloc(TsInterfaceDecl {
     inner,
+    span: inner.span(),
     parent,
     id: unsafe { MaybeUninit::uninit().assume_init() },
     type_params: None,
@@ -15366,6 +15608,7 @@ pub struct TsIntersectionType<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsIntersectionType,
+  pub span: Span,
   pub types: Vec<TsType<'a>>,
 }
 
@@ -15420,6 +15663,7 @@ impl<'a> CastableNode<'a> for TsIntersectionType<'a> {
 fn get_view_for_ts_intersection_type<'a>(inner: &'a swc_ast::TsIntersectionType, parent: Node<'a>, bump: &'a Bump) -> &'a TsIntersectionType<'a> {
   let node = bump.alloc(TsIntersectionType {
     inner,
+    span: inner.span(),
     parent,
     types: Vec::with_capacity(inner.types.len()),
   });
@@ -15435,6 +15679,7 @@ pub struct TsKeywordType<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsKeywordType,
+  pub span: Span,
   pub kind: TsKeywordTypeKind,
 }
 
@@ -15485,6 +15730,7 @@ impl<'a> CastableNode<'a> for TsKeywordType<'a> {
 fn get_view_for_ts_keyword_type<'a>(inner: &'a swc_ast::TsKeywordType, parent: Node<'a>, bump: &'a Bump) -> &'a TsKeywordType<'a> {
   let node = bump.alloc(TsKeywordType {
     inner,
+    span: inner.span(),
     parent,
     kind: inner.kind,
   });
@@ -15498,6 +15744,7 @@ pub struct TsLitType<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsLitType,
+  pub span: Span,
   pub lit: TsLit<'a>,
 }
 
@@ -15550,6 +15797,7 @@ impl<'a> CastableNode<'a> for TsLitType<'a> {
 fn get_view_for_ts_lit_type<'a>(inner: &'a swc_ast::TsLitType, parent: Node<'a>, bump: &'a Bump) -> &'a TsLitType<'a> {
   let node = bump.alloc(TsLitType {
     inner,
+    span: inner.span(),
     parent,
     lit: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -15565,6 +15813,7 @@ pub struct TsMappedType<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsMappedType,
+  pub span: Span,
   pub type_param: &'a TsTypeParam<'a>,
   pub name_type: Option<TsType<'a>>,
   pub type_ann: Option<TsType<'a>>,
@@ -15627,6 +15876,7 @@ impl<'a> CastableNode<'a> for TsMappedType<'a> {
 fn get_view_for_ts_mapped_type<'a>(inner: &'a swc_ast::TsMappedType, parent: Node<'a>, bump: &'a Bump) -> &'a TsMappedType<'a> {
   let node = bump.alloc(TsMappedType {
     inner,
+    span: inner.span(),
     parent,
     type_param: unsafe { MaybeUninit::uninit().assume_init() },
     name_type: None,
@@ -15654,6 +15904,7 @@ pub struct TsMethodSignature<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsMethodSignature,
+  pub span: Span,
   pub key: Expr<'a>,
   pub params: Vec<TsFnParam<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
@@ -15721,6 +15972,7 @@ impl<'a> CastableNode<'a> for TsMethodSignature<'a> {
 fn get_view_for_ts_method_signature<'a>(inner: &'a swc_ast::TsMethodSignature, parent: Node<'a>, bump: &'a Bump) -> &'a TsMethodSignature<'a> {
   let node = bump.alloc(TsMethodSignature {
     inner,
+    span: inner.span(),
     parent,
     key: unsafe { MaybeUninit::uninit().assume_init() },
     params: Vec::with_capacity(inner.params.len()),
@@ -15751,6 +16003,7 @@ pub struct TsModuleBlock<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsModuleBlock,
+  pub span: Span,
   pub body: Vec<ModuleItem<'a>>,
 }
 
@@ -15805,6 +16058,7 @@ impl<'a> CastableNode<'a> for TsModuleBlock<'a> {
 fn get_view_for_ts_module_block<'a>(inner: &'a swc_ast::TsModuleBlock, parent: Node<'a>, bump: &'a Bump) -> &'a TsModuleBlock<'a> {
   let node = bump.alloc(TsModuleBlock {
     inner,
+    span: inner.span(),
     parent,
     body: Vec::with_capacity(inner.body.len()),
   });
@@ -15820,6 +16074,7 @@ pub struct TsModuleDecl<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsModuleDecl,
+  pub span: Span,
   pub id: TsModuleName<'a>,
   pub body: Option<TsNamespaceBody<'a>>,
   pub declare: bool,
@@ -15879,6 +16134,7 @@ impl<'a> CastableNode<'a> for TsModuleDecl<'a> {
 fn get_view_for_ts_module_decl<'a>(inner: &'a swc_ast::TsModuleDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsModuleDecl<'a> {
   let node = bump.alloc(TsModuleDecl {
     inner,
+    span: inner.span(),
     parent,
     id: unsafe { MaybeUninit::uninit().assume_init() },
     body: None,
@@ -15901,6 +16157,7 @@ pub struct TsNamespaceDecl<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsNamespaceDecl,
+  pub span: Span,
   pub id: &'a Ident<'a>,
   pub body: TsNamespaceBody<'a>,
   pub declare: bool,
@@ -15958,6 +16215,7 @@ impl<'a> CastableNode<'a> for TsNamespaceDecl<'a> {
 fn get_view_for_ts_namespace_decl<'a>(inner: &'a swc_ast::TsNamespaceDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsNamespaceDecl<'a> {
   let node = bump.alloc(TsNamespaceDecl {
     inner,
+    span: inner.span(),
     parent,
     id: unsafe { MaybeUninit::uninit().assume_init() },
     body: unsafe { MaybeUninit::uninit().assume_init() },
@@ -15977,6 +16235,7 @@ pub struct TsNamespaceExportDecl<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsNamespaceExportDecl,
+  pub span: Span,
   pub id: &'a Ident<'a>,
 }
 
@@ -16029,6 +16288,7 @@ impl<'a> CastableNode<'a> for TsNamespaceExportDecl<'a> {
 fn get_view_for_ts_namespace_export_decl<'a>(inner: &'a swc_ast::TsNamespaceExportDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsNamespaceExportDecl<'a> {
   let node = bump.alloc(TsNamespaceExportDecl {
     inner,
+    span: inner.span(),
     parent,
     id: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -16044,6 +16304,7 @@ pub struct TsNonNullExpr<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsNonNullExpr,
+  pub span: Span,
   pub expr: Expr<'a>,
 }
 
@@ -16096,6 +16357,7 @@ impl<'a> CastableNode<'a> for TsNonNullExpr<'a> {
 fn get_view_for_ts_non_null_expr<'a>(inner: &'a swc_ast::TsNonNullExpr, parent: Node<'a>, bump: &'a Bump) -> &'a TsNonNullExpr<'a> {
   let node = bump.alloc(TsNonNullExpr {
     inner,
+    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -16111,6 +16373,7 @@ pub struct TsOptionalType<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsOptionalType,
+  pub span: Span,
   pub type_ann: TsType<'a>,
 }
 
@@ -16163,6 +16426,7 @@ impl<'a> CastableNode<'a> for TsOptionalType<'a> {
 fn get_view_for_ts_optional_type<'a>(inner: &'a swc_ast::TsOptionalType, parent: Node<'a>, bump: &'a Bump) -> &'a TsOptionalType<'a> {
   let node = bump.alloc(TsOptionalType {
     inner,
+    span: inner.span(),
     parent,
     type_ann: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -16178,6 +16442,7 @@ pub struct TsParamProp<'a> {
   pub parent: &'a Constructor<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsParamProp,
+  pub span: Span,
   pub decorators: Vec<&'a Decorator<'a>>,
   pub param: TsParamPropParam<'a>,
   /// At least one of `accessibility` or `readonly` must be set.
@@ -16237,6 +16502,7 @@ impl<'a> CastableNode<'a> for TsParamProp<'a> {
 fn get_view_for_ts_param_prop<'a>(inner: &'a swc_ast::TsParamProp, parent: Node<'a>, bump: &'a Bump) -> &'a TsParamProp<'a> {
   let node = bump.alloc(TsParamProp {
     inner,
+    span: inner.span(),
     parent: parent.expect::<Constructor>(),
     decorators: Vec::with_capacity(inner.decorators.len()),
     param: unsafe { MaybeUninit::uninit().assume_init() },
@@ -16256,6 +16522,7 @@ pub struct TsParenthesizedType<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsParenthesizedType,
+  pub span: Span,
   pub type_ann: TsType<'a>,
 }
 
@@ -16308,6 +16575,7 @@ impl<'a> CastableNode<'a> for TsParenthesizedType<'a> {
 fn get_view_for_ts_parenthesized_type<'a>(inner: &'a swc_ast::TsParenthesizedType, parent: Node<'a>, bump: &'a Bump) -> &'a TsParenthesizedType<'a> {
   let node = bump.alloc(TsParenthesizedType {
     inner,
+    span: inner.span(),
     parent,
     type_ann: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -16323,6 +16591,7 @@ pub struct TsPropertySignature<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsPropertySignature,
+  pub span: Span,
   pub key: Expr<'a>,
   pub init: Option<Expr<'a>>,
   pub params: Vec<TsFnParam<'a>>,
@@ -16394,6 +16663,7 @@ impl<'a> CastableNode<'a> for TsPropertySignature<'a> {
 fn get_view_for_ts_property_signature<'a>(inner: &'a swc_ast::TsPropertySignature, parent: Node<'a>, bump: &'a Bump) -> &'a TsPropertySignature<'a> {
   let node = bump.alloc(TsPropertySignature {
     inner,
+    span: inner.span(),
     parent,
     key: unsafe { MaybeUninit::uninit().assume_init() },
     init: None,
@@ -16429,6 +16699,7 @@ pub struct TsQualifiedName<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsQualifiedName,
+  pub span: Span,
   pub left: TsEntityName<'a>,
   pub right: &'a Ident<'a>,
 }
@@ -16483,6 +16754,7 @@ impl<'a> CastableNode<'a> for TsQualifiedName<'a> {
 fn get_view_for_ts_qualified_name<'a>(inner: &'a swc_ast::TsQualifiedName, parent: Node<'a>, bump: &'a Bump) -> &'a TsQualifiedName<'a> {
   let node = bump.alloc(TsQualifiedName {
     inner,
+    span: inner.span(),
     parent,
     left: unsafe { MaybeUninit::uninit().assume_init() },
     right: unsafe { MaybeUninit::uninit().assume_init() },
@@ -16500,6 +16772,7 @@ pub struct TsRestType<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsRestType,
+  pub span: Span,
   pub type_ann: TsType<'a>,
 }
 
@@ -16552,6 +16825,7 @@ impl<'a> CastableNode<'a> for TsRestType<'a> {
 fn get_view_for_ts_rest_type<'a>(inner: &'a swc_ast::TsRestType, parent: Node<'a>, bump: &'a Bump) -> &'a TsRestType<'a> {
   let node = bump.alloc(TsRestType {
     inner,
+    span: inner.span(),
     parent,
     type_ann: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -16567,6 +16841,7 @@ pub struct TsThisType<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsThisType,
+  pub span: Span,
 }
 
 impl<'a> Spanned for TsThisType<'a> {
@@ -16616,6 +16891,7 @@ impl<'a> CastableNode<'a> for TsThisType<'a> {
 fn get_view_for_ts_this_type<'a>(inner: &'a swc_ast::TsThisType, parent: Node<'a>, bump: &'a Bump) -> &'a TsThisType<'a> {
   let node = bump.alloc(TsThisType {
     inner,
+    span: inner.span(),
     parent,
   });
   node
@@ -16628,6 +16904,7 @@ pub struct TsTplLitType<'a> {
   pub parent: &'a TsLitType<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsTplLitType,
+  pub span: Span,
   pub types: Vec<TsType<'a>>,
   pub quasis: Vec<&'a TplElement<'a>>,
 }
@@ -16686,6 +16963,7 @@ impl<'a> CastableNode<'a> for TsTplLitType<'a> {
 fn get_view_for_ts_tpl_lit_type<'a>(inner: &'a swc_ast::TsTplLitType, parent: Node<'a>, bump: &'a Bump) -> &'a TsTplLitType<'a> {
   let node = bump.alloc(TsTplLitType {
     inner,
+    span: inner.span(),
     parent: parent.expect::<TsLitType>(),
     types: Vec::with_capacity(inner.types.len()),
     quasis: Vec::with_capacity(inner.quasis.len()),
@@ -16703,6 +16981,7 @@ pub struct TsTupleElement<'a> {
   pub parent: &'a TsTupleType<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsTupleElement,
+  pub span: Span,
   /// `Ident` or `RestPat { arg: Ident }`
   pub label: Option<Pat<'a>>,
   pub ty: TsType<'a>,
@@ -16760,6 +17039,7 @@ impl<'a> CastableNode<'a> for TsTupleElement<'a> {
 fn get_view_for_ts_tuple_element<'a>(inner: &'a swc_ast::TsTupleElement, parent: Node<'a>, bump: &'a Bump) -> &'a TsTupleElement<'a> {
   let node = bump.alloc(TsTupleElement {
     inner,
+    span: inner.span(),
     parent: parent.expect::<TsTupleType>(),
     label: None,
     ty: unsafe { MaybeUninit::uninit().assume_init() },
@@ -16780,6 +17060,7 @@ pub struct TsTupleType<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsTupleType,
+  pub span: Span,
   pub elem_types: Vec<&'a TsTupleElement<'a>>,
 }
 
@@ -16834,6 +17115,7 @@ impl<'a> CastableNode<'a> for TsTupleType<'a> {
 fn get_view_for_ts_tuple_type<'a>(inner: &'a swc_ast::TsTupleType, parent: Node<'a>, bump: &'a Bump) -> &'a TsTupleType<'a> {
   let node = bump.alloc(TsTupleType {
     inner,
+    span: inner.span(),
     parent,
     elem_types: Vec::with_capacity(inner.elem_types.len()),
   });
@@ -16849,6 +17131,7 @@ pub struct TsTypeAliasDecl<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeAliasDecl,
+  pub span: Span,
   pub id: &'a Ident<'a>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
   pub type_ann: TsType<'a>,
@@ -16908,6 +17191,7 @@ impl<'a> CastableNode<'a> for TsTypeAliasDecl<'a> {
 fn get_view_for_ts_type_alias_decl<'a>(inner: &'a swc_ast::TsTypeAliasDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeAliasDecl<'a> {
   let node = bump.alloc(TsTypeAliasDecl {
     inner,
+    span: inner.span(),
     parent,
     id: unsafe { MaybeUninit::uninit().assume_init() },
     type_params: None,
@@ -16931,6 +17215,7 @@ pub struct TsTypeAnn<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeAnn,
+  pub span: Span,
   pub type_ann: TsType<'a>,
 }
 
@@ -16983,6 +17268,7 @@ impl<'a> CastableNode<'a> for TsTypeAnn<'a> {
 fn get_view_for_ts_type_ann<'a>(inner: &'a swc_ast::TsTypeAnn, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeAnn<'a> {
   let node = bump.alloc(TsTypeAnn {
     inner,
+    span: inner.span(),
     parent,
     type_ann: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -16998,6 +17284,7 @@ pub struct TsTypeAssertion<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeAssertion,
+  pub span: Span,
   pub expr: Expr<'a>,
   pub type_ann: TsType<'a>,
 }
@@ -17052,6 +17339,7 @@ impl<'a> CastableNode<'a> for TsTypeAssertion<'a> {
 fn get_view_for_ts_type_assertion<'a>(inner: &'a swc_ast::TsTypeAssertion, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeAssertion<'a> {
   let node = bump.alloc(TsTypeAssertion {
     inner,
+    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
     type_ann: unsafe { MaybeUninit::uninit().assume_init() },
@@ -17069,6 +17357,7 @@ pub struct TsTypeLit<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeLit,
+  pub span: Span,
   pub members: Vec<TsTypeElement<'a>>,
 }
 
@@ -17123,6 +17412,7 @@ impl<'a> CastableNode<'a> for TsTypeLit<'a> {
 fn get_view_for_ts_type_lit<'a>(inner: &'a swc_ast::TsTypeLit, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeLit<'a> {
   let node = bump.alloc(TsTypeLit {
     inner,
+    span: inner.span(),
     parent,
     members: Vec::with_capacity(inner.members.len()),
   });
@@ -17138,6 +17428,7 @@ pub struct TsTypeOperator<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeOperator,
+  pub span: Span,
   pub type_ann: TsType<'a>,
   pub op: TsTypeOperatorOp,
 }
@@ -17191,6 +17482,7 @@ impl<'a> CastableNode<'a> for TsTypeOperator<'a> {
 fn get_view_for_ts_type_operator<'a>(inner: &'a swc_ast::TsTypeOperator, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeOperator<'a> {
   let node = bump.alloc(TsTypeOperator {
     inner,
+    span: inner.span(),
     parent,
     type_ann: unsafe { MaybeUninit::uninit().assume_init() },
     op: inner.op,
@@ -17207,6 +17499,7 @@ pub struct TsTypeParam<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeParam,
+  pub span: Span,
   pub name: &'a Ident<'a>,
   pub constraint: Option<TsType<'a>>,
   pub default: Option<TsType<'a>>,
@@ -17267,6 +17560,7 @@ impl<'a> CastableNode<'a> for TsTypeParam<'a> {
 fn get_view_for_ts_type_param<'a>(inner: &'a swc_ast::TsTypeParam, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeParam<'a> {
   let node = bump.alloc(TsTypeParam {
     inner,
+    span: inner.span(),
     parent,
     name: unsafe { MaybeUninit::uninit().assume_init() },
     constraint: None,
@@ -17292,6 +17586,7 @@ pub struct TsTypeParamDecl<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeParamDecl,
+  pub span: Span,
   pub params: Vec<&'a TsTypeParam<'a>>,
 }
 
@@ -17346,6 +17641,7 @@ impl<'a> CastableNode<'a> for TsTypeParamDecl<'a> {
 fn get_view_for_ts_type_param_decl<'a>(inner: &'a swc_ast::TsTypeParamDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeParamDecl<'a> {
   let node = bump.alloc(TsTypeParamDecl {
     inner,
+    span: inner.span(),
     parent,
     params: Vec::with_capacity(inner.params.len()),
   });
@@ -17361,6 +17657,7 @@ pub struct TsTypeParamInstantiation<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeParamInstantiation,
+  pub span: Span,
   pub params: Vec<TsType<'a>>,
 }
 
@@ -17415,6 +17712,7 @@ impl<'a> CastableNode<'a> for TsTypeParamInstantiation<'a> {
 fn get_view_for_ts_type_param_instantiation<'a>(inner: &'a swc_ast::TsTypeParamInstantiation, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeParamInstantiation<'a> {
   let node = bump.alloc(TsTypeParamInstantiation {
     inner,
+    span: inner.span(),
     parent,
     params: Vec::with_capacity(inner.params.len()),
   });
@@ -17430,6 +17728,7 @@ pub struct TsTypePredicate<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsTypePredicate,
+  pub span: Span,
   pub param_name: TsThisTypeOrIdent<'a>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
   pub asserts: bool,
@@ -17487,6 +17786,7 @@ impl<'a> CastableNode<'a> for TsTypePredicate<'a> {
 fn get_view_for_ts_type_predicate<'a>(inner: &'a swc_ast::TsTypePredicate, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypePredicate<'a> {
   let node = bump.alloc(TsTypePredicate {
     inner,
+    span: inner.span(),
     parent,
     param_name: unsafe { MaybeUninit::uninit().assume_init() },
     type_ann: None,
@@ -17509,6 +17809,7 @@ pub struct TsTypeQuery<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeQuery,
+  pub span: Span,
   pub expr_name: TsTypeQueryExpr<'a>,
 }
 
@@ -17561,6 +17862,7 @@ impl<'a> CastableNode<'a> for TsTypeQuery<'a> {
 fn get_view_for_ts_type_query<'a>(inner: &'a swc_ast::TsTypeQuery, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeQuery<'a> {
   let node = bump.alloc(TsTypeQuery {
     inner,
+    span: inner.span(),
     parent,
     expr_name: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -17576,6 +17878,7 @@ pub struct TsTypeRef<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeRef,
+  pub span: Span,
   pub type_name: TsEntityName<'a>,
   pub type_params: Option<&'a TsTypeParamInstantiation<'a>>,
 }
@@ -17632,6 +17935,7 @@ impl<'a> CastableNode<'a> for TsTypeRef<'a> {
 fn get_view_for_ts_type_ref<'a>(inner: &'a swc_ast::TsTypeRef, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeRef<'a> {
   let node = bump.alloc(TsTypeRef {
     inner,
+    span: inner.span(),
     parent,
     type_name: unsafe { MaybeUninit::uninit().assume_init() },
     type_params: None,
@@ -17652,6 +17956,7 @@ pub struct TsUnionType<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::TsUnionType,
+  pub span: Span,
   pub types: Vec<TsType<'a>>,
 }
 
@@ -17706,6 +18011,7 @@ impl<'a> CastableNode<'a> for TsUnionType<'a> {
 fn get_view_for_ts_union_type<'a>(inner: &'a swc_ast::TsUnionType, parent: Node<'a>, bump: &'a Bump) -> &'a TsUnionType<'a> {
   let node = bump.alloc(TsUnionType {
     inner,
+    span: inner.span(),
     parent,
     types: Vec::with_capacity(inner.types.len()),
   });
@@ -17721,6 +18027,7 @@ pub struct UnaryExpr<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::UnaryExpr,
+  pub span: Span,
   pub arg: Expr<'a>,
   pub op: UnaryOp,
 }
@@ -17774,6 +18081,7 @@ impl<'a> CastableNode<'a> for UnaryExpr<'a> {
 fn get_view_for_unary_expr<'a>(inner: &'a swc_ast::UnaryExpr, parent: Node<'a>, bump: &'a Bump) -> &'a UnaryExpr<'a> {
   let node = bump.alloc(UnaryExpr {
     inner,
+    span: inner.span(),
     parent,
     arg: unsafe { MaybeUninit::uninit().assume_init() },
     op: inner.op,
@@ -17790,6 +18098,7 @@ pub struct UpdateExpr<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::UpdateExpr,
+  pub span: Span,
   pub arg: Expr<'a>,
   pub op: UpdateOp,
   pub prefix: bool,
@@ -17844,6 +18153,7 @@ impl<'a> CastableNode<'a> for UpdateExpr<'a> {
 fn get_view_for_update_expr<'a>(inner: &'a swc_ast::UpdateExpr, parent: Node<'a>, bump: &'a Bump) -> &'a UpdateExpr<'a> {
   let node = bump.alloc(UpdateExpr {
     inner,
+    span: inner.span(),
     parent,
     arg: unsafe { MaybeUninit::uninit().assume_init() },
     op: inner.op,
@@ -17861,6 +18171,7 @@ pub struct VarDecl<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::VarDecl,
+  pub span: Span,
   pub decls: Vec<&'a VarDeclarator<'a>>,
   pub kind: VarDeclKind,
   pub declare: bool,
@@ -17917,6 +18228,7 @@ impl<'a> CastableNode<'a> for VarDecl<'a> {
 fn get_view_for_var_decl<'a>(inner: &'a swc_ast::VarDecl, parent: Node<'a>, bump: &'a Bump) -> &'a VarDecl<'a> {
   let node = bump.alloc(VarDecl {
     inner,
+    span: inner.span(),
     parent,
     decls: Vec::with_capacity(inner.decls.len()),
     kind: inner.kind,
@@ -17934,6 +18246,7 @@ pub struct VarDeclarator<'a> {
   pub parent: &'a VarDecl<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::VarDeclarator,
+  pub span: Span,
   pub name: Pat<'a>,
   /// Initialization expression.
   pub init: Option<Expr<'a>>,
@@ -17993,6 +18306,7 @@ impl<'a> CastableNode<'a> for VarDeclarator<'a> {
 fn get_view_for_var_declarator<'a>(inner: &'a swc_ast::VarDeclarator, parent: Node<'a>, bump: &'a Bump) -> &'a VarDeclarator<'a> {
   let node = bump.alloc(VarDeclarator {
     inner,
+    span: inner.span(),
     parent: parent.expect::<VarDecl>(),
     name: unsafe { MaybeUninit::uninit().assume_init() },
     init: None,
@@ -18014,6 +18328,7 @@ pub struct WhileStmt<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::WhileStmt,
+  pub span: Span,
   pub test: Expr<'a>,
   pub body: Stmt<'a>,
 }
@@ -18068,6 +18383,7 @@ impl<'a> CastableNode<'a> for WhileStmt<'a> {
 fn get_view_for_while_stmt<'a>(inner: &'a swc_ast::WhileStmt, parent: Node<'a>, bump: &'a Bump) -> &'a WhileStmt<'a> {
   let node = bump.alloc(WhileStmt {
     inner,
+    span: inner.span(),
     parent,
     test: unsafe { MaybeUninit::uninit().assume_init() },
     body: unsafe { MaybeUninit::uninit().assume_init() },
@@ -18085,6 +18401,7 @@ pub struct WithStmt<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::WithStmt,
+  pub span: Span,
   pub obj: Expr<'a>,
   pub body: Stmt<'a>,
 }
@@ -18139,6 +18456,7 @@ impl<'a> CastableNode<'a> for WithStmt<'a> {
 fn get_view_for_with_stmt<'a>(inner: &'a swc_ast::WithStmt, parent: Node<'a>, bump: &'a Bump) -> &'a WithStmt<'a> {
   let node = bump.alloc(WithStmt {
     inner,
+    span: inner.span(),
     parent,
     obj: unsafe { MaybeUninit::uninit().assume_init() },
     body: unsafe { MaybeUninit::uninit().assume_init() },
@@ -18156,6 +18474,7 @@ pub struct YieldExpr<'a> {
   pub parent: Node<'a>,
   #[serde(skip)]
   pub inner: &'a swc_ast::YieldExpr,
+  pub span: Span,
   pub arg: Option<Expr<'a>>,
   pub delegate: bool,
 }
@@ -18211,6 +18530,7 @@ impl<'a> CastableNode<'a> for YieldExpr<'a> {
 fn get_view_for_yield_expr<'a>(inner: &'a swc_ast::YieldExpr, parent: Node<'a>, bump: &'a Bump) -> &'a YieldExpr<'a> {
   let node = bump.alloc(YieldExpr {
     inner,
+    span: inner.span(),
     parent,
     arg: None,
     delegate: inner.delegate,
