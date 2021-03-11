@@ -1,0 +1,60 @@
+{
+  "nodeKind": "Module",
+  "span": {
+    "start": 0,
+    "end": 13,
+    "ctxt": 0
+  },
+  "body": [
+    {
+      "nodeKind": "VarDecl",
+      "span": {
+        "start": 0,
+        "end": 13,
+        "ctxt": 0
+      },
+      "decls": [
+        {
+          "nodeKind": "VarDeclarator",
+          "span": {
+            "start": 4,
+            "end": 12,
+            "ctxt": 0
+          },
+          "name": {
+            "nodeKind": "BindingIdent",
+            "span": {
+              "start": 4,
+              "end": 7,
+              "ctxt": 0
+            },
+            "id": {
+              "nodeKind": "Ident",
+              "span": {
+                "start": 4,
+                "end": 7,
+                "ctxt": 0
+              },
+              "sym": "foo",
+              "optional": false
+            },
+            "typeAnn": null
+          },
+          "init": {
+            "nodeKind": "Number",
+            "span": {
+              "start": 10,
+              "end": 12,
+              "ctxt": 0
+            },
+            "value": 42.0
+          },
+          "definite": false
+        }
+      ],
+      "kind": "let",
+      "declare": false
+    }
+  ],
+  "shebang": null
+}

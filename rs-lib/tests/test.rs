@@ -14,3 +14,18 @@ fn it_should_get_children() {
     assert_eq!(children[1].text(), "b: number;");
   });
 }
+
+#[test]
+fn it_shoule_be_serialized_to_json() {
+  let tests = [
+    ("let foo = 42;", "./tests/expected/serialize_var_decl.json"),
+    (
+      "function foo({ a }: { a: number }): boolean { return a % 2 === 0; }",
+      "./tests/expected/serialize_ts_function.json",
+    ),
+  ];
+
+  for (code, expected_path) in tests.iter() {
+    run_serialize_test(code, expected_path);
+  }
+}
