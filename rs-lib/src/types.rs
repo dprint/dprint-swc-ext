@@ -1,6 +1,7 @@
 use crate::comments::*;
 use crate::generated::*;
 use crate::tokens::*;
+use serde::Serialize;
 use swc_common::{comments::SingleThreadedComments, BytePos, Span, Spanned};
 use swc_ecmascript::parser::token::TokenAndSpan;
 
@@ -79,7 +80,8 @@ implement_root_node!(Script<'a>);
 implement_root_node!(&Script<'a>);
 
 /// A Module or Script node.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Serialize)]
+#[serde(untagged)]
 pub enum Program<'a> {
   Module(&'a Module<'a>),
   Script(&'a Script<'a>),
