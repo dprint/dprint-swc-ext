@@ -2,6 +2,7 @@
 // Run `deno run -A generation/main.ts` from the root directory to regenerate it.
 use std::mem::{self, MaybeUninit};
 use bumpalo::Bump;
+use serde::Serialize;
 use swc_common::{Span, Spanned};
 pub use swc_ecmascript::ast::{self as swc_ast, Accessibility, AssignOp, BinaryOp, EsVersion, MethodKind, StrKind, TruePlusMinus, TsKeywordTypeKind, TsTypeOperatorOp, UnaryOp, UpdateOp, VarDeclKind};
 use crate::comments::*;
@@ -1400,7 +1401,8 @@ impl std::fmt::Display for NodeKind {
 }
 
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum BlockStmtOrExpr<'a> {
   BlockStmt(&'a BlockStmt<'a>),
   Expr(Expr<'a>),
@@ -1489,7 +1491,8 @@ fn get_view_for_block_stmt_or_expr<'a>(inner: &'a swc_ast::BlockStmtOrExpr, pare
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum ClassMember<'a> {
   Constructor(&'a Constructor<'a>),
   /// `es2015`
@@ -1625,7 +1628,8 @@ fn get_view_for_class_member<'a>(inner: &'a swc_ast::ClassMember, parent: Node<'
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Decl<'a> {
   Class(&'a ClassDecl<'a>),
   Fn(&'a FnDecl<'a>),
@@ -1759,7 +1763,8 @@ fn get_view_for_decl<'a>(inner: &'a swc_ast::Decl, parent: Node<'a>, bump: &'a B
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum DefaultDecl<'a> {
   Class(&'a ClassExpr<'a>),
   Fn(&'a FnExpr<'a>),
@@ -1857,7 +1862,8 @@ fn get_view_for_default_decl<'a>(inner: &'a swc_ast::DefaultDecl, parent: Node<'
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum ExportSpecifier<'a> {
   Namespace(&'a ExportNamespaceSpecifier<'a>),
   Default(&'a ExportDefaultSpecifier<'a>),
@@ -1955,7 +1961,8 @@ fn get_view_for_export_specifier<'a>(inner: &'a swc_ast::ExportSpecifier, parent
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Expr<'a> {
   This(&'a ThisExpr<'a>),
   Array(&'a ArrayLit<'a>),
@@ -2348,7 +2355,8 @@ fn get_view_for_expr<'a>(inner: &'a swc_ast::Expr, parent: Node<'a>, bump: &'a B
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum ExprOrSuper<'a> {
   Super(&'a Super<'a>),
   Expr(Expr<'a>),
@@ -2437,7 +2445,8 @@ fn get_view_for_expr_or_super<'a>(inner: &'a swc_ast::ExprOrSuper, parent: Node<
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum ImportSpecifier<'a> {
   Named(&'a ImportNamedSpecifier<'a>),
   Default(&'a ImportDefaultSpecifier<'a>),
@@ -2535,7 +2544,8 @@ fn get_view_for_import_specifier<'a>(inner: &'a swc_ast::ImportSpecifier, parent
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum JSXAttrName<'a> {
   Ident(&'a Ident<'a>),
   JSXNamespacedName(&'a JSXNamespacedName<'a>),
@@ -2624,7 +2634,8 @@ fn get_view_for_jsxattr_name<'a>(inner: &'a swc_ast::JSXAttrName, parent: Node<'
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum JSXAttrOrSpread<'a> {
   JSXAttr(&'a JSXAttr<'a>),
   SpreadElement(&'a SpreadElement<'a>),
@@ -2713,7 +2724,8 @@ fn get_view_for_jsxattr_or_spread<'a>(inner: &'a swc_ast::JSXAttrOrSpread, paren
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum JSXAttrValue<'a> {
   Lit(Lit<'a>),
   JSXExprContainer(&'a JSXExprContainer<'a>),
@@ -2820,7 +2832,8 @@ fn get_view_for_jsxattr_value<'a>(inner: &'a swc_ast::JSXAttrValue, parent: Node
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum JSXElementChild<'a> {
   JSXText(&'a JSXText<'a>),
   JSXExprContainer(&'a JSXExprContainer<'a>),
@@ -2936,7 +2949,8 @@ fn get_view_for_jsxelement_child<'a>(inner: &'a swc_ast::JSXElementChild, parent
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum JSXElementName<'a> {
   Ident(&'a Ident<'a>),
   JSXMemberExpr(&'a JSXMemberExpr<'a>),
@@ -3034,7 +3048,8 @@ fn get_view_for_jsxelement_name<'a>(inner: &'a swc_ast::JSXElementName, parent: 
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum JSXExpr<'a> {
   JSXEmptyExpr(&'a JSXEmptyExpr<'a>),
   Expr(Expr<'a>),
@@ -3124,7 +3139,8 @@ fn get_view_for_jsxexpr<'a>(inner: &'a swc_ast::JSXExpr, parent: Node<'a>, bump:
 }
 
 /// Used for `obj` property of `JSXMemberExpr`.
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum JSXObject<'a> {
   JSXMemberExpr(&'a JSXMemberExpr<'a>),
   Ident(&'a Ident<'a>),
@@ -3213,7 +3229,8 @@ fn get_view_for_jsxobject<'a>(inner: &'a swc_ast::JSXObject, parent: Node<'a>, b
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Lit<'a> {
   Str(&'a Str<'a>),
   Bool(&'a Bool<'a>),
@@ -3347,7 +3364,8 @@ fn get_view_for_lit<'a>(inner: &'a swc_ast::Lit, parent: Node<'a>, bump: &'a Bum
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum ModuleDecl<'a> {
   Import(&'a ImportDecl<'a>),
   ExportDecl(&'a ExportDecl<'a>),
@@ -3499,7 +3517,8 @@ fn get_view_for_module_decl<'a>(inner: &'a swc_ast::ModuleDecl, parent: Node<'a>
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum ModuleItem<'a> {
   ModuleDecl(ModuleDecl<'a>),
   Stmt(Stmt<'a>),
@@ -3588,7 +3607,8 @@ fn get_view_for_module_item<'a>(inner: &'a swc_ast::ModuleItem, parent: Node<'a>
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum ObjectPatProp<'a> {
   KeyValue(&'a KeyValuePatProp<'a>),
   Assign(&'a AssignPatProp<'a>),
@@ -3686,7 +3706,8 @@ fn get_view_for_object_pat_prop<'a>(inner: &'a swc_ast::ObjectPatProp, parent: N
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum ParamOrTsParamProp<'a> {
   TsParamProp(&'a TsParamProp<'a>),
   Param(&'a Param<'a>),
@@ -3775,7 +3796,8 @@ fn get_view_for_param_or_ts_param_prop<'a>(inner: &'a swc_ast::ParamOrTsParamPro
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Pat<'a> {
   Ident(&'a BindingIdent<'a>),
   Array(&'a ArrayPat<'a>),
@@ -3910,7 +3932,8 @@ fn get_view_for_pat<'a>(inner: &'a swc_ast::Pat, parent: Node<'a>, bump: &'a Bum
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum PatOrExpr<'a> {
   Expr(Expr<'a>),
   Pat(Pat<'a>),
@@ -3999,7 +4022,8 @@ fn get_view_for_pat_or_expr<'a>(inner: &'a swc_ast::PatOrExpr, parent: Node<'a>,
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Prop<'a> {
   /// `a` in `{ a, }`
   Shorthand(&'a Ident<'a>),
@@ -4127,7 +4151,8 @@ fn get_view_for_prop<'a>(inner: &'a swc_ast::Prop, parent: Node<'a>, bump: &'a B
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum PropName<'a> {
   Ident(&'a Ident<'a>),
   /// String literal.
@@ -4245,7 +4270,8 @@ fn get_view_for_prop_name<'a>(inner: &'a swc_ast::PropName, parent: Node<'a>, bu
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum PropOrSpread<'a> {
   /// Spread properties, e.g., `{a: 1, ...obj, b: 2}`.
   Spread(&'a SpreadElement<'a>),
@@ -4335,7 +4361,8 @@ fn get_view_for_prop_or_spread<'a>(inner: &'a swc_ast::PropOrSpread, parent: Nod
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Stmt<'a> {
   Block(&'a BlockStmt<'a>),
   Empty(&'a EmptyStmt<'a>),
@@ -4578,7 +4605,8 @@ fn get_view_for_stmt<'a>(inner: &'a swc_ast::Stmt, parent: Node<'a>, bump: &'a B
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum TsEntityName<'a> {
   TsQualifiedName(&'a TsQualifiedName<'a>),
   Ident(&'a Ident<'a>),
@@ -4669,7 +4697,8 @@ fn get_view_for_ts_entity_name<'a>(inner: &'a swc_ast::TsEntityName, parent: Nod
 
 ///
 /// - Invalid: [Ident] with empty symbol.
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum TsEnumMemberId<'a> {
   Ident(&'a Ident<'a>),
   Str(&'a Str<'a>),
@@ -4758,7 +4787,8 @@ fn get_view_for_ts_enum_member_id<'a>(inner: &'a swc_ast::TsEnumMemberId, parent
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum TsFnOrConstructorType<'a> {
   TsFnType(&'a TsFnType<'a>),
   TsConstructorType(&'a TsConstructorType<'a>),
@@ -4847,7 +4877,8 @@ fn get_view_for_ts_fn_or_constructor_type<'a>(inner: &'a swc_ast::TsFnOrConstruc
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum TsFnParam<'a> {
   Ident(&'a BindingIdent<'a>),
   Array(&'a ArrayPat<'a>),
@@ -4954,7 +4985,8 @@ fn get_view_for_ts_fn_param<'a>(inner: &'a swc_ast::TsFnParam, parent: Node<'a>,
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum TsLit<'a> {
   Number(&'a Number<'a>),
   Str(&'a Str<'a>),
@@ -5070,7 +5102,8 @@ fn get_view_for_ts_lit<'a>(inner: &'a swc_ast::TsLit, parent: Node<'a>, bump: &'
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum TsModuleName<'a> {
   Ident(&'a Ident<'a>),
   Str(&'a Str<'a>),
@@ -5159,7 +5192,8 @@ fn get_view_for_ts_module_name<'a>(inner: &'a swc_ast::TsModuleName, parent: Nod
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum TsModuleRef<'a> {
   TsEntityName(TsEntityName<'a>),
   TsExternalModuleRef(&'a TsExternalModuleRef<'a>),
@@ -5250,7 +5284,8 @@ fn get_view_for_ts_module_ref<'a>(inner: &'a swc_ast::TsModuleRef, parent: Node<
 
 /// `namespace A.B { }` is a namespace named `A` with another TsNamespaceDecl as
 /// its body.
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum TsNamespaceBody<'a> {
   TsModuleBlock(&'a TsModuleBlock<'a>),
   TsNamespaceDecl(&'a TsNamespaceDecl<'a>),
@@ -5339,7 +5374,8 @@ fn get_view_for_ts_namespace_body<'a>(inner: &'a swc_ast::TsNamespaceBody, paren
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum TsParamPropParam<'a> {
   Ident(&'a BindingIdent<'a>),
   Assign(&'a AssignPat<'a>),
@@ -5428,7 +5464,8 @@ fn get_view_for_ts_param_prop_param<'a>(inner: &'a swc_ast::TsParamPropParam, pa
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum TsThisTypeOrIdent<'a> {
   TsThisType(&'a TsThisType<'a>),
   Ident(&'a Ident<'a>),
@@ -5517,7 +5554,8 @@ fn get_view_for_ts_this_type_or_ident<'a>(inner: &'a swc_ast::TsThisTypeOrIdent,
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum TsType<'a> {
   TsKeywordType(&'a TsKeywordType<'a>),
   TsThisType(&'a TsThisType<'a>),
@@ -5768,7 +5806,8 @@ fn get_view_for_ts_type<'a>(inner: &'a swc_ast::TsType, parent: Node<'a>, bump: 
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum TsTypeElement<'a> {
   TsCallSignatureDecl(&'a TsCallSignatureDecl<'a>),
   TsConstructSignatureDecl(&'a TsConstructSignatureDecl<'a>),
@@ -5884,7 +5923,8 @@ fn get_view_for_ts_type_element<'a>(inner: &'a swc_ast::TsTypeElement, parent: N
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum TsTypeQueryExpr<'a> {
   TsEntityName(TsEntityName<'a>),
   Import(&'a TsImportType<'a>),
@@ -5973,7 +6013,8 @@ fn get_view_for_ts_type_query_expr<'a>(inner: &'a swc_ast::TsTypeQueryExpr, pare
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum TsUnionOrIntersectionType<'a> {
   TsUnionType(&'a TsUnionType<'a>),
   TsIntersectionType(&'a TsIntersectionType<'a>),
@@ -6062,7 +6103,8 @@ fn get_view_for_ts_union_or_intersection_type<'a>(inner: &'a swc_ast::TsUnionOrI
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum VarDeclOrExpr<'a> {
   VarDecl(&'a VarDecl<'a>),
   Expr(Expr<'a>),
@@ -6151,7 +6193,8 @@ fn get_view_for_var_decl_or_expr<'a>(inner: &'a swc_ast::VarDeclOrExpr, parent: 
   }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize)]
+#[serde(untagged)]
 pub enum VarDeclOrPat<'a> {
   VarDecl(&'a VarDecl<'a>),
   Pat(Pat<'a>),
@@ -6241,8 +6284,12 @@ fn get_view_for_var_decl_or_pat<'a>(inner: &'a swc_ast::VarDeclOrPat, parent: No
 }
 
 /// Array literal.
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ArrayLit<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ArrayLit,
   pub elems: Vec<Option<&'a ExprOrSpread<'a>>>,
 }
@@ -6311,8 +6358,12 @@ fn get_view_for_array_lit<'a>(inner: &'a swc_ast::ArrayLit, parent: Node<'a>, bu
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ArrayPat<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ArrayPat,
   pub elems: Vec<Option<Pat<'a>>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
@@ -6393,8 +6444,12 @@ fn get_view_for_array_pat<'a>(inner: &'a swc_ast::ArrayPat, parent: Node<'a>, bu
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ArrowExpr<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ArrowExpr,
   pub params: Vec<Pat<'a>>,
   pub body: BlockStmtOrExpr<'a>,
@@ -6484,8 +6539,12 @@ fn get_view_for_arrow_expr<'a>(inner: &'a swc_ast::ArrowExpr, parent: Node<'a>, 
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct AssignExpr<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::AssignExpr,
   pub left: PatOrExpr<'a>,
   pub right: Expr<'a>,
@@ -6553,8 +6612,12 @@ fn get_view_for_assign_expr<'a>(inner: &'a swc_ast::AssignExpr, parent: Node<'a>
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct AssignPat<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::AssignPat,
   pub left: Pat<'a>,
   pub right: Expr<'a>,
@@ -6630,8 +6693,12 @@ fn get_view_for_assign_pat<'a>(inner: &'a swc_ast::AssignPat, parent: Node<'a>, 
 }
 
 /// `{key}` or `{key = value}`
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct AssignPatProp<'a> {
+  #[serde(skip)]
   pub parent: &'a ObjectPat<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::AssignPatProp,
   pub key: &'a Ident<'a>,
   pub value: Option<Expr<'a>>,
@@ -6702,8 +6769,12 @@ fn get_view_for_assign_pat_prop<'a>(inner: &'a swc_ast::AssignPatProp, parent: N
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct AssignProp<'a> {
+  #[serde(skip)]
   pub parent: &'a ObjectLit<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::AssignProp,
   pub key: &'a Ident<'a>,
   pub value: Expr<'a>,
@@ -6769,8 +6840,12 @@ fn get_view_for_assign_prop<'a>(inner: &'a swc_ast::AssignProp, parent: Node<'a>
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct AwaitExpr<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::AwaitExpr,
   pub arg: Expr<'a>,
 }
@@ -6832,8 +6907,12 @@ fn get_view_for_await_expr<'a>(inner: &'a swc_ast::AwaitExpr, parent: Node<'a>, 
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct BigInt<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::BigInt,
   pub value: &'a num_bigint::BigInt,
 }
@@ -6891,8 +6970,12 @@ fn get_view_for_big_int<'a>(inner: &'a swc_ast::BigInt, parent: Node<'a>, bump: 
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct BinExpr<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::BinExpr,
   pub left: Expr<'a>,
   pub right: Expr<'a>,
@@ -6961,8 +7044,12 @@ fn get_view_for_bin_expr<'a>(inner: &'a swc_ast::BinExpr, parent: Node<'a>, bump
 }
 
 /// Identifer used as a pattern.
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct BindingIdent<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::BindingIdent,
   pub id: &'a Ident<'a>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
@@ -7034,8 +7121,12 @@ fn get_view_for_binding_ident<'a>(inner: &'a swc_ast::BindingIdent, parent: Node
 }
 
 /// Use when only block statements are allowed.
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct BlockStmt<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::BlockStmt,
   pub stmts: Vec<Stmt<'a>>,
 }
@@ -7099,8 +7190,12 @@ fn get_view_for_block_stmt<'a>(inner: &'a swc_ast::BlockStmt, parent: Node<'a>, 
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct Bool<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::Bool,
   pub value: bool,
 }
@@ -7158,8 +7253,12 @@ fn get_view_for_bool<'a>(inner: &'a swc_ast::Bool, parent: Node<'a>, bump: &'a B
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct BreakStmt<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::BreakStmt,
   pub label: Option<&'a Ident<'a>>,
 }
@@ -7226,8 +7325,12 @@ fn get_view_for_break_stmt<'a>(inner: &'a swc_ast::BreakStmt, parent: Node<'a>, 
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct CallExpr<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::CallExpr,
   pub callee: ExprOrSuper<'a>,
   pub args: Vec<&'a ExprOrSpread<'a>>,
@@ -7304,8 +7407,12 @@ fn get_view_for_call_expr<'a>(inner: &'a swc_ast::CallExpr, parent: Node<'a>, bu
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct CatchClause<'a> {
+  #[serde(skip)]
   pub parent: &'a TryStmt<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::CatchClause,
   /// es2019
   ///
@@ -7380,8 +7487,12 @@ fn get_view_for_catch_clause<'a>(inner: &'a swc_ast::CatchClause, parent: Node<'
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct Class<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::Class,
   pub decorators: Vec<&'a Decorator<'a>>,
   pub body: Vec<ClassMember<'a>>,
@@ -7487,8 +7598,12 @@ fn get_view_for_class<'a>(inner: &'a swc_ast::Class, parent: Node<'a>, bump: &'a
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ClassDecl<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ClassDecl,
   pub ident: &'a Ident<'a>,
   pub class: &'a Class<'a>,
@@ -7557,8 +7672,12 @@ fn get_view_for_class_decl<'a>(inner: &'a swc_ast::ClassDecl, parent: Node<'a>, 
 }
 
 /// Class expression.
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ClassExpr<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ClassExpr,
   pub ident: Option<&'a Ident<'a>>,
   pub class: &'a Class<'a>,
@@ -7629,8 +7748,12 @@ fn get_view_for_class_expr<'a>(inner: &'a swc_ast::ClassExpr, parent: Node<'a>, 
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ClassMethod<'a> {
+  #[serde(skip)]
   pub parent: &'a Class<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ClassMethod,
   pub key: PropName<'a>,
   pub function: &'a Function<'a>,
@@ -7708,8 +7831,12 @@ fn get_view_for_class_method<'a>(inner: &'a swc_ast::ClassMethod, parent: Node<'
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ClassProp<'a> {
+  #[serde(skip)]
   pub parent: &'a Class<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ClassProp,
   pub key: Expr<'a>,
   pub value: Option<Expr<'a>>,
@@ -7813,8 +7940,12 @@ fn get_view_for_class_prop<'a>(inner: &'a swc_ast::ClassProp, parent: Node<'a>, 
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ComputedPropName<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ComputedPropName,
   pub expr: Expr<'a>,
 }
@@ -7876,8 +8007,12 @@ fn get_view_for_computed_prop_name<'a>(inner: &'a swc_ast::ComputedPropName, par
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct CondExpr<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::CondExpr,
   pub test: Expr<'a>,
   pub cons: Expr<'a>,
@@ -7947,8 +8082,12 @@ fn get_view_for_cond_expr<'a>(inner: &'a swc_ast::CondExpr, parent: Node<'a>, bu
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct Constructor<'a> {
+  #[serde(skip)]
   pub parent: &'a Class<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::Constructor,
   pub key: PropName<'a>,
   pub params: Vec<ParamOrTsParamProp<'a>>,
@@ -8029,8 +8168,12 @@ fn get_view_for_constructor<'a>(inner: &'a swc_ast::Constructor, parent: Node<'a
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ContinueStmt<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ContinueStmt,
   pub label: Option<&'a Ident<'a>>,
 }
@@ -8097,8 +8240,12 @@ fn get_view_for_continue_stmt<'a>(inner: &'a swc_ast::ContinueStmt, parent: Node
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct DebuggerStmt<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::DebuggerStmt,
 }
 
@@ -8154,8 +8301,12 @@ fn get_view_for_debugger_stmt<'a>(inner: &'a swc_ast::DebuggerStmt, parent: Node
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct Decorator<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::Decorator,
   pub expr: Expr<'a>,
 }
@@ -8217,8 +8368,12 @@ fn get_view_for_decorator<'a>(inner: &'a swc_ast::Decorator, parent: Node<'a>, b
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct DoWhileStmt<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::DoWhileStmt,
   pub test: Expr<'a>,
   pub body: Stmt<'a>,
@@ -8284,8 +8439,12 @@ fn get_view_for_do_while_stmt<'a>(inner: &'a swc_ast::DoWhileStmt, parent: Node<
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct EmptyStmt<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::EmptyStmt,
 }
 
@@ -8342,8 +8501,12 @@ fn get_view_for_empty_stmt<'a>(inner: &'a swc_ast::EmptyStmt, parent: Node<'a>, 
 }
 
 /// `export * from 'mod'`
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ExportAll<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ExportAll,
   pub src: &'a Str<'a>,
   pub asserts: Option<&'a ObjectLit<'a>>,
@@ -8414,8 +8577,12 @@ fn get_view_for_export_all<'a>(inner: &'a swc_ast::ExportAll, parent: Node<'a>, 
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ExportDecl<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ExportDecl,
   pub decl: Decl<'a>,
 }
@@ -8477,8 +8644,12 @@ fn get_view_for_export_decl<'a>(inner: &'a swc_ast::ExportDecl, parent: Node<'a>
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ExportDefaultDecl<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ExportDefaultDecl,
   pub decl: DefaultDecl<'a>,
 }
@@ -8540,8 +8711,12 @@ fn get_view_for_export_default_decl<'a>(inner: &'a swc_ast::ExportDefaultDecl, p
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ExportDefaultExpr<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ExportDefaultExpr,
   pub expr: Expr<'a>,
 }
@@ -8603,8 +8778,12 @@ fn get_view_for_export_default_expr<'a>(inner: &'a swc_ast::ExportDefaultExpr, p
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ExportDefaultSpecifier<'a> {
+  #[serde(skip)]
   pub parent: &'a NamedExport<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ExportDefaultSpecifier,
   pub exported: &'a Ident<'a>,
 }
@@ -8666,8 +8845,12 @@ fn get_view_for_export_default_specifier<'a>(inner: &'a swc_ast::ExportDefaultSp
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ExportNamedSpecifier<'a> {
+  #[serde(skip)]
   pub parent: &'a NamedExport<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ExportNamedSpecifier,
   /// `foo` in `export { foo as bar }`
   pub orig: &'a Ident<'a>,
@@ -8741,8 +8924,12 @@ fn get_view_for_export_named_specifier<'a>(inner: &'a swc_ast::ExportNamedSpecif
 }
 
 /// `export * as foo from 'src';`
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ExportNamespaceSpecifier<'a> {
+  #[serde(skip)]
   pub parent: &'a NamedExport<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ExportNamespaceSpecifier,
   pub name: &'a Ident<'a>,
 }
@@ -8804,8 +8991,12 @@ fn get_view_for_export_namespace_specifier<'a>(inner: &'a swc_ast::ExportNamespa
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ExprOrSpread<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ExprOrSpread,
   pub expr: Expr<'a>,
   pub spread: &'a Option<swc_common::Span>,
@@ -8869,8 +9060,12 @@ fn get_view_for_expr_or_spread<'a>(inner: &'a swc_ast::ExprOrSpread, parent: Nod
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ExprStmt<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ExprStmt,
   pub expr: Expr<'a>,
 }
@@ -8932,8 +9127,12 @@ fn get_view_for_expr_stmt<'a>(inner: &'a swc_ast::ExprStmt, parent: Node<'a>, bu
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct FnDecl<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::FnDecl,
   pub ident: &'a Ident<'a>,
   pub function: &'a Function<'a>,
@@ -9002,8 +9201,12 @@ fn get_view_for_fn_decl<'a>(inner: &'a swc_ast::FnDecl, parent: Node<'a>, bump: 
 }
 
 /// Function expression.
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct FnExpr<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::FnExpr,
   pub ident: Option<&'a Ident<'a>>,
   pub function: &'a Function<'a>,
@@ -9074,8 +9277,12 @@ fn get_view_for_fn_expr<'a>(inner: &'a swc_ast::FnExpr, parent: Node<'a>, bump: 
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ForInStmt<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ForInStmt,
   pub left: VarDeclOrPat<'a>,
   pub right: Expr<'a>,
@@ -9145,8 +9352,12 @@ fn get_view_for_for_in_stmt<'a>(inner: &'a swc_ast::ForInStmt, parent: Node<'a>,
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ForOfStmt<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ForOfStmt,
   pub left: VarDeclOrPat<'a>,
   pub right: Expr<'a>,
@@ -9223,8 +9434,12 @@ fn get_view_for_for_of_stmt<'a>(inner: &'a swc_ast::ForOfStmt, parent: Node<'a>,
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ForStmt<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ForStmt,
   pub init: Option<VarDeclOrExpr<'a>>,
   pub test: Option<Expr<'a>>,
@@ -9314,8 +9529,12 @@ fn get_view_for_for_stmt<'a>(inner: &'a swc_ast::ForStmt, parent: Node<'a>, bump
 }
 
 /// Common parts of function and method.
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct Function<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::Function,
   pub params: Vec<&'a Param<'a>>,
   pub decorators: Vec<&'a Decorator<'a>>,
@@ -9418,8 +9637,12 @@ fn get_view_for_function<'a>(inner: &'a swc_ast::Function, parent: Node<'a>, bum
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct GetterProp<'a> {
+  #[serde(skip)]
   pub parent: &'a ObjectLit<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::GetterProp,
   pub key: PropName<'a>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
@@ -9500,8 +9723,12 @@ fn get_view_for_getter_prop<'a>(inner: &'a swc_ast::GetterProp, parent: Node<'a>
 }
 
 /// Ident with span.
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct Ident<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::Ident,
   pub sym: &'a swc_atoms::JsWord,
   /// TypeScript only. Used in case of an optional parameter.
@@ -9562,8 +9789,12 @@ fn get_view_for_ident<'a>(inner: &'a swc_ast::Ident, parent: Node<'a>, bump: &'a
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct IfStmt<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::IfStmt,
   pub test: Expr<'a>,
   pub cons: Stmt<'a>,
@@ -9638,8 +9869,12 @@ fn get_view_for_if_stmt<'a>(inner: &'a swc_ast::IfStmt, parent: Node<'a>, bump: 
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ImportDecl<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ImportDecl,
   pub specifiers: Vec<ImportSpecifier<'a>>,
   pub src: &'a Str<'a>,
@@ -9719,8 +9954,12 @@ fn get_view_for_import_decl<'a>(inner: &'a swc_ast::ImportDecl, parent: Node<'a>
 }
 
 /// e.g. `import foo from 'mod.js'`
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ImportDefaultSpecifier<'a> {
+  #[serde(skip)]
   pub parent: &'a ImportDecl<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ImportDefaultSpecifier,
   pub local: &'a Ident<'a>,
 }
@@ -9785,8 +10024,12 @@ fn get_view_for_import_default_specifier<'a>(inner: &'a swc_ast::ImportDefaultSp
 /// e.g. local = foo, imported = None `import { foo } from 'mod.js'`
 /// e.g. local = bar, imported = Some(foo) for `import { foo as bar } from
 /// 'mod.js'`
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ImportNamedSpecifier<'a> {
+  #[serde(skip)]
   pub parent: &'a ImportDecl<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ImportNamedSpecifier,
   pub local: &'a Ident<'a>,
   pub imported: Option<&'a Ident<'a>>,
@@ -9858,8 +10101,12 @@ fn get_view_for_import_named_specifier<'a>(inner: &'a swc_ast::ImportNamedSpecif
 }
 
 /// e.g. `import * as foo from 'mod.js'`.
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ImportStarAsSpecifier<'a> {
+  #[serde(skip)]
   pub parent: &'a ImportDecl<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ImportStarAsSpecifier,
   pub local: &'a Ident<'a>,
 }
@@ -9922,8 +10169,12 @@ fn get_view_for_import_star_as_specifier<'a>(inner: &'a swc_ast::ImportStarAsSpe
 }
 
 /// Represents a invalid node.
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct Invalid<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::Invalid,
 }
 
@@ -9979,8 +10230,12 @@ fn get_view_for_invalid<'a>(inner: &'a swc_ast::Invalid, parent: Node<'a>, bump:
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct JSXAttr<'a> {
+  #[serde(skip)]
   pub parent: &'a JSXOpeningElement<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::JSXAttr,
   pub name: JSXAttrName<'a>,
   /// Babel uses Expr instead of JSXAttrValue
@@ -10052,8 +10307,12 @@ fn get_view_for_jsxattr<'a>(inner: &'a swc_ast::JSXAttr, parent: Node<'a>, bump:
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct JSXClosingElement<'a> {
+  #[serde(skip)]
   pub parent: &'a JSXElement<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::JSXClosingElement,
   pub name: JSXElementName<'a>,
 }
@@ -10115,8 +10374,12 @@ fn get_view_for_jsxclosing_element<'a>(inner: &'a swc_ast::JSXClosingElement, pa
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct JSXClosingFragment<'a> {
+  #[serde(skip)]
   pub parent: &'a JSXFragment<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::JSXClosingFragment,
 }
 
@@ -10172,8 +10435,12 @@ fn get_view_for_jsxclosing_fragment<'a>(inner: &'a swc_ast::JSXClosingFragment, 
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct JSXElement<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::JSXElement,
   pub opening: &'a JSXOpeningElement<'a>,
   pub children: Vec<JSXElementChild<'a>>,
@@ -10250,8 +10517,12 @@ fn get_view_for_jsxelement<'a>(inner: &'a swc_ast::JSXElement, parent: Node<'a>,
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct JSXEmptyExpr<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::JSXEmptyExpr,
 }
 
@@ -10307,8 +10578,12 @@ fn get_view_for_jsxempty_expr<'a>(inner: &'a swc_ast::JSXEmptyExpr, parent: Node
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct JSXExprContainer<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::JSXExprContainer,
   pub expr: JSXExpr<'a>,
 }
@@ -10370,8 +10645,12 @@ fn get_view_for_jsxexpr_container<'a>(inner: &'a swc_ast::JSXExprContainer, pare
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct JSXFragment<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::JSXFragment,
   pub opening: &'a JSXOpeningFragment<'a>,
   pub children: Vec<JSXElementChild<'a>>,
@@ -10443,8 +10722,12 @@ fn get_view_for_jsxfragment<'a>(inner: &'a swc_ast::JSXFragment, parent: Node<'a
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct JSXMemberExpr<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::JSXMemberExpr,
   pub obj: JSXObject<'a>,
   pub prop: &'a Ident<'a>,
@@ -10511,8 +10794,12 @@ fn get_view_for_jsxmember_expr<'a>(inner: &'a swc_ast::JSXMemberExpr, parent: No
 }
 
 /// XML-based namespace syntax:
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct JSXNamespacedName<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::JSXNamespacedName,
   pub ns: &'a Ident<'a>,
   pub name: &'a Ident<'a>,
@@ -10578,8 +10865,12 @@ fn get_view_for_jsxnamespaced_name<'a>(inner: &'a swc_ast::JSXNamespacedName, pa
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct JSXOpeningElement<'a> {
+  #[serde(skip)]
   pub parent: &'a JSXElement<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::JSXOpeningElement,
   pub name: JSXElementName<'a>,
   pub attrs: Vec<JSXAttrOrSpread<'a>>,
@@ -10660,8 +10951,12 @@ fn get_view_for_jsxopening_element<'a>(inner: &'a swc_ast::JSXOpeningElement, pa
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct JSXOpeningFragment<'a> {
+  #[serde(skip)]
   pub parent: &'a JSXFragment<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::JSXOpeningFragment,
 }
 
@@ -10717,8 +11012,12 @@ fn get_view_for_jsxopening_fragment<'a>(inner: &'a swc_ast::JSXOpeningFragment, 
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct JSXSpreadChild<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::JSXSpreadChild,
   pub expr: Expr<'a>,
 }
@@ -10780,8 +11079,12 @@ fn get_view_for_jsxspread_child<'a>(inner: &'a swc_ast::JSXSpreadChild, parent: 
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct JSXText<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::JSXText,
   pub value: &'a swc_atoms::JsWord,
   pub raw: &'a swc_atoms::JsWord,
@@ -10842,8 +11145,12 @@ fn get_view_for_jsxtext<'a>(inner: &'a swc_ast::JSXText, parent: Node<'a>, bump:
 }
 
 /// `{key: value}`
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct KeyValuePatProp<'a> {
+  #[serde(skip)]
   pub parent: &'a ObjectPat<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::KeyValuePatProp,
   pub key: PropName<'a>,
   pub value: Pat<'a>,
@@ -10909,8 +11216,12 @@ fn get_view_for_key_value_pat_prop<'a>(inner: &'a swc_ast::KeyValuePatProp, pare
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct KeyValueProp<'a> {
+  #[serde(skip)]
   pub parent: &'a ObjectLit<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::KeyValueProp,
   pub key: PropName<'a>,
   pub value: Expr<'a>,
@@ -10976,8 +11287,12 @@ fn get_view_for_key_value_prop<'a>(inner: &'a swc_ast::KeyValueProp, parent: Nod
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct LabeledStmt<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::LabeledStmt,
   pub label: &'a Ident<'a>,
   pub body: Stmt<'a>,
@@ -11043,8 +11358,12 @@ fn get_view_for_labeled_stmt<'a>(inner: &'a swc_ast::LabeledStmt, parent: Node<'
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct MemberExpr<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::MemberExpr,
   pub obj: ExprOrSuper<'a>,
   pub prop: Expr<'a>,
@@ -11112,8 +11431,12 @@ fn get_view_for_member_expr<'a>(inner: &'a swc_ast::MemberExpr, parent: Node<'a>
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct MetaPropExpr<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::MetaPropExpr,
   pub meta: &'a Ident<'a>,
   pub prop: &'a Ident<'a>,
@@ -11179,8 +11502,12 @@ fn get_view_for_meta_prop_expr<'a>(inner: &'a swc_ast::MetaPropExpr, parent: Nod
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct MethodProp<'a> {
+  #[serde(skip)]
   pub parent: &'a ObjectLit<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::MethodProp,
   pub key: PropName<'a>,
   pub function: &'a Function<'a>,
@@ -11246,10 +11573,16 @@ fn get_view_for_method_prop<'a>(inner: &'a swc_ast::MethodProp, parent: Node<'a>
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct Module<'a> {
+  #[serde(skip)]
   pub source_file: Option<&'a swc_common::SourceFile>,
+  #[serde(skip)]
   pub tokens: Option<&'a TokenContainer<'a>>,
+  #[serde(skip)]
   pub comments: Option<&'a CommentContainer<'a>>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::Module,
   pub body: Vec<ModuleItem<'a>>,
   pub shebang: &'a Option<swc_atoms::JsWord>,
@@ -11326,8 +11659,12 @@ fn get_view_for_module<'a>(source_file_info: &'a ModuleInfo<'a>, bump: &'a Bump)
 
 /// `export { foo } from 'mod'`
 /// `export { foo as bar } from 'mod'`
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct NamedExport<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::NamedExport,
   pub specifiers: Vec<ExportSpecifier<'a>>,
   pub src: Option<&'a Str<'a>>,
@@ -11411,8 +11748,12 @@ fn get_view_for_named_export<'a>(inner: &'a swc_ast::NamedExport, parent: Node<'
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct NewExpr<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::NewExpr,
   pub callee: Expr<'a>,
   pub args: Option<Vec<&'a ExprOrSpread<'a>>>,
@@ -11494,8 +11835,12 @@ fn get_view_for_new_expr<'a>(inner: &'a swc_ast::NewExpr, parent: Node<'a>, bump
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct Null<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::Null,
 }
 
@@ -11551,8 +11896,12 @@ fn get_view_for_null<'a>(inner: &'a swc_ast::Null, parent: Node<'a>, bump: &'a B
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct Number<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::Number,
   /// **Note**: This should not be `NaN`. Use [crate::Ident] to represent NaN.
   ///
@@ -11614,8 +11963,12 @@ fn get_view_for_number<'a>(inner: &'a swc_ast::Number, parent: Node<'a>, bump: &
 }
 
 /// Object literal.
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ObjectLit<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ObjectLit,
   pub props: Vec<PropOrSpread<'a>>,
 }
@@ -11679,8 +12032,12 @@ fn get_view_for_object_lit<'a>(inner: &'a swc_ast::ObjectLit, parent: Node<'a>, 
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ObjectPat<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ObjectPat,
   pub props: Vec<ObjectPatProp<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
@@ -11756,8 +12113,12 @@ fn get_view_for_object_pat<'a>(inner: &'a swc_ast::ObjectPat, parent: Node<'a>, 
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct OptChainExpr<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::OptChainExpr,
   pub expr: Expr<'a>,
   pub question_dot_token: &'a swc_common::Span,
@@ -11821,8 +12182,12 @@ fn get_view_for_opt_chain_expr<'a>(inner: &'a swc_ast::OptChainExpr, parent: Nod
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct Param<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::Param,
   pub decorators: Vec<&'a Decorator<'a>>,
   pub pat: Pat<'a>,
@@ -11890,8 +12255,12 @@ fn get_view_for_param<'a>(inner: &'a swc_ast::Param, parent: Node<'a>, bump: &'a
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ParenExpr<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ParenExpr,
   pub expr: Expr<'a>,
 }
@@ -11953,8 +12322,12 @@ fn get_view_for_paren_expr<'a>(inner: &'a swc_ast::ParenExpr, parent: Node<'a>, 
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct PrivateMethod<'a> {
+  #[serde(skip)]
   pub parent: &'a Class<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::PrivateMethod,
   pub key: &'a PrivateName<'a>,
   pub function: &'a Function<'a>,
@@ -12032,8 +12405,12 @@ fn get_view_for_private_method<'a>(inner: &'a swc_ast::PrivateMethod, parent: No
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct PrivateName<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::PrivateName,
   pub id: &'a Ident<'a>,
 }
@@ -12095,8 +12472,12 @@ fn get_view_for_private_name<'a>(inner: &'a swc_ast::PrivateName, parent: Node<'
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct PrivateProp<'a> {
+  #[serde(skip)]
   pub parent: &'a Class<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::PrivateProp,
   pub key: &'a PrivateName<'a>,
   pub value: Option<Expr<'a>>,
@@ -12198,8 +12579,12 @@ fn get_view_for_private_prop<'a>(inner: &'a swc_ast::PrivateProp, parent: Node<'
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct Regex<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::Regex,
   pub exp: &'a swc_atoms::JsWord,
   pub flags: &'a swc_atoms::JsWord,
@@ -12260,8 +12645,12 @@ fn get_view_for_regex<'a>(inner: &'a swc_ast::Regex, parent: Node<'a>, bump: &'a
 }
 
 /// EsTree `RestElement`
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct RestPat<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::RestPat,
   pub arg: Pat<'a>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
@@ -12334,8 +12723,12 @@ fn get_view_for_rest_pat<'a>(inner: &'a swc_ast::RestPat, parent: Node<'a>, bump
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ReturnStmt<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ReturnStmt,
   pub arg: Option<Expr<'a>>,
 }
@@ -12402,10 +12795,16 @@ fn get_view_for_return_stmt<'a>(inner: &'a swc_ast::ReturnStmt, parent: Node<'a>
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct Script<'a> {
+  #[serde(skip)]
   pub source_file: Option<&'a swc_common::SourceFile>,
+  #[serde(skip)]
   pub tokens: Option<&'a TokenContainer<'a>>,
+  #[serde(skip)]
   pub comments: Option<&'a CommentContainer<'a>>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::Script,
   pub body: Vec<Stmt<'a>>,
   pub shebang: &'a Option<swc_atoms::JsWord>,
@@ -12480,8 +12879,12 @@ fn get_view_for_script<'a>(source_file_info: &'a ScriptInfo<'a>, bump: &'a Bump)
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct SeqExpr<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::SeqExpr,
   pub exprs: Vec<Expr<'a>>,
 }
@@ -12545,8 +12948,12 @@ fn get_view_for_seq_expr<'a>(inner: &'a swc_ast::SeqExpr, parent: Node<'a>, bump
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct SetterProp<'a> {
+  #[serde(skip)]
   pub parent: &'a ObjectLit<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::SetterProp,
   pub key: PropName<'a>,
   pub param: Pat<'a>,
@@ -12621,8 +13028,12 @@ fn get_view_for_setter_prop<'a>(inner: &'a swc_ast::SetterProp, parent: Node<'a>
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct SpreadElement<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::SpreadElement,
   pub expr: Expr<'a>,
   pub dot3_token: &'a swc_common::Span,
@@ -12686,8 +13097,12 @@ fn get_view_for_spread_element<'a>(inner: &'a swc_ast::SpreadElement, parent: No
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct Str<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::Str,
   pub value: &'a swc_atoms::JsWord,
   /// This includes line escape.
@@ -12750,8 +13165,12 @@ fn get_view_for_str<'a>(inner: &'a swc_ast::Str, parent: Node<'a>, bump: &'a Bum
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct Super<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::Super,
 }
 
@@ -12807,8 +13226,12 @@ fn get_view_for_super<'a>(inner: &'a swc_ast::Super, parent: Node<'a>, bump: &'a
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct SwitchCase<'a> {
+  #[serde(skip)]
   pub parent: &'a SwitchStmt<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::SwitchCase,
   /// None for `default:`
   pub test: Option<Expr<'a>>,
@@ -12882,8 +13305,12 @@ fn get_view_for_switch_case<'a>(inner: &'a swc_ast::SwitchCase, parent: Node<'a>
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct SwitchStmt<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::SwitchStmt,
   pub discriminant: Expr<'a>,
   pub cases: Vec<&'a SwitchCase<'a>>,
@@ -12951,8 +13378,12 @@ fn get_view_for_switch_stmt<'a>(inner: &'a swc_ast::SwitchStmt, parent: Node<'a>
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TaggedTpl<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TaggedTpl,
   pub tag: Expr<'a>,
   pub exprs: Vec<Expr<'a>>,
@@ -13035,8 +13466,12 @@ fn get_view_for_tagged_tpl<'a>(inner: &'a swc_ast::TaggedTpl, parent: Node<'a>, 
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ThisExpr<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ThisExpr,
 }
 
@@ -13092,8 +13527,12 @@ fn get_view_for_this_expr<'a>(inner: &'a swc_ast::ThisExpr, parent: Node<'a>, bu
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct ThrowStmt<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::ThrowStmt,
   pub arg: Expr<'a>,
 }
@@ -13155,8 +13594,12 @@ fn get_view_for_throw_stmt<'a>(inner: &'a swc_ast::ThrowStmt, parent: Node<'a>, 
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct Tpl<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::Tpl,
   pub exprs: Vec<Expr<'a>>,
   pub quasis: Vec<&'a TplElement<'a>>,
@@ -13226,8 +13669,12 @@ fn get_view_for_tpl<'a>(inner: &'a swc_ast::Tpl, parent: Node<'a>, bump: &'a Bum
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TplElement<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TplElement,
   pub cooked: Option<&'a Str<'a>>,
   pub raw: &'a Str<'a>,
@@ -13300,8 +13747,12 @@ fn get_view_for_tpl_element<'a>(inner: &'a swc_ast::TplElement, parent: Node<'a>
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TryStmt<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TryStmt,
   pub block: &'a BlockStmt<'a>,
   pub handler: Option<&'a CatchClause<'a>>,
@@ -13381,8 +13832,12 @@ fn get_view_for_try_stmt<'a>(inner: &'a swc_ast::TryStmt, parent: Node<'a>, bump
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsArrayType<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsArrayType,
   pub elem_type: TsType<'a>,
 }
@@ -13444,8 +13899,12 @@ fn get_view_for_ts_array_type<'a>(inner: &'a swc_ast::TsArrayType, parent: Node<
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsAsExpr<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsAsExpr,
   pub expr: Expr<'a>,
   pub type_ann: TsType<'a>,
@@ -13511,8 +13970,12 @@ fn get_view_for_ts_as_expr<'a>(inner: &'a swc_ast::TsAsExpr, parent: Node<'a>, b
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsCallSignatureDecl<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsCallSignatureDecl,
   pub params: Vec<TsFnParam<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
@@ -13594,8 +14057,12 @@ fn get_view_for_ts_call_signature_decl<'a>(inner: &'a swc_ast::TsCallSignatureDe
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsConditionalType<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsConditionalType,
   pub check_type: TsType<'a>,
   pub extends_type: TsType<'a>,
@@ -13669,8 +14136,12 @@ fn get_view_for_ts_conditional_type<'a>(inner: &'a swc_ast::TsConditionalType, p
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsConstAssertion<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsConstAssertion,
   pub expr: Expr<'a>,
 }
@@ -13732,8 +14203,12 @@ fn get_view_for_ts_const_assertion<'a>(inner: &'a swc_ast::TsConstAssertion, par
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsConstructSignatureDecl<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsConstructSignatureDecl,
   pub params: Vec<TsFnParam<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
@@ -13815,8 +14290,12 @@ fn get_view_for_ts_construct_signature_decl<'a>(inner: &'a swc_ast::TsConstructS
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsConstructorType<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsConstructorType,
   pub params: Vec<TsFnParam<'a>>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
@@ -13895,8 +14374,12 @@ fn get_view_for_ts_constructor_type<'a>(inner: &'a swc_ast::TsConstructorType, p
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsEnumDecl<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsEnumDecl,
   pub id: &'a Ident<'a>,
   pub members: Vec<&'a TsEnumMember<'a>>,
@@ -13968,8 +14451,12 @@ fn get_view_for_ts_enum_decl<'a>(inner: &'a swc_ast::TsEnumDecl, parent: Node<'a
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsEnumMember<'a> {
+  #[serde(skip)]
   pub parent: &'a TsEnumDecl<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsEnumMember,
   pub id: TsEnumMemberId<'a>,
   pub init: Option<Expr<'a>>,
@@ -14043,8 +14530,12 @@ fn get_view_for_ts_enum_member<'a>(inner: &'a swc_ast::TsEnumMember, parent: Nod
 /// TypeScript's own parser uses ExportAssignment for both `export default` and
 /// `export =`. But for @babel/parser, `export default` is an ExportDefaultDecl,
 /// so a TsExportAssignment is always `export =`.
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsExportAssignment<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsExportAssignment,
   pub expr: Expr<'a>,
 }
@@ -14106,8 +14597,12 @@ fn get_view_for_ts_export_assignment<'a>(inner: &'a swc_ast::TsExportAssignment,
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsExprWithTypeArgs<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsExprWithTypeArgs,
   pub expr: TsEntityName<'a>,
   pub type_args: Option<&'a TsTypeParamInstantiation<'a>>,
@@ -14178,8 +14673,12 @@ fn get_view_for_ts_expr_with_type_args<'a>(inner: &'a swc_ast::TsExprWithTypeArg
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsExternalModuleRef<'a> {
+  #[serde(skip)]
   pub parent: &'a TsImportEqualsDecl<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsExternalModuleRef,
   pub expr: &'a Str<'a>,
 }
@@ -14241,8 +14740,12 @@ fn get_view_for_ts_external_module_ref<'a>(inner: &'a swc_ast::TsExternalModuleR
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsFnType<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsFnType,
   pub params: Vec<TsFnParam<'a>>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
@@ -14319,8 +14822,12 @@ fn get_view_for_ts_fn_type<'a>(inner: &'a swc_ast::TsFnType, parent: Node<'a>, b
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsImportEqualsDecl<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsImportEqualsDecl,
   pub id: &'a Ident<'a>,
   pub module_ref: TsModuleRef<'a>,
@@ -14390,8 +14897,12 @@ fn get_view_for_ts_import_equals_decl<'a>(inner: &'a swc_ast::TsImportEqualsDecl
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsImportType<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsImportType,
   pub arg: &'a Str<'a>,
   pub qualifier: Option<TsEntityName<'a>>,
@@ -14471,8 +14982,12 @@ fn get_view_for_ts_import_type<'a>(inner: &'a swc_ast::TsImportType, parent: Nod
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsIndexSignature<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsIndexSignature,
   pub params: Vec<TsFnParam<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
@@ -14547,8 +15062,12 @@ fn get_view_for_ts_index_signature<'a>(inner: &'a swc_ast::TsIndexSignature, par
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsIndexedAccessType<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsIndexedAccessType,
   pub obj_type: TsType<'a>,
   pub index_type: TsType<'a>,
@@ -14616,8 +15135,12 @@ fn get_view_for_ts_indexed_access_type<'a>(inner: &'a swc_ast::TsIndexedAccessTy
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsInferType<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsInferType,
   pub type_param: &'a TsTypeParam<'a>,
 }
@@ -14679,8 +15202,12 @@ fn get_view_for_ts_infer_type<'a>(inner: &'a swc_ast::TsInferType, parent: Node<
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsInterfaceBody<'a> {
+  #[serde(skip)]
   pub parent: &'a TsInterfaceDecl<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsInterfaceBody,
   pub body: Vec<TsTypeElement<'a>>,
 }
@@ -14744,8 +15271,12 @@ fn get_view_for_ts_interface_body<'a>(inner: &'a swc_ast::TsInterfaceBody, paren
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsInterfaceDecl<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsInterfaceDecl,
   pub id: &'a Ident<'a>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
@@ -14828,8 +15359,12 @@ fn get_view_for_ts_interface_decl<'a>(inner: &'a swc_ast::TsInterfaceDecl, paren
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsIntersectionType<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsIntersectionType,
   pub types: Vec<TsType<'a>>,
 }
@@ -14893,8 +15428,12 @@ fn get_view_for_ts_intersection_type<'a>(inner: &'a swc_ast::TsIntersectionType,
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsKeywordType<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsKeywordType,
   pub kind: TsKeywordTypeKind,
 }
@@ -14952,8 +15491,12 @@ fn get_view_for_ts_keyword_type<'a>(inner: &'a swc_ast::TsKeywordType, parent: N
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsLitType<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsLitType,
   pub lit: TsLit<'a>,
 }
@@ -15015,8 +15558,12 @@ fn get_view_for_ts_lit_type<'a>(inner: &'a swc_ast::TsLitType, parent: Node<'a>,
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsMappedType<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsMappedType,
   pub type_param: &'a TsTypeParam<'a>,
   pub name_type: Option<TsType<'a>>,
@@ -15100,8 +15647,12 @@ fn get_view_for_ts_mapped_type<'a>(inner: &'a swc_ast::TsMappedType, parent: Nod
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsMethodSignature<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsMethodSignature,
   pub key: Expr<'a>,
   pub params: Vec<TsFnParam<'a>>,
@@ -15193,8 +15744,12 @@ fn get_view_for_ts_method_signature<'a>(inner: &'a swc_ast::TsMethodSignature, p
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsModuleBlock<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsModuleBlock,
   pub body: Vec<ModuleItem<'a>>,
 }
@@ -15258,8 +15813,12 @@ fn get_view_for_ts_module_block<'a>(inner: &'a swc_ast::TsModuleBlock, parent: N
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsModuleDecl<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsModuleDecl,
   pub id: TsModuleName<'a>,
   pub body: Option<TsNamespaceBody<'a>>,
@@ -15335,8 +15894,12 @@ fn get_view_for_ts_module_decl<'a>(inner: &'a swc_ast::TsModuleDecl, parent: Nod
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsNamespaceDecl<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsNamespaceDecl,
   pub id: &'a Ident<'a>,
   pub body: TsNamespaceBody<'a>,
@@ -15407,8 +15970,12 @@ fn get_view_for_ts_namespace_decl<'a>(inner: &'a swc_ast::TsNamespaceDecl, paren
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsNamespaceExportDecl<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsNamespaceExportDecl,
   pub id: &'a Ident<'a>,
 }
@@ -15470,8 +16037,12 @@ fn get_view_for_ts_namespace_export_decl<'a>(inner: &'a swc_ast::TsNamespaceExpo
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsNonNullExpr<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsNonNullExpr,
   pub expr: Expr<'a>,
 }
@@ -15533,8 +16104,12 @@ fn get_view_for_ts_non_null_expr<'a>(inner: &'a swc_ast::TsNonNullExpr, parent: 
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsOptionalType<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsOptionalType,
   pub type_ann: TsType<'a>,
 }
@@ -15596,8 +16171,12 @@ fn get_view_for_ts_optional_type<'a>(inner: &'a swc_ast::TsOptionalType, parent:
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsParamProp<'a> {
+  #[serde(skip)]
   pub parent: &'a Constructor<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsParamProp,
   pub decorators: Vec<&'a Decorator<'a>>,
   pub param: TsParamPropParam<'a>,
@@ -15670,8 +16249,12 @@ fn get_view_for_ts_param_prop<'a>(inner: &'a swc_ast::TsParamProp, parent: Node<
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsParenthesizedType<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsParenthesizedType,
   pub type_ann: TsType<'a>,
 }
@@ -15733,8 +16316,12 @@ fn get_view_for_ts_parenthesized_type<'a>(inner: &'a swc_ast::TsParenthesizedTyp
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsPropertySignature<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsPropertySignature,
   pub key: Expr<'a>,
   pub init: Option<Expr<'a>>,
@@ -15835,8 +16422,12 @@ fn get_view_for_ts_property_signature<'a>(inner: &'a swc_ast::TsPropertySignatur
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsQualifiedName<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsQualifiedName,
   pub left: TsEntityName<'a>,
   pub right: &'a Ident<'a>,
@@ -15902,8 +16493,12 @@ fn get_view_for_ts_qualified_name<'a>(inner: &'a swc_ast::TsQualifiedName, paren
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsRestType<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsRestType,
   pub type_ann: TsType<'a>,
 }
@@ -15965,8 +16560,12 @@ fn get_view_for_ts_rest_type<'a>(inner: &'a swc_ast::TsRestType, parent: Node<'a
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsThisType<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsThisType,
 }
 
@@ -16022,8 +16621,12 @@ fn get_view_for_ts_this_type<'a>(inner: &'a swc_ast::TsThisType, parent: Node<'a
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsTplLitType<'a> {
+  #[serde(skip)]
   pub parent: &'a TsLitType<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsTplLitType,
   pub types: Vec<TsType<'a>>,
   pub quasis: Vec<&'a TplElement<'a>>,
@@ -16093,8 +16696,12 @@ fn get_view_for_ts_tpl_lit_type<'a>(inner: &'a swc_ast::TsTplLitType, parent: No
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsTupleElement<'a> {
+  #[serde(skip)]
   pub parent: &'a TsTupleType<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsTupleElement,
   /// `Ident` or `RestPat { arg: Ident }`
   pub label: Option<Pat<'a>>,
@@ -16166,8 +16773,12 @@ fn get_view_for_ts_tuple_element<'a>(inner: &'a swc_ast::TsTupleElement, parent:
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsTupleType<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsTupleType,
   pub elem_types: Vec<&'a TsTupleElement<'a>>,
 }
@@ -16231,8 +16842,12 @@ fn get_view_for_ts_tuple_type<'a>(inner: &'a swc_ast::TsTupleType, parent: Node<
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsTypeAliasDecl<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeAliasDecl,
   pub id: &'a Ident<'a>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
@@ -16309,8 +16924,12 @@ fn get_view_for_ts_type_alias_decl<'a>(inner: &'a swc_ast::TsTypeAliasDecl, pare
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsTypeAnn<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeAnn,
   pub type_ann: TsType<'a>,
 }
@@ -16372,8 +16991,12 @@ fn get_view_for_ts_type_ann<'a>(inner: &'a swc_ast::TsTypeAnn, parent: Node<'a>,
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsTypeAssertion<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeAssertion,
   pub expr: Expr<'a>,
   pub type_ann: TsType<'a>,
@@ -16439,8 +17062,12 @@ fn get_view_for_ts_type_assertion<'a>(inner: &'a swc_ast::TsTypeAssertion, paren
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsTypeLit<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeLit,
   pub members: Vec<TsTypeElement<'a>>,
 }
@@ -16504,8 +17131,12 @@ fn get_view_for_ts_type_lit<'a>(inner: &'a swc_ast::TsTypeLit, parent: Node<'a>,
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsTypeOperator<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeOperator,
   pub type_ann: TsType<'a>,
   pub op: TsTypeOperatorOp,
@@ -16569,8 +17200,12 @@ fn get_view_for_ts_type_operator<'a>(inner: &'a swc_ast::TsTypeOperator, parent:
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsTypeParam<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeParam,
   pub name: &'a Ident<'a>,
   pub constraint: Option<TsType<'a>>,
@@ -16650,8 +17285,12 @@ fn get_view_for_ts_type_param<'a>(inner: &'a swc_ast::TsTypeParam, parent: Node<
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsTypeParamDecl<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeParamDecl,
   pub params: Vec<&'a TsTypeParam<'a>>,
 }
@@ -16715,8 +17354,12 @@ fn get_view_for_ts_type_param_decl<'a>(inner: &'a swc_ast::TsTypeParamDecl, pare
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsTypeParamInstantiation<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeParamInstantiation,
   pub params: Vec<TsType<'a>>,
 }
@@ -16780,8 +17423,12 @@ fn get_view_for_ts_type_param_instantiation<'a>(inner: &'a swc_ast::TsTypeParamI
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsTypePredicate<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsTypePredicate,
   pub param_name: TsThisTypeOrIdent<'a>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
@@ -16855,8 +17502,12 @@ fn get_view_for_ts_type_predicate<'a>(inner: &'a swc_ast::TsTypePredicate, paren
 }
 
 /// `typeof` operator
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsTypeQuery<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeQuery,
   pub expr_name: TsTypeQueryExpr<'a>,
 }
@@ -16918,8 +17569,12 @@ fn get_view_for_ts_type_query<'a>(inner: &'a swc_ast::TsTypeQuery, parent: Node<
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsTypeRef<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeRef,
   pub type_name: TsEntityName<'a>,
   pub type_params: Option<&'a TsTypeParamInstantiation<'a>>,
@@ -16990,8 +17645,12 @@ fn get_view_for_ts_type_ref<'a>(inner: &'a swc_ast::TsTypeRef, parent: Node<'a>,
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct TsUnionType<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::TsUnionType,
   pub types: Vec<TsType<'a>>,
 }
@@ -17055,8 +17714,12 @@ fn get_view_for_ts_union_type<'a>(inner: &'a swc_ast::TsUnionType, parent: Node<
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct UnaryExpr<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::UnaryExpr,
   pub arg: Expr<'a>,
   pub op: UnaryOp,
@@ -17120,8 +17783,12 @@ fn get_view_for_unary_expr<'a>(inner: &'a swc_ast::UnaryExpr, parent: Node<'a>, 
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct UpdateExpr<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::UpdateExpr,
   pub arg: Expr<'a>,
   pub op: UpdateOp,
@@ -17187,8 +17854,12 @@ fn get_view_for_update_expr<'a>(inner: &'a swc_ast::UpdateExpr, parent: Node<'a>
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct VarDecl<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::VarDecl,
   pub decls: Vec<&'a VarDeclarator<'a>>,
   pub kind: VarDeclKind,
@@ -17256,8 +17927,12 @@ fn get_view_for_var_decl<'a>(inner: &'a swc_ast::VarDecl, parent: Node<'a>, bump
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct VarDeclarator<'a> {
+  #[serde(skip)]
   pub parent: &'a VarDecl<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::VarDeclarator,
   pub name: Pat<'a>,
   /// Initialization expression.
@@ -17332,8 +18007,12 @@ fn get_view_for_var_declarator<'a>(inner: &'a swc_ast::VarDeclarator, parent: No
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct WhileStmt<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::WhileStmt,
   pub test: Expr<'a>,
   pub body: Stmt<'a>,
@@ -17399,8 +18078,12 @@ fn get_view_for_while_stmt<'a>(inner: &'a swc_ast::WhileStmt, parent: Node<'a>, 
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct WithStmt<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::WithStmt,
   pub obj: Expr<'a>,
   pub body: Stmt<'a>,
@@ -17466,8 +18149,12 @@ fn get_view_for_with_stmt<'a>(inner: &'a swc_ast::WithStmt, parent: Node<'a>, bu
   node
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase", tag = "nodeKind")]
 pub struct YieldExpr<'a> {
+  #[serde(skip)]
   pub parent: Node<'a>,
+  #[serde(skip)]
   pub inner: &'a swc_ast::YieldExpr,
   pub arg: Option<Expr<'a>>,
   pub delegate: bool,

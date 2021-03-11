@@ -39,6 +39,7 @@ export function generate(analysisResult: AnalysisResult) {
     function writeUseDeclarations() {
         writer.writeLine("use std::mem::{self, MaybeUninit};");
         writer.writeLine("use bumpalo::Bump;");
+        writer.writeLine("use serde::Serialize;");
         writer.writeLine("use swc_common::{Span, Spanned};");
         writer.write("pub use swc_ecmascript::ast::{self as swc_ast, ");
         writer.write(analysisResult.enums.filter(e => e.isPlain).map(e => e.name).join(", "));
@@ -236,7 +237,8 @@ export function generate(analysisResult: AnalysisResult) {
 
         function writeEnum() {
             writeDocs(enumDef.docs);
-            writer.writeLine("#[derive(Copy, Clone)]");
+            writer.writeLine("#[derive(Copy, Clone, Serialize)]");
+            writer.writeLine("#[serde(untagged)]");
             writer.write(`pub enum ${enumDef.name}<'a> {`);
             writer.indent(() => {
                 for (const variant of enumDef.variants) {
@@ -411,9 +413,12 @@ export function generate(analysisResult: AnalysisResult) {
 
         function writeStruct() {
             writeDocs(struct.docs);
+            writer.writeLine("#[derive(Serialize)]");
+            writer.writeLine(`#[serde(rename_all = "camelCase", tag = "nodeKind")]`);
             writer.writeLine(`pub struct ${struct.name}<'a> {`);
             writer.indent(() => {
                 if (struct.parents.length > 0) {
+                    writer.writeLine("#[serde(skip)]");
                     if (struct.parents.length === 1) {
                         writer.writeLine(`pub parent: &'a ${struct.parents[0].name}<'a>,`);
                     } else {
@@ -421,10 +426,14 @@ export function generate(analysisResult: AnalysisResult) {
                     }
                 }
                 if (struct.name === "Module" || struct.name === "Script") {
+                    writer.writeLine("#[serde(skip)]");
                     writer.writeLine("pub source_file: Option<&'a swc_common::SourceFile>,");
+                    writer.writeLine("#[serde(skip)]");
                     writer.writeLine("pub tokens: Option<&'a TokenContainer<'a>>,");
+                    writer.writeLine("#[serde(skip)]");
                     writer.writeLine("pub comments: Option<&'a CommentContainer<'a>>,");
                 }
+                writer.writeLine("#[serde(skip)]");
                 writer.writeLine(`pub inner: &'a swc_ast::${struct.name},`);
 
                 for (const field of structFields) {
