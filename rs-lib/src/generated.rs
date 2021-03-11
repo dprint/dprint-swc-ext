@@ -6316,13 +6316,8 @@ pub struct ArrayPat<'a> {
   pub inner: &'a swc_ast::ArrayPat,
   pub elems: Vec<Option<Pat<'a>>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
-}
-
-impl<'a> ArrayPat<'a> {
   /// Only in an ambient context
-  pub fn optional(&self) -> bool {
-    self.inner.optional
-  }
+  pub optional: bool,
 }
 
 impl<'a> Spanned for ArrayPat<'a> {
@@ -6384,6 +6379,7 @@ fn get_view_for_array_pat<'a>(inner: &'a swc_ast::ArrayPat, parent: Node<'a>, bu
     parent,
     elems: Vec::with_capacity(inner.elems.len()),
     type_ann: None,
+    optional: inner.optional,
   });
   let parent: Node<'a> = (&*node).into();
   node.elems.extend(inner.elems.iter().map(|value| match value {
@@ -6404,16 +6400,8 @@ pub struct ArrowExpr<'a> {
   pub body: BlockStmtOrExpr<'a>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
   pub return_type: Option<&'a TsTypeAnn<'a>>,
-}
-
-impl<'a> ArrowExpr<'a> {
-  pub fn is_async(&self) -> bool {
-    self.inner.is_async
-  }
-
-  pub fn is_generator(&self) -> bool {
-    self.inner.is_generator
-  }
+  pub is_async: bool,
+  pub is_generator: bool,
 }
 
 impl<'a> Spanned for ArrowExpr<'a> {
@@ -6479,6 +6467,8 @@ fn get_view_for_arrow_expr<'a>(inner: &'a swc_ast::ArrowExpr, parent: Node<'a>, 
     body: unsafe { MaybeUninit::uninit().assume_init() },
     type_params: None,
     return_type: None,
+    is_async: inner.is_async,
+    is_generator: inner.is_generator,
   });
   let parent: Node<'a> = (&*node).into();
   node.params.extend(inner.params.iter().map(|value| get_view_for_pat(value, parent.clone(), bump)));
@@ -6499,12 +6489,7 @@ pub struct AssignExpr<'a> {
   pub inner: &'a swc_ast::AssignExpr,
   pub left: PatOrExpr<'a>,
   pub right: Expr<'a>,
-}
-
-impl<'a> AssignExpr<'a> {
-  pub fn op(&self) -> AssignOp {
-    self.inner.op
-  }
+  pub op: AssignOp,
 }
 
 impl<'a> Spanned for AssignExpr<'a> {
@@ -6560,6 +6545,7 @@ fn get_view_for_assign_expr<'a>(inner: &'a swc_ast::AssignExpr, parent: Node<'a>
     parent,
     left: unsafe { MaybeUninit::uninit().assume_init() },
     right: unsafe { MaybeUninit::uninit().assume_init() },
+    op: inner.op,
   });
   let parent: Node<'a> = (&*node).into();
   node.left = get_view_for_pat_or_expr(&inner.left, parent.clone(), bump);
@@ -6849,12 +6835,7 @@ fn get_view_for_await_expr<'a>(inner: &'a swc_ast::AwaitExpr, parent: Node<'a>, 
 pub struct BigInt<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::BigInt,
-}
-
-impl<'a> BigInt<'a> {
-  pub fn value(&self) -> &num_bigint::BigInt {
-    &self.inner.value
-  }
+  pub value: &'a num_bigint::BigInt,
 }
 
 impl<'a> Spanned for BigInt<'a> {
@@ -6905,6 +6886,7 @@ fn get_view_for_big_int<'a>(inner: &'a swc_ast::BigInt, parent: Node<'a>, bump: 
   let node = bump.alloc(BigInt {
     inner,
     parent,
+    value: &inner.value,
   });
   node
 }
@@ -6914,12 +6896,7 @@ pub struct BinExpr<'a> {
   pub inner: &'a swc_ast::BinExpr,
   pub left: Expr<'a>,
   pub right: Expr<'a>,
-}
-
-impl<'a> BinExpr<'a> {
-  pub fn op(&self) -> BinaryOp {
-    self.inner.op
-  }
+  pub op: BinaryOp,
 }
 
 impl<'a> Spanned for BinExpr<'a> {
@@ -6975,6 +6952,7 @@ fn get_view_for_bin_expr<'a>(inner: &'a swc_ast::BinExpr, parent: Node<'a>, bump
     parent,
     left: unsafe { MaybeUninit::uninit().assume_init() },
     right: unsafe { MaybeUninit::uninit().assume_init() },
+    op: inner.op,
   });
   let parent: Node<'a> = (&*node).into();
   node.left = get_view_for_expr(&inner.left, parent.clone(), bump);
@@ -7124,12 +7102,7 @@ fn get_view_for_block_stmt<'a>(inner: &'a swc_ast::BlockStmt, parent: Node<'a>, 
 pub struct Bool<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::Bool,
-}
-
-impl<'a> Bool<'a> {
-  pub fn value(&self) -> bool {
-    self.inner.value
-  }
+  pub value: bool,
 }
 
 impl<'a> Spanned for Bool<'a> {
@@ -7180,6 +7153,7 @@ fn get_view_for_bool<'a>(inner: &'a swc_ast::Bool, parent: Node<'a>, bump: &'a B
   let node = bump.alloc(Bool {
     inner,
     parent,
+    value: inner.value,
   });
   node
 }
@@ -7416,12 +7390,7 @@ pub struct Class<'a> {
   pub super_type_params: Option<&'a TsTypeParamInstantiation<'a>>,
   /// Typescript extension.
   pub implements: Vec<&'a TsExprWithTypeArgs<'a>>,
-}
-
-impl<'a> Class<'a> {
-  pub fn is_abstract(&self) -> bool {
-    self.inner.is_abstract
-  }
+  pub is_abstract: bool,
 }
 
 impl<'a> Spanned for Class<'a> {
@@ -7497,6 +7466,7 @@ fn get_view_for_class<'a>(inner: &'a swc_ast::Class, parent: Node<'a>, bump: &'a
     type_params: None,
     super_type_params: None,
     implements: Vec::with_capacity(inner.implements.len()),
+    is_abstract: inner.is_abstract,
   });
   let parent: Node<'a> = (&*node).into();
   node.decorators.extend(inner.decorators.iter().map(|value| get_view_for_decorator(value, parent.clone(), bump)));
@@ -7522,12 +7492,7 @@ pub struct ClassDecl<'a> {
   pub inner: &'a swc_ast::ClassDecl,
   pub ident: &'a Ident<'a>,
   pub class: &'a Class<'a>,
-}
-
-impl<'a> ClassDecl<'a> {
-  pub fn declare(&self) -> bool {
-    self.inner.declare
-  }
+  pub declare: bool,
 }
 
 impl<'a> Spanned for ClassDecl<'a> {
@@ -7583,6 +7548,7 @@ fn get_view_for_class_decl<'a>(inner: &'a swc_ast::ClassDecl, parent: Node<'a>, 
     parent,
     ident: unsafe { MaybeUninit::uninit().assume_init() },
     class: unsafe { MaybeUninit::uninit().assume_init() },
+    declare: inner.declare,
   });
   let parent: Node<'a> = (&*node).into();
   node.ident = get_view_for_ident(&inner.ident, parent.clone(), bump);
@@ -7668,30 +7634,13 @@ pub struct ClassMethod<'a> {
   pub inner: &'a swc_ast::ClassMethod,
   pub key: PropName<'a>,
   pub function: &'a Function<'a>,
-}
-
-impl<'a> ClassMethod<'a> {
-  pub fn kind(&self) -> MethodKind {
-    self.inner.kind
-  }
-
-  pub fn is_static(&self) -> bool {
-    self.inner.is_static
-  }
-
+  pub kind: MethodKind,
+  pub is_static: bool,
   /// Typescript extension.
-  pub fn accessibility(&self) -> Option<Accessibility> {
-    self.inner.accessibility
-  }
-
+  pub accessibility: Option<Accessibility>,
   /// Typescript extension.
-  pub fn is_abstract(&self) -> bool {
-    self.inner.is_abstract
-  }
-
-  pub fn is_optional(&self) -> bool {
-    self.inner.is_optional
-  }
+  pub is_abstract: bool,
+  pub is_optional: bool,
 }
 
 impl<'a> Spanned for ClassMethod<'a> {
@@ -7747,6 +7696,11 @@ fn get_view_for_class_method<'a>(inner: &'a swc_ast::ClassMethod, parent: Node<'
     parent: parent.expect::<Class>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     function: unsafe { MaybeUninit::uninit().assume_init() },
+    kind: inner.kind,
+    is_static: inner.is_static,
+    accessibility: inner.accessibility,
+    is_abstract: inner.is_abstract,
+    is_optional: inner.is_optional,
   });
   let parent: Node<'a> = (&*node).into();
   node.key = get_view_for_prop_name(&inner.key, parent.clone(), bump);
@@ -7761,42 +7715,16 @@ pub struct ClassProp<'a> {
   pub value: Option<Expr<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
   pub decorators: Vec<&'a Decorator<'a>>,
-}
-
-impl<'a> ClassProp<'a> {
-  pub fn is_static(&self) -> bool {
-    self.inner.is_static
-  }
-
-  pub fn computed(&self) -> bool {
-    self.inner.computed
-  }
-
+  pub is_static: bool,
+  pub computed: bool,
   /// Typescript extension.
-  pub fn accessibility(&self) -> Option<Accessibility> {
-    self.inner.accessibility
-  }
-
+  pub accessibility: Option<Accessibility>,
   /// Typescript extension.
-  pub fn is_abstract(&self) -> bool {
-    self.inner.is_abstract
-  }
-
-  pub fn is_optional(&self) -> bool {
-    self.inner.is_optional
-  }
-
-  pub fn readonly(&self) -> bool {
-    self.inner.readonly
-  }
-
-  pub fn declare(&self) -> bool {
-    self.inner.declare
-  }
-
-  pub fn definite(&self) -> bool {
-    self.inner.definite
-  }
+  pub is_abstract: bool,
+  pub is_optional: bool,
+  pub readonly: bool,
+  pub declare: bool,
+  pub definite: bool,
 }
 
 impl<'a> Spanned for ClassProp<'a> {
@@ -7862,6 +7790,14 @@ fn get_view_for_class_prop<'a>(inner: &'a swc_ast::ClassProp, parent: Node<'a>, 
     value: None,
     type_ann: None,
     decorators: Vec::with_capacity(inner.decorators.len()),
+    is_static: inner.is_static,
+    computed: inner.computed,
+    accessibility: inner.accessibility,
+    is_abstract: inner.is_abstract,
+    is_optional: inner.is_optional,
+    readonly: inner.readonly,
+    declare: inner.declare,
+    definite: inner.definite,
   });
   let parent: Node<'a> = (&*node).into();
   node.key = get_view_for_expr(&inner.key, parent.clone(), bump);
@@ -8017,16 +7953,8 @@ pub struct Constructor<'a> {
   pub key: PropName<'a>,
   pub params: Vec<ParamOrTsParamProp<'a>>,
   pub body: Option<&'a BlockStmt<'a>>,
-}
-
-impl<'a> Constructor<'a> {
-  pub fn accessibility(&self) -> Option<Accessibility> {
-    self.inner.accessibility
-  }
-
-  pub fn is_optional(&self) -> bool {
-    self.inner.is_optional
-  }
+  pub accessibility: Option<Accessibility>,
+  pub is_optional: bool,
 }
 
 impl<'a> Spanned for Constructor<'a> {
@@ -8088,6 +8016,8 @@ fn get_view_for_constructor<'a>(inner: &'a swc_ast::Constructor, parent: Node<'a
     key: unsafe { MaybeUninit::uninit().assume_init() },
     params: Vec::with_capacity(inner.params.len()),
     body: None,
+    accessibility: inner.accessibility,
+    is_optional: inner.is_optional,
   });
   let parent: Node<'a> = (&*node).into();
   node.key = get_view_for_prop_name(&inner.key, parent.clone(), bump);
@@ -8878,12 +8808,7 @@ pub struct ExprOrSpread<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::ExprOrSpread,
   pub expr: Expr<'a>,
-}
-
-impl<'a> ExprOrSpread<'a> {
-  pub fn spread(&self) -> &Option<swc_common::Span> {
-    &self.inner.spread
-  }
+  pub spread: &'a Option<swc_common::Span>,
 }
 
 impl<'a> Spanned for ExprOrSpread<'a> {
@@ -8937,6 +8862,7 @@ fn get_view_for_expr_or_spread<'a>(inner: &'a swc_ast::ExprOrSpread, parent: Nod
     inner,
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
+    spread: &inner.spread,
   });
   let parent: Node<'a> = (&*node).into();
   node.expr = get_view_for_expr(&inner.expr, parent, bump);
@@ -9011,12 +8937,7 @@ pub struct FnDecl<'a> {
   pub inner: &'a swc_ast::FnDecl,
   pub ident: &'a Ident<'a>,
   pub function: &'a Function<'a>,
-}
-
-impl<'a> FnDecl<'a> {
-  pub fn declare(&self) -> bool {
-    self.inner.declare
-  }
+  pub declare: bool,
 }
 
 impl<'a> Spanned for FnDecl<'a> {
@@ -9072,6 +8993,7 @@ fn get_view_for_fn_decl<'a>(inner: &'a swc_ast::FnDecl, parent: Node<'a>, bump: 
     parent,
     ident: unsafe { MaybeUninit::uninit().assume_init() },
     function: unsafe { MaybeUninit::uninit().assume_init() },
+    declare: inner.declare,
   });
   let parent: Node<'a> = (&*node).into();
   node.ident = get_view_for_ident(&inner.ident, parent.clone(), bump);
@@ -9229,17 +9151,12 @@ pub struct ForOfStmt<'a> {
   pub left: VarDeclOrPat<'a>,
   pub right: Expr<'a>,
   pub body: Stmt<'a>,
-}
-
-impl<'a> ForOfStmt<'a> {
   /// Span of the await token.
   ///
   /// es2018
   ///
   /// for-await-of statements, e.g., `for await (const x of xs) {`
-  pub fn await_token(&self) -> &Option<swc_common::Span> {
-    &self.inner.await_token
-  }
+  pub await_token: &'a Option<swc_common::Span>,
 }
 
 impl<'a> Spanned for ForOfStmt<'a> {
@@ -9297,6 +9214,7 @@ fn get_view_for_for_of_stmt<'a>(inner: &'a swc_ast::ForOfStmt, parent: Node<'a>,
     left: unsafe { MaybeUninit::uninit().assume_init() },
     right: unsafe { MaybeUninit::uninit().assume_init() },
     body: unsafe { MaybeUninit::uninit().assume_init() },
+    await_token: &inner.await_token,
   });
   let parent: Node<'a> = (&*node).into();
   node.left = get_view_for_var_decl_or_pat(&inner.left, parent.clone(), bump);
@@ -9404,18 +9322,10 @@ pub struct Function<'a> {
   pub body: Option<&'a BlockStmt<'a>>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
   pub return_type: Option<&'a TsTypeAnn<'a>>,
-}
-
-impl<'a> Function<'a> {
   /// if it's a generator.
-  pub fn is_generator(&self) -> bool {
-    self.inner.is_generator
-  }
-
+  pub is_generator: bool,
   /// if it's an async function.
-  pub fn is_async(&self) -> bool {
-    self.inner.is_async
-  }
+  pub is_async: bool,
 }
 
 impl<'a> Spanned for Function<'a> {
@@ -9487,6 +9397,8 @@ fn get_view_for_function<'a>(inner: &'a swc_ast::Function, parent: Node<'a>, bum
     body: None,
     type_params: None,
     return_type: None,
+    is_generator: inner.is_generator,
+    is_async: inner.is_async,
   });
   let parent: Node<'a> = (&*node).into();
   node.params.extend(inner.params.iter().map(|value| get_view_for_param(value, parent.clone(), bump)));
@@ -9591,17 +9503,9 @@ fn get_view_for_getter_prop<'a>(inner: &'a swc_ast::GetterProp, parent: Node<'a>
 pub struct Ident<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::Ident,
-}
-
-impl<'a> Ident<'a> {
-  pub fn sym(&self) -> &swc_atoms::JsWord {
-    &self.inner.sym
-  }
-
+  pub sym: &'a swc_atoms::JsWord,
   /// TypeScript only. Used in case of an optional parameter.
-  pub fn optional(&self) -> bool {
-    self.inner.optional
-  }
+  pub optional: bool,
 }
 
 impl<'a> Spanned for Ident<'a> {
@@ -9652,6 +9556,8 @@ fn get_view_for_ident<'a>(inner: &'a swc_ast::Ident, parent: Node<'a>, bump: &'a
   let node = bump.alloc(Ident {
     inner,
     parent,
+    sym: &inner.sym,
+    optional: inner.optional,
   });
   node
 }
@@ -9738,12 +9644,7 @@ pub struct ImportDecl<'a> {
   pub specifiers: Vec<ImportSpecifier<'a>>,
   pub src: &'a Str<'a>,
   pub asserts: Option<&'a ObjectLit<'a>>,
-}
-
-impl<'a> ImportDecl<'a> {
-  pub fn type_only(&self) -> bool {
-    self.inner.type_only
-  }
+  pub type_only: bool,
 }
 
 impl<'a> Spanned for ImportDecl<'a> {
@@ -9805,6 +9706,7 @@ fn get_view_for_import_decl<'a>(inner: &'a swc_ast::ImportDecl, parent: Node<'a>
     specifiers: Vec::with_capacity(inner.specifiers.len()),
     src: unsafe { MaybeUninit::uninit().assume_init() },
     asserts: None,
+    type_only: inner.type_only,
   });
   let parent: Node<'a> = (&*node).into();
   node.specifiers.extend(inner.specifiers.iter().map(|value| get_view_for_import_specifier(value, parent.clone(), bump)));
@@ -10684,12 +10586,7 @@ pub struct JSXOpeningElement<'a> {
   /// Note: This field's name is different from one from babel because it is
   /// misleading
   pub type_args: Option<&'a TsTypeParamInstantiation<'a>>,
-}
-
-impl<'a> JSXOpeningElement<'a> {
-  pub fn self_closing(&self) -> bool {
-    self.inner.self_closing
-  }
+  pub self_closing: bool,
 }
 
 impl<'a> Spanned for JSXOpeningElement<'a> {
@@ -10751,6 +10648,7 @@ fn get_view_for_jsxopening_element<'a>(inner: &'a swc_ast::JSXOpeningElement, pa
     name: unsafe { MaybeUninit::uninit().assume_init() },
     attrs: Vec::with_capacity(inner.attrs.len()),
     type_args: None,
+    self_closing: inner.self_closing,
   });
   let parent: Node<'a> = (&*node).into();
   node.name = get_view_for_jsxelement_name(&inner.name, parent.clone(), bump);
@@ -10885,16 +10783,8 @@ fn get_view_for_jsxspread_child<'a>(inner: &'a swc_ast::JSXSpreadChild, parent: 
 pub struct JSXText<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::JSXText,
-}
-
-impl<'a> JSXText<'a> {
-  pub fn value(&self) -> &swc_atoms::JsWord {
-    &self.inner.value
-  }
-
-  pub fn raw(&self) -> &swc_atoms::JsWord {
-    &self.inner.raw
-  }
+  pub value: &'a swc_atoms::JsWord,
+  pub raw: &'a swc_atoms::JsWord,
 }
 
 impl<'a> Spanned for JSXText<'a> {
@@ -10945,6 +10835,8 @@ fn get_view_for_jsxtext<'a>(inner: &'a swc_ast::JSXText, parent: Node<'a>, bump:
   let node = bump.alloc(JSXText {
     inner,
     parent,
+    value: &inner.value,
+    raw: &inner.raw,
   });
   node
 }
@@ -11156,12 +11048,7 @@ pub struct MemberExpr<'a> {
   pub inner: &'a swc_ast::MemberExpr,
   pub obj: ExprOrSuper<'a>,
   pub prop: Expr<'a>,
-}
-
-impl<'a> MemberExpr<'a> {
-  pub fn computed(&self) -> bool {
-    self.inner.computed
-  }
+  pub computed: bool,
 }
 
 impl<'a> Spanned for MemberExpr<'a> {
@@ -11217,6 +11104,7 @@ fn get_view_for_member_expr<'a>(inner: &'a swc_ast::MemberExpr, parent: Node<'a>
     parent,
     obj: unsafe { MaybeUninit::uninit().assume_init() },
     prop: unsafe { MaybeUninit::uninit().assume_init() },
+    computed: inner.computed,
   });
   let parent: Node<'a> = (&*node).into();
   node.obj = get_view_for_expr_or_super(&inner.obj, parent.clone(), bump);
@@ -11364,12 +11252,7 @@ pub struct Module<'a> {
   pub comments: Option<&'a CommentContainer<'a>>,
   pub inner: &'a swc_ast::Module,
   pub body: Vec<ModuleItem<'a>>,
-}
-
-impl<'a> Module<'a> {
-  pub fn shebang(&self) -> &Option<swc_atoms::JsWord> {
-    &self.inner.shebang
-  }
+  pub shebang: &'a Option<swc_atoms::JsWord>,
 }
 
 impl<'a> Spanned for Module<'a> {
@@ -11434,6 +11317,7 @@ fn get_view_for_module<'a>(source_file_info: &'a ModuleInfo<'a>, bump: &'a Bump)
     tokens,
     comments,
     body: Vec::with_capacity(inner.body.len()),
+    shebang: &inner.shebang,
   });
   let parent: Node<'a> = (&*node).into();
   node.body.extend(inner.body.iter().map(|value| get_view_for_module_item(value, parent.clone(), bump)));
@@ -11448,12 +11332,7 @@ pub struct NamedExport<'a> {
   pub specifiers: Vec<ExportSpecifier<'a>>,
   pub src: Option<&'a Str<'a>>,
   pub asserts: Option<&'a ObjectLit<'a>>,
-}
-
-impl<'a> NamedExport<'a> {
-  pub fn type_only(&self) -> bool {
-    self.inner.type_only
-  }
+  pub type_only: bool,
 }
 
 impl<'a> Spanned for NamedExport<'a> {
@@ -11517,6 +11396,7 @@ fn get_view_for_named_export<'a>(inner: &'a swc_ast::NamedExport, parent: Node<'
     specifiers: Vec::with_capacity(inner.specifiers.len()),
     src: None,
     asserts: None,
+    type_only: inner.type_only,
   });
   let parent: Node<'a> = (&*node).into();
   node.specifiers.extend(inner.specifiers.iter().map(|value| get_view_for_export_specifier(value, parent.clone(), bump)));
@@ -11674,15 +11554,10 @@ fn get_view_for_null<'a>(inner: &'a swc_ast::Null, parent: Node<'a>, bump: &'a B
 pub struct Number<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::Number,
-}
-
-impl<'a> Number<'a> {
   /// **Note**: This should not be `NaN`. Use [crate::Ident] to represent NaN.
   ///
   /// If you store `NaN` in this field, a hash map will behave strangely.
-  pub fn value(&self) -> f64 {
-    self.inner.value
-  }
+  pub value: f64,
 }
 
 impl<'a> Spanned for Number<'a> {
@@ -11733,6 +11608,7 @@ fn get_view_for_number<'a>(inner: &'a swc_ast::Number, parent: Node<'a>, bump: &
   let node = bump.alloc(Number {
     inner,
     parent,
+    value: inner.value,
   });
   node
 }
@@ -11808,13 +11684,8 @@ pub struct ObjectPat<'a> {
   pub inner: &'a swc_ast::ObjectPat,
   pub props: Vec<ObjectPatProp<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
-}
-
-impl<'a> ObjectPat<'a> {
   /// Only in an ambient context
-  pub fn optional(&self) -> bool {
-    self.inner.optional
-  }
+  pub optional: bool,
 }
 
 impl<'a> Spanned for ObjectPat<'a> {
@@ -11874,6 +11745,7 @@ fn get_view_for_object_pat<'a>(inner: &'a swc_ast::ObjectPat, parent: Node<'a>, 
     parent,
     props: Vec::with_capacity(inner.props.len()),
     type_ann: None,
+    optional: inner.optional,
   });
   let parent: Node<'a> = (&*node).into();
   node.props.extend(inner.props.iter().map(|value| get_view_for_object_pat_prop(value, parent.clone(), bump)));
@@ -11888,12 +11760,7 @@ pub struct OptChainExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::OptChainExpr,
   pub expr: Expr<'a>,
-}
-
-impl<'a> OptChainExpr<'a> {
-  pub fn question_dot_token(&self) -> &swc_common::Span {
-    &self.inner.question_dot_token
-  }
+  pub question_dot_token: &'a swc_common::Span,
 }
 
 impl<'a> Spanned for OptChainExpr<'a> {
@@ -11947,6 +11814,7 @@ fn get_view_for_opt_chain_expr<'a>(inner: &'a swc_ast::OptChainExpr, parent: Nod
     inner,
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
+    question_dot_token: &inner.question_dot_token,
   });
   let parent: Node<'a> = (&*node).into();
   node.expr = get_view_for_expr(&inner.expr, parent, bump);
@@ -12090,30 +11958,13 @@ pub struct PrivateMethod<'a> {
   pub inner: &'a swc_ast::PrivateMethod,
   pub key: &'a PrivateName<'a>,
   pub function: &'a Function<'a>,
-}
-
-impl<'a> PrivateMethod<'a> {
-  pub fn kind(&self) -> MethodKind {
-    self.inner.kind
-  }
-
-  pub fn is_static(&self) -> bool {
-    self.inner.is_static
-  }
-
+  pub kind: MethodKind,
+  pub is_static: bool,
   /// Typescript extension.
-  pub fn accessibility(&self) -> Option<Accessibility> {
-    self.inner.accessibility
-  }
-
+  pub accessibility: Option<Accessibility>,
   /// Typescript extension.
-  pub fn is_abstract(&self) -> bool {
-    self.inner.is_abstract
-  }
-
-  pub fn is_optional(&self) -> bool {
-    self.inner.is_optional
-  }
+  pub is_abstract: bool,
+  pub is_optional: bool,
 }
 
 impl<'a> Spanned for PrivateMethod<'a> {
@@ -12169,6 +12020,11 @@ fn get_view_for_private_method<'a>(inner: &'a swc_ast::PrivateMethod, parent: No
     parent: parent.expect::<Class>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     function: unsafe { MaybeUninit::uninit().assume_init() },
+    kind: inner.kind,
+    is_static: inner.is_static,
+    accessibility: inner.accessibility,
+    is_abstract: inner.is_abstract,
+    is_optional: inner.is_optional,
   });
   let parent: Node<'a> = (&*node).into();
   node.key = get_view_for_private_name(&inner.key, parent.clone(), bump);
@@ -12246,38 +12102,15 @@ pub struct PrivateProp<'a> {
   pub value: Option<Expr<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
   pub decorators: Vec<&'a Decorator<'a>>,
-}
-
-impl<'a> PrivateProp<'a> {
-  pub fn is_static(&self) -> bool {
-    self.inner.is_static
-  }
-
-  pub fn computed(&self) -> bool {
-    self.inner.computed
-  }
-
+  pub is_static: bool,
+  pub computed: bool,
   /// Typescript extension.
-  pub fn accessibility(&self) -> Option<Accessibility> {
-    self.inner.accessibility
-  }
-
+  pub accessibility: Option<Accessibility>,
   /// Typescript extension.
-  pub fn is_abstract(&self) -> bool {
-    self.inner.is_abstract
-  }
-
-  pub fn is_optional(&self) -> bool {
-    self.inner.is_optional
-  }
-
-  pub fn readonly(&self) -> bool {
-    self.inner.readonly
-  }
-
-  pub fn definite(&self) -> bool {
-    self.inner.definite
-  }
+  pub is_abstract: bool,
+  pub is_optional: bool,
+  pub readonly: bool,
+  pub definite: bool,
 }
 
 impl<'a> Spanned for PrivateProp<'a> {
@@ -12343,6 +12176,13 @@ fn get_view_for_private_prop<'a>(inner: &'a swc_ast::PrivateProp, parent: Node<'
     value: None,
     type_ann: None,
     decorators: Vec::with_capacity(inner.decorators.len()),
+    is_static: inner.is_static,
+    computed: inner.computed,
+    accessibility: inner.accessibility,
+    is_abstract: inner.is_abstract,
+    is_optional: inner.is_optional,
+    readonly: inner.readonly,
+    definite: inner.definite,
   });
   let parent: Node<'a> = (&*node).into();
   node.key = get_view_for_private_name(&inner.key, parent.clone(), bump);
@@ -12361,16 +12201,8 @@ fn get_view_for_private_prop<'a>(inner: &'a swc_ast::PrivateProp, parent: Node<'
 pub struct Regex<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::Regex,
-}
-
-impl<'a> Regex<'a> {
-  pub fn exp(&self) -> &swc_atoms::JsWord {
-    &self.inner.exp
-  }
-
-  pub fn flags(&self) -> &swc_atoms::JsWord {
-    &self.inner.flags
-  }
+  pub exp: &'a swc_atoms::JsWord,
+  pub flags: &'a swc_atoms::JsWord,
 }
 
 impl<'a> Spanned for Regex<'a> {
@@ -12421,6 +12253,8 @@ fn get_view_for_regex<'a>(inner: &'a swc_ast::Regex, parent: Node<'a>, bump: &'a
   let node = bump.alloc(Regex {
     inner,
     parent,
+    exp: &inner.exp,
+    flags: &inner.flags,
   });
   node
 }
@@ -12431,12 +12265,7 @@ pub struct RestPat<'a> {
   pub inner: &'a swc_ast::RestPat,
   pub arg: Pat<'a>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
-}
-
-impl<'a> RestPat<'a> {
-  pub fn dot3_token(&self) -> &swc_common::Span {
-    &self.inner.dot3_token
-  }
+  pub dot3_token: &'a swc_common::Span,
 }
 
 impl<'a> Spanned for RestPat<'a> {
@@ -12494,6 +12323,7 @@ fn get_view_for_rest_pat<'a>(inner: &'a swc_ast::RestPat, parent: Node<'a>, bump
     parent,
     arg: unsafe { MaybeUninit::uninit().assume_init() },
     type_ann: None,
+    dot3_token: &inner.dot3_token,
   });
   let parent: Node<'a> = (&*node).into();
   node.arg = get_view_for_pat(&inner.arg, parent.clone(), bump);
@@ -12578,12 +12408,7 @@ pub struct Script<'a> {
   pub comments: Option<&'a CommentContainer<'a>>,
   pub inner: &'a swc_ast::Script,
   pub body: Vec<Stmt<'a>>,
-}
-
-impl<'a> Script<'a> {
-  pub fn shebang(&self) -> &Option<swc_atoms::JsWord> {
-    &self.inner.shebang
-  }
+  pub shebang: &'a Option<swc_atoms::JsWord>,
 }
 
 impl<'a> Spanned for Script<'a> {
@@ -12648,6 +12473,7 @@ fn get_view_for_script<'a>(source_file_info: &'a ScriptInfo<'a>, bump: &'a Bump)
     tokens,
     comments,
     body: Vec::with_capacity(inner.body.len()),
+    shebang: &inner.shebang,
   });
   let parent: Node<'a> = (&*node).into();
   node.body.extend(inner.body.iter().map(|value| get_view_for_stmt(value, parent.clone(), bump)));
@@ -12799,12 +12625,7 @@ pub struct SpreadElement<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::SpreadElement,
   pub expr: Expr<'a>,
-}
-
-impl<'a> SpreadElement<'a> {
-  pub fn dot3_token(&self) -> &swc_common::Span {
-    &self.inner.dot3_token
-  }
+  pub dot3_token: &'a swc_common::Span,
 }
 
 impl<'a> Spanned for SpreadElement<'a> {
@@ -12858,6 +12679,7 @@ fn get_view_for_spread_element<'a>(inner: &'a swc_ast::SpreadElement, parent: No
     inner,
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
+    dot3_token: &inner.dot3_token,
   });
   let parent: Node<'a> = (&*node).into();
   node.expr = get_view_for_expr(&inner.expr, parent, bump);
@@ -12867,21 +12689,10 @@ fn get_view_for_spread_element<'a>(inner: &'a swc_ast::SpreadElement, parent: No
 pub struct Str<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::Str,
-}
-
-impl<'a> Str<'a> {
-  pub fn value(&self) -> &swc_atoms::JsWord {
-    &self.inner.value
-  }
-
+  pub value: &'a swc_atoms::JsWord,
   /// This includes line escape.
-  pub fn has_escape(&self) -> bool {
-    self.inner.has_escape
-  }
-
-  pub fn kind(&self) -> StrKind {
-    self.inner.kind
-  }
+  pub has_escape: bool,
+  pub kind: StrKind,
 }
 
 impl<'a> Spanned for Str<'a> {
@@ -12932,6 +12743,9 @@ fn get_view_for_str<'a>(inner: &'a swc_ast::Str, parent: Node<'a>, bump: &'a Bum
   let node = bump.alloc(Str {
     inner,
     parent,
+    value: &inner.value,
+    has_escape: inner.has_escape,
+    kind: inner.kind,
   });
   node
 }
@@ -13417,12 +13231,7 @@ pub struct TplElement<'a> {
   pub inner: &'a swc_ast::TplElement,
   pub cooked: Option<&'a Str<'a>>,
   pub raw: &'a Str<'a>,
-}
-
-impl<'a> TplElement<'a> {
-  pub fn tail(&self) -> bool {
-    self.inner.tail
-  }
+  pub tail: bool,
 }
 
 impl<'a> Spanned for TplElement<'a> {
@@ -13480,6 +13289,7 @@ fn get_view_for_tpl_element<'a>(inner: &'a swc_ast::TplElement, parent: Node<'a>
     parent,
     cooked: None,
     raw: unsafe { MaybeUninit::uninit().assume_init() },
+    tail: inner.tail,
   });
   let parent: Node<'a> = (&*node).into();
   node.cooked = match &inner.cooked {
@@ -14011,12 +13821,7 @@ pub struct TsConstructorType<'a> {
   pub params: Vec<TsFnParam<'a>>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
   pub type_ann: &'a TsTypeAnn<'a>,
-}
-
-impl<'a> TsConstructorType<'a> {
-  pub fn is_abstract(&self) -> bool {
-    self.inner.is_abstract
-  }
+  pub is_abstract: bool,
 }
 
 impl<'a> Spanned for TsConstructorType<'a> {
@@ -14078,6 +13883,7 @@ fn get_view_for_ts_constructor_type<'a>(inner: &'a swc_ast::TsConstructorType, p
     params: Vec::with_capacity(inner.params.len()),
     type_params: None,
     type_ann: unsafe { MaybeUninit::uninit().assume_init() },
+    is_abstract: inner.is_abstract,
   });
   let parent: Node<'a> = (&*node).into();
   node.params.extend(inner.params.iter().map(|value| get_view_for_ts_fn_param(value, parent.clone(), bump)));
@@ -14094,16 +13900,8 @@ pub struct TsEnumDecl<'a> {
   pub inner: &'a swc_ast::TsEnumDecl,
   pub id: &'a Ident<'a>,
   pub members: Vec<&'a TsEnumMember<'a>>,
-}
-
-impl<'a> TsEnumDecl<'a> {
-  pub fn declare(&self) -> bool {
-    self.inner.declare
-  }
-
-  pub fn is_const(&self) -> bool {
-    self.inner.is_const
-  }
+  pub declare: bool,
+  pub is_const: bool,
 }
 
 impl<'a> Spanned for TsEnumDecl<'a> {
@@ -14161,6 +13959,8 @@ fn get_view_for_ts_enum_decl<'a>(inner: &'a swc_ast::TsEnumDecl, parent: Node<'a
     parent,
     id: unsafe { MaybeUninit::uninit().assume_init() },
     members: Vec::with_capacity(inner.members.len()),
+    declare: inner.declare,
+    is_const: inner.is_const,
   });
   let parent: Node<'a> = (&*node).into();
   node.id = get_view_for_ident(&inner.id, parent.clone(), bump);
@@ -14524,16 +14324,8 @@ pub struct TsImportEqualsDecl<'a> {
   pub inner: &'a swc_ast::TsImportEqualsDecl,
   pub id: &'a Ident<'a>,
   pub module_ref: TsModuleRef<'a>,
-}
-
-impl<'a> TsImportEqualsDecl<'a> {
-  pub fn declare(&self) -> bool {
-    self.inner.declare
-  }
-
-  pub fn is_export(&self) -> bool {
-    self.inner.is_export
-  }
+  pub declare: bool,
+  pub is_export: bool,
 }
 
 impl<'a> Spanned for TsImportEqualsDecl<'a> {
@@ -14589,6 +14381,8 @@ fn get_view_for_ts_import_equals_decl<'a>(inner: &'a swc_ast::TsImportEqualsDecl
     parent,
     id: unsafe { MaybeUninit::uninit().assume_init() },
     module_ref: unsafe { MaybeUninit::uninit().assume_init() },
+    declare: inner.declare,
+    is_export: inner.is_export,
   });
   let parent: Node<'a> = (&*node).into();
   node.id = get_view_for_ident(&inner.id, parent.clone(), bump);
@@ -14682,12 +14476,7 @@ pub struct TsIndexSignature<'a> {
   pub inner: &'a swc_ast::TsIndexSignature,
   pub params: Vec<TsFnParam<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
-}
-
-impl<'a> TsIndexSignature<'a> {
-  pub fn readonly(&self) -> bool {
-    self.inner.readonly
-  }
+  pub readonly: bool,
 }
 
 impl<'a> Spanned for TsIndexSignature<'a> {
@@ -14747,6 +14536,7 @@ fn get_view_for_ts_index_signature<'a>(inner: &'a swc_ast::TsIndexSignature, par
     parent,
     params: Vec::with_capacity(inner.params.len()),
     type_ann: None,
+    readonly: inner.readonly,
   });
   let parent: Node<'a> = (&*node).into();
   node.params.extend(inner.params.iter().map(|value| get_view_for_ts_fn_param(value, parent.clone(), bump)));
@@ -14762,12 +14552,7 @@ pub struct TsIndexedAccessType<'a> {
   pub inner: &'a swc_ast::TsIndexedAccessType,
   pub obj_type: TsType<'a>,
   pub index_type: TsType<'a>,
-}
-
-impl<'a> TsIndexedAccessType<'a> {
-  pub fn readonly(&self) -> bool {
-    self.inner.readonly
-  }
+  pub readonly: bool,
 }
 
 impl<'a> Spanned for TsIndexedAccessType<'a> {
@@ -14823,6 +14608,7 @@ fn get_view_for_ts_indexed_access_type<'a>(inner: &'a swc_ast::TsIndexedAccessTy
     parent,
     obj_type: unsafe { MaybeUninit::uninit().assume_init() },
     index_type: unsafe { MaybeUninit::uninit().assume_init() },
+    readonly: inner.readonly,
   });
   let parent: Node<'a> = (&*node).into();
   node.obj_type = get_view_for_ts_type(&inner.obj_type, parent.clone(), bump);
@@ -14965,12 +14751,7 @@ pub struct TsInterfaceDecl<'a> {
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
   pub extends: Vec<&'a TsExprWithTypeArgs<'a>>,
   pub body: &'a TsInterfaceBody<'a>,
-}
-
-impl<'a> TsInterfaceDecl<'a> {
-  pub fn declare(&self) -> bool {
-    self.inner.declare
-  }
+  pub declare: bool,
 }
 
 impl<'a> Spanned for TsInterfaceDecl<'a> {
@@ -15034,6 +14815,7 @@ fn get_view_for_ts_interface_decl<'a>(inner: &'a swc_ast::TsInterfaceDecl, paren
     type_params: None,
     extends: Vec::with_capacity(inner.extends.len()),
     body: unsafe { MaybeUninit::uninit().assume_init() },
+    declare: inner.declare,
   });
   let parent: Node<'a> = (&*node).into();
   node.id = get_view_for_ident(&inner.id, parent.clone(), bump);
@@ -15114,12 +14896,7 @@ fn get_view_for_ts_intersection_type<'a>(inner: &'a swc_ast::TsIntersectionType,
 pub struct TsKeywordType<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsKeywordType,
-}
-
-impl<'a> TsKeywordType<'a> {
-  pub fn kind(&self) -> TsKeywordTypeKind {
-    self.inner.kind
-  }
+  pub kind: TsKeywordTypeKind,
 }
 
 impl<'a> Spanned for TsKeywordType<'a> {
@@ -15170,6 +14947,7 @@ fn get_view_for_ts_keyword_type<'a>(inner: &'a swc_ast::TsKeywordType, parent: N
   let node = bump.alloc(TsKeywordType {
     inner,
     parent,
+    kind: inner.kind,
   });
   node
 }
@@ -15243,16 +15021,8 @@ pub struct TsMappedType<'a> {
   pub type_param: &'a TsTypeParam<'a>,
   pub name_type: Option<TsType<'a>>,
   pub type_ann: Option<TsType<'a>>,
-}
-
-impl<'a> TsMappedType<'a> {
-  pub fn readonly(&self) -> Option<TruePlusMinus> {
-    self.inner.readonly
-  }
-
-  pub fn optional(&self) -> Option<TruePlusMinus> {
-    self.inner.optional
-  }
+  pub readonly: Option<TruePlusMinus>,
+  pub optional: Option<TruePlusMinus>,
 }
 
 impl<'a> Spanned for TsMappedType<'a> {
@@ -15314,6 +15084,8 @@ fn get_view_for_ts_mapped_type<'a>(inner: &'a swc_ast::TsMappedType, parent: Nod
     type_param: unsafe { MaybeUninit::uninit().assume_init() },
     name_type: None,
     type_ann: None,
+    readonly: inner.readonly,
+    optional: inner.optional,
   });
   let parent: Node<'a> = (&*node).into();
   node.type_param = get_view_for_ts_type_param(&inner.type_param, parent.clone(), bump);
@@ -15335,20 +15107,9 @@ pub struct TsMethodSignature<'a> {
   pub params: Vec<TsFnParam<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
-}
-
-impl<'a> TsMethodSignature<'a> {
-  pub fn readonly(&self) -> bool {
-    self.inner.readonly
-  }
-
-  pub fn computed(&self) -> bool {
-    self.inner.computed
-  }
-
-  pub fn optional(&self) -> bool {
-    self.inner.optional
-  }
+  pub readonly: bool,
+  pub computed: bool,
+  pub optional: bool,
 }
 
 impl<'a> Spanned for TsMethodSignature<'a> {
@@ -15414,6 +15175,9 @@ fn get_view_for_ts_method_signature<'a>(inner: &'a swc_ast::TsMethodSignature, p
     params: Vec::with_capacity(inner.params.len()),
     type_ann: None,
     type_params: None,
+    readonly: inner.readonly,
+    computed: inner.computed,
+    optional: inner.optional,
   });
   let parent: Node<'a> = (&*node).into();
   node.key = get_view_for_expr(&inner.key, parent.clone(), bump);
@@ -15499,17 +15263,9 @@ pub struct TsModuleDecl<'a> {
   pub inner: &'a swc_ast::TsModuleDecl,
   pub id: TsModuleName<'a>,
   pub body: Option<TsNamespaceBody<'a>>,
-}
-
-impl<'a> TsModuleDecl<'a> {
-  pub fn declare(&self) -> bool {
-    self.inner.declare
-  }
-
+  pub declare: bool,
   /// In TypeScript, this is only available through`node.flags`.
-  pub fn global(&self) -> bool {
-    self.inner.global
-  }
+  pub global: bool,
 }
 
 impl<'a> Spanned for TsModuleDecl<'a> {
@@ -15567,6 +15323,8 @@ fn get_view_for_ts_module_decl<'a>(inner: &'a swc_ast::TsModuleDecl, parent: Nod
     parent,
     id: unsafe { MaybeUninit::uninit().assume_init() },
     body: None,
+    declare: inner.declare,
+    global: inner.global,
   });
   let parent: Node<'a> = (&*node).into();
   node.id = get_view_for_ts_module_name(&inner.id, parent.clone(), bump);
@@ -15582,17 +15340,9 @@ pub struct TsNamespaceDecl<'a> {
   pub inner: &'a swc_ast::TsNamespaceDecl,
   pub id: &'a Ident<'a>,
   pub body: TsNamespaceBody<'a>,
-}
-
-impl<'a> TsNamespaceDecl<'a> {
-  pub fn declare(&self) -> bool {
-    self.inner.declare
-  }
-
+  pub declare: bool,
   /// In TypeScript, this is only available through`node.flags`.
-  pub fn global(&self) -> bool {
-    self.inner.global
-  }
+  pub global: bool,
 }
 
 impl<'a> Spanned for TsNamespaceDecl<'a> {
@@ -15648,6 +15398,8 @@ fn get_view_for_ts_namespace_decl<'a>(inner: &'a swc_ast::TsNamespaceDecl, paren
     parent,
     id: unsafe { MaybeUninit::uninit().assume_init() },
     body: unsafe { MaybeUninit::uninit().assume_init() },
+    declare: inner.declare,
+    global: inner.global,
   });
   let parent: Node<'a> = (&*node).into();
   node.id = get_view_for_ident(&inner.id, parent.clone(), bump);
@@ -15849,17 +15601,9 @@ pub struct TsParamProp<'a> {
   pub inner: &'a swc_ast::TsParamProp,
   pub decorators: Vec<&'a Decorator<'a>>,
   pub param: TsParamPropParam<'a>,
-}
-
-impl<'a> TsParamProp<'a> {
   /// At least one of `accessibility` or `readonly` must be set.
-  pub fn accessibility(&self) -> Option<Accessibility> {
-    self.inner.accessibility
-  }
-
-  pub fn readonly(&self) -> bool {
-    self.inner.readonly
-  }
+  pub accessibility: Option<Accessibility>,
+  pub readonly: bool,
 }
 
 impl<'a> Spanned for TsParamProp<'a> {
@@ -15917,6 +15661,8 @@ fn get_view_for_ts_param_prop<'a>(inner: &'a swc_ast::TsParamProp, parent: Node<
     parent: parent.expect::<Constructor>(),
     decorators: Vec::with_capacity(inner.decorators.len()),
     param: unsafe { MaybeUninit::uninit().assume_init() },
+    accessibility: inner.accessibility,
+    readonly: inner.readonly,
   });
   let parent: Node<'a> = (&*node).into();
   node.decorators.extend(inner.decorators.iter().map(|value| get_view_for_decorator(value, parent.clone(), bump)));
@@ -15995,20 +15741,9 @@ pub struct TsPropertySignature<'a> {
   pub params: Vec<TsFnParam<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
-}
-
-impl<'a> TsPropertySignature<'a> {
-  pub fn readonly(&self) -> bool {
-    self.inner.readonly
-  }
-
-  pub fn computed(&self) -> bool {
-    self.inner.computed
-  }
-
-  pub fn optional(&self) -> bool {
-    self.inner.optional
-  }
+  pub readonly: bool,
+  pub computed: bool,
+  pub optional: bool,
 }
 
 impl<'a> Spanned for TsPropertySignature<'a> {
@@ -16078,6 +15813,9 @@ fn get_view_for_ts_property_signature<'a>(inner: &'a swc_ast::TsPropertySignatur
     params: Vec::with_capacity(inner.params.len()),
     type_ann: None,
     type_params: None,
+    readonly: inner.readonly,
+    computed: inner.computed,
+    optional: inner.optional,
   });
   let parent: Node<'a> = (&*node).into();
   node.key = get_view_for_expr(&inner.key, parent.clone(), bump);
@@ -16499,12 +16237,7 @@ pub struct TsTypeAliasDecl<'a> {
   pub id: &'a Ident<'a>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
   pub type_ann: TsType<'a>,
-}
-
-impl<'a> TsTypeAliasDecl<'a> {
-  pub fn declare(&self) -> bool {
-    self.inner.declare
-  }
+  pub declare: bool,
 }
 
 impl<'a> Spanned for TsTypeAliasDecl<'a> {
@@ -16564,6 +16297,7 @@ fn get_view_for_ts_type_alias_decl<'a>(inner: &'a swc_ast::TsTypeAliasDecl, pare
     id: unsafe { MaybeUninit::uninit().assume_init() },
     type_params: None,
     type_ann: unsafe { MaybeUninit::uninit().assume_init() },
+    declare: inner.declare,
   });
   let parent: Node<'a> = (&*node).into();
   node.id = get_view_for_ident(&inner.id, parent.clone(), bump);
@@ -16774,12 +16508,7 @@ pub struct TsTypeOperator<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsTypeOperator,
   pub type_ann: TsType<'a>,
-}
-
-impl<'a> TsTypeOperator<'a> {
-  pub fn op(&self) -> TsTypeOperatorOp {
-    self.inner.op
-  }
+  pub op: TsTypeOperatorOp,
 }
 
 impl<'a> Spanned for TsTypeOperator<'a> {
@@ -16833,6 +16562,7 @@ fn get_view_for_ts_type_operator<'a>(inner: &'a swc_ast::TsTypeOperator, parent:
     inner,
     parent,
     type_ann: unsafe { MaybeUninit::uninit().assume_init() },
+    op: inner.op,
   });
   let parent: Node<'a> = (&*node).into();
   node.type_ann = get_view_for_ts_type(&inner.type_ann, parent, bump);
@@ -17055,12 +16785,7 @@ pub struct TsTypePredicate<'a> {
   pub inner: &'a swc_ast::TsTypePredicate,
   pub param_name: TsThisTypeOrIdent<'a>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
-}
-
-impl<'a> TsTypePredicate<'a> {
-  pub fn asserts(&self) -> bool {
-    self.inner.asserts
-  }
+  pub asserts: bool,
 }
 
 impl<'a> Spanned for TsTypePredicate<'a> {
@@ -17118,6 +16843,7 @@ fn get_view_for_ts_type_predicate<'a>(inner: &'a swc_ast::TsTypePredicate, paren
     parent,
     param_name: unsafe { MaybeUninit::uninit().assume_init() },
     type_ann: None,
+    asserts: inner.asserts,
   });
   let parent: Node<'a> = (&*node).into();
   node.param_name = get_view_for_ts_this_type_or_ident(&inner.param_name, parent.clone(), bump);
@@ -17333,12 +17059,7 @@ pub struct UnaryExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::UnaryExpr,
   pub arg: Expr<'a>,
-}
-
-impl<'a> UnaryExpr<'a> {
-  pub fn op(&self) -> UnaryOp {
-    self.inner.op
-  }
+  pub op: UnaryOp,
 }
 
 impl<'a> Spanned for UnaryExpr<'a> {
@@ -17392,6 +17113,7 @@ fn get_view_for_unary_expr<'a>(inner: &'a swc_ast::UnaryExpr, parent: Node<'a>, 
     inner,
     parent,
     arg: unsafe { MaybeUninit::uninit().assume_init() },
+    op: inner.op,
   });
   let parent: Node<'a> = (&*node).into();
   node.arg = get_view_for_expr(&inner.arg, parent, bump);
@@ -17402,16 +17124,8 @@ pub struct UpdateExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::UpdateExpr,
   pub arg: Expr<'a>,
-}
-
-impl<'a> UpdateExpr<'a> {
-  pub fn op(&self) -> UpdateOp {
-    self.inner.op
-  }
-
-  pub fn prefix(&self) -> bool {
-    self.inner.prefix
-  }
+  pub op: UpdateOp,
+  pub prefix: bool,
 }
 
 impl<'a> Spanned for UpdateExpr<'a> {
@@ -17465,6 +17179,8 @@ fn get_view_for_update_expr<'a>(inner: &'a swc_ast::UpdateExpr, parent: Node<'a>
     inner,
     parent,
     arg: unsafe { MaybeUninit::uninit().assume_init() },
+    op: inner.op,
+    prefix: inner.prefix,
   });
   let parent: Node<'a> = (&*node).into();
   node.arg = get_view_for_expr(&inner.arg, parent, bump);
@@ -17475,16 +17191,8 @@ pub struct VarDecl<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::VarDecl,
   pub decls: Vec<&'a VarDeclarator<'a>>,
-}
-
-impl<'a> VarDecl<'a> {
-  pub fn kind(&self) -> VarDeclKind {
-    self.inner.kind
-  }
-
-  pub fn declare(&self) -> bool {
-    self.inner.declare
-  }
+  pub kind: VarDeclKind,
+  pub declare: bool,
 }
 
 impl<'a> Spanned for VarDecl<'a> {
@@ -17540,6 +17248,8 @@ fn get_view_for_var_decl<'a>(inner: &'a swc_ast::VarDecl, parent: Node<'a>, bump
     inner,
     parent,
     decls: Vec::with_capacity(inner.decls.len()),
+    kind: inner.kind,
+    declare: inner.declare,
   });
   let parent: Node<'a> = (&*node).into();
   node.decls.extend(inner.decls.iter().map(|value| get_view_for_var_declarator(value, parent.clone(), bump)));
@@ -17552,13 +17262,8 @@ pub struct VarDeclarator<'a> {
   pub name: Pat<'a>,
   /// Initialization expression.
   pub init: Option<Expr<'a>>,
-}
-
-impl<'a> VarDeclarator<'a> {
   /// Typescript only
-  pub fn definite(&self) -> bool {
-    self.inner.definite
-  }
+  pub definite: bool,
 }
 
 impl<'a> Spanned for VarDeclarator<'a> {
@@ -17616,6 +17321,7 @@ fn get_view_for_var_declarator<'a>(inner: &'a swc_ast::VarDeclarator, parent: No
     parent: parent.expect::<VarDecl>(),
     name: unsafe { MaybeUninit::uninit().assume_init() },
     init: None,
+    definite: inner.definite,
   });
   let parent: Node<'a> = (&*node).into();
   node.name = get_view_for_pat(&inner.name, parent.clone(), bump);
@@ -17764,12 +17470,7 @@ pub struct YieldExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::YieldExpr,
   pub arg: Option<Expr<'a>>,
-}
-
-impl<'a> YieldExpr<'a> {
-  pub fn delegate(&self) -> bool {
-    self.inner.delegate
-  }
+  pub delegate: bool,
 }
 
 impl<'a> Spanned for YieldExpr<'a> {
@@ -17825,6 +17526,7 @@ fn get_view_for_yield_expr<'a>(inner: &'a swc_ast::YieldExpr, parent: Node<'a>, 
     inner,
     parent,
     arg: None,
+    delegate: inner.delegate,
   });
   let parent: Node<'a> = (&*node).into();
   node.arg = match &inner.arg {

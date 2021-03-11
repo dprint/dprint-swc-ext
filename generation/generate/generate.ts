@@ -433,33 +433,18 @@ export function generate(analysisResult: AnalysisResult) {
                     writeType(field.type, true);
                     writer.write(",").newLine();
                 }
+
+                for (const field of implFields) {
+                    writeDocs(field.docs);
+                    writer.write(`pub ${field.name}: `);
+                    if (getIsReferenceType(field.type)) {
+                        writer.write("&'a ");
+                    }
+                    writeType(field.type, false);
+                    writer.write(",").newLine();
+                }
             });
             writer.write("}").newLine();
-
-            if (implFields.length > 0) {
-                writer.newLine();
-                writer.write(`impl<'a> ${struct.name}<'a> {`);
-                writer.indent(() => {
-                    for (const field of implFields) {
-                        const isReferenceType = getIsReferenceType(field.type);
-                        writer.newLine();
-
-                        writeDocs(field.docs);
-                        writer.write(`pub fn ${field.name}(&self) -> `);
-                        if (isReferenceType) {
-                            writer.write("&");
-                        }
-                        writeType(field.type, false);
-                        writer.write(` {`).newLine();
-                        writer.indent(() => {
-                            if (isReferenceType) {
-                                writer.write("&");
-                            }
-                            writer.write(`self.inner.${field.name}`).newLine();
-                        }).write("}").newLine();
-                    }
-                }).write("}").newLine();
-            }
 
             writer.newLine();
             writeTrait("Spanned", `${struct.name}<'a>`, () => {
@@ -683,6 +668,14 @@ export function generate(analysisResult: AnalysisResult) {
                         } else {
                             writer.writeLine(`${field.name}: unsafe { MaybeUninit::uninit().assume_init() },`);
                         }
+                    }
+                    for (const field of implFields) {
+                        writer.write(`${field.name}: `);
+                        if (getIsReferenceType(field.type)) {
+                            writer.write("&");
+                        }
+                        writer.write(`inner.${field.name},`);
+                        writer.newLine();
                     }
                 }).write("});").newLine();
                 if (structFields.length > 0) {
