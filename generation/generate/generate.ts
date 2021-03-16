@@ -2,18 +2,22 @@ import {
     AnalysisResult,
     EnumDefinition,
     EnumVariantDefinition,
-    PrimitiveTypeDefinition,
     StructDefinition,
     TypeDefinition,
-    TypeReferenceDefinition,
 } from "../analyze/analysis_types.ts";
 import { nameToSnakeCase } from "../utils/stringUtils.ts";
+import { 
+    writeHeader,
+    getIsForImpl,
+    writeType,
+    getIsReferenceType,
+} from "../utils/generationUtils.ts";
 import { Writer } from "./writer.ts";
 
-export function generate(analysisResult: AnalysisResult) {
+export function generate(analysisResult: AnalysisResult): string {
     const writer = new Writer();
 
-    writeHeader();
+    writeHeader(writer);
     writeUseDeclarations();
     writeBumpAllocator();
     writePublicFunctions();
@@ -31,15 +35,9 @@ export function generate(analysisResult: AnalysisResult) {
 
     return writer.toString();
 
-    function writeHeader() {
-        writer.writeLine("// This code is code generated.");
-        writer.writeLine("// Run `deno run -A generation/main.ts` from the root directory to regenerate it.");
-    }
-
     function writeUseDeclarations() {
         writer.writeLine("use std::mem::{self, MaybeUninit};");
         writer.writeLine("use bumpalo::Bump;");
-        writer.writeLine("use serde::Serialize;");
         writer.writeLine("use swc_common::{Span, Spanned};");
         writer.write("pub use swc_ecmascript::ast::{self as swc_ast, ");
         writer.write(analysisResult.enums.filter(e => e.isPlain).map(e => e.name).join(", "));
@@ -47,6 +45,9 @@ export function generate(analysisResult: AnalysisResult) {
         writer.writeLine("use crate::comments::*;");
         writer.writeLine("use crate::tokens::*;");
         writer.writeLine("use crate::types::*;");
+        writer.newLine();
+        writer.writeLine(`#[cfg(feature = "serialize")]`);
+        writer.writeLine("use serde::Serialize;");
         writer.newLine();
     }
 
@@ -237,8 +238,9 @@ export function generate(analysisResult: AnalysisResult) {
 
         function writeEnum() {
             writeDocs(enumDef.docs);
-            writer.writeLine("#[derive(Copy, Clone, Serialize)]");
-            writer.writeLine("#[serde(untagged)]");
+            writer.writeLine("#[derive(Copy, Clone)]");
+            writer.writeLine(`#[cfg_attr(feature = "serialize", derive(Serialize))]`);
+            writer.writeLine(`#[cfg_attr(feature = "serialize", serde(untagged))]`);
             writer.write(`pub enum ${enumDef.name}<'a> {`);
             writer.indent(() => {
                 for (const variant of enumDef.variants) {
@@ -251,7 +253,7 @@ export function generate(analysisResult: AnalysisResult) {
                             if (i > 0) {
                                 writer.write(", ");
                             }
-                            writeType(arg, true);
+                            writeType(writer, analysisResult, arg, true);
                         }
                         writer.write(")");
                     }
@@ -404,8 +406,8 @@ export function generate(analysisResult: AnalysisResult) {
     }
 
     function handleStruct(struct: StructDefinition) {
-        const implFields = struct.fields.filter(f => getIsForImpl(f.type));
-        const structFields = struct.fields.filter(f => !getIsForImpl(f.type) && f.name !== "span");
+        const implFields = struct.fields.filter(f => getIsForImpl(analysisResult, f.type));
+        const structFields = struct.fields.filter(f => !getIsForImpl(analysisResult, f.type) && f.name !== "span");
 
         writeStruct();
         writer.newLine();
@@ -413,12 +415,12 @@ export function generate(analysisResult: AnalysisResult) {
 
         function writeStruct() {
             writeDocs(struct.docs);
-            writer.writeLine("#[derive(Serialize)]");
-            writer.writeLine(`#[serde(rename_all = "camelCase", tag = "nodeKind")]`);
+            writer.writeLine("#[derive(Clone)]");
+            writer.writeLine(`#[cfg_attr(feature = "serialize", derive(Serialize))]`);
+            writer.writeLine(`#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::Serializable${struct.name}"))]`);
             writer.writeLine(`pub struct ${struct.name}<'a> {`);
             writer.indent(() => {
                 if (struct.parents.length > 0) {
-                    writer.writeLine("#[serde(skip)]");
                     if (struct.parents.length === 1) {
                         writer.writeLine(`pub parent: &'a ${struct.parents[0].name}<'a>,`);
                     } else {
@@ -426,35 +428,45 @@ export function generate(analysisResult: AnalysisResult) {
                     }
                 }
                 if (struct.name === "Module" || struct.name === "Script") {
-                    writer.writeLine("#[serde(skip)]");
                     writer.writeLine("pub source_file: Option<&'a swc_common::SourceFile>,");
-                    writer.writeLine("#[serde(skip)]");
                     writer.writeLine("pub tokens: Option<&'a TokenContainer<'a>>,");
-                    writer.writeLine("#[serde(skip)]");
                     writer.writeLine("pub comments: Option<&'a CommentContainer<'a>>,");
                 }
-                writer.writeLine("#[serde(skip)]");
                 writer.writeLine(`pub inner: &'a swc_ast::${struct.name},`);
-                writer.writeLine(`pub span: Span,`);
 
                 for (const field of structFields) {
                     writeDocs(field.docs);
                     writer.write(`pub ${field.name}: `);
-                    writeType(field.type, true);
-                    writer.write(",").newLine();
-                }
-
-                for (const field of implFields) {
-                    writeDocs(field.docs);
-                    writer.write(`pub ${field.name}: `);
-                    if (getIsReferenceType(field.type)) {
-                        writer.write("&'a ");
-                    }
-                    writeType(field.type, false);
+                    writeType(writer, analysisResult, field.type, true);
                     writer.write(",").newLine();
                 }
             });
             writer.write("}").newLine();
+
+            if (implFields.length > 0) {
+                writer.newLine();
+                writer.write(`impl<'a> ${struct.name}<'a> {`);
+                writer.indent(() => {
+                    for (const field of implFields) {
+                        const isReferenceType = getIsReferenceType(analysisResult, field.type);
+                        writer.newLine();
+
+                        writeDocs(field.docs);
+                        writer.write(`pub fn ${field.name}(&self) -> `);
+                        if (isReferenceType) {
+                            writer.write("&");
+                        }
+                        writeType(writer, analysisResult, field.type, false);
+                        writer.write(` {`).newLine();
+                        writer.indent(() => {
+                            if (isReferenceType) {
+                                writer.write("&");
+                            }
+                            writer.write(`self.inner.${field.name}`).newLine();
+                        }).write("}").newLine();
+                    }
+                }).write("}").newLine();
+            }
 
             writer.newLine();
             writeTrait("Spanned", `${struct.name}<'a>`, () => {
@@ -657,7 +669,6 @@ export function generate(analysisResult: AnalysisResult) {
                 writer.write(`let node = bump.alloc(${struct.name} {`).newLine();
                 writer.indent(() => {
                     writer.write("inner,").newLine();
-                    writer.write("span: inner.span(),").newLine();
                     if (struct.parents.length > 0) {
                         if (struct.parents.length === 1) {
                             writer.write(`parent: parent.expect::<${struct.parents[0].name}>()`);
@@ -679,14 +690,6 @@ export function generate(analysisResult: AnalysisResult) {
                         } else {
                             writer.writeLine(`${field.name}: unsafe { MaybeUninit::uninit().assume_init() },`);
                         }
-                    }
-                    for (const field of implFields) {
-                        writer.write(`${field.name}: `);
-                        if (getIsReferenceType(field.type)) {
-                            writer.write("&");
-                        }
-                        writer.write(`inner.${field.name},`);
-                        writer.newLine();
                     }
                 }).write("});").newLine();
                 if (structFields.length > 0) {
@@ -766,51 +769,8 @@ export function generate(analysisResult: AnalysisResult) {
         }
     }
 
-    function writeType(type: TypeDefinition, writeStructReference: boolean) {
-        switch (type.kind) {
-            case "primitive":
-                writePrimitive(type);
-                break;
-            case "reference":
-                writeReference(type);
-                break;
-            default:
-                const _assertNever: never = type;
-                throw new Error("Not handled type.");
-        }
-
-        function writePrimitive(type: PrimitiveTypeDefinition) {
-            writer.write(type.text);
-        }
-
-        function writeReference(type: TypeReferenceDefinition) {
-            const path = type.path.join("::").replace(/^swc_ecma_ast::/, "");
-            if (analysisResult.enums.some(e => !e.isPlain && e.name === type.name) || analysisResult.structs.some(s => s.name === type.name)) {
-                if (type.generic_args.length > 0) {
-                    throw new Error("Unhandled.");
-                }
-                if (analysisResult.structs.some(s => s.name === type.name) && writeStructReference) {
-                    writer.write("&'a ");
-                }
-                writer.write(path);
-                writer.write("<'a>");
-            } else if (type.generic_args.length > 0) {
-                writer.write(path);
-                writer.write("<");
-                writer.write(type.generic_args.map(type => writeType(type, writeStructReference)).join(", "));
-                writer.write(">");
-            } else {
-                writer.write(path);
-            }
-        }
-    }
-
     function isSwcNodeEnumType(type: TypeDefinition | undefined): boolean {
         return type != null && type.kind === "reference" && analysisResult.enums.some(e => !e.isPlain && e.name === type.name);
-    }
-
-    function isSwcPlainEnumType(type: TypeDefinition | undefined): boolean {
-        return type != null && type.kind === "reference" && analysisResult.enums.some(e => e.isPlain && e.name === type.name);
     }
 
     function isSwcStructType(type: TypeDefinition | undefined): boolean {
@@ -823,32 +783,6 @@ export function generate(analysisResult: AnalysisResult) {
 
     function isOptionType(type: TypeDefinition | undefined): boolean {
         return type != null && type.kind === "reference" && type.name === "Option";
-    }
-
-    function getIsForImpl(type: TypeDefinition): boolean {
-        if (type.kind === "primitive") {
-            return true;
-        }
-        if (type.name === "Option" || type.name === "Vec") {
-            return getIsForImpl(type.generic_args[0]);
-        }
-        if (type.path[0] === "swc_ecma_ast") {
-            return analysisResult.enums.some(s => s.isPlain && s.name === type.path[1]);
-        }
-        return true;
-    }
-
-    function getIsReferenceType(type: TypeDefinition): boolean {
-        if (type.kind === "primitive") {
-            return false;
-        }
-        if (type.name === "Option") {
-            return getIsReferenceType(type.generic_args[0]);
-        }
-        if (isSwcPlainEnumType(type)) {
-            return false;
-        }
-        return true;
     }
 
     function writeDocs(docs: string | undefined) {

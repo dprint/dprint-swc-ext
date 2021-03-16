@@ -8,6 +8,10 @@ license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[features]
+default = []
+serialize = ["serde"]
+
 [dependencies]
 swc_common = "0.10.12"
 swc_atoms = "0.2.5"
@@ -15,7 +19,7 @@ swc_ecmascript = { version = "0.25.0", features = ["parser"] }
 num-bigint = "0.2"
 bumpalo = "3.4.0"
 fnv = "1.0.3"
-serde = { version = "1.0.124", features = ["derive"] }
+serde = { version = "1.0.124", features = ["derive"], optional = true }
 
 [dev-dependencies]
 serde_json = "1.0.64"

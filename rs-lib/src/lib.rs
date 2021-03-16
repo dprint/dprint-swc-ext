@@ -1,6 +1,8 @@
 mod comments;
 #[allow(invalid_value)]
 mod generated;
+#[cfg(feature = "serialize")]
+mod generated_serialize;
 mod tokens;
 mod types;
 

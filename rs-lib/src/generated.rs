@@ -1,13 +1,15 @@
 // This code is code generated.
-// Run `deno run -A generation/main.ts` from the root directory to regenerate it.
+// Run `./scripts/generate.sh` from the root directory to regenerate it.
 use std::mem::{self, MaybeUninit};
 use bumpalo::Bump;
-use serde::Serialize;
 use swc_common::{Span, Spanned};
 pub use swc_ecmascript::ast::{self as swc_ast, Accessibility, AssignOp, BinaryOp, EsVersion, MethodKind, StrKind, TruePlusMinus, TsKeywordTypeKind, TsTypeOperatorOp, UnaryOp, UpdateOp, VarDeclKind};
 use crate::comments::*;
 use crate::tokens::*;
 use crate::types::*;
+
+#[cfg(feature = "serialize")]
+use serde::Serialize;
 
 thread_local! {
   static LOCAL_BUMP_ALLOCATOR: std::cell::RefCell<Bump> = std::cell::RefCell::new(Bump::new());
@@ -1401,8 +1403,9 @@ impl std::fmt::Display for NodeKind {
 }
 
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum BlockStmtOrExpr<'a> {
   BlockStmt(&'a BlockStmt<'a>),
   Expr(Expr<'a>),
@@ -1491,8 +1494,9 @@ fn get_view_for_block_stmt_or_expr<'a>(inner: &'a swc_ast::BlockStmtOrExpr, pare
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum ClassMember<'a> {
   Constructor(&'a Constructor<'a>),
   /// `es2015`
@@ -1628,8 +1632,9 @@ fn get_view_for_class_member<'a>(inner: &'a swc_ast::ClassMember, parent: Node<'
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum Decl<'a> {
   Class(&'a ClassDecl<'a>),
   Fn(&'a FnDecl<'a>),
@@ -1763,8 +1768,9 @@ fn get_view_for_decl<'a>(inner: &'a swc_ast::Decl, parent: Node<'a>, bump: &'a B
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum DefaultDecl<'a> {
   Class(&'a ClassExpr<'a>),
   Fn(&'a FnExpr<'a>),
@@ -1862,8 +1868,9 @@ fn get_view_for_default_decl<'a>(inner: &'a swc_ast::DefaultDecl, parent: Node<'
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum ExportSpecifier<'a> {
   Namespace(&'a ExportNamespaceSpecifier<'a>),
   Default(&'a ExportDefaultSpecifier<'a>),
@@ -1961,8 +1968,9 @@ fn get_view_for_export_specifier<'a>(inner: &'a swc_ast::ExportSpecifier, parent
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum Expr<'a> {
   This(&'a ThisExpr<'a>),
   Array(&'a ArrayLit<'a>),
@@ -2355,8 +2363,9 @@ fn get_view_for_expr<'a>(inner: &'a swc_ast::Expr, parent: Node<'a>, bump: &'a B
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum ExprOrSuper<'a> {
   Super(&'a Super<'a>),
   Expr(Expr<'a>),
@@ -2445,8 +2454,9 @@ fn get_view_for_expr_or_super<'a>(inner: &'a swc_ast::ExprOrSuper, parent: Node<
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum ImportSpecifier<'a> {
   Named(&'a ImportNamedSpecifier<'a>),
   Default(&'a ImportDefaultSpecifier<'a>),
@@ -2544,8 +2554,9 @@ fn get_view_for_import_specifier<'a>(inner: &'a swc_ast::ImportSpecifier, parent
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum JSXAttrName<'a> {
   Ident(&'a Ident<'a>),
   JSXNamespacedName(&'a JSXNamespacedName<'a>),
@@ -2634,8 +2645,9 @@ fn get_view_for_jsxattr_name<'a>(inner: &'a swc_ast::JSXAttrName, parent: Node<'
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum JSXAttrOrSpread<'a> {
   JSXAttr(&'a JSXAttr<'a>),
   SpreadElement(&'a SpreadElement<'a>),
@@ -2724,8 +2736,9 @@ fn get_view_for_jsxattr_or_spread<'a>(inner: &'a swc_ast::JSXAttrOrSpread, paren
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum JSXAttrValue<'a> {
   Lit(Lit<'a>),
   JSXExprContainer(&'a JSXExprContainer<'a>),
@@ -2832,8 +2845,9 @@ fn get_view_for_jsxattr_value<'a>(inner: &'a swc_ast::JSXAttrValue, parent: Node
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum JSXElementChild<'a> {
   JSXText(&'a JSXText<'a>),
   JSXExprContainer(&'a JSXExprContainer<'a>),
@@ -2949,8 +2963,9 @@ fn get_view_for_jsxelement_child<'a>(inner: &'a swc_ast::JSXElementChild, parent
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum JSXElementName<'a> {
   Ident(&'a Ident<'a>),
   JSXMemberExpr(&'a JSXMemberExpr<'a>),
@@ -3048,8 +3063,9 @@ fn get_view_for_jsxelement_name<'a>(inner: &'a swc_ast::JSXElementName, parent: 
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum JSXExpr<'a> {
   JSXEmptyExpr(&'a JSXEmptyExpr<'a>),
   Expr(Expr<'a>),
@@ -3139,8 +3155,9 @@ fn get_view_for_jsxexpr<'a>(inner: &'a swc_ast::JSXExpr, parent: Node<'a>, bump:
 }
 
 /// Used for `obj` property of `JSXMemberExpr`.
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum JSXObject<'a> {
   JSXMemberExpr(&'a JSXMemberExpr<'a>),
   Ident(&'a Ident<'a>),
@@ -3229,8 +3246,9 @@ fn get_view_for_jsxobject<'a>(inner: &'a swc_ast::JSXObject, parent: Node<'a>, b
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum Lit<'a> {
   Str(&'a Str<'a>),
   Bool(&'a Bool<'a>),
@@ -3364,8 +3382,9 @@ fn get_view_for_lit<'a>(inner: &'a swc_ast::Lit, parent: Node<'a>, bump: &'a Bum
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum ModuleDecl<'a> {
   Import(&'a ImportDecl<'a>),
   ExportDecl(&'a ExportDecl<'a>),
@@ -3517,8 +3536,9 @@ fn get_view_for_module_decl<'a>(inner: &'a swc_ast::ModuleDecl, parent: Node<'a>
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum ModuleItem<'a> {
   ModuleDecl(ModuleDecl<'a>),
   Stmt(Stmt<'a>),
@@ -3607,8 +3627,9 @@ fn get_view_for_module_item<'a>(inner: &'a swc_ast::ModuleItem, parent: Node<'a>
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum ObjectPatProp<'a> {
   KeyValue(&'a KeyValuePatProp<'a>),
   Assign(&'a AssignPatProp<'a>),
@@ -3706,8 +3727,9 @@ fn get_view_for_object_pat_prop<'a>(inner: &'a swc_ast::ObjectPatProp, parent: N
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum ParamOrTsParamProp<'a> {
   TsParamProp(&'a TsParamProp<'a>),
   Param(&'a Param<'a>),
@@ -3796,8 +3818,9 @@ fn get_view_for_param_or_ts_param_prop<'a>(inner: &'a swc_ast::ParamOrTsParamPro
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum Pat<'a> {
   Ident(&'a BindingIdent<'a>),
   Array(&'a ArrayPat<'a>),
@@ -3932,8 +3955,9 @@ fn get_view_for_pat<'a>(inner: &'a swc_ast::Pat, parent: Node<'a>, bump: &'a Bum
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum PatOrExpr<'a> {
   Expr(Expr<'a>),
   Pat(Pat<'a>),
@@ -4022,8 +4046,9 @@ fn get_view_for_pat_or_expr<'a>(inner: &'a swc_ast::PatOrExpr, parent: Node<'a>,
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum Prop<'a> {
   /// `a` in `{ a, }`
   Shorthand(&'a Ident<'a>),
@@ -4151,8 +4176,9 @@ fn get_view_for_prop<'a>(inner: &'a swc_ast::Prop, parent: Node<'a>, bump: &'a B
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum PropName<'a> {
   Ident(&'a Ident<'a>),
   /// String literal.
@@ -4270,8 +4296,9 @@ fn get_view_for_prop_name<'a>(inner: &'a swc_ast::PropName, parent: Node<'a>, bu
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum PropOrSpread<'a> {
   /// Spread properties, e.g., `{a: 1, ...obj, b: 2}`.
   Spread(&'a SpreadElement<'a>),
@@ -4361,8 +4388,9 @@ fn get_view_for_prop_or_spread<'a>(inner: &'a swc_ast::PropOrSpread, parent: Nod
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum Stmt<'a> {
   Block(&'a BlockStmt<'a>),
   Empty(&'a EmptyStmt<'a>),
@@ -4605,8 +4633,9 @@ fn get_view_for_stmt<'a>(inner: &'a swc_ast::Stmt, parent: Node<'a>, bump: &'a B
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsEntityName<'a> {
   TsQualifiedName(&'a TsQualifiedName<'a>),
   Ident(&'a Ident<'a>),
@@ -4697,8 +4726,9 @@ fn get_view_for_ts_entity_name<'a>(inner: &'a swc_ast::TsEntityName, parent: Nod
 
 ///
 /// - Invalid: [Ident] with empty symbol.
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsEnumMemberId<'a> {
   Ident(&'a Ident<'a>),
   Str(&'a Str<'a>),
@@ -4787,8 +4817,9 @@ fn get_view_for_ts_enum_member_id<'a>(inner: &'a swc_ast::TsEnumMemberId, parent
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsFnOrConstructorType<'a> {
   TsFnType(&'a TsFnType<'a>),
   TsConstructorType(&'a TsConstructorType<'a>),
@@ -4877,8 +4908,9 @@ fn get_view_for_ts_fn_or_constructor_type<'a>(inner: &'a swc_ast::TsFnOrConstruc
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsFnParam<'a> {
   Ident(&'a BindingIdent<'a>),
   Array(&'a ArrayPat<'a>),
@@ -4985,8 +5017,9 @@ fn get_view_for_ts_fn_param<'a>(inner: &'a swc_ast::TsFnParam, parent: Node<'a>,
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsLit<'a> {
   Number(&'a Number<'a>),
   Str(&'a Str<'a>),
@@ -5102,8 +5135,9 @@ fn get_view_for_ts_lit<'a>(inner: &'a swc_ast::TsLit, parent: Node<'a>, bump: &'
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsModuleName<'a> {
   Ident(&'a Ident<'a>),
   Str(&'a Str<'a>),
@@ -5192,8 +5226,9 @@ fn get_view_for_ts_module_name<'a>(inner: &'a swc_ast::TsModuleName, parent: Nod
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsModuleRef<'a> {
   TsEntityName(TsEntityName<'a>),
   TsExternalModuleRef(&'a TsExternalModuleRef<'a>),
@@ -5284,8 +5319,9 @@ fn get_view_for_ts_module_ref<'a>(inner: &'a swc_ast::TsModuleRef, parent: Node<
 
 /// `namespace A.B { }` is a namespace named `A` with another TsNamespaceDecl as
 /// its body.
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsNamespaceBody<'a> {
   TsModuleBlock(&'a TsModuleBlock<'a>),
   TsNamespaceDecl(&'a TsNamespaceDecl<'a>),
@@ -5374,8 +5410,9 @@ fn get_view_for_ts_namespace_body<'a>(inner: &'a swc_ast::TsNamespaceBody, paren
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsParamPropParam<'a> {
   Ident(&'a BindingIdent<'a>),
   Assign(&'a AssignPat<'a>),
@@ -5464,8 +5501,9 @@ fn get_view_for_ts_param_prop_param<'a>(inner: &'a swc_ast::TsParamPropParam, pa
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsThisTypeOrIdent<'a> {
   TsThisType(&'a TsThisType<'a>),
   Ident(&'a Ident<'a>),
@@ -5554,8 +5592,9 @@ fn get_view_for_ts_this_type_or_ident<'a>(inner: &'a swc_ast::TsThisTypeOrIdent,
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsType<'a> {
   TsKeywordType(&'a TsKeywordType<'a>),
   TsThisType(&'a TsThisType<'a>),
@@ -5806,8 +5845,9 @@ fn get_view_for_ts_type<'a>(inner: &'a swc_ast::TsType, parent: Node<'a>, bump: 
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsTypeElement<'a> {
   TsCallSignatureDecl(&'a TsCallSignatureDecl<'a>),
   TsConstructSignatureDecl(&'a TsConstructSignatureDecl<'a>),
@@ -5923,8 +5963,9 @@ fn get_view_for_ts_type_element<'a>(inner: &'a swc_ast::TsTypeElement, parent: N
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsTypeQueryExpr<'a> {
   TsEntityName(TsEntityName<'a>),
   Import(&'a TsImportType<'a>),
@@ -6013,8 +6054,9 @@ fn get_view_for_ts_type_query_expr<'a>(inner: &'a swc_ast::TsTypeQueryExpr, pare
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsUnionOrIntersectionType<'a> {
   TsUnionType(&'a TsUnionType<'a>),
   TsIntersectionType(&'a TsIntersectionType<'a>),
@@ -6103,8 +6145,9 @@ fn get_view_for_ts_union_or_intersection_type<'a>(inner: &'a swc_ast::TsUnionOrI
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum VarDeclOrExpr<'a> {
   VarDecl(&'a VarDecl<'a>),
   Expr(Expr<'a>),
@@ -6193,8 +6236,9 @@ fn get_view_for_var_decl_or_expr<'a>(inner: &'a swc_ast::VarDeclOrExpr, parent: 
   }
 }
 
-#[derive(Copy, Clone, Serialize)]
-#[serde(untagged)]
+#[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum VarDeclOrPat<'a> {
   VarDecl(&'a VarDecl<'a>),
   Pat(Pat<'a>),
@@ -6284,14 +6328,12 @@ fn get_view_for_var_decl_or_pat<'a>(inner: &'a swc_ast::VarDeclOrPat, parent: No
 }
 
 /// Array literal.
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableArrayLit"))]
 pub struct ArrayLit<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ArrayLit,
-  pub span: Span,
   pub elems: Vec<Option<&'a ExprOrSpread<'a>>>,
 }
 
@@ -6348,7 +6390,6 @@ impl<'a> CastableNode<'a> for ArrayLit<'a> {
 fn get_view_for_array_lit<'a>(inner: &'a swc_ast::ArrayLit, parent: Node<'a>, bump: &'a Bump) -> &'a ArrayLit<'a> {
   let node = bump.alloc(ArrayLit {
     inner,
-    span: inner.span(),
     parent,
     elems: Vec::with_capacity(inner.elems.len()),
   });
@@ -6360,18 +6401,21 @@ fn get_view_for_array_lit<'a>(inner: &'a swc_ast::ArrayLit, parent: Node<'a>, bu
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableArrayPat"))]
 pub struct ArrayPat<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ArrayPat,
-  pub span: Span,
   pub elems: Vec<Option<Pat<'a>>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
+}
+
+impl<'a> ArrayPat<'a> {
   /// Only in an ambient context
-  pub optional: bool,
+  pub fn optional(&self) -> bool {
+    self.inner.optional
+  }
 }
 
 impl<'a> Spanned for ArrayPat<'a> {
@@ -6430,11 +6474,9 @@ impl<'a> CastableNode<'a> for ArrayPat<'a> {
 fn get_view_for_array_pat<'a>(inner: &'a swc_ast::ArrayPat, parent: Node<'a>, bump: &'a Bump) -> &'a ArrayPat<'a> {
   let node = bump.alloc(ArrayPat {
     inner,
-    span: inner.span(),
     parent,
     elems: Vec::with_capacity(inner.elems.len()),
     type_ann: None,
-    optional: inner.optional,
   });
   let parent: Node<'a> = (&*node).into();
   node.elems.extend(inner.elems.iter().map(|value| match value {
@@ -6448,20 +6490,26 @@ fn get_view_for_array_pat<'a>(inner: &'a swc_ast::ArrayPat, parent: Node<'a>, bu
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableArrowExpr"))]
 pub struct ArrowExpr<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ArrowExpr,
-  pub span: Span,
   pub params: Vec<Pat<'a>>,
   pub body: BlockStmtOrExpr<'a>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
   pub return_type: Option<&'a TsTypeAnn<'a>>,
-  pub is_async: bool,
-  pub is_generator: bool,
+}
+
+impl<'a> ArrowExpr<'a> {
+  pub fn is_async(&self) -> bool {
+    self.inner.is_async
+  }
+
+  pub fn is_generator(&self) -> bool {
+    self.inner.is_generator
+  }
 }
 
 impl<'a> Spanned for ArrowExpr<'a> {
@@ -6522,14 +6570,11 @@ impl<'a> CastableNode<'a> for ArrowExpr<'a> {
 fn get_view_for_arrow_expr<'a>(inner: &'a swc_ast::ArrowExpr, parent: Node<'a>, bump: &'a Bump) -> &'a ArrowExpr<'a> {
   let node = bump.alloc(ArrowExpr {
     inner,
-    span: inner.span(),
     parent,
     params: Vec::with_capacity(inner.params.len()),
     body: unsafe { MaybeUninit::uninit().assume_init() },
     type_params: None,
     return_type: None,
-    is_async: inner.is_async,
-    is_generator: inner.is_generator,
   });
   let parent: Node<'a> = (&*node).into();
   node.params.extend(inner.params.iter().map(|value| get_view_for_pat(value, parent.clone(), bump)));
@@ -6545,17 +6590,20 @@ fn get_view_for_arrow_expr<'a>(inner: &'a swc_ast::ArrowExpr, parent: Node<'a>, 
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableAssignExpr"))]
 pub struct AssignExpr<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::AssignExpr,
-  pub span: Span,
   pub left: PatOrExpr<'a>,
   pub right: Expr<'a>,
-  pub op: AssignOp,
+}
+
+impl<'a> AssignExpr<'a> {
+  pub fn op(&self) -> AssignOp {
+    self.inner.op
+  }
 }
 
 impl<'a> Spanned for AssignExpr<'a> {
@@ -6608,11 +6656,9 @@ impl<'a> CastableNode<'a> for AssignExpr<'a> {
 fn get_view_for_assign_expr<'a>(inner: &'a swc_ast::AssignExpr, parent: Node<'a>, bump: &'a Bump) -> &'a AssignExpr<'a> {
   let node = bump.alloc(AssignExpr {
     inner,
-    span: inner.span(),
     parent,
     left: unsafe { MaybeUninit::uninit().assume_init() },
     right: unsafe { MaybeUninit::uninit().assume_init() },
-    op: inner.op,
   });
   let parent: Node<'a> = (&*node).into();
   node.left = get_view_for_pat_or_expr(&inner.left, parent.clone(), bump);
@@ -6620,14 +6666,12 @@ fn get_view_for_assign_expr<'a>(inner: &'a swc_ast::AssignExpr, parent: Node<'a>
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableAssignPat"))]
 pub struct AssignPat<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::AssignPat,
-  pub span: Span,
   pub left: Pat<'a>,
   pub right: Expr<'a>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
@@ -6686,7 +6730,6 @@ impl<'a> CastableNode<'a> for AssignPat<'a> {
 fn get_view_for_assign_pat<'a>(inner: &'a swc_ast::AssignPat, parent: Node<'a>, bump: &'a Bump) -> &'a AssignPat<'a> {
   let node = bump.alloc(AssignPat {
     inner,
-    span: inner.span(),
     parent,
     left: unsafe { MaybeUninit::uninit().assume_init() },
     right: unsafe { MaybeUninit::uninit().assume_init() },
@@ -6703,14 +6746,12 @@ fn get_view_for_assign_pat<'a>(inner: &'a swc_ast::AssignPat, parent: Node<'a>, 
 }
 
 /// `{key}` or `{key = value}`
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableAssignPatProp"))]
 pub struct AssignPatProp<'a> {
-  #[serde(skip)]
   pub parent: &'a ObjectPat<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::AssignPatProp,
-  pub span: Span,
   pub key: &'a Ident<'a>,
   pub value: Option<Expr<'a>>,
 }
@@ -6767,7 +6808,6 @@ impl<'a> CastableNode<'a> for AssignPatProp<'a> {
 fn get_view_for_assign_pat_prop<'a>(inner: &'a swc_ast::AssignPatProp, parent: Node<'a>, bump: &'a Bump) -> &'a AssignPatProp<'a> {
   let node = bump.alloc(AssignPatProp {
     inner,
-    span: inner.span(),
     parent: parent.expect::<ObjectPat>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     value: None,
@@ -6781,14 +6821,12 @@ fn get_view_for_assign_pat_prop<'a>(inner: &'a swc_ast::AssignPatProp, parent: N
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableAssignProp"))]
 pub struct AssignProp<'a> {
-  #[serde(skip)]
   pub parent: &'a ObjectLit<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::AssignProp,
-  pub span: Span,
   pub key: &'a Ident<'a>,
   pub value: Expr<'a>,
 }
@@ -6843,7 +6881,6 @@ impl<'a> CastableNode<'a> for AssignProp<'a> {
 fn get_view_for_assign_prop<'a>(inner: &'a swc_ast::AssignProp, parent: Node<'a>, bump: &'a Bump) -> &'a AssignProp<'a> {
   let node = bump.alloc(AssignProp {
     inner,
-    span: inner.span(),
     parent: parent.expect::<ObjectLit>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     value: unsafe { MaybeUninit::uninit().assume_init() },
@@ -6854,14 +6891,12 @@ fn get_view_for_assign_prop<'a>(inner: &'a swc_ast::AssignProp, parent: Node<'a>
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableAwaitExpr"))]
 pub struct AwaitExpr<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::AwaitExpr,
-  pub span: Span,
   pub arg: Expr<'a>,
 }
 
@@ -6914,7 +6949,6 @@ impl<'a> CastableNode<'a> for AwaitExpr<'a> {
 fn get_view_for_await_expr<'a>(inner: &'a swc_ast::AwaitExpr, parent: Node<'a>, bump: &'a Bump) -> &'a AwaitExpr<'a> {
   let node = bump.alloc(AwaitExpr {
     inner,
-    span: inner.span(),
     parent,
     arg: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -6923,15 +6957,18 @@ fn get_view_for_await_expr<'a>(inner: &'a swc_ast::AwaitExpr, parent: Node<'a>, 
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableBigInt"))]
 pub struct BigInt<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::BigInt,
-  pub span: Span,
-  pub value: &'a num_bigint::BigInt,
+}
+
+impl<'a> BigInt<'a> {
+  pub fn value(&self) -> &num_bigint::BigInt {
+    &self.inner.value
+  }
 }
 
 impl<'a> Spanned for BigInt<'a> {
@@ -6981,24 +7018,25 @@ impl<'a> CastableNode<'a> for BigInt<'a> {
 fn get_view_for_big_int<'a>(inner: &'a swc_ast::BigInt, parent: Node<'a>, bump: &'a Bump) -> &'a BigInt<'a> {
   let node = bump.alloc(BigInt {
     inner,
-    span: inner.span(),
     parent,
-    value: &inner.value,
   });
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableBinExpr"))]
 pub struct BinExpr<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::BinExpr,
-  pub span: Span,
   pub left: Expr<'a>,
   pub right: Expr<'a>,
-  pub op: BinaryOp,
+}
+
+impl<'a> BinExpr<'a> {
+  pub fn op(&self) -> BinaryOp {
+    self.inner.op
+  }
 }
 
 impl<'a> Spanned for BinExpr<'a> {
@@ -7051,11 +7089,9 @@ impl<'a> CastableNode<'a> for BinExpr<'a> {
 fn get_view_for_bin_expr<'a>(inner: &'a swc_ast::BinExpr, parent: Node<'a>, bump: &'a Bump) -> &'a BinExpr<'a> {
   let node = bump.alloc(BinExpr {
     inner,
-    span: inner.span(),
     parent,
     left: unsafe { MaybeUninit::uninit().assume_init() },
     right: unsafe { MaybeUninit::uninit().assume_init() },
-    op: inner.op,
   });
   let parent: Node<'a> = (&*node).into();
   node.left = get_view_for_expr(&inner.left, parent.clone(), bump);
@@ -7064,14 +7100,12 @@ fn get_view_for_bin_expr<'a>(inner: &'a swc_ast::BinExpr, parent: Node<'a>, bump
 }
 
 /// Identifer used as a pattern.
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableBindingIdent"))]
 pub struct BindingIdent<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::BindingIdent,
-  pub span: Span,
   pub id: &'a Ident<'a>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
 }
@@ -7128,7 +7162,6 @@ impl<'a> CastableNode<'a> for BindingIdent<'a> {
 fn get_view_for_binding_ident<'a>(inner: &'a swc_ast::BindingIdent, parent: Node<'a>, bump: &'a Bump) -> &'a BindingIdent<'a> {
   let node = bump.alloc(BindingIdent {
     inner,
-    span: inner.span(),
     parent,
     id: unsafe { MaybeUninit::uninit().assume_init() },
     type_ann: None,
@@ -7143,14 +7176,12 @@ fn get_view_for_binding_ident<'a>(inner: &'a swc_ast::BindingIdent, parent: Node
 }
 
 /// Use when only block statements are allowed.
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableBlockStmt"))]
 pub struct BlockStmt<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::BlockStmt,
-  pub span: Span,
   pub stmts: Vec<Stmt<'a>>,
 }
 
@@ -7205,7 +7236,6 @@ impl<'a> CastableNode<'a> for BlockStmt<'a> {
 fn get_view_for_block_stmt<'a>(inner: &'a swc_ast::BlockStmt, parent: Node<'a>, bump: &'a Bump) -> &'a BlockStmt<'a> {
   let node = bump.alloc(BlockStmt {
     inner,
-    span: inner.span(),
     parent,
     stmts: Vec::with_capacity(inner.stmts.len()),
   });
@@ -7214,15 +7244,18 @@ fn get_view_for_block_stmt<'a>(inner: &'a swc_ast::BlockStmt, parent: Node<'a>, 
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableBool"))]
 pub struct Bool<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::Bool,
-  pub span: Span,
-  pub value: bool,
+}
+
+impl<'a> Bool<'a> {
+  pub fn value(&self) -> bool {
+    self.inner.value
+  }
 }
 
 impl<'a> Spanned for Bool<'a> {
@@ -7272,21 +7305,17 @@ impl<'a> CastableNode<'a> for Bool<'a> {
 fn get_view_for_bool<'a>(inner: &'a swc_ast::Bool, parent: Node<'a>, bump: &'a Bump) -> &'a Bool<'a> {
   let node = bump.alloc(Bool {
     inner,
-    span: inner.span(),
     parent,
-    value: inner.value,
   });
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableBreakStmt"))]
 pub struct BreakStmt<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::BreakStmt,
-  pub span: Span,
   pub label: Option<&'a Ident<'a>>,
 }
 
@@ -7341,7 +7370,6 @@ impl<'a> CastableNode<'a> for BreakStmt<'a> {
 fn get_view_for_break_stmt<'a>(inner: &'a swc_ast::BreakStmt, parent: Node<'a>, bump: &'a Bump) -> &'a BreakStmt<'a> {
   let node = bump.alloc(BreakStmt {
     inner,
-    span: inner.span(),
     parent,
     label: None,
   });
@@ -7353,14 +7381,12 @@ fn get_view_for_break_stmt<'a>(inner: &'a swc_ast::BreakStmt, parent: Node<'a>, 
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableCallExpr"))]
 pub struct CallExpr<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::CallExpr,
-  pub span: Span,
   pub callee: ExprOrSuper<'a>,
   pub args: Vec<&'a ExprOrSpread<'a>>,
   pub type_args: Option<&'a TsTypeParamInstantiation<'a>>,
@@ -7421,7 +7447,6 @@ impl<'a> CastableNode<'a> for CallExpr<'a> {
 fn get_view_for_call_expr<'a>(inner: &'a swc_ast::CallExpr, parent: Node<'a>, bump: &'a Bump) -> &'a CallExpr<'a> {
   let node = bump.alloc(CallExpr {
     inner,
-    span: inner.span(),
     parent,
     callee: unsafe { MaybeUninit::uninit().assume_init() },
     args: Vec::with_capacity(inner.args.len()),
@@ -7437,14 +7462,12 @@ fn get_view_for_call_expr<'a>(inner: &'a swc_ast::CallExpr, parent: Node<'a>, bu
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableCatchClause"))]
 pub struct CatchClause<'a> {
-  #[serde(skip)]
   pub parent: &'a TryStmt<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::CatchClause,
-  pub span: Span,
   /// es2019
   ///
   /// The param is null if the catch binding is omitted. E.g., try { foo() }
@@ -7505,7 +7528,6 @@ impl<'a> CastableNode<'a> for CatchClause<'a> {
 fn get_view_for_catch_clause<'a>(inner: &'a swc_ast::CatchClause, parent: Node<'a>, bump: &'a Bump) -> &'a CatchClause<'a> {
   let node = bump.alloc(CatchClause {
     inner,
-    span: inner.span(),
     parent: parent.expect::<TryStmt>(),
     param: None,
     body: unsafe { MaybeUninit::uninit().assume_init() },
@@ -7519,14 +7541,12 @@ fn get_view_for_catch_clause<'a>(inner: &'a swc_ast::CatchClause, parent: Node<'
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableClass"))]
 pub struct Class<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::Class,
-  pub span: Span,
   pub decorators: Vec<&'a Decorator<'a>>,
   pub body: Vec<ClassMember<'a>>,
   pub super_class: Option<Expr<'a>>,
@@ -7534,7 +7554,12 @@ pub struct Class<'a> {
   pub super_type_params: Option<&'a TsTypeParamInstantiation<'a>>,
   /// Typescript extension.
   pub implements: Vec<&'a TsExprWithTypeArgs<'a>>,
-  pub is_abstract: bool,
+}
+
+impl<'a> Class<'a> {
+  pub fn is_abstract(&self) -> bool {
+    self.inner.is_abstract
+  }
 }
 
 impl<'a> Spanned for Class<'a> {
@@ -7603,7 +7628,6 @@ impl<'a> CastableNode<'a> for Class<'a> {
 fn get_view_for_class<'a>(inner: &'a swc_ast::Class, parent: Node<'a>, bump: &'a Bump) -> &'a Class<'a> {
   let node = bump.alloc(Class {
     inner,
-    span: inner.span(),
     parent,
     decorators: Vec::with_capacity(inner.decorators.len()),
     body: Vec::with_capacity(inner.body.len()),
@@ -7611,7 +7635,6 @@ fn get_view_for_class<'a>(inner: &'a swc_ast::Class, parent: Node<'a>, bump: &'a
     type_params: None,
     super_type_params: None,
     implements: Vec::with_capacity(inner.implements.len()),
-    is_abstract: inner.is_abstract,
   });
   let parent: Node<'a> = (&*node).into();
   node.decorators.extend(inner.decorators.iter().map(|value| get_view_for_decorator(value, parent.clone(), bump)));
@@ -7632,17 +7655,20 @@ fn get_view_for_class<'a>(inner: &'a swc_ast::Class, parent: Node<'a>, bump: &'a
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableClassDecl"))]
 pub struct ClassDecl<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ClassDecl,
-  pub span: Span,
   pub ident: &'a Ident<'a>,
   pub class: &'a Class<'a>,
-  pub declare: bool,
+}
+
+impl<'a> ClassDecl<'a> {
+  pub fn declare(&self) -> bool {
+    self.inner.declare
+  }
 }
 
 impl<'a> Spanned for ClassDecl<'a> {
@@ -7695,11 +7721,9 @@ impl<'a> CastableNode<'a> for ClassDecl<'a> {
 fn get_view_for_class_decl<'a>(inner: &'a swc_ast::ClassDecl, parent: Node<'a>, bump: &'a Bump) -> &'a ClassDecl<'a> {
   let node = bump.alloc(ClassDecl {
     inner,
-    span: inner.span(),
     parent,
     ident: unsafe { MaybeUninit::uninit().assume_init() },
     class: unsafe { MaybeUninit::uninit().assume_init() },
-    declare: inner.declare,
   });
   let parent: Node<'a> = (&*node).into();
   node.ident = get_view_for_ident(&inner.ident, parent.clone(), bump);
@@ -7708,14 +7732,12 @@ fn get_view_for_class_decl<'a>(inner: &'a swc_ast::ClassDecl, parent: Node<'a>, 
 }
 
 /// Class expression.
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableClassExpr"))]
 pub struct ClassExpr<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ClassExpr,
-  pub span: Span,
   pub ident: Option<&'a Ident<'a>>,
   pub class: &'a Class<'a>,
 }
@@ -7772,7 +7794,6 @@ impl<'a> CastableNode<'a> for ClassExpr<'a> {
 fn get_view_for_class_expr<'a>(inner: &'a swc_ast::ClassExpr, parent: Node<'a>, bump: &'a Bump) -> &'a ClassExpr<'a> {
   let node = bump.alloc(ClassExpr {
     inner,
-    span: inner.span(),
     parent,
     ident: None,
     class: unsafe { MaybeUninit::uninit().assume_init() },
@@ -7786,23 +7807,38 @@ fn get_view_for_class_expr<'a>(inner: &'a swc_ast::ClassExpr, parent: Node<'a>, 
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableClassMethod"))]
 pub struct ClassMethod<'a> {
-  #[serde(skip)]
   pub parent: &'a Class<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ClassMethod,
-  pub span: Span,
   pub key: PropName<'a>,
   pub function: &'a Function<'a>,
-  pub kind: MethodKind,
-  pub is_static: bool,
+}
+
+impl<'a> ClassMethod<'a> {
+  pub fn kind(&self) -> MethodKind {
+    self.inner.kind
+  }
+
+  pub fn is_static(&self) -> bool {
+    self.inner.is_static
+  }
+
   /// Typescript extension.
-  pub accessibility: Option<Accessibility>,
+  pub fn accessibility(&self) -> Option<Accessibility> {
+    self.inner.accessibility
+  }
+
   /// Typescript extension.
-  pub is_abstract: bool,
-  pub is_optional: bool,
+  pub fn is_abstract(&self) -> bool {
+    self.inner.is_abstract
+  }
+
+  pub fn is_optional(&self) -> bool {
+    self.inner.is_optional
+  }
 }
 
 impl<'a> Spanned for ClassMethod<'a> {
@@ -7855,15 +7891,9 @@ impl<'a> CastableNode<'a> for ClassMethod<'a> {
 fn get_view_for_class_method<'a>(inner: &'a swc_ast::ClassMethod, parent: Node<'a>, bump: &'a Bump) -> &'a ClassMethod<'a> {
   let node = bump.alloc(ClassMethod {
     inner,
-    span: inner.span(),
     parent: parent.expect::<Class>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     function: unsafe { MaybeUninit::uninit().assume_init() },
-    kind: inner.kind,
-    is_static: inner.is_static,
-    accessibility: inner.accessibility,
-    is_abstract: inner.is_abstract,
-    is_optional: inner.is_optional,
   });
   let parent: Node<'a> = (&*node).into();
   node.key = get_view_for_prop_name(&inner.key, parent.clone(), bump);
@@ -7871,28 +7901,52 @@ fn get_view_for_class_method<'a>(inner: &'a swc_ast::ClassMethod, parent: Node<'
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableClassProp"))]
 pub struct ClassProp<'a> {
-  #[serde(skip)]
   pub parent: &'a Class<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ClassProp,
-  pub span: Span,
   pub key: Expr<'a>,
   pub value: Option<Expr<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
   pub decorators: Vec<&'a Decorator<'a>>,
-  pub is_static: bool,
-  pub computed: bool,
+}
+
+impl<'a> ClassProp<'a> {
+  pub fn is_static(&self) -> bool {
+    self.inner.is_static
+  }
+
+  pub fn computed(&self) -> bool {
+    self.inner.computed
+  }
+
   /// Typescript extension.
-  pub accessibility: Option<Accessibility>,
+  pub fn accessibility(&self) -> Option<Accessibility> {
+    self.inner.accessibility
+  }
+
   /// Typescript extension.
-  pub is_abstract: bool,
-  pub is_optional: bool,
-  pub readonly: bool,
-  pub declare: bool,
-  pub definite: bool,
+  pub fn is_abstract(&self) -> bool {
+    self.inner.is_abstract
+  }
+
+  pub fn is_optional(&self) -> bool {
+    self.inner.is_optional
+  }
+
+  pub fn readonly(&self) -> bool {
+    self.inner.readonly
+  }
+
+  pub fn declare(&self) -> bool {
+    self.inner.declare
+  }
+
+  pub fn definite(&self) -> bool {
+    self.inner.definite
+  }
 }
 
 impl<'a> Spanned for ClassProp<'a> {
@@ -7953,20 +8007,11 @@ impl<'a> CastableNode<'a> for ClassProp<'a> {
 fn get_view_for_class_prop<'a>(inner: &'a swc_ast::ClassProp, parent: Node<'a>, bump: &'a Bump) -> &'a ClassProp<'a> {
   let node = bump.alloc(ClassProp {
     inner,
-    span: inner.span(),
     parent: parent.expect::<Class>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     value: None,
     type_ann: None,
     decorators: Vec::with_capacity(inner.decorators.len()),
-    is_static: inner.is_static,
-    computed: inner.computed,
-    accessibility: inner.accessibility,
-    is_abstract: inner.is_abstract,
-    is_optional: inner.is_optional,
-    readonly: inner.readonly,
-    declare: inner.declare,
-    definite: inner.definite,
   });
   let parent: Node<'a> = (&*node).into();
   node.key = get_view_for_expr(&inner.key, parent.clone(), bump);
@@ -7982,14 +8027,12 @@ fn get_view_for_class_prop<'a>(inner: &'a swc_ast::ClassProp, parent: Node<'a>, 
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableComputedPropName"))]
 pub struct ComputedPropName<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ComputedPropName,
-  pub span: Span,
   pub expr: Expr<'a>,
 }
 
@@ -8042,7 +8085,6 @@ impl<'a> CastableNode<'a> for ComputedPropName<'a> {
 fn get_view_for_computed_prop_name<'a>(inner: &'a swc_ast::ComputedPropName, parent: Node<'a>, bump: &'a Bump) -> &'a ComputedPropName<'a> {
   let node = bump.alloc(ComputedPropName {
     inner,
-    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -8051,14 +8093,12 @@ fn get_view_for_computed_prop_name<'a>(inner: &'a swc_ast::ComputedPropName, par
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableCondExpr"))]
 pub struct CondExpr<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::CondExpr,
-  pub span: Span,
   pub test: Expr<'a>,
   pub cons: Expr<'a>,
   pub alt: Expr<'a>,
@@ -8115,7 +8155,6 @@ impl<'a> CastableNode<'a> for CondExpr<'a> {
 fn get_view_for_cond_expr<'a>(inner: &'a swc_ast::CondExpr, parent: Node<'a>, bump: &'a Bump) -> &'a CondExpr<'a> {
   let node = bump.alloc(CondExpr {
     inner,
-    span: inner.span(),
     parent,
     test: unsafe { MaybeUninit::uninit().assume_init() },
     cons: unsafe { MaybeUninit::uninit().assume_init() },
@@ -8128,19 +8167,25 @@ fn get_view_for_cond_expr<'a>(inner: &'a swc_ast::CondExpr, parent: Node<'a>, bu
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableConstructor"))]
 pub struct Constructor<'a> {
-  #[serde(skip)]
   pub parent: &'a Class<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::Constructor,
-  pub span: Span,
   pub key: PropName<'a>,
   pub params: Vec<ParamOrTsParamProp<'a>>,
   pub body: Option<&'a BlockStmt<'a>>,
-  pub accessibility: Option<Accessibility>,
-  pub is_optional: bool,
+}
+
+impl<'a> Constructor<'a> {
+  pub fn accessibility(&self) -> Option<Accessibility> {
+    self.inner.accessibility
+  }
+
+  pub fn is_optional(&self) -> bool {
+    self.inner.is_optional
+  }
 }
 
 impl<'a> Spanned for Constructor<'a> {
@@ -8198,13 +8243,10 @@ impl<'a> CastableNode<'a> for Constructor<'a> {
 fn get_view_for_constructor<'a>(inner: &'a swc_ast::Constructor, parent: Node<'a>, bump: &'a Bump) -> &'a Constructor<'a> {
   let node = bump.alloc(Constructor {
     inner,
-    span: inner.span(),
     parent: parent.expect::<Class>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     params: Vec::with_capacity(inner.params.len()),
     body: None,
-    accessibility: inner.accessibility,
-    is_optional: inner.is_optional,
   });
   let parent: Node<'a> = (&*node).into();
   node.key = get_view_for_prop_name(&inner.key, parent.clone(), bump);
@@ -8216,14 +8258,12 @@ fn get_view_for_constructor<'a>(inner: &'a swc_ast::Constructor, parent: Node<'a
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableContinueStmt"))]
 pub struct ContinueStmt<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ContinueStmt,
-  pub span: Span,
   pub label: Option<&'a Ident<'a>>,
 }
 
@@ -8278,7 +8318,6 @@ impl<'a> CastableNode<'a> for ContinueStmt<'a> {
 fn get_view_for_continue_stmt<'a>(inner: &'a swc_ast::ContinueStmt, parent: Node<'a>, bump: &'a Bump) -> &'a ContinueStmt<'a> {
   let node = bump.alloc(ContinueStmt {
     inner,
-    span: inner.span(),
     parent,
     label: None,
   });
@@ -8290,14 +8329,12 @@ fn get_view_for_continue_stmt<'a>(inner: &'a swc_ast::ContinueStmt, parent: Node
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableDebuggerStmt"))]
 pub struct DebuggerStmt<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::DebuggerStmt,
-  pub span: Span,
 }
 
 impl<'a> Spanned for DebuggerStmt<'a> {
@@ -8347,20 +8384,17 @@ impl<'a> CastableNode<'a> for DebuggerStmt<'a> {
 fn get_view_for_debugger_stmt<'a>(inner: &'a swc_ast::DebuggerStmt, parent: Node<'a>, bump: &'a Bump) -> &'a DebuggerStmt<'a> {
   let node = bump.alloc(DebuggerStmt {
     inner,
-    span: inner.span(),
     parent,
   });
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableDecorator"))]
 pub struct Decorator<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::Decorator,
-  pub span: Span,
   pub expr: Expr<'a>,
 }
 
@@ -8413,7 +8447,6 @@ impl<'a> CastableNode<'a> for Decorator<'a> {
 fn get_view_for_decorator<'a>(inner: &'a swc_ast::Decorator, parent: Node<'a>, bump: &'a Bump) -> &'a Decorator<'a> {
   let node = bump.alloc(Decorator {
     inner,
-    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -8422,14 +8455,12 @@ fn get_view_for_decorator<'a>(inner: &'a swc_ast::Decorator, parent: Node<'a>, b
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableDoWhileStmt"))]
 pub struct DoWhileStmt<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::DoWhileStmt,
-  pub span: Span,
   pub test: Expr<'a>,
   pub body: Stmt<'a>,
 }
@@ -8484,7 +8515,6 @@ impl<'a> CastableNode<'a> for DoWhileStmt<'a> {
 fn get_view_for_do_while_stmt<'a>(inner: &'a swc_ast::DoWhileStmt, parent: Node<'a>, bump: &'a Bump) -> &'a DoWhileStmt<'a> {
   let node = bump.alloc(DoWhileStmt {
     inner,
-    span: inner.span(),
     parent,
     test: unsafe { MaybeUninit::uninit().assume_init() },
     body: unsafe { MaybeUninit::uninit().assume_init() },
@@ -8495,14 +8525,12 @@ fn get_view_for_do_while_stmt<'a>(inner: &'a swc_ast::DoWhileStmt, parent: Node<
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableEmptyStmt"))]
 pub struct EmptyStmt<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::EmptyStmt,
-  pub span: Span,
 }
 
 impl<'a> Spanned for EmptyStmt<'a> {
@@ -8552,21 +8580,18 @@ impl<'a> CastableNode<'a> for EmptyStmt<'a> {
 fn get_view_for_empty_stmt<'a>(inner: &'a swc_ast::EmptyStmt, parent: Node<'a>, bump: &'a Bump) -> &'a EmptyStmt<'a> {
   let node = bump.alloc(EmptyStmt {
     inner,
-    span: inner.span(),
     parent,
   });
   node
 }
 
 /// `export * from 'mod'`
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableExportAll"))]
 pub struct ExportAll<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ExportAll,
-  pub span: Span,
   pub src: &'a Str<'a>,
   pub asserts: Option<&'a ObjectLit<'a>>,
 }
@@ -8623,7 +8648,6 @@ impl<'a> CastableNode<'a> for ExportAll<'a> {
 fn get_view_for_export_all<'a>(inner: &'a swc_ast::ExportAll, parent: Node<'a>, bump: &'a Bump) -> &'a ExportAll<'a> {
   let node = bump.alloc(ExportAll {
     inner,
-    span: inner.span(),
     parent,
     src: unsafe { MaybeUninit::uninit().assume_init() },
     asserts: None,
@@ -8637,14 +8661,12 @@ fn get_view_for_export_all<'a>(inner: &'a swc_ast::ExportAll, parent: Node<'a>, 
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableExportDecl"))]
 pub struct ExportDecl<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ExportDecl,
-  pub span: Span,
   pub decl: Decl<'a>,
 }
 
@@ -8697,7 +8719,6 @@ impl<'a> CastableNode<'a> for ExportDecl<'a> {
 fn get_view_for_export_decl<'a>(inner: &'a swc_ast::ExportDecl, parent: Node<'a>, bump: &'a Bump) -> &'a ExportDecl<'a> {
   let node = bump.alloc(ExportDecl {
     inner,
-    span: inner.span(),
     parent,
     decl: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -8706,14 +8727,12 @@ fn get_view_for_export_decl<'a>(inner: &'a swc_ast::ExportDecl, parent: Node<'a>
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableExportDefaultDecl"))]
 pub struct ExportDefaultDecl<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ExportDefaultDecl,
-  pub span: Span,
   pub decl: DefaultDecl<'a>,
 }
 
@@ -8766,7 +8785,6 @@ impl<'a> CastableNode<'a> for ExportDefaultDecl<'a> {
 fn get_view_for_export_default_decl<'a>(inner: &'a swc_ast::ExportDefaultDecl, parent: Node<'a>, bump: &'a Bump) -> &'a ExportDefaultDecl<'a> {
   let node = bump.alloc(ExportDefaultDecl {
     inner,
-    span: inner.span(),
     parent,
     decl: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -8775,14 +8793,12 @@ fn get_view_for_export_default_decl<'a>(inner: &'a swc_ast::ExportDefaultDecl, p
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableExportDefaultExpr"))]
 pub struct ExportDefaultExpr<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ExportDefaultExpr,
-  pub span: Span,
   pub expr: Expr<'a>,
 }
 
@@ -8835,7 +8851,6 @@ impl<'a> CastableNode<'a> for ExportDefaultExpr<'a> {
 fn get_view_for_export_default_expr<'a>(inner: &'a swc_ast::ExportDefaultExpr, parent: Node<'a>, bump: &'a Bump) -> &'a ExportDefaultExpr<'a> {
   let node = bump.alloc(ExportDefaultExpr {
     inner,
-    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -8844,14 +8859,12 @@ fn get_view_for_export_default_expr<'a>(inner: &'a swc_ast::ExportDefaultExpr, p
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableExportDefaultSpecifier"))]
 pub struct ExportDefaultSpecifier<'a> {
-  #[serde(skip)]
   pub parent: &'a NamedExport<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ExportDefaultSpecifier,
-  pub span: Span,
   pub exported: &'a Ident<'a>,
 }
 
@@ -8904,7 +8917,6 @@ impl<'a> CastableNode<'a> for ExportDefaultSpecifier<'a> {
 fn get_view_for_export_default_specifier<'a>(inner: &'a swc_ast::ExportDefaultSpecifier, parent: Node<'a>, bump: &'a Bump) -> &'a ExportDefaultSpecifier<'a> {
   let node = bump.alloc(ExportDefaultSpecifier {
     inner,
-    span: inner.span(),
     parent: parent.expect::<NamedExport>(),
     exported: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -8913,14 +8925,12 @@ fn get_view_for_export_default_specifier<'a>(inner: &'a swc_ast::ExportDefaultSp
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableExportNamedSpecifier"))]
 pub struct ExportNamedSpecifier<'a> {
-  #[serde(skip)]
   pub parent: &'a NamedExport<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ExportNamedSpecifier,
-  pub span: Span,
   /// `foo` in `export { foo as bar }`
   pub orig: &'a Ident<'a>,
   /// `Some(bar)` in `export { foo as bar }`
@@ -8979,7 +8989,6 @@ impl<'a> CastableNode<'a> for ExportNamedSpecifier<'a> {
 fn get_view_for_export_named_specifier<'a>(inner: &'a swc_ast::ExportNamedSpecifier, parent: Node<'a>, bump: &'a Bump) -> &'a ExportNamedSpecifier<'a> {
   let node = bump.alloc(ExportNamedSpecifier {
     inner,
-    span: inner.span(),
     parent: parent.expect::<NamedExport>(),
     orig: unsafe { MaybeUninit::uninit().assume_init() },
     exported: None,
@@ -8994,14 +9003,12 @@ fn get_view_for_export_named_specifier<'a>(inner: &'a swc_ast::ExportNamedSpecif
 }
 
 /// `export * as foo from 'src';`
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableExportNamespaceSpecifier"))]
 pub struct ExportNamespaceSpecifier<'a> {
-  #[serde(skip)]
   pub parent: &'a NamedExport<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ExportNamespaceSpecifier,
-  pub span: Span,
   pub name: &'a Ident<'a>,
 }
 
@@ -9054,7 +9061,6 @@ impl<'a> CastableNode<'a> for ExportNamespaceSpecifier<'a> {
 fn get_view_for_export_namespace_specifier<'a>(inner: &'a swc_ast::ExportNamespaceSpecifier, parent: Node<'a>, bump: &'a Bump) -> &'a ExportNamespaceSpecifier<'a> {
   let node = bump.alloc(ExportNamespaceSpecifier {
     inner,
-    span: inner.span(),
     parent: parent.expect::<NamedExport>(),
     name: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -9063,16 +9069,19 @@ fn get_view_for_export_namespace_specifier<'a>(inner: &'a swc_ast::ExportNamespa
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableExprOrSpread"))]
 pub struct ExprOrSpread<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ExprOrSpread,
-  pub span: Span,
   pub expr: Expr<'a>,
-  pub spread: &'a Option<swc_common::Span>,
+}
+
+impl<'a> ExprOrSpread<'a> {
+  pub fn spread(&self) -> &Option<swc_common::Span> {
+    &self.inner.spread
+  }
 }
 
 impl<'a> Spanned for ExprOrSpread<'a> {
@@ -9124,24 +9133,20 @@ impl<'a> CastableNode<'a> for ExprOrSpread<'a> {
 fn get_view_for_expr_or_spread<'a>(inner: &'a swc_ast::ExprOrSpread, parent: Node<'a>, bump: &'a Bump) -> &'a ExprOrSpread<'a> {
   let node = bump.alloc(ExprOrSpread {
     inner,
-    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
-    spread: &inner.spread,
   });
   let parent: Node<'a> = (&*node).into();
   node.expr = get_view_for_expr(&inner.expr, parent, bump);
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableExprStmt"))]
 pub struct ExprStmt<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ExprStmt,
-  pub span: Span,
   pub expr: Expr<'a>,
 }
 
@@ -9194,7 +9199,6 @@ impl<'a> CastableNode<'a> for ExprStmt<'a> {
 fn get_view_for_expr_stmt<'a>(inner: &'a swc_ast::ExprStmt, parent: Node<'a>, bump: &'a Bump) -> &'a ExprStmt<'a> {
   let node = bump.alloc(ExprStmt {
     inner,
-    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -9203,17 +9207,20 @@ fn get_view_for_expr_stmt<'a>(inner: &'a swc_ast::ExprStmt, parent: Node<'a>, bu
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableFnDecl"))]
 pub struct FnDecl<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::FnDecl,
-  pub span: Span,
   pub ident: &'a Ident<'a>,
   pub function: &'a Function<'a>,
-  pub declare: bool,
+}
+
+impl<'a> FnDecl<'a> {
+  pub fn declare(&self) -> bool {
+    self.inner.declare
+  }
 }
 
 impl<'a> Spanned for FnDecl<'a> {
@@ -9266,11 +9273,9 @@ impl<'a> CastableNode<'a> for FnDecl<'a> {
 fn get_view_for_fn_decl<'a>(inner: &'a swc_ast::FnDecl, parent: Node<'a>, bump: &'a Bump) -> &'a FnDecl<'a> {
   let node = bump.alloc(FnDecl {
     inner,
-    span: inner.span(),
     parent,
     ident: unsafe { MaybeUninit::uninit().assume_init() },
     function: unsafe { MaybeUninit::uninit().assume_init() },
-    declare: inner.declare,
   });
   let parent: Node<'a> = (&*node).into();
   node.ident = get_view_for_ident(&inner.ident, parent.clone(), bump);
@@ -9279,14 +9284,12 @@ fn get_view_for_fn_decl<'a>(inner: &'a swc_ast::FnDecl, parent: Node<'a>, bump: 
 }
 
 /// Function expression.
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableFnExpr"))]
 pub struct FnExpr<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::FnExpr,
-  pub span: Span,
   pub ident: Option<&'a Ident<'a>>,
   pub function: &'a Function<'a>,
 }
@@ -9343,7 +9346,6 @@ impl<'a> CastableNode<'a> for FnExpr<'a> {
 fn get_view_for_fn_expr<'a>(inner: &'a swc_ast::FnExpr, parent: Node<'a>, bump: &'a Bump) -> &'a FnExpr<'a> {
   let node = bump.alloc(FnExpr {
     inner,
-    span: inner.span(),
     parent,
     ident: None,
     function: unsafe { MaybeUninit::uninit().assume_init() },
@@ -9357,14 +9359,12 @@ fn get_view_for_fn_expr<'a>(inner: &'a swc_ast::FnExpr, parent: Node<'a>, bump: 
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableForInStmt"))]
 pub struct ForInStmt<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ForInStmt,
-  pub span: Span,
   pub left: VarDeclOrPat<'a>,
   pub right: Expr<'a>,
   pub body: Stmt<'a>,
@@ -9421,7 +9421,6 @@ impl<'a> CastableNode<'a> for ForInStmt<'a> {
 fn get_view_for_for_in_stmt<'a>(inner: &'a swc_ast::ForInStmt, parent: Node<'a>, bump: &'a Bump) -> &'a ForInStmt<'a> {
   let node = bump.alloc(ForInStmt {
     inner,
-    span: inner.span(),
     parent,
     left: unsafe { MaybeUninit::uninit().assume_init() },
     right: unsafe { MaybeUninit::uninit().assume_init() },
@@ -9434,23 +9433,26 @@ fn get_view_for_for_in_stmt<'a>(inner: &'a swc_ast::ForInStmt, parent: Node<'a>,
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableForOfStmt"))]
 pub struct ForOfStmt<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ForOfStmt,
-  pub span: Span,
   pub left: VarDeclOrPat<'a>,
   pub right: Expr<'a>,
   pub body: Stmt<'a>,
+}
+
+impl<'a> ForOfStmt<'a> {
   /// Span of the await token.
   ///
   /// es2018
   ///
   /// for-await-of statements, e.g., `for await (const x of xs) {`
-  pub await_token: &'a Option<swc_common::Span>,
+  pub fn await_token(&self) -> &Option<swc_common::Span> {
+    &self.inner.await_token
+  }
 }
 
 impl<'a> Spanned for ForOfStmt<'a> {
@@ -9504,12 +9506,10 @@ impl<'a> CastableNode<'a> for ForOfStmt<'a> {
 fn get_view_for_for_of_stmt<'a>(inner: &'a swc_ast::ForOfStmt, parent: Node<'a>, bump: &'a Bump) -> &'a ForOfStmt<'a> {
   let node = bump.alloc(ForOfStmt {
     inner,
-    span: inner.span(),
     parent,
     left: unsafe { MaybeUninit::uninit().assume_init() },
     right: unsafe { MaybeUninit::uninit().assume_init() },
     body: unsafe { MaybeUninit::uninit().assume_init() },
-    await_token: &inner.await_token,
   });
   let parent: Node<'a> = (&*node).into();
   node.left = get_view_for_var_decl_or_pat(&inner.left, parent.clone(), bump);
@@ -9518,14 +9518,12 @@ fn get_view_for_for_of_stmt<'a>(inner: &'a swc_ast::ForOfStmt, parent: Node<'a>,
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableForStmt"))]
 pub struct ForStmt<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ForStmt,
-  pub span: Span,
   pub init: Option<VarDeclOrExpr<'a>>,
   pub test: Option<Expr<'a>>,
   pub update: Option<Expr<'a>>,
@@ -9590,7 +9588,6 @@ impl<'a> CastableNode<'a> for ForStmt<'a> {
 fn get_view_for_for_stmt<'a>(inner: &'a swc_ast::ForStmt, parent: Node<'a>, bump: &'a Bump) -> &'a ForStmt<'a> {
   let node = bump.alloc(ForStmt {
     inner,
-    span: inner.span(),
     parent,
     init: None,
     test: None,
@@ -9615,23 +9612,29 @@ fn get_view_for_for_stmt<'a>(inner: &'a swc_ast::ForStmt, parent: Node<'a>, bump
 }
 
 /// Common parts of function and method.
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableFunction"))]
 pub struct Function<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::Function,
-  pub span: Span,
   pub params: Vec<&'a Param<'a>>,
   pub decorators: Vec<&'a Decorator<'a>>,
   pub body: Option<&'a BlockStmt<'a>>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
   pub return_type: Option<&'a TsTypeAnn<'a>>,
+}
+
+impl<'a> Function<'a> {
   /// if it's a generator.
-  pub is_generator: bool,
+  pub fn is_generator(&self) -> bool {
+    self.inner.is_generator
+  }
+
   /// if it's an async function.
-  pub is_async: bool,
+  pub fn is_async(&self) -> bool {
+    self.inner.is_async
+  }
 }
 
 impl<'a> Spanned for Function<'a> {
@@ -9697,15 +9700,12 @@ impl<'a> CastableNode<'a> for Function<'a> {
 fn get_view_for_function<'a>(inner: &'a swc_ast::Function, parent: Node<'a>, bump: &'a Bump) -> &'a Function<'a> {
   let node = bump.alloc(Function {
     inner,
-    span: inner.span(),
     parent,
     params: Vec::with_capacity(inner.params.len()),
     decorators: Vec::with_capacity(inner.decorators.len()),
     body: None,
     type_params: None,
     return_type: None,
-    is_generator: inner.is_generator,
-    is_async: inner.is_async,
   });
   let parent: Node<'a> = (&*node).into();
   node.params.extend(inner.params.iter().map(|value| get_view_for_param(value, parent.clone(), bump)));
@@ -9725,14 +9725,12 @@ fn get_view_for_function<'a>(inner: &'a swc_ast::Function, parent: Node<'a>, bum
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableGetterProp"))]
 pub struct GetterProp<'a> {
-  #[serde(skip)]
   pub parent: &'a ObjectLit<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::GetterProp,
-  pub span: Span,
   pub key: PropName<'a>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
   pub body: Option<&'a BlockStmt<'a>>,
@@ -9793,7 +9791,6 @@ impl<'a> CastableNode<'a> for GetterProp<'a> {
 fn get_view_for_getter_prop<'a>(inner: &'a swc_ast::GetterProp, parent: Node<'a>, bump: &'a Bump) -> &'a GetterProp<'a> {
   let node = bump.alloc(GetterProp {
     inner,
-    span: inner.span(),
     parent: parent.expect::<ObjectLit>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     type_ann: None,
@@ -9813,17 +9810,23 @@ fn get_view_for_getter_prop<'a>(inner: &'a swc_ast::GetterProp, parent: Node<'a>
 }
 
 /// Ident with span.
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableIdent"))]
 pub struct Ident<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::Ident,
-  pub span: Span,
-  pub sym: &'a swc_atoms::JsWord,
+}
+
+impl<'a> Ident<'a> {
+  pub fn sym(&self) -> &swc_atoms::JsWord {
+    &self.inner.sym
+  }
+
   /// TypeScript only. Used in case of an optional parameter.
-  pub optional: bool,
+  pub fn optional(&self) -> bool {
+    self.inner.optional
+  }
 }
 
 impl<'a> Spanned for Ident<'a> {
@@ -9873,22 +9876,17 @@ impl<'a> CastableNode<'a> for Ident<'a> {
 fn get_view_for_ident<'a>(inner: &'a swc_ast::Ident, parent: Node<'a>, bump: &'a Bump) -> &'a Ident<'a> {
   let node = bump.alloc(Ident {
     inner,
-    span: inner.span(),
     parent,
-    sym: &inner.sym,
-    optional: inner.optional,
   });
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableIfStmt"))]
 pub struct IfStmt<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::IfStmt,
-  pub span: Span,
   pub test: Expr<'a>,
   pub cons: Stmt<'a>,
   pub alt: Option<Stmt<'a>>,
@@ -9947,7 +9945,6 @@ impl<'a> CastableNode<'a> for IfStmt<'a> {
 fn get_view_for_if_stmt<'a>(inner: &'a swc_ast::IfStmt, parent: Node<'a>, bump: &'a Bump) -> &'a IfStmt<'a> {
   let node = bump.alloc(IfStmt {
     inner,
-    span: inner.span(),
     parent,
     test: unsafe { MaybeUninit::uninit().assume_init() },
     cons: unsafe { MaybeUninit::uninit().assume_init() },
@@ -9963,18 +9960,21 @@ fn get_view_for_if_stmt<'a>(inner: &'a swc_ast::IfStmt, parent: Node<'a>, bump: 
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableImportDecl"))]
 pub struct ImportDecl<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ImportDecl,
-  pub span: Span,
   pub specifiers: Vec<ImportSpecifier<'a>>,
   pub src: &'a Str<'a>,
   pub asserts: Option<&'a ObjectLit<'a>>,
-  pub type_only: bool,
+}
+
+impl<'a> ImportDecl<'a> {
+  pub fn type_only(&self) -> bool {
+    self.inner.type_only
+  }
 }
 
 impl<'a> Spanned for ImportDecl<'a> {
@@ -10032,12 +10032,10 @@ impl<'a> CastableNode<'a> for ImportDecl<'a> {
 fn get_view_for_import_decl<'a>(inner: &'a swc_ast::ImportDecl, parent: Node<'a>, bump: &'a Bump) -> &'a ImportDecl<'a> {
   let node = bump.alloc(ImportDecl {
     inner,
-    span: inner.span(),
     parent,
     specifiers: Vec::with_capacity(inner.specifiers.len()),
     src: unsafe { MaybeUninit::uninit().assume_init() },
     asserts: None,
-    type_only: inner.type_only,
   });
   let parent: Node<'a> = (&*node).into();
   node.specifiers.extend(inner.specifiers.iter().map(|value| get_view_for_import_specifier(value, parent.clone(), bump)));
@@ -10050,14 +10048,12 @@ fn get_view_for_import_decl<'a>(inner: &'a swc_ast::ImportDecl, parent: Node<'a>
 }
 
 /// e.g. `import foo from 'mod.js'`
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableImportDefaultSpecifier"))]
 pub struct ImportDefaultSpecifier<'a> {
-  #[serde(skip)]
   pub parent: &'a ImportDecl<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ImportDefaultSpecifier,
-  pub span: Span,
   pub local: &'a Ident<'a>,
 }
 
@@ -10110,7 +10106,6 @@ impl<'a> CastableNode<'a> for ImportDefaultSpecifier<'a> {
 fn get_view_for_import_default_specifier<'a>(inner: &'a swc_ast::ImportDefaultSpecifier, parent: Node<'a>, bump: &'a Bump) -> &'a ImportDefaultSpecifier<'a> {
   let node = bump.alloc(ImportDefaultSpecifier {
     inner,
-    span: inner.span(),
     parent: parent.expect::<ImportDecl>(),
     local: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -10122,14 +10117,12 @@ fn get_view_for_import_default_specifier<'a>(inner: &'a swc_ast::ImportDefaultSp
 /// e.g. local = foo, imported = None `import { foo } from 'mod.js'`
 /// e.g. local = bar, imported = Some(foo) for `import { foo as bar } from
 /// 'mod.js'`
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableImportNamedSpecifier"))]
 pub struct ImportNamedSpecifier<'a> {
-  #[serde(skip)]
   pub parent: &'a ImportDecl<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ImportNamedSpecifier,
-  pub span: Span,
   pub local: &'a Ident<'a>,
   pub imported: Option<&'a Ident<'a>>,
 }
@@ -10186,7 +10179,6 @@ impl<'a> CastableNode<'a> for ImportNamedSpecifier<'a> {
 fn get_view_for_import_named_specifier<'a>(inner: &'a swc_ast::ImportNamedSpecifier, parent: Node<'a>, bump: &'a Bump) -> &'a ImportNamedSpecifier<'a> {
   let node = bump.alloc(ImportNamedSpecifier {
     inner,
-    span: inner.span(),
     parent: parent.expect::<ImportDecl>(),
     local: unsafe { MaybeUninit::uninit().assume_init() },
     imported: None,
@@ -10201,14 +10193,12 @@ fn get_view_for_import_named_specifier<'a>(inner: &'a swc_ast::ImportNamedSpecif
 }
 
 /// e.g. `import * as foo from 'mod.js'`.
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableImportStarAsSpecifier"))]
 pub struct ImportStarAsSpecifier<'a> {
-  #[serde(skip)]
   pub parent: &'a ImportDecl<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ImportStarAsSpecifier,
-  pub span: Span,
   pub local: &'a Ident<'a>,
 }
 
@@ -10261,7 +10251,6 @@ impl<'a> CastableNode<'a> for ImportStarAsSpecifier<'a> {
 fn get_view_for_import_star_as_specifier<'a>(inner: &'a swc_ast::ImportStarAsSpecifier, parent: Node<'a>, bump: &'a Bump) -> &'a ImportStarAsSpecifier<'a> {
   let node = bump.alloc(ImportStarAsSpecifier {
     inner,
-    span: inner.span(),
     parent: parent.expect::<ImportDecl>(),
     local: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -10271,14 +10260,12 @@ fn get_view_for_import_star_as_specifier<'a>(inner: &'a swc_ast::ImportStarAsSpe
 }
 
 /// Represents a invalid node.
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableInvalid"))]
 pub struct Invalid<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::Invalid,
-  pub span: Span,
 }
 
 impl<'a> Spanned for Invalid<'a> {
@@ -10328,20 +10315,17 @@ impl<'a> CastableNode<'a> for Invalid<'a> {
 fn get_view_for_invalid<'a>(inner: &'a swc_ast::Invalid, parent: Node<'a>, bump: &'a Bump) -> &'a Invalid<'a> {
   let node = bump.alloc(Invalid {
     inner,
-    span: inner.span(),
     parent,
   });
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXAttr"))]
 pub struct JSXAttr<'a> {
-  #[serde(skip)]
   pub parent: &'a JSXOpeningElement<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::JSXAttr,
-  pub span: Span,
   pub name: JSXAttrName<'a>,
   /// Babel uses Expr instead of JSXAttrValue
   pub value: Option<JSXAttrValue<'a>>,
@@ -10399,7 +10383,6 @@ impl<'a> CastableNode<'a> for JSXAttr<'a> {
 fn get_view_for_jsxattr<'a>(inner: &'a swc_ast::JSXAttr, parent: Node<'a>, bump: &'a Bump) -> &'a JSXAttr<'a> {
   let node = bump.alloc(JSXAttr {
     inner,
-    span: inner.span(),
     parent: parent.expect::<JSXOpeningElement>(),
     name: unsafe { MaybeUninit::uninit().assume_init() },
     value: None,
@@ -10413,14 +10396,12 @@ fn get_view_for_jsxattr<'a>(inner: &'a swc_ast::JSXAttr, parent: Node<'a>, bump:
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXClosingElement"))]
 pub struct JSXClosingElement<'a> {
-  #[serde(skip)]
   pub parent: &'a JSXElement<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::JSXClosingElement,
-  pub span: Span,
   pub name: JSXElementName<'a>,
 }
 
@@ -10473,7 +10454,6 @@ impl<'a> CastableNode<'a> for JSXClosingElement<'a> {
 fn get_view_for_jsxclosing_element<'a>(inner: &'a swc_ast::JSXClosingElement, parent: Node<'a>, bump: &'a Bump) -> &'a JSXClosingElement<'a> {
   let node = bump.alloc(JSXClosingElement {
     inner,
-    span: inner.span(),
     parent: parent.expect::<JSXElement>(),
     name: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -10482,14 +10462,12 @@ fn get_view_for_jsxclosing_element<'a>(inner: &'a swc_ast::JSXClosingElement, pa
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXClosingFragment"))]
 pub struct JSXClosingFragment<'a> {
-  #[serde(skip)]
   pub parent: &'a JSXFragment<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::JSXClosingFragment,
-  pub span: Span,
 }
 
 impl<'a> Spanned for JSXClosingFragment<'a> {
@@ -10539,20 +10517,17 @@ impl<'a> CastableNode<'a> for JSXClosingFragment<'a> {
 fn get_view_for_jsxclosing_fragment<'a>(inner: &'a swc_ast::JSXClosingFragment, parent: Node<'a>, bump: &'a Bump) -> &'a JSXClosingFragment<'a> {
   let node = bump.alloc(JSXClosingFragment {
     inner,
-    span: inner.span(),
     parent: parent.expect::<JSXFragment>(),
   });
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXElement"))]
 pub struct JSXElement<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::JSXElement,
-  pub span: Span,
   pub opening: &'a JSXOpeningElement<'a>,
   pub children: Vec<JSXElementChild<'a>>,
   pub closing: Option<&'a JSXClosingElement<'a>>,
@@ -10613,7 +10588,6 @@ impl<'a> CastableNode<'a> for JSXElement<'a> {
 fn get_view_for_jsxelement<'a>(inner: &'a swc_ast::JSXElement, parent: Node<'a>, bump: &'a Bump) -> &'a JSXElement<'a> {
   let node = bump.alloc(JSXElement {
     inner,
-    span: inner.span(),
     parent,
     opening: unsafe { MaybeUninit::uninit().assume_init() },
     children: Vec::with_capacity(inner.children.len()),
@@ -10629,14 +10603,12 @@ fn get_view_for_jsxelement<'a>(inner: &'a swc_ast::JSXElement, parent: Node<'a>,
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXEmptyExpr"))]
 pub struct JSXEmptyExpr<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::JSXEmptyExpr,
-  pub span: Span,
 }
 
 impl<'a> Spanned for JSXEmptyExpr<'a> {
@@ -10686,20 +10658,17 @@ impl<'a> CastableNode<'a> for JSXEmptyExpr<'a> {
 fn get_view_for_jsxempty_expr<'a>(inner: &'a swc_ast::JSXEmptyExpr, parent: Node<'a>, bump: &'a Bump) -> &'a JSXEmptyExpr<'a> {
   let node = bump.alloc(JSXEmptyExpr {
     inner,
-    span: inner.span(),
     parent,
   });
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXExprContainer"))]
 pub struct JSXExprContainer<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::JSXExprContainer,
-  pub span: Span,
   pub expr: JSXExpr<'a>,
 }
 
@@ -10752,7 +10721,6 @@ impl<'a> CastableNode<'a> for JSXExprContainer<'a> {
 fn get_view_for_jsxexpr_container<'a>(inner: &'a swc_ast::JSXExprContainer, parent: Node<'a>, bump: &'a Bump) -> &'a JSXExprContainer<'a> {
   let node = bump.alloc(JSXExprContainer {
     inner,
-    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -10761,14 +10729,12 @@ fn get_view_for_jsxexpr_container<'a>(inner: &'a swc_ast::JSXExprContainer, pare
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXFragment"))]
 pub struct JSXFragment<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::JSXFragment,
-  pub span: Span,
   pub opening: &'a JSXOpeningFragment<'a>,
   pub children: Vec<JSXElementChild<'a>>,
   pub closing: &'a JSXClosingFragment<'a>,
@@ -10827,7 +10793,6 @@ impl<'a> CastableNode<'a> for JSXFragment<'a> {
 fn get_view_for_jsxfragment<'a>(inner: &'a swc_ast::JSXFragment, parent: Node<'a>, bump: &'a Bump) -> &'a JSXFragment<'a> {
   let node = bump.alloc(JSXFragment {
     inner,
-    span: inner.span(),
     parent,
     opening: unsafe { MaybeUninit::uninit().assume_init() },
     children: Vec::with_capacity(inner.children.len()),
@@ -10840,14 +10805,12 @@ fn get_view_for_jsxfragment<'a>(inner: &'a swc_ast::JSXFragment, parent: Node<'a
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXMemberExpr"))]
 pub struct JSXMemberExpr<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::JSXMemberExpr,
-  pub span: Span,
   pub obj: JSXObject<'a>,
   pub prop: &'a Ident<'a>,
 }
@@ -10902,7 +10865,6 @@ impl<'a> CastableNode<'a> for JSXMemberExpr<'a> {
 fn get_view_for_jsxmember_expr<'a>(inner: &'a swc_ast::JSXMemberExpr, parent: Node<'a>, bump: &'a Bump) -> &'a JSXMemberExpr<'a> {
   let node = bump.alloc(JSXMemberExpr {
     inner,
-    span: inner.span(),
     parent,
     obj: unsafe { MaybeUninit::uninit().assume_init() },
     prop: unsafe { MaybeUninit::uninit().assume_init() },
@@ -10914,14 +10876,12 @@ fn get_view_for_jsxmember_expr<'a>(inner: &'a swc_ast::JSXMemberExpr, parent: No
 }
 
 /// XML-based namespace syntax:
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXNamespacedName"))]
 pub struct JSXNamespacedName<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::JSXNamespacedName,
-  pub span: Span,
   pub ns: &'a Ident<'a>,
   pub name: &'a Ident<'a>,
 }
@@ -10976,7 +10936,6 @@ impl<'a> CastableNode<'a> for JSXNamespacedName<'a> {
 fn get_view_for_jsxnamespaced_name<'a>(inner: &'a swc_ast::JSXNamespacedName, parent: Node<'a>, bump: &'a Bump) -> &'a JSXNamespacedName<'a> {
   let node = bump.alloc(JSXNamespacedName {
     inner,
-    span: inner.span(),
     parent,
     ns: unsafe { MaybeUninit::uninit().assume_init() },
     name: unsafe { MaybeUninit::uninit().assume_init() },
@@ -10987,20 +10946,23 @@ fn get_view_for_jsxnamespaced_name<'a>(inner: &'a swc_ast::JSXNamespacedName, pa
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXOpeningElement"))]
 pub struct JSXOpeningElement<'a> {
-  #[serde(skip)]
   pub parent: &'a JSXElement<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::JSXOpeningElement,
-  pub span: Span,
   pub name: JSXElementName<'a>,
   pub attrs: Vec<JSXAttrOrSpread<'a>>,
   /// Note: This field's name is different from one from babel because it is
   /// misleading
   pub type_args: Option<&'a TsTypeParamInstantiation<'a>>,
-  pub self_closing: bool,
+}
+
+impl<'a> JSXOpeningElement<'a> {
+  pub fn self_closing(&self) -> bool {
+    self.inner.self_closing
+  }
 }
 
 impl<'a> Spanned for JSXOpeningElement<'a> {
@@ -11058,12 +11020,10 @@ impl<'a> CastableNode<'a> for JSXOpeningElement<'a> {
 fn get_view_for_jsxopening_element<'a>(inner: &'a swc_ast::JSXOpeningElement, parent: Node<'a>, bump: &'a Bump) -> &'a JSXOpeningElement<'a> {
   let node = bump.alloc(JSXOpeningElement {
     inner,
-    span: inner.span(),
     parent: parent.expect::<JSXElement>(),
     name: unsafe { MaybeUninit::uninit().assume_init() },
     attrs: Vec::with_capacity(inner.attrs.len()),
     type_args: None,
-    self_closing: inner.self_closing,
   });
   let parent: Node<'a> = (&*node).into();
   node.name = get_view_for_jsxelement_name(&inner.name, parent.clone(), bump);
@@ -11075,14 +11035,12 @@ fn get_view_for_jsxopening_element<'a>(inner: &'a swc_ast::JSXOpeningElement, pa
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXOpeningFragment"))]
 pub struct JSXOpeningFragment<'a> {
-  #[serde(skip)]
   pub parent: &'a JSXFragment<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::JSXOpeningFragment,
-  pub span: Span,
 }
 
 impl<'a> Spanned for JSXOpeningFragment<'a> {
@@ -11132,20 +11090,17 @@ impl<'a> CastableNode<'a> for JSXOpeningFragment<'a> {
 fn get_view_for_jsxopening_fragment<'a>(inner: &'a swc_ast::JSXOpeningFragment, parent: Node<'a>, bump: &'a Bump) -> &'a JSXOpeningFragment<'a> {
   let node = bump.alloc(JSXOpeningFragment {
     inner,
-    span: inner.span(),
     parent: parent.expect::<JSXFragment>(),
   });
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXSpreadChild"))]
 pub struct JSXSpreadChild<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::JSXSpreadChild,
-  pub span: Span,
   pub expr: Expr<'a>,
 }
 
@@ -11198,7 +11153,6 @@ impl<'a> CastableNode<'a> for JSXSpreadChild<'a> {
 fn get_view_for_jsxspread_child<'a>(inner: &'a swc_ast::JSXSpreadChild, parent: Node<'a>, bump: &'a Bump) -> &'a JSXSpreadChild<'a> {
   let node = bump.alloc(JSXSpreadChild {
     inner,
-    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -11207,16 +11161,22 @@ fn get_view_for_jsxspread_child<'a>(inner: &'a swc_ast::JSXSpreadChild, parent: 
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXText"))]
 pub struct JSXText<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::JSXText,
-  pub span: Span,
-  pub value: &'a swc_atoms::JsWord,
-  pub raw: &'a swc_atoms::JsWord,
+}
+
+impl<'a> JSXText<'a> {
+  pub fn value(&self) -> &swc_atoms::JsWord {
+    &self.inner.value
+  }
+
+  pub fn raw(&self) -> &swc_atoms::JsWord {
+    &self.inner.raw
+  }
 }
 
 impl<'a> Spanned for JSXText<'a> {
@@ -11266,23 +11226,18 @@ impl<'a> CastableNode<'a> for JSXText<'a> {
 fn get_view_for_jsxtext<'a>(inner: &'a swc_ast::JSXText, parent: Node<'a>, bump: &'a Bump) -> &'a JSXText<'a> {
   let node = bump.alloc(JSXText {
     inner,
-    span: inner.span(),
     parent,
-    value: &inner.value,
-    raw: &inner.raw,
   });
   node
 }
 
 /// `{key: value}`
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableKeyValuePatProp"))]
 pub struct KeyValuePatProp<'a> {
-  #[serde(skip)]
   pub parent: &'a ObjectPat<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::KeyValuePatProp,
-  pub span: Span,
   pub key: PropName<'a>,
   pub value: Pat<'a>,
 }
@@ -11337,7 +11292,6 @@ impl<'a> CastableNode<'a> for KeyValuePatProp<'a> {
 fn get_view_for_key_value_pat_prop<'a>(inner: &'a swc_ast::KeyValuePatProp, parent: Node<'a>, bump: &'a Bump) -> &'a KeyValuePatProp<'a> {
   let node = bump.alloc(KeyValuePatProp {
     inner,
-    span: inner.span(),
     parent: parent.expect::<ObjectPat>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     value: unsafe { MaybeUninit::uninit().assume_init() },
@@ -11348,14 +11302,12 @@ fn get_view_for_key_value_pat_prop<'a>(inner: &'a swc_ast::KeyValuePatProp, pare
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableKeyValueProp"))]
 pub struct KeyValueProp<'a> {
-  #[serde(skip)]
   pub parent: &'a ObjectLit<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::KeyValueProp,
-  pub span: Span,
   pub key: PropName<'a>,
   pub value: Expr<'a>,
 }
@@ -11410,7 +11362,6 @@ impl<'a> CastableNode<'a> for KeyValueProp<'a> {
 fn get_view_for_key_value_prop<'a>(inner: &'a swc_ast::KeyValueProp, parent: Node<'a>, bump: &'a Bump) -> &'a KeyValueProp<'a> {
   let node = bump.alloc(KeyValueProp {
     inner,
-    span: inner.span(),
     parent: parent.expect::<ObjectLit>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     value: unsafe { MaybeUninit::uninit().assume_init() },
@@ -11421,14 +11372,12 @@ fn get_view_for_key_value_prop<'a>(inner: &'a swc_ast::KeyValueProp, parent: Nod
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableLabeledStmt"))]
 pub struct LabeledStmt<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::LabeledStmt,
-  pub span: Span,
   pub label: &'a Ident<'a>,
   pub body: Stmt<'a>,
 }
@@ -11483,7 +11432,6 @@ impl<'a> CastableNode<'a> for LabeledStmt<'a> {
 fn get_view_for_labeled_stmt<'a>(inner: &'a swc_ast::LabeledStmt, parent: Node<'a>, bump: &'a Bump) -> &'a LabeledStmt<'a> {
   let node = bump.alloc(LabeledStmt {
     inner,
-    span: inner.span(),
     parent,
     label: unsafe { MaybeUninit::uninit().assume_init() },
     body: unsafe { MaybeUninit::uninit().assume_init() },
@@ -11494,17 +11442,20 @@ fn get_view_for_labeled_stmt<'a>(inner: &'a swc_ast::LabeledStmt, parent: Node<'
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableMemberExpr"))]
 pub struct MemberExpr<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::MemberExpr,
-  pub span: Span,
   pub obj: ExprOrSuper<'a>,
   pub prop: Expr<'a>,
-  pub computed: bool,
+}
+
+impl<'a> MemberExpr<'a> {
+  pub fn computed(&self) -> bool {
+    self.inner.computed
+  }
 }
 
 impl<'a> Spanned for MemberExpr<'a> {
@@ -11557,11 +11508,9 @@ impl<'a> CastableNode<'a> for MemberExpr<'a> {
 fn get_view_for_member_expr<'a>(inner: &'a swc_ast::MemberExpr, parent: Node<'a>, bump: &'a Bump) -> &'a MemberExpr<'a> {
   let node = bump.alloc(MemberExpr {
     inner,
-    span: inner.span(),
     parent,
     obj: unsafe { MaybeUninit::uninit().assume_init() },
     prop: unsafe { MaybeUninit::uninit().assume_init() },
-    computed: inner.computed,
   });
   let parent: Node<'a> = (&*node).into();
   node.obj = get_view_for_expr_or_super(&inner.obj, parent.clone(), bump);
@@ -11569,14 +11518,12 @@ fn get_view_for_member_expr<'a>(inner: &'a swc_ast::MemberExpr, parent: Node<'a>
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableMetaPropExpr"))]
 pub struct MetaPropExpr<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::MetaPropExpr,
-  pub span: Span,
   pub meta: &'a Ident<'a>,
   pub prop: &'a Ident<'a>,
 }
@@ -11631,7 +11578,6 @@ impl<'a> CastableNode<'a> for MetaPropExpr<'a> {
 fn get_view_for_meta_prop_expr<'a>(inner: &'a swc_ast::MetaPropExpr, parent: Node<'a>, bump: &'a Bump) -> &'a MetaPropExpr<'a> {
   let node = bump.alloc(MetaPropExpr {
     inner,
-    span: inner.span(),
     parent,
     meta: unsafe { MaybeUninit::uninit().assume_init() },
     prop: unsafe { MaybeUninit::uninit().assume_init() },
@@ -11642,14 +11588,12 @@ fn get_view_for_meta_prop_expr<'a>(inner: &'a swc_ast::MetaPropExpr, parent: Nod
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableMethodProp"))]
 pub struct MethodProp<'a> {
-  #[serde(skip)]
   pub parent: &'a ObjectLit<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::MethodProp,
-  pub span: Span,
   pub key: PropName<'a>,
   pub function: &'a Function<'a>,
 }
@@ -11704,7 +11648,6 @@ impl<'a> CastableNode<'a> for MethodProp<'a> {
 fn get_view_for_method_prop<'a>(inner: &'a swc_ast::MethodProp, parent: Node<'a>, bump: &'a Bump) -> &'a MethodProp<'a> {
   let node = bump.alloc(MethodProp {
     inner,
-    span: inner.span(),
     parent: parent.expect::<ObjectLit>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     function: unsafe { MaybeUninit::uninit().assume_init() },
@@ -11715,20 +11658,21 @@ fn get_view_for_method_prop<'a>(inner: &'a swc_ast::MethodProp, parent: Node<'a>
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableModule"))]
 pub struct Module<'a> {
-  #[serde(skip)]
   pub source_file: Option<&'a swc_common::SourceFile>,
-  #[serde(skip)]
   pub tokens: Option<&'a TokenContainer<'a>>,
-  #[serde(skip)]
   pub comments: Option<&'a CommentContainer<'a>>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::Module,
-  pub span: Span,
   pub body: Vec<ModuleItem<'a>>,
-  pub shebang: &'a Option<swc_atoms::JsWord>,
+}
+
+impl<'a> Module<'a> {
+  pub fn shebang(&self) -> &Option<swc_atoms::JsWord> {
+    &self.inner.shebang
+  }
 }
 
 impl<'a> Spanned for Module<'a> {
@@ -11789,12 +11733,10 @@ fn get_view_for_module<'a>(source_file_info: &'a ModuleInfo<'a>, bump: &'a Bump)
   )));
   let node = bump.alloc(Module {
     inner,
-    span: inner.span(),
     source_file: source_file_info.source_file,
     tokens,
     comments,
     body: Vec::with_capacity(inner.body.len()),
-    shebang: &inner.shebang,
   });
   let parent: Node<'a> = (&*node).into();
   node.body.extend(inner.body.iter().map(|value| get_view_for_module_item(value, parent.clone(), bump)));
@@ -11803,18 +11745,21 @@ fn get_view_for_module<'a>(source_file_info: &'a ModuleInfo<'a>, bump: &'a Bump)
 
 /// `export { foo } from 'mod'`
 /// `export { foo as bar } from 'mod'`
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableNamedExport"))]
 pub struct NamedExport<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::NamedExport,
-  pub span: Span,
   pub specifiers: Vec<ExportSpecifier<'a>>,
   pub src: Option<&'a Str<'a>>,
   pub asserts: Option<&'a ObjectLit<'a>>,
-  pub type_only: bool,
+}
+
+impl<'a> NamedExport<'a> {
+  pub fn type_only(&self) -> bool {
+    self.inner.type_only
+  }
 }
 
 impl<'a> Spanned for NamedExport<'a> {
@@ -11874,12 +11819,10 @@ impl<'a> CastableNode<'a> for NamedExport<'a> {
 fn get_view_for_named_export<'a>(inner: &'a swc_ast::NamedExport, parent: Node<'a>, bump: &'a Bump) -> &'a NamedExport<'a> {
   let node = bump.alloc(NamedExport {
     inner,
-    span: inner.span(),
     parent,
     specifiers: Vec::with_capacity(inner.specifiers.len()),
     src: None,
     asserts: None,
-    type_only: inner.type_only,
   });
   let parent: Node<'a> = (&*node).into();
   node.specifiers.extend(inner.specifiers.iter().map(|value| get_view_for_export_specifier(value, parent.clone(), bump)));
@@ -11894,14 +11837,12 @@ fn get_view_for_named_export<'a>(inner: &'a swc_ast::NamedExport, parent: Node<'
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableNewExpr"))]
 pub struct NewExpr<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::NewExpr,
-  pub span: Span,
   pub callee: Expr<'a>,
   pub args: Option<Vec<&'a ExprOrSpread<'a>>>,
   pub type_args: Option<&'a TsTypeParamInstantiation<'a>>,
@@ -11964,7 +11905,6 @@ impl<'a> CastableNode<'a> for NewExpr<'a> {
 fn get_view_for_new_expr<'a>(inner: &'a swc_ast::NewExpr, parent: Node<'a>, bump: &'a Bump) -> &'a NewExpr<'a> {
   let node = bump.alloc(NewExpr {
     inner,
-    span: inner.span(),
     parent,
     callee: unsafe { MaybeUninit::uninit().assume_init() },
     args: None,
@@ -11983,14 +11923,12 @@ fn get_view_for_new_expr<'a>(inner: &'a swc_ast::NewExpr, parent: Node<'a>, bump
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableNull"))]
 pub struct Null<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::Null,
-  pub span: Span,
 }
 
 impl<'a> Spanned for Null<'a> {
@@ -12040,24 +11978,26 @@ impl<'a> CastableNode<'a> for Null<'a> {
 fn get_view_for_null<'a>(inner: &'a swc_ast::Null, parent: Node<'a>, bump: &'a Bump) -> &'a Null<'a> {
   let node = bump.alloc(Null {
     inner,
-    span: inner.span(),
     parent,
   });
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableNumber"))]
 pub struct Number<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::Number,
-  pub span: Span,
+}
+
+impl<'a> Number<'a> {
   /// **Note**: This should not be `NaN`. Use [crate::Ident] to represent NaN.
   ///
   /// If you store `NaN` in this field, a hash map will behave strangely.
-  pub value: f64,
+  pub fn value(&self) -> f64 {
+    self.inner.value
+  }
 }
 
 impl<'a> Spanned for Number<'a> {
@@ -12107,22 +12047,18 @@ impl<'a> CastableNode<'a> for Number<'a> {
 fn get_view_for_number<'a>(inner: &'a swc_ast::Number, parent: Node<'a>, bump: &'a Bump) -> &'a Number<'a> {
   let node = bump.alloc(Number {
     inner,
-    span: inner.span(),
     parent,
-    value: inner.value,
   });
   node
 }
 
 /// Object literal.
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableObjectLit"))]
 pub struct ObjectLit<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ObjectLit,
-  pub span: Span,
   pub props: Vec<PropOrSpread<'a>>,
 }
 
@@ -12177,7 +12113,6 @@ impl<'a> CastableNode<'a> for ObjectLit<'a> {
 fn get_view_for_object_lit<'a>(inner: &'a swc_ast::ObjectLit, parent: Node<'a>, bump: &'a Bump) -> &'a ObjectLit<'a> {
   let node = bump.alloc(ObjectLit {
     inner,
-    span: inner.span(),
     parent,
     props: Vec::with_capacity(inner.props.len()),
   });
@@ -12186,18 +12121,21 @@ fn get_view_for_object_lit<'a>(inner: &'a swc_ast::ObjectLit, parent: Node<'a>, 
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableObjectPat"))]
 pub struct ObjectPat<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ObjectPat,
-  pub span: Span,
   pub props: Vec<ObjectPatProp<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
+}
+
+impl<'a> ObjectPat<'a> {
   /// Only in an ambient context
-  pub optional: bool,
+  pub fn optional(&self) -> bool {
+    self.inner.optional
+  }
 }
 
 impl<'a> Spanned for ObjectPat<'a> {
@@ -12254,11 +12192,9 @@ impl<'a> CastableNode<'a> for ObjectPat<'a> {
 fn get_view_for_object_pat<'a>(inner: &'a swc_ast::ObjectPat, parent: Node<'a>, bump: &'a Bump) -> &'a ObjectPat<'a> {
   let node = bump.alloc(ObjectPat {
     inner,
-    span: inner.span(),
     parent,
     props: Vec::with_capacity(inner.props.len()),
     type_ann: None,
-    optional: inner.optional,
   });
   let parent: Node<'a> = (&*node).into();
   node.props.extend(inner.props.iter().map(|value| get_view_for_object_pat_prop(value, parent.clone(), bump)));
@@ -12269,16 +12205,19 @@ fn get_view_for_object_pat<'a>(inner: &'a swc_ast::ObjectPat, parent: Node<'a>, 
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableOptChainExpr"))]
 pub struct OptChainExpr<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::OptChainExpr,
-  pub span: Span,
   pub expr: Expr<'a>,
-  pub question_dot_token: &'a swc_common::Span,
+}
+
+impl<'a> OptChainExpr<'a> {
+  pub fn question_dot_token(&self) -> &swc_common::Span {
+    &self.inner.question_dot_token
+  }
 }
 
 impl<'a> Spanned for OptChainExpr<'a> {
@@ -12330,24 +12269,20 @@ impl<'a> CastableNode<'a> for OptChainExpr<'a> {
 fn get_view_for_opt_chain_expr<'a>(inner: &'a swc_ast::OptChainExpr, parent: Node<'a>, bump: &'a Bump) -> &'a OptChainExpr<'a> {
   let node = bump.alloc(OptChainExpr {
     inner,
-    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
-    question_dot_token: &inner.question_dot_token,
   });
   let parent: Node<'a> = (&*node).into();
   node.expr = get_view_for_expr(&inner.expr, parent, bump);
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableParam"))]
 pub struct Param<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::Param,
-  pub span: Span,
   pub decorators: Vec<&'a Decorator<'a>>,
   pub pat: Pat<'a>,
 }
@@ -12404,7 +12339,6 @@ impl<'a> CastableNode<'a> for Param<'a> {
 fn get_view_for_param<'a>(inner: &'a swc_ast::Param, parent: Node<'a>, bump: &'a Bump) -> &'a Param<'a> {
   let node = bump.alloc(Param {
     inner,
-    span: inner.span(),
     parent,
     decorators: Vec::with_capacity(inner.decorators.len()),
     pat: unsafe { MaybeUninit::uninit().assume_init() },
@@ -12415,14 +12349,12 @@ fn get_view_for_param<'a>(inner: &'a swc_ast::Param, parent: Node<'a>, bump: &'a
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableParenExpr"))]
 pub struct ParenExpr<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ParenExpr,
-  pub span: Span,
   pub expr: Expr<'a>,
 }
 
@@ -12475,7 +12407,6 @@ impl<'a> CastableNode<'a> for ParenExpr<'a> {
 fn get_view_for_paren_expr<'a>(inner: &'a swc_ast::ParenExpr, parent: Node<'a>, bump: &'a Bump) -> &'a ParenExpr<'a> {
   let node = bump.alloc(ParenExpr {
     inner,
-    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -12484,23 +12415,38 @@ fn get_view_for_paren_expr<'a>(inner: &'a swc_ast::ParenExpr, parent: Node<'a>, 
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializablePrivateMethod"))]
 pub struct PrivateMethod<'a> {
-  #[serde(skip)]
   pub parent: &'a Class<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::PrivateMethod,
-  pub span: Span,
   pub key: &'a PrivateName<'a>,
   pub function: &'a Function<'a>,
-  pub kind: MethodKind,
-  pub is_static: bool,
+}
+
+impl<'a> PrivateMethod<'a> {
+  pub fn kind(&self) -> MethodKind {
+    self.inner.kind
+  }
+
+  pub fn is_static(&self) -> bool {
+    self.inner.is_static
+  }
+
   /// Typescript extension.
-  pub accessibility: Option<Accessibility>,
+  pub fn accessibility(&self) -> Option<Accessibility> {
+    self.inner.accessibility
+  }
+
   /// Typescript extension.
-  pub is_abstract: bool,
-  pub is_optional: bool,
+  pub fn is_abstract(&self) -> bool {
+    self.inner.is_abstract
+  }
+
+  pub fn is_optional(&self) -> bool {
+    self.inner.is_optional
+  }
 }
 
 impl<'a> Spanned for PrivateMethod<'a> {
@@ -12553,15 +12499,9 @@ impl<'a> CastableNode<'a> for PrivateMethod<'a> {
 fn get_view_for_private_method<'a>(inner: &'a swc_ast::PrivateMethod, parent: Node<'a>, bump: &'a Bump) -> &'a PrivateMethod<'a> {
   let node = bump.alloc(PrivateMethod {
     inner,
-    span: inner.span(),
     parent: parent.expect::<Class>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     function: unsafe { MaybeUninit::uninit().assume_init() },
-    kind: inner.kind,
-    is_static: inner.is_static,
-    accessibility: inner.accessibility,
-    is_abstract: inner.is_abstract,
-    is_optional: inner.is_optional,
   });
   let parent: Node<'a> = (&*node).into();
   node.key = get_view_for_private_name(&inner.key, parent.clone(), bump);
@@ -12569,14 +12509,12 @@ fn get_view_for_private_method<'a>(inner: &'a swc_ast::PrivateMethod, parent: No
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializablePrivateName"))]
 pub struct PrivateName<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::PrivateName,
-  pub span: Span,
   pub id: &'a Ident<'a>,
 }
 
@@ -12629,7 +12567,6 @@ impl<'a> CastableNode<'a> for PrivateName<'a> {
 fn get_view_for_private_name<'a>(inner: &'a swc_ast::PrivateName, parent: Node<'a>, bump: &'a Bump) -> &'a PrivateName<'a> {
   let node = bump.alloc(PrivateName {
     inner,
-    span: inner.span(),
     parent,
     id: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -12638,27 +12575,48 @@ fn get_view_for_private_name<'a>(inner: &'a swc_ast::PrivateName, parent: Node<'
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializablePrivateProp"))]
 pub struct PrivateProp<'a> {
-  #[serde(skip)]
   pub parent: &'a Class<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::PrivateProp,
-  pub span: Span,
   pub key: &'a PrivateName<'a>,
   pub value: Option<Expr<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
   pub decorators: Vec<&'a Decorator<'a>>,
-  pub is_static: bool,
-  pub computed: bool,
+}
+
+impl<'a> PrivateProp<'a> {
+  pub fn is_static(&self) -> bool {
+    self.inner.is_static
+  }
+
+  pub fn computed(&self) -> bool {
+    self.inner.computed
+  }
+
   /// Typescript extension.
-  pub accessibility: Option<Accessibility>,
+  pub fn accessibility(&self) -> Option<Accessibility> {
+    self.inner.accessibility
+  }
+
   /// Typescript extension.
-  pub is_abstract: bool,
-  pub is_optional: bool,
-  pub readonly: bool,
-  pub definite: bool,
+  pub fn is_abstract(&self) -> bool {
+    self.inner.is_abstract
+  }
+
+  pub fn is_optional(&self) -> bool {
+    self.inner.is_optional
+  }
+
+  pub fn readonly(&self) -> bool {
+    self.inner.readonly
+  }
+
+  pub fn definite(&self) -> bool {
+    self.inner.definite
+  }
 }
 
 impl<'a> Spanned for PrivateProp<'a> {
@@ -12719,19 +12677,11 @@ impl<'a> CastableNode<'a> for PrivateProp<'a> {
 fn get_view_for_private_prop<'a>(inner: &'a swc_ast::PrivateProp, parent: Node<'a>, bump: &'a Bump) -> &'a PrivateProp<'a> {
   let node = bump.alloc(PrivateProp {
     inner,
-    span: inner.span(),
     parent: parent.expect::<Class>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     value: None,
     type_ann: None,
     decorators: Vec::with_capacity(inner.decorators.len()),
-    is_static: inner.is_static,
-    computed: inner.computed,
-    accessibility: inner.accessibility,
-    is_abstract: inner.is_abstract,
-    is_optional: inner.is_optional,
-    readonly: inner.readonly,
-    definite: inner.definite,
   });
   let parent: Node<'a> = (&*node).into();
   node.key = get_view_for_private_name(&inner.key, parent.clone(), bump);
@@ -12747,16 +12697,22 @@ fn get_view_for_private_prop<'a>(inner: &'a swc_ast::PrivateProp, parent: Node<'
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableRegex"))]
 pub struct Regex<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::Regex,
-  pub span: Span,
-  pub exp: &'a swc_atoms::JsWord,
-  pub flags: &'a swc_atoms::JsWord,
+}
+
+impl<'a> Regex<'a> {
+  pub fn exp(&self) -> &swc_atoms::JsWord {
+    &self.inner.exp
+  }
+
+  pub fn flags(&self) -> &swc_atoms::JsWord {
+    &self.inner.flags
+  }
 }
 
 impl<'a> Spanned for Regex<'a> {
@@ -12806,26 +12762,26 @@ impl<'a> CastableNode<'a> for Regex<'a> {
 fn get_view_for_regex<'a>(inner: &'a swc_ast::Regex, parent: Node<'a>, bump: &'a Bump) -> &'a Regex<'a> {
   let node = bump.alloc(Regex {
     inner,
-    span: inner.span(),
     parent,
-    exp: &inner.exp,
-    flags: &inner.flags,
   });
   node
 }
 
 /// EsTree `RestElement`
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableRestPat"))]
 pub struct RestPat<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::RestPat,
-  pub span: Span,
   pub arg: Pat<'a>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
-  pub dot3_token: &'a swc_common::Span,
+}
+
+impl<'a> RestPat<'a> {
+  pub fn dot3_token(&self) -> &swc_common::Span {
+    &self.inner.dot3_token
+  }
 }
 
 impl<'a> Spanned for RestPat<'a> {
@@ -12880,11 +12836,9 @@ impl<'a> CastableNode<'a> for RestPat<'a> {
 fn get_view_for_rest_pat<'a>(inner: &'a swc_ast::RestPat, parent: Node<'a>, bump: &'a Bump) -> &'a RestPat<'a> {
   let node = bump.alloc(RestPat {
     inner,
-    span: inner.span(),
     parent,
     arg: unsafe { MaybeUninit::uninit().assume_init() },
     type_ann: None,
-    dot3_token: &inner.dot3_token,
   });
   let parent: Node<'a> = (&*node).into();
   node.arg = get_view_for_pat(&inner.arg, parent.clone(), bump);
@@ -12895,14 +12849,12 @@ fn get_view_for_rest_pat<'a>(inner: &'a swc_ast::RestPat, parent: Node<'a>, bump
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableReturnStmt"))]
 pub struct ReturnStmt<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ReturnStmt,
-  pub span: Span,
   pub arg: Option<Expr<'a>>,
 }
 
@@ -12957,7 +12909,6 @@ impl<'a> CastableNode<'a> for ReturnStmt<'a> {
 fn get_view_for_return_stmt<'a>(inner: &'a swc_ast::ReturnStmt, parent: Node<'a>, bump: &'a Bump) -> &'a ReturnStmt<'a> {
   let node = bump.alloc(ReturnStmt {
     inner,
-    span: inner.span(),
     parent,
     arg: None,
   });
@@ -12969,20 +12920,21 @@ fn get_view_for_return_stmt<'a>(inner: &'a swc_ast::ReturnStmt, parent: Node<'a>
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableScript"))]
 pub struct Script<'a> {
-  #[serde(skip)]
   pub source_file: Option<&'a swc_common::SourceFile>,
-  #[serde(skip)]
   pub tokens: Option<&'a TokenContainer<'a>>,
-  #[serde(skip)]
   pub comments: Option<&'a CommentContainer<'a>>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::Script,
-  pub span: Span,
   pub body: Vec<Stmt<'a>>,
-  pub shebang: &'a Option<swc_atoms::JsWord>,
+}
+
+impl<'a> Script<'a> {
+  pub fn shebang(&self) -> &Option<swc_atoms::JsWord> {
+    &self.inner.shebang
+  }
 }
 
 impl<'a> Spanned for Script<'a> {
@@ -13043,26 +12995,22 @@ fn get_view_for_script<'a>(source_file_info: &'a ScriptInfo<'a>, bump: &'a Bump)
   )));
   let node = bump.alloc(Script {
     inner,
-    span: inner.span(),
     source_file: source_file_info.source_file,
     tokens,
     comments,
     body: Vec::with_capacity(inner.body.len()),
-    shebang: &inner.shebang,
   });
   let parent: Node<'a> = (&*node).into();
   node.body.extend(inner.body.iter().map(|value| get_view_for_stmt(value, parent.clone(), bump)));
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableSeqExpr"))]
 pub struct SeqExpr<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::SeqExpr,
-  pub span: Span,
   pub exprs: Vec<Expr<'a>>,
 }
 
@@ -13117,7 +13065,6 @@ impl<'a> CastableNode<'a> for SeqExpr<'a> {
 fn get_view_for_seq_expr<'a>(inner: &'a swc_ast::SeqExpr, parent: Node<'a>, bump: &'a Bump) -> &'a SeqExpr<'a> {
   let node = bump.alloc(SeqExpr {
     inner,
-    span: inner.span(),
     parent,
     exprs: Vec::with_capacity(inner.exprs.len()),
   });
@@ -13126,14 +13073,12 @@ fn get_view_for_seq_expr<'a>(inner: &'a swc_ast::SeqExpr, parent: Node<'a>, bump
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableSetterProp"))]
 pub struct SetterProp<'a> {
-  #[serde(skip)]
   pub parent: &'a ObjectLit<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::SetterProp,
-  pub span: Span,
   pub key: PropName<'a>,
   pub param: Pat<'a>,
   pub body: Option<&'a BlockStmt<'a>>,
@@ -13192,7 +13137,6 @@ impl<'a> CastableNode<'a> for SetterProp<'a> {
 fn get_view_for_setter_prop<'a>(inner: &'a swc_ast::SetterProp, parent: Node<'a>, bump: &'a Bump) -> &'a SetterProp<'a> {
   let node = bump.alloc(SetterProp {
     inner,
-    span: inner.span(),
     parent: parent.expect::<ObjectLit>(),
     key: unsafe { MaybeUninit::uninit().assume_init() },
     param: unsafe { MaybeUninit::uninit().assume_init() },
@@ -13208,16 +13152,19 @@ fn get_view_for_setter_prop<'a>(inner: &'a swc_ast::SetterProp, parent: Node<'a>
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableSpreadElement"))]
 pub struct SpreadElement<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::SpreadElement,
-  pub span: Span,
   pub expr: Expr<'a>,
-  pub dot3_token: &'a swc_common::Span,
+}
+
+impl<'a> SpreadElement<'a> {
+  pub fn dot3_token(&self) -> &swc_common::Span {
+    &self.inner.dot3_token
+  }
 }
 
 impl<'a> Spanned for SpreadElement<'a> {
@@ -13269,28 +13216,35 @@ impl<'a> CastableNode<'a> for SpreadElement<'a> {
 fn get_view_for_spread_element<'a>(inner: &'a swc_ast::SpreadElement, parent: Node<'a>, bump: &'a Bump) -> &'a SpreadElement<'a> {
   let node = bump.alloc(SpreadElement {
     inner,
-    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
-    dot3_token: &inner.dot3_token,
   });
   let parent: Node<'a> = (&*node).into();
   node.expr = get_view_for_expr(&inner.expr, parent, bump);
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableStr"))]
 pub struct Str<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::Str,
-  pub span: Span,
-  pub value: &'a swc_atoms::JsWord,
+}
+
+impl<'a> Str<'a> {
+  pub fn value(&self) -> &swc_atoms::JsWord {
+    &self.inner.value
+  }
+
   /// This includes line escape.
-  pub has_escape: bool,
-  pub kind: StrKind,
+  pub fn has_escape(&self) -> bool {
+    self.inner.has_escape
+  }
+
+  pub fn kind(&self) -> StrKind {
+    self.inner.kind
+  }
 }
 
 impl<'a> Spanned for Str<'a> {
@@ -13340,23 +13294,17 @@ impl<'a> CastableNode<'a> for Str<'a> {
 fn get_view_for_str<'a>(inner: &'a swc_ast::Str, parent: Node<'a>, bump: &'a Bump) -> &'a Str<'a> {
   let node = bump.alloc(Str {
     inner,
-    span: inner.span(),
     parent,
-    value: &inner.value,
-    has_escape: inner.has_escape,
-    kind: inner.kind,
   });
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableSuper"))]
 pub struct Super<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::Super,
-  pub span: Span,
 }
 
 impl<'a> Spanned for Super<'a> {
@@ -13406,20 +13354,17 @@ impl<'a> CastableNode<'a> for Super<'a> {
 fn get_view_for_super<'a>(inner: &'a swc_ast::Super, parent: Node<'a>, bump: &'a Bump) -> &'a Super<'a> {
   let node = bump.alloc(Super {
     inner,
-    span: inner.span(),
     parent,
   });
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableSwitchCase"))]
 pub struct SwitchCase<'a> {
-  #[serde(skip)]
   pub parent: &'a SwitchStmt<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::SwitchCase,
-  pub span: Span,
   /// None for `default:`
   pub test: Option<Expr<'a>>,
   pub cons: Vec<Stmt<'a>>,
@@ -13479,7 +13424,6 @@ impl<'a> CastableNode<'a> for SwitchCase<'a> {
 fn get_view_for_switch_case<'a>(inner: &'a swc_ast::SwitchCase, parent: Node<'a>, bump: &'a Bump) -> &'a SwitchCase<'a> {
   let node = bump.alloc(SwitchCase {
     inner,
-    span: inner.span(),
     parent: parent.expect::<SwitchStmt>(),
     test: None,
     cons: Vec::with_capacity(inner.cons.len()),
@@ -13493,14 +13437,12 @@ fn get_view_for_switch_case<'a>(inner: &'a swc_ast::SwitchCase, parent: Node<'a>
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableSwitchStmt"))]
 pub struct SwitchStmt<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::SwitchStmt,
-  pub span: Span,
   pub discriminant: Expr<'a>,
   pub cases: Vec<&'a SwitchCase<'a>>,
 }
@@ -13557,7 +13499,6 @@ impl<'a> CastableNode<'a> for SwitchStmt<'a> {
 fn get_view_for_switch_stmt<'a>(inner: &'a swc_ast::SwitchStmt, parent: Node<'a>, bump: &'a Bump) -> &'a SwitchStmt<'a> {
   let node = bump.alloc(SwitchStmt {
     inner,
-    span: inner.span(),
     parent,
     discriminant: unsafe { MaybeUninit::uninit().assume_init() },
     cases: Vec::with_capacity(inner.cases.len()),
@@ -13568,14 +13509,12 @@ fn get_view_for_switch_stmt<'a>(inner: &'a swc_ast::SwitchStmt, parent: Node<'a>
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTaggedTpl"))]
 pub struct TaggedTpl<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TaggedTpl,
-  pub span: Span,
   pub tag: Expr<'a>,
   pub exprs: Vec<Expr<'a>>,
   pub quasis: Vec<&'a TplElement<'a>>,
@@ -13640,7 +13579,6 @@ impl<'a> CastableNode<'a> for TaggedTpl<'a> {
 fn get_view_for_tagged_tpl<'a>(inner: &'a swc_ast::TaggedTpl, parent: Node<'a>, bump: &'a Bump) -> &'a TaggedTpl<'a> {
   let node = bump.alloc(TaggedTpl {
     inner,
-    span: inner.span(),
     parent,
     tag: unsafe { MaybeUninit::uninit().assume_init() },
     exprs: Vec::with_capacity(inner.exprs.len()),
@@ -13658,14 +13596,12 @@ fn get_view_for_tagged_tpl<'a>(inner: &'a swc_ast::TaggedTpl, parent: Node<'a>, 
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableThisExpr"))]
 pub struct ThisExpr<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ThisExpr,
-  pub span: Span,
 }
 
 impl<'a> Spanned for ThisExpr<'a> {
@@ -13715,20 +13651,17 @@ impl<'a> CastableNode<'a> for ThisExpr<'a> {
 fn get_view_for_this_expr<'a>(inner: &'a swc_ast::ThisExpr, parent: Node<'a>, bump: &'a Bump) -> &'a ThisExpr<'a> {
   let node = bump.alloc(ThisExpr {
     inner,
-    span: inner.span(),
     parent,
   });
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableThrowStmt"))]
 pub struct ThrowStmt<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::ThrowStmt,
-  pub span: Span,
   pub arg: Expr<'a>,
 }
 
@@ -13781,7 +13714,6 @@ impl<'a> CastableNode<'a> for ThrowStmt<'a> {
 fn get_view_for_throw_stmt<'a>(inner: &'a swc_ast::ThrowStmt, parent: Node<'a>, bump: &'a Bump) -> &'a ThrowStmt<'a> {
   let node = bump.alloc(ThrowStmt {
     inner,
-    span: inner.span(),
     parent,
     arg: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -13790,14 +13722,12 @@ fn get_view_for_throw_stmt<'a>(inner: &'a swc_ast::ThrowStmt, parent: Node<'a>, 
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTpl"))]
 pub struct Tpl<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::Tpl,
-  pub span: Span,
   pub exprs: Vec<Expr<'a>>,
   pub quasis: Vec<&'a TplElement<'a>>,
 }
@@ -13856,7 +13786,6 @@ impl<'a> CastableNode<'a> for Tpl<'a> {
 fn get_view_for_tpl<'a>(inner: &'a swc_ast::Tpl, parent: Node<'a>, bump: &'a Bump) -> &'a Tpl<'a> {
   let node = bump.alloc(Tpl {
     inner,
-    span: inner.span(),
     parent,
     exprs: Vec::with_capacity(inner.exprs.len()),
     quasis: Vec::with_capacity(inner.quasis.len()),
@@ -13867,17 +13796,20 @@ fn get_view_for_tpl<'a>(inner: &'a swc_ast::Tpl, parent: Node<'a>, bump: &'a Bum
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTplElement"))]
 pub struct TplElement<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TplElement,
-  pub span: Span,
   pub cooked: Option<&'a Str<'a>>,
   pub raw: &'a Str<'a>,
-  pub tail: bool,
+}
+
+impl<'a> TplElement<'a> {
+  pub fn tail(&self) -> bool {
+    self.inner.tail
+  }
 }
 
 impl<'a> Spanned for TplElement<'a> {
@@ -13932,11 +13864,9 @@ impl<'a> CastableNode<'a> for TplElement<'a> {
 fn get_view_for_tpl_element<'a>(inner: &'a swc_ast::TplElement, parent: Node<'a>, bump: &'a Bump) -> &'a TplElement<'a> {
   let node = bump.alloc(TplElement {
     inner,
-    span: inner.span(),
     parent,
     cooked: None,
     raw: unsafe { MaybeUninit::uninit().assume_init() },
-    tail: inner.tail,
   });
   let parent: Node<'a> = (&*node).into();
   node.cooked = match &inner.cooked {
@@ -13947,14 +13877,12 @@ fn get_view_for_tpl_element<'a>(inner: &'a swc_ast::TplElement, parent: Node<'a>
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTryStmt"))]
 pub struct TryStmt<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TryStmt,
-  pub span: Span,
   pub block: &'a BlockStmt<'a>,
   pub handler: Option<&'a CatchClause<'a>>,
   pub finalizer: Option<&'a BlockStmt<'a>>,
@@ -14015,7 +13943,6 @@ impl<'a> CastableNode<'a> for TryStmt<'a> {
 fn get_view_for_try_stmt<'a>(inner: &'a swc_ast::TryStmt, parent: Node<'a>, bump: &'a Bump) -> &'a TryStmt<'a> {
   let node = bump.alloc(TryStmt {
     inner,
-    span: inner.span(),
     parent,
     block: unsafe { MaybeUninit::uninit().assume_init() },
     handler: None,
@@ -14034,14 +13961,12 @@ fn get_view_for_try_stmt<'a>(inner: &'a swc_ast::TryStmt, parent: Node<'a>, bump
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsArrayType"))]
 pub struct TsArrayType<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsArrayType,
-  pub span: Span,
   pub elem_type: TsType<'a>,
 }
 
@@ -14094,7 +14019,6 @@ impl<'a> CastableNode<'a> for TsArrayType<'a> {
 fn get_view_for_ts_array_type<'a>(inner: &'a swc_ast::TsArrayType, parent: Node<'a>, bump: &'a Bump) -> &'a TsArrayType<'a> {
   let node = bump.alloc(TsArrayType {
     inner,
-    span: inner.span(),
     parent,
     elem_type: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -14103,14 +14027,12 @@ fn get_view_for_ts_array_type<'a>(inner: &'a swc_ast::TsArrayType, parent: Node<
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsAsExpr"))]
 pub struct TsAsExpr<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsAsExpr,
-  pub span: Span,
   pub expr: Expr<'a>,
   pub type_ann: TsType<'a>,
 }
@@ -14165,7 +14087,6 @@ impl<'a> CastableNode<'a> for TsAsExpr<'a> {
 fn get_view_for_ts_as_expr<'a>(inner: &'a swc_ast::TsAsExpr, parent: Node<'a>, bump: &'a Bump) -> &'a TsAsExpr<'a> {
   let node = bump.alloc(TsAsExpr {
     inner,
-    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
     type_ann: unsafe { MaybeUninit::uninit().assume_init() },
@@ -14176,14 +14097,12 @@ fn get_view_for_ts_as_expr<'a>(inner: &'a swc_ast::TsAsExpr, parent: Node<'a>, b
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsCallSignatureDecl"))]
 pub struct TsCallSignatureDecl<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsCallSignatureDecl,
-  pub span: Span,
   pub params: Vec<TsFnParam<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
@@ -14246,7 +14165,6 @@ impl<'a> CastableNode<'a> for TsCallSignatureDecl<'a> {
 fn get_view_for_ts_call_signature_decl<'a>(inner: &'a swc_ast::TsCallSignatureDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsCallSignatureDecl<'a> {
   let node = bump.alloc(TsCallSignatureDecl {
     inner,
-    span: inner.span(),
     parent,
     params: Vec::with_capacity(inner.params.len()),
     type_ann: None,
@@ -14265,14 +14183,12 @@ fn get_view_for_ts_call_signature_decl<'a>(inner: &'a swc_ast::TsCallSignatureDe
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsConditionalType"))]
 pub struct TsConditionalType<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsConditionalType,
-  pub span: Span,
   pub check_type: TsType<'a>,
   pub extends_type: TsType<'a>,
   pub true_type: TsType<'a>,
@@ -14331,7 +14247,6 @@ impl<'a> CastableNode<'a> for TsConditionalType<'a> {
 fn get_view_for_ts_conditional_type<'a>(inner: &'a swc_ast::TsConditionalType, parent: Node<'a>, bump: &'a Bump) -> &'a TsConditionalType<'a> {
   let node = bump.alloc(TsConditionalType {
     inner,
-    span: inner.span(),
     parent,
     check_type: unsafe { MaybeUninit::uninit().assume_init() },
     extends_type: unsafe { MaybeUninit::uninit().assume_init() },
@@ -14346,14 +14261,12 @@ fn get_view_for_ts_conditional_type<'a>(inner: &'a swc_ast::TsConditionalType, p
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsConstAssertion"))]
 pub struct TsConstAssertion<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsConstAssertion,
-  pub span: Span,
   pub expr: Expr<'a>,
 }
 
@@ -14406,7 +14319,6 @@ impl<'a> CastableNode<'a> for TsConstAssertion<'a> {
 fn get_view_for_ts_const_assertion<'a>(inner: &'a swc_ast::TsConstAssertion, parent: Node<'a>, bump: &'a Bump) -> &'a TsConstAssertion<'a> {
   let node = bump.alloc(TsConstAssertion {
     inner,
-    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -14415,14 +14327,12 @@ fn get_view_for_ts_const_assertion<'a>(inner: &'a swc_ast::TsConstAssertion, par
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsConstructSignatureDecl"))]
 pub struct TsConstructSignatureDecl<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsConstructSignatureDecl,
-  pub span: Span,
   pub params: Vec<TsFnParam<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
@@ -14485,7 +14395,6 @@ impl<'a> CastableNode<'a> for TsConstructSignatureDecl<'a> {
 fn get_view_for_ts_construct_signature_decl<'a>(inner: &'a swc_ast::TsConstructSignatureDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsConstructSignatureDecl<'a> {
   let node = bump.alloc(TsConstructSignatureDecl {
     inner,
-    span: inner.span(),
     parent,
     params: Vec::with_capacity(inner.params.len()),
     type_ann: None,
@@ -14504,18 +14413,21 @@ fn get_view_for_ts_construct_signature_decl<'a>(inner: &'a swc_ast::TsConstructS
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsConstructorType"))]
 pub struct TsConstructorType<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsConstructorType,
-  pub span: Span,
   pub params: Vec<TsFnParam<'a>>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
   pub type_ann: &'a TsTypeAnn<'a>,
-  pub is_abstract: bool,
+}
+
+impl<'a> TsConstructorType<'a> {
+  pub fn is_abstract(&self) -> bool {
+    self.inner.is_abstract
+  }
 }
 
 impl<'a> Spanned for TsConstructorType<'a> {
@@ -14573,12 +14485,10 @@ impl<'a> CastableNode<'a> for TsConstructorType<'a> {
 fn get_view_for_ts_constructor_type<'a>(inner: &'a swc_ast::TsConstructorType, parent: Node<'a>, bump: &'a Bump) -> &'a TsConstructorType<'a> {
   let node = bump.alloc(TsConstructorType {
     inner,
-    span: inner.span(),
     parent,
     params: Vec::with_capacity(inner.params.len()),
     type_params: None,
     type_ann: unsafe { MaybeUninit::uninit().assume_init() },
-    is_abstract: inner.is_abstract,
   });
   let parent: Node<'a> = (&*node).into();
   node.params.extend(inner.params.iter().map(|value| get_view_for_ts_fn_param(value, parent.clone(), bump)));
@@ -14590,18 +14500,24 @@ fn get_view_for_ts_constructor_type<'a>(inner: &'a swc_ast::TsConstructorType, p
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsEnumDecl"))]
 pub struct TsEnumDecl<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsEnumDecl,
-  pub span: Span,
   pub id: &'a Ident<'a>,
   pub members: Vec<&'a TsEnumMember<'a>>,
-  pub declare: bool,
-  pub is_const: bool,
+}
+
+impl<'a> TsEnumDecl<'a> {
+  pub fn declare(&self) -> bool {
+    self.inner.declare
+  }
+
+  pub fn is_const(&self) -> bool {
+    self.inner.is_const
+  }
 }
 
 impl<'a> Spanned for TsEnumDecl<'a> {
@@ -14656,12 +14572,9 @@ impl<'a> CastableNode<'a> for TsEnumDecl<'a> {
 fn get_view_for_ts_enum_decl<'a>(inner: &'a swc_ast::TsEnumDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsEnumDecl<'a> {
   let node = bump.alloc(TsEnumDecl {
     inner,
-    span: inner.span(),
     parent,
     id: unsafe { MaybeUninit::uninit().assume_init() },
     members: Vec::with_capacity(inner.members.len()),
-    declare: inner.declare,
-    is_const: inner.is_const,
   });
   let parent: Node<'a> = (&*node).into();
   node.id = get_view_for_ident(&inner.id, parent.clone(), bump);
@@ -14669,14 +14582,12 @@ fn get_view_for_ts_enum_decl<'a>(inner: &'a swc_ast::TsEnumDecl, parent: Node<'a
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsEnumMember"))]
 pub struct TsEnumMember<'a> {
-  #[serde(skip)]
   pub parent: &'a TsEnumDecl<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsEnumMember,
-  pub span: Span,
   pub id: TsEnumMemberId<'a>,
   pub init: Option<Expr<'a>>,
 }
@@ -14733,7 +14644,6 @@ impl<'a> CastableNode<'a> for TsEnumMember<'a> {
 fn get_view_for_ts_enum_member<'a>(inner: &'a swc_ast::TsEnumMember, parent: Node<'a>, bump: &'a Bump) -> &'a TsEnumMember<'a> {
   let node = bump.alloc(TsEnumMember {
     inner,
-    span: inner.span(),
     parent: parent.expect::<TsEnumDecl>(),
     id: unsafe { MaybeUninit::uninit().assume_init() },
     init: None,
@@ -14750,14 +14660,12 @@ fn get_view_for_ts_enum_member<'a>(inner: &'a swc_ast::TsEnumMember, parent: Nod
 /// TypeScript's own parser uses ExportAssignment for both `export default` and
 /// `export =`. But for @babel/parser, `export default` is an ExportDefaultDecl,
 /// so a TsExportAssignment is always `export =`.
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsExportAssignment"))]
 pub struct TsExportAssignment<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsExportAssignment,
-  pub span: Span,
   pub expr: Expr<'a>,
 }
 
@@ -14810,7 +14718,6 @@ impl<'a> CastableNode<'a> for TsExportAssignment<'a> {
 fn get_view_for_ts_export_assignment<'a>(inner: &'a swc_ast::TsExportAssignment, parent: Node<'a>, bump: &'a Bump) -> &'a TsExportAssignment<'a> {
   let node = bump.alloc(TsExportAssignment {
     inner,
-    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -14819,14 +14726,12 @@ fn get_view_for_ts_export_assignment<'a>(inner: &'a swc_ast::TsExportAssignment,
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsExprWithTypeArgs"))]
 pub struct TsExprWithTypeArgs<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsExprWithTypeArgs,
-  pub span: Span,
   pub expr: TsEntityName<'a>,
   pub type_args: Option<&'a TsTypeParamInstantiation<'a>>,
 }
@@ -14883,7 +14788,6 @@ impl<'a> CastableNode<'a> for TsExprWithTypeArgs<'a> {
 fn get_view_for_ts_expr_with_type_args<'a>(inner: &'a swc_ast::TsExprWithTypeArgs, parent: Node<'a>, bump: &'a Bump) -> &'a TsExprWithTypeArgs<'a> {
   let node = bump.alloc(TsExprWithTypeArgs {
     inner,
-    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
     type_args: None,
@@ -14897,14 +14801,12 @@ fn get_view_for_ts_expr_with_type_args<'a>(inner: &'a swc_ast::TsExprWithTypeArg
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsExternalModuleRef"))]
 pub struct TsExternalModuleRef<'a> {
-  #[serde(skip)]
   pub parent: &'a TsImportEqualsDecl<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsExternalModuleRef,
-  pub span: Span,
   pub expr: &'a Str<'a>,
 }
 
@@ -14957,7 +14859,6 @@ impl<'a> CastableNode<'a> for TsExternalModuleRef<'a> {
 fn get_view_for_ts_external_module_ref<'a>(inner: &'a swc_ast::TsExternalModuleRef, parent: Node<'a>, bump: &'a Bump) -> &'a TsExternalModuleRef<'a> {
   let node = bump.alloc(TsExternalModuleRef {
     inner,
-    span: inner.span(),
     parent: parent.expect::<TsImportEqualsDecl>(),
     expr: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -14966,14 +14867,12 @@ fn get_view_for_ts_external_module_ref<'a>(inner: &'a swc_ast::TsExternalModuleR
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsFnType"))]
 pub struct TsFnType<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsFnType,
-  pub span: Span,
   pub params: Vec<TsFnParam<'a>>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
   pub type_ann: &'a TsTypeAnn<'a>,
@@ -15034,7 +14933,6 @@ impl<'a> CastableNode<'a> for TsFnType<'a> {
 fn get_view_for_ts_fn_type<'a>(inner: &'a swc_ast::TsFnType, parent: Node<'a>, bump: &'a Bump) -> &'a TsFnType<'a> {
   let node = bump.alloc(TsFnType {
     inner,
-    span: inner.span(),
     parent,
     params: Vec::with_capacity(inner.params.len()),
     type_params: None,
@@ -15050,18 +14948,24 @@ fn get_view_for_ts_fn_type<'a>(inner: &'a swc_ast::TsFnType, parent: Node<'a>, b
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsImportEqualsDecl"))]
 pub struct TsImportEqualsDecl<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsImportEqualsDecl,
-  pub span: Span,
   pub id: &'a Ident<'a>,
   pub module_ref: TsModuleRef<'a>,
-  pub declare: bool,
-  pub is_export: bool,
+}
+
+impl<'a> TsImportEqualsDecl<'a> {
+  pub fn declare(&self) -> bool {
+    self.inner.declare
+  }
+
+  pub fn is_export(&self) -> bool {
+    self.inner.is_export
+  }
 }
 
 impl<'a> Spanned for TsImportEqualsDecl<'a> {
@@ -15114,12 +15018,9 @@ impl<'a> CastableNode<'a> for TsImportEqualsDecl<'a> {
 fn get_view_for_ts_import_equals_decl<'a>(inner: &'a swc_ast::TsImportEqualsDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsImportEqualsDecl<'a> {
   let node = bump.alloc(TsImportEqualsDecl {
     inner,
-    span: inner.span(),
     parent,
     id: unsafe { MaybeUninit::uninit().assume_init() },
     module_ref: unsafe { MaybeUninit::uninit().assume_init() },
-    declare: inner.declare,
-    is_export: inner.is_export,
   });
   let parent: Node<'a> = (&*node).into();
   node.id = get_view_for_ident(&inner.id, parent.clone(), bump);
@@ -15127,14 +15028,12 @@ fn get_view_for_ts_import_equals_decl<'a>(inner: &'a swc_ast::TsImportEqualsDecl
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsImportType"))]
 pub struct TsImportType<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsImportType,
-  pub span: Span,
   pub arg: &'a Str<'a>,
   pub qualifier: Option<TsEntityName<'a>>,
   pub type_args: Option<&'a TsTypeParamInstantiation<'a>>,
@@ -15195,7 +15094,6 @@ impl<'a> CastableNode<'a> for TsImportType<'a> {
 fn get_view_for_ts_import_type<'a>(inner: &'a swc_ast::TsImportType, parent: Node<'a>, bump: &'a Bump) -> &'a TsImportType<'a> {
   let node = bump.alloc(TsImportType {
     inner,
-    span: inner.span(),
     parent,
     arg: unsafe { MaybeUninit::uninit().assume_init() },
     qualifier: None,
@@ -15214,17 +15112,20 @@ fn get_view_for_ts_import_type<'a>(inner: &'a swc_ast::TsImportType, parent: Nod
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsIndexSignature"))]
 pub struct TsIndexSignature<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsIndexSignature,
-  pub span: Span,
   pub params: Vec<TsFnParam<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
-  pub readonly: bool,
+}
+
+impl<'a> TsIndexSignature<'a> {
+  pub fn readonly(&self) -> bool {
+    self.inner.readonly
+  }
 }
 
 impl<'a> Spanned for TsIndexSignature<'a> {
@@ -15281,11 +15182,9 @@ impl<'a> CastableNode<'a> for TsIndexSignature<'a> {
 fn get_view_for_ts_index_signature<'a>(inner: &'a swc_ast::TsIndexSignature, parent: Node<'a>, bump: &'a Bump) -> &'a TsIndexSignature<'a> {
   let node = bump.alloc(TsIndexSignature {
     inner,
-    span: inner.span(),
     parent,
     params: Vec::with_capacity(inner.params.len()),
     type_ann: None,
-    readonly: inner.readonly,
   });
   let parent: Node<'a> = (&*node).into();
   node.params.extend(inner.params.iter().map(|value| get_view_for_ts_fn_param(value, parent.clone(), bump)));
@@ -15296,17 +15195,20 @@ fn get_view_for_ts_index_signature<'a>(inner: &'a swc_ast::TsIndexSignature, par
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsIndexedAccessType"))]
 pub struct TsIndexedAccessType<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsIndexedAccessType,
-  pub span: Span,
   pub obj_type: TsType<'a>,
   pub index_type: TsType<'a>,
-  pub readonly: bool,
+}
+
+impl<'a> TsIndexedAccessType<'a> {
+  pub fn readonly(&self) -> bool {
+    self.inner.readonly
+  }
 }
 
 impl<'a> Spanned for TsIndexedAccessType<'a> {
@@ -15359,11 +15261,9 @@ impl<'a> CastableNode<'a> for TsIndexedAccessType<'a> {
 fn get_view_for_ts_indexed_access_type<'a>(inner: &'a swc_ast::TsIndexedAccessType, parent: Node<'a>, bump: &'a Bump) -> &'a TsIndexedAccessType<'a> {
   let node = bump.alloc(TsIndexedAccessType {
     inner,
-    span: inner.span(),
     parent,
     obj_type: unsafe { MaybeUninit::uninit().assume_init() },
     index_type: unsafe { MaybeUninit::uninit().assume_init() },
-    readonly: inner.readonly,
   });
   let parent: Node<'a> = (&*node).into();
   node.obj_type = get_view_for_ts_type(&inner.obj_type, parent.clone(), bump);
@@ -15371,14 +15271,12 @@ fn get_view_for_ts_indexed_access_type<'a>(inner: &'a swc_ast::TsIndexedAccessTy
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsInferType"))]
 pub struct TsInferType<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsInferType,
-  pub span: Span,
   pub type_param: &'a TsTypeParam<'a>,
 }
 
@@ -15431,7 +15329,6 @@ impl<'a> CastableNode<'a> for TsInferType<'a> {
 fn get_view_for_ts_infer_type<'a>(inner: &'a swc_ast::TsInferType, parent: Node<'a>, bump: &'a Bump) -> &'a TsInferType<'a> {
   let node = bump.alloc(TsInferType {
     inner,
-    span: inner.span(),
     parent,
     type_param: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -15440,14 +15337,12 @@ fn get_view_for_ts_infer_type<'a>(inner: &'a swc_ast::TsInferType, parent: Node<
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsInterfaceBody"))]
 pub struct TsInterfaceBody<'a> {
-  #[serde(skip)]
   pub parent: &'a TsInterfaceDecl<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsInterfaceBody,
-  pub span: Span,
   pub body: Vec<TsTypeElement<'a>>,
 }
 
@@ -15502,7 +15397,6 @@ impl<'a> CastableNode<'a> for TsInterfaceBody<'a> {
 fn get_view_for_ts_interface_body<'a>(inner: &'a swc_ast::TsInterfaceBody, parent: Node<'a>, bump: &'a Bump) -> &'a TsInterfaceBody<'a> {
   let node = bump.alloc(TsInterfaceBody {
     inner,
-    span: inner.span(),
     parent: parent.expect::<TsInterfaceDecl>(),
     body: Vec::with_capacity(inner.body.len()),
   });
@@ -15511,19 +15405,22 @@ fn get_view_for_ts_interface_body<'a>(inner: &'a swc_ast::TsInterfaceBody, paren
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsInterfaceDecl"))]
 pub struct TsInterfaceDecl<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsInterfaceDecl,
-  pub span: Span,
   pub id: &'a Ident<'a>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
   pub extends: Vec<&'a TsExprWithTypeArgs<'a>>,
   pub body: &'a TsInterfaceBody<'a>,
-  pub declare: bool,
+}
+
+impl<'a> TsInterfaceDecl<'a> {
+  pub fn declare(&self) -> bool {
+    self.inner.declare
+  }
 }
 
 impl<'a> Spanned for TsInterfaceDecl<'a> {
@@ -15582,13 +15479,11 @@ impl<'a> CastableNode<'a> for TsInterfaceDecl<'a> {
 fn get_view_for_ts_interface_decl<'a>(inner: &'a swc_ast::TsInterfaceDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsInterfaceDecl<'a> {
   let node = bump.alloc(TsInterfaceDecl {
     inner,
-    span: inner.span(),
     parent,
     id: unsafe { MaybeUninit::uninit().assume_init() },
     type_params: None,
     extends: Vec::with_capacity(inner.extends.len()),
     body: unsafe { MaybeUninit::uninit().assume_init() },
-    declare: inner.declare,
   });
   let parent: Node<'a> = (&*node).into();
   node.id = get_view_for_ident(&inner.id, parent.clone(), bump);
@@ -15601,14 +15496,12 @@ fn get_view_for_ts_interface_decl<'a>(inner: &'a swc_ast::TsInterfaceDecl, paren
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsIntersectionType"))]
 pub struct TsIntersectionType<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsIntersectionType,
-  pub span: Span,
   pub types: Vec<TsType<'a>>,
 }
 
@@ -15663,7 +15556,6 @@ impl<'a> CastableNode<'a> for TsIntersectionType<'a> {
 fn get_view_for_ts_intersection_type<'a>(inner: &'a swc_ast::TsIntersectionType, parent: Node<'a>, bump: &'a Bump) -> &'a TsIntersectionType<'a> {
   let node = bump.alloc(TsIntersectionType {
     inner,
-    span: inner.span(),
     parent,
     types: Vec::with_capacity(inner.types.len()),
   });
@@ -15672,15 +15564,18 @@ fn get_view_for_ts_intersection_type<'a>(inner: &'a swc_ast::TsIntersectionType,
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsKeywordType"))]
 pub struct TsKeywordType<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsKeywordType,
-  pub span: Span,
-  pub kind: TsKeywordTypeKind,
+}
+
+impl<'a> TsKeywordType<'a> {
+  pub fn kind(&self) -> TsKeywordTypeKind {
+    self.inner.kind
+  }
 }
 
 impl<'a> Spanned for TsKeywordType<'a> {
@@ -15730,21 +15625,17 @@ impl<'a> CastableNode<'a> for TsKeywordType<'a> {
 fn get_view_for_ts_keyword_type<'a>(inner: &'a swc_ast::TsKeywordType, parent: Node<'a>, bump: &'a Bump) -> &'a TsKeywordType<'a> {
   let node = bump.alloc(TsKeywordType {
     inner,
-    span: inner.span(),
     parent,
-    kind: inner.kind,
   });
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsLitType"))]
 pub struct TsLitType<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsLitType,
-  pub span: Span,
   pub lit: TsLit<'a>,
 }
 
@@ -15797,7 +15688,6 @@ impl<'a> CastableNode<'a> for TsLitType<'a> {
 fn get_view_for_ts_lit_type<'a>(inner: &'a swc_ast::TsLitType, parent: Node<'a>, bump: &'a Bump) -> &'a TsLitType<'a> {
   let node = bump.alloc(TsLitType {
     inner,
-    span: inner.span(),
     parent,
     lit: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -15806,19 +15696,25 @@ fn get_view_for_ts_lit_type<'a>(inner: &'a swc_ast::TsLitType, parent: Node<'a>,
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsMappedType"))]
 pub struct TsMappedType<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsMappedType,
-  pub span: Span,
   pub type_param: &'a TsTypeParam<'a>,
   pub name_type: Option<TsType<'a>>,
   pub type_ann: Option<TsType<'a>>,
-  pub readonly: Option<TruePlusMinus>,
-  pub optional: Option<TruePlusMinus>,
+}
+
+impl<'a> TsMappedType<'a> {
+  pub fn readonly(&self) -> Option<TruePlusMinus> {
+    self.inner.readonly
+  }
+
+  pub fn optional(&self) -> Option<TruePlusMinus> {
+    self.inner.optional
+  }
 }
 
 impl<'a> Spanned for TsMappedType<'a> {
@@ -15876,13 +15772,10 @@ impl<'a> CastableNode<'a> for TsMappedType<'a> {
 fn get_view_for_ts_mapped_type<'a>(inner: &'a swc_ast::TsMappedType, parent: Node<'a>, bump: &'a Bump) -> &'a TsMappedType<'a> {
   let node = bump.alloc(TsMappedType {
     inner,
-    span: inner.span(),
     parent,
     type_param: unsafe { MaybeUninit::uninit().assume_init() },
     name_type: None,
     type_ann: None,
-    readonly: inner.readonly,
-    optional: inner.optional,
   });
   let parent: Node<'a> = (&*node).into();
   node.type_param = get_view_for_ts_type_param(&inner.type_param, parent.clone(), bump);
@@ -15897,21 +15790,30 @@ fn get_view_for_ts_mapped_type<'a>(inner: &'a swc_ast::TsMappedType, parent: Nod
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsMethodSignature"))]
 pub struct TsMethodSignature<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsMethodSignature,
-  pub span: Span,
   pub key: Expr<'a>,
   pub params: Vec<TsFnParam<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
-  pub readonly: bool,
-  pub computed: bool,
-  pub optional: bool,
+}
+
+impl<'a> TsMethodSignature<'a> {
+  pub fn readonly(&self) -> bool {
+    self.inner.readonly
+  }
+
+  pub fn computed(&self) -> bool {
+    self.inner.computed
+  }
+
+  pub fn optional(&self) -> bool {
+    self.inner.optional
+  }
 }
 
 impl<'a> Spanned for TsMethodSignature<'a> {
@@ -15972,15 +15874,11 @@ impl<'a> CastableNode<'a> for TsMethodSignature<'a> {
 fn get_view_for_ts_method_signature<'a>(inner: &'a swc_ast::TsMethodSignature, parent: Node<'a>, bump: &'a Bump) -> &'a TsMethodSignature<'a> {
   let node = bump.alloc(TsMethodSignature {
     inner,
-    span: inner.span(),
     parent,
     key: unsafe { MaybeUninit::uninit().assume_init() },
     params: Vec::with_capacity(inner.params.len()),
     type_ann: None,
     type_params: None,
-    readonly: inner.readonly,
-    computed: inner.computed,
-    optional: inner.optional,
   });
   let parent: Node<'a> = (&*node).into();
   node.key = get_view_for_expr(&inner.key, parent.clone(), bump);
@@ -15996,14 +15894,12 @@ fn get_view_for_ts_method_signature<'a>(inner: &'a swc_ast::TsMethodSignature, p
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsModuleBlock"))]
 pub struct TsModuleBlock<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsModuleBlock,
-  pub span: Span,
   pub body: Vec<ModuleItem<'a>>,
 }
 
@@ -16058,7 +15954,6 @@ impl<'a> CastableNode<'a> for TsModuleBlock<'a> {
 fn get_view_for_ts_module_block<'a>(inner: &'a swc_ast::TsModuleBlock, parent: Node<'a>, bump: &'a Bump) -> &'a TsModuleBlock<'a> {
   let node = bump.alloc(TsModuleBlock {
     inner,
-    span: inner.span(),
     parent,
     body: Vec::with_capacity(inner.body.len()),
   });
@@ -16067,19 +15962,25 @@ fn get_view_for_ts_module_block<'a>(inner: &'a swc_ast::TsModuleBlock, parent: N
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsModuleDecl"))]
 pub struct TsModuleDecl<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsModuleDecl,
-  pub span: Span,
   pub id: TsModuleName<'a>,
   pub body: Option<TsNamespaceBody<'a>>,
-  pub declare: bool,
+}
+
+impl<'a> TsModuleDecl<'a> {
+  pub fn declare(&self) -> bool {
+    self.inner.declare
+  }
+
   /// In TypeScript, this is only available through`node.flags`.
-  pub global: bool,
+  pub fn global(&self) -> bool {
+    self.inner.global
+  }
 }
 
 impl<'a> Spanned for TsModuleDecl<'a> {
@@ -16134,12 +16035,9 @@ impl<'a> CastableNode<'a> for TsModuleDecl<'a> {
 fn get_view_for_ts_module_decl<'a>(inner: &'a swc_ast::TsModuleDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsModuleDecl<'a> {
   let node = bump.alloc(TsModuleDecl {
     inner,
-    span: inner.span(),
     parent,
     id: unsafe { MaybeUninit::uninit().assume_init() },
     body: None,
-    declare: inner.declare,
-    global: inner.global,
   });
   let parent: Node<'a> = (&*node).into();
   node.id = get_view_for_ts_module_name(&inner.id, parent.clone(), bump);
@@ -16150,19 +16048,25 @@ fn get_view_for_ts_module_decl<'a>(inner: &'a swc_ast::TsModuleDecl, parent: Nod
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsNamespaceDecl"))]
 pub struct TsNamespaceDecl<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsNamespaceDecl,
-  pub span: Span,
   pub id: &'a Ident<'a>,
   pub body: TsNamespaceBody<'a>,
-  pub declare: bool,
+}
+
+impl<'a> TsNamespaceDecl<'a> {
+  pub fn declare(&self) -> bool {
+    self.inner.declare
+  }
+
   /// In TypeScript, this is only available through`node.flags`.
-  pub global: bool,
+  pub fn global(&self) -> bool {
+    self.inner.global
+  }
 }
 
 impl<'a> Spanned for TsNamespaceDecl<'a> {
@@ -16215,12 +16119,9 @@ impl<'a> CastableNode<'a> for TsNamespaceDecl<'a> {
 fn get_view_for_ts_namespace_decl<'a>(inner: &'a swc_ast::TsNamespaceDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsNamespaceDecl<'a> {
   let node = bump.alloc(TsNamespaceDecl {
     inner,
-    span: inner.span(),
     parent,
     id: unsafe { MaybeUninit::uninit().assume_init() },
     body: unsafe { MaybeUninit::uninit().assume_init() },
-    declare: inner.declare,
-    global: inner.global,
   });
   let parent: Node<'a> = (&*node).into();
   node.id = get_view_for_ident(&inner.id, parent.clone(), bump);
@@ -16228,14 +16129,12 @@ fn get_view_for_ts_namespace_decl<'a>(inner: &'a swc_ast::TsNamespaceDecl, paren
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsNamespaceExportDecl"))]
 pub struct TsNamespaceExportDecl<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsNamespaceExportDecl,
-  pub span: Span,
   pub id: &'a Ident<'a>,
 }
 
@@ -16288,7 +16187,6 @@ impl<'a> CastableNode<'a> for TsNamespaceExportDecl<'a> {
 fn get_view_for_ts_namespace_export_decl<'a>(inner: &'a swc_ast::TsNamespaceExportDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsNamespaceExportDecl<'a> {
   let node = bump.alloc(TsNamespaceExportDecl {
     inner,
-    span: inner.span(),
     parent,
     id: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -16297,14 +16195,12 @@ fn get_view_for_ts_namespace_export_decl<'a>(inner: &'a swc_ast::TsNamespaceExpo
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsNonNullExpr"))]
 pub struct TsNonNullExpr<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsNonNullExpr,
-  pub span: Span,
   pub expr: Expr<'a>,
 }
 
@@ -16357,7 +16253,6 @@ impl<'a> CastableNode<'a> for TsNonNullExpr<'a> {
 fn get_view_for_ts_non_null_expr<'a>(inner: &'a swc_ast::TsNonNullExpr, parent: Node<'a>, bump: &'a Bump) -> &'a TsNonNullExpr<'a> {
   let node = bump.alloc(TsNonNullExpr {
     inner,
-    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -16366,14 +16261,12 @@ fn get_view_for_ts_non_null_expr<'a>(inner: &'a swc_ast::TsNonNullExpr, parent: 
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsOptionalType"))]
 pub struct TsOptionalType<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsOptionalType,
-  pub span: Span,
   pub type_ann: TsType<'a>,
 }
 
@@ -16426,7 +16319,6 @@ impl<'a> CastableNode<'a> for TsOptionalType<'a> {
 fn get_view_for_ts_optional_type<'a>(inner: &'a swc_ast::TsOptionalType, parent: Node<'a>, bump: &'a Bump) -> &'a TsOptionalType<'a> {
   let node = bump.alloc(TsOptionalType {
     inner,
-    span: inner.span(),
     parent,
     type_ann: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -16435,19 +16327,25 @@ fn get_view_for_ts_optional_type<'a>(inner: &'a swc_ast::TsOptionalType, parent:
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsParamProp"))]
 pub struct TsParamProp<'a> {
-  #[serde(skip)]
   pub parent: &'a Constructor<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsParamProp,
-  pub span: Span,
   pub decorators: Vec<&'a Decorator<'a>>,
   pub param: TsParamPropParam<'a>,
+}
+
+impl<'a> TsParamProp<'a> {
   /// At least one of `accessibility` or `readonly` must be set.
-  pub accessibility: Option<Accessibility>,
-  pub readonly: bool,
+  pub fn accessibility(&self) -> Option<Accessibility> {
+    self.inner.accessibility
+  }
+
+  pub fn readonly(&self) -> bool {
+    self.inner.readonly
+  }
 }
 
 impl<'a> Spanned for TsParamProp<'a> {
@@ -16502,12 +16400,9 @@ impl<'a> CastableNode<'a> for TsParamProp<'a> {
 fn get_view_for_ts_param_prop<'a>(inner: &'a swc_ast::TsParamProp, parent: Node<'a>, bump: &'a Bump) -> &'a TsParamProp<'a> {
   let node = bump.alloc(TsParamProp {
     inner,
-    span: inner.span(),
     parent: parent.expect::<Constructor>(),
     decorators: Vec::with_capacity(inner.decorators.len()),
     param: unsafe { MaybeUninit::uninit().assume_init() },
-    accessibility: inner.accessibility,
-    readonly: inner.readonly,
   });
   let parent: Node<'a> = (&*node).into();
   node.decorators.extend(inner.decorators.iter().map(|value| get_view_for_decorator(value, parent.clone(), bump)));
@@ -16515,14 +16410,12 @@ fn get_view_for_ts_param_prop<'a>(inner: &'a swc_ast::TsParamProp, parent: Node<
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsParenthesizedType"))]
 pub struct TsParenthesizedType<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsParenthesizedType,
-  pub span: Span,
   pub type_ann: TsType<'a>,
 }
 
@@ -16575,7 +16468,6 @@ impl<'a> CastableNode<'a> for TsParenthesizedType<'a> {
 fn get_view_for_ts_parenthesized_type<'a>(inner: &'a swc_ast::TsParenthesizedType, parent: Node<'a>, bump: &'a Bump) -> &'a TsParenthesizedType<'a> {
   let node = bump.alloc(TsParenthesizedType {
     inner,
-    span: inner.span(),
     parent,
     type_ann: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -16584,22 +16476,31 @@ fn get_view_for_ts_parenthesized_type<'a>(inner: &'a swc_ast::TsParenthesizedTyp
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsPropertySignature"))]
 pub struct TsPropertySignature<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsPropertySignature,
-  pub span: Span,
   pub key: Expr<'a>,
   pub init: Option<Expr<'a>>,
   pub params: Vec<TsFnParam<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
-  pub readonly: bool,
-  pub computed: bool,
-  pub optional: bool,
+}
+
+impl<'a> TsPropertySignature<'a> {
+  pub fn readonly(&self) -> bool {
+    self.inner.readonly
+  }
+
+  pub fn computed(&self) -> bool {
+    self.inner.computed
+  }
+
+  pub fn optional(&self) -> bool {
+    self.inner.optional
+  }
 }
 
 impl<'a> Spanned for TsPropertySignature<'a> {
@@ -16663,16 +16564,12 @@ impl<'a> CastableNode<'a> for TsPropertySignature<'a> {
 fn get_view_for_ts_property_signature<'a>(inner: &'a swc_ast::TsPropertySignature, parent: Node<'a>, bump: &'a Bump) -> &'a TsPropertySignature<'a> {
   let node = bump.alloc(TsPropertySignature {
     inner,
-    span: inner.span(),
     parent,
     key: unsafe { MaybeUninit::uninit().assume_init() },
     init: None,
     params: Vec::with_capacity(inner.params.len()),
     type_ann: None,
     type_params: None,
-    readonly: inner.readonly,
-    computed: inner.computed,
-    optional: inner.optional,
   });
   let parent: Node<'a> = (&*node).into();
   node.key = get_view_for_expr(&inner.key, parent.clone(), bump);
@@ -16692,14 +16589,12 @@ fn get_view_for_ts_property_signature<'a>(inner: &'a swc_ast::TsPropertySignatur
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsQualifiedName"))]
 pub struct TsQualifiedName<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsQualifiedName,
-  pub span: Span,
   pub left: TsEntityName<'a>,
   pub right: &'a Ident<'a>,
 }
@@ -16754,7 +16649,6 @@ impl<'a> CastableNode<'a> for TsQualifiedName<'a> {
 fn get_view_for_ts_qualified_name<'a>(inner: &'a swc_ast::TsQualifiedName, parent: Node<'a>, bump: &'a Bump) -> &'a TsQualifiedName<'a> {
   let node = bump.alloc(TsQualifiedName {
     inner,
-    span: inner.span(),
     parent,
     left: unsafe { MaybeUninit::uninit().assume_init() },
     right: unsafe { MaybeUninit::uninit().assume_init() },
@@ -16765,14 +16659,12 @@ fn get_view_for_ts_qualified_name<'a>(inner: &'a swc_ast::TsQualifiedName, paren
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsRestType"))]
 pub struct TsRestType<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsRestType,
-  pub span: Span,
   pub type_ann: TsType<'a>,
 }
 
@@ -16825,7 +16717,6 @@ impl<'a> CastableNode<'a> for TsRestType<'a> {
 fn get_view_for_ts_rest_type<'a>(inner: &'a swc_ast::TsRestType, parent: Node<'a>, bump: &'a Bump) -> &'a TsRestType<'a> {
   let node = bump.alloc(TsRestType {
     inner,
-    span: inner.span(),
     parent,
     type_ann: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -16834,14 +16725,12 @@ fn get_view_for_ts_rest_type<'a>(inner: &'a swc_ast::TsRestType, parent: Node<'a
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsThisType"))]
 pub struct TsThisType<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsThisType,
-  pub span: Span,
 }
 
 impl<'a> Spanned for TsThisType<'a> {
@@ -16891,20 +16780,17 @@ impl<'a> CastableNode<'a> for TsThisType<'a> {
 fn get_view_for_ts_this_type<'a>(inner: &'a swc_ast::TsThisType, parent: Node<'a>, bump: &'a Bump) -> &'a TsThisType<'a> {
   let node = bump.alloc(TsThisType {
     inner,
-    span: inner.span(),
     parent,
   });
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTplLitType"))]
 pub struct TsTplLitType<'a> {
-  #[serde(skip)]
   pub parent: &'a TsLitType<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsTplLitType,
-  pub span: Span,
   pub types: Vec<TsType<'a>>,
   pub quasis: Vec<&'a TplElement<'a>>,
 }
@@ -16963,7 +16849,6 @@ impl<'a> CastableNode<'a> for TsTplLitType<'a> {
 fn get_view_for_ts_tpl_lit_type<'a>(inner: &'a swc_ast::TsTplLitType, parent: Node<'a>, bump: &'a Bump) -> &'a TsTplLitType<'a> {
   let node = bump.alloc(TsTplLitType {
     inner,
-    span: inner.span(),
     parent: parent.expect::<TsLitType>(),
     types: Vec::with_capacity(inner.types.len()),
     quasis: Vec::with_capacity(inner.quasis.len()),
@@ -16974,14 +16859,12 @@ fn get_view_for_ts_tpl_lit_type<'a>(inner: &'a swc_ast::TsTplLitType, parent: No
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTupleElement"))]
 pub struct TsTupleElement<'a> {
-  #[serde(skip)]
   pub parent: &'a TsTupleType<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsTupleElement,
-  pub span: Span,
   /// `Ident` or `RestPat { arg: Ident }`
   pub label: Option<Pat<'a>>,
   pub ty: TsType<'a>,
@@ -17039,7 +16922,6 @@ impl<'a> CastableNode<'a> for TsTupleElement<'a> {
 fn get_view_for_ts_tuple_element<'a>(inner: &'a swc_ast::TsTupleElement, parent: Node<'a>, bump: &'a Bump) -> &'a TsTupleElement<'a> {
   let node = bump.alloc(TsTupleElement {
     inner,
-    span: inner.span(),
     parent: parent.expect::<TsTupleType>(),
     label: None,
     ty: unsafe { MaybeUninit::uninit().assume_init() },
@@ -17053,14 +16935,12 @@ fn get_view_for_ts_tuple_element<'a>(inner: &'a swc_ast::TsTupleElement, parent:
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTupleType"))]
 pub struct TsTupleType<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsTupleType,
-  pub span: Span,
   pub elem_types: Vec<&'a TsTupleElement<'a>>,
 }
 
@@ -17115,7 +16995,6 @@ impl<'a> CastableNode<'a> for TsTupleType<'a> {
 fn get_view_for_ts_tuple_type<'a>(inner: &'a swc_ast::TsTupleType, parent: Node<'a>, bump: &'a Bump) -> &'a TsTupleType<'a> {
   let node = bump.alloc(TsTupleType {
     inner,
-    span: inner.span(),
     parent,
     elem_types: Vec::with_capacity(inner.elem_types.len()),
   });
@@ -17124,18 +17003,21 @@ fn get_view_for_ts_tuple_type<'a>(inner: &'a swc_ast::TsTupleType, parent: Node<
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTypeAliasDecl"))]
 pub struct TsTypeAliasDecl<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeAliasDecl,
-  pub span: Span,
   pub id: &'a Ident<'a>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
   pub type_ann: TsType<'a>,
-  pub declare: bool,
+}
+
+impl<'a> TsTypeAliasDecl<'a> {
+  pub fn declare(&self) -> bool {
+    self.inner.declare
+  }
 }
 
 impl<'a> Spanned for TsTypeAliasDecl<'a> {
@@ -17191,12 +17073,10 @@ impl<'a> CastableNode<'a> for TsTypeAliasDecl<'a> {
 fn get_view_for_ts_type_alias_decl<'a>(inner: &'a swc_ast::TsTypeAliasDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeAliasDecl<'a> {
   let node = bump.alloc(TsTypeAliasDecl {
     inner,
-    span: inner.span(),
     parent,
     id: unsafe { MaybeUninit::uninit().assume_init() },
     type_params: None,
     type_ann: unsafe { MaybeUninit::uninit().assume_init() },
-    declare: inner.declare,
   });
   let parent: Node<'a> = (&*node).into();
   node.id = get_view_for_ident(&inner.id, parent.clone(), bump);
@@ -17208,14 +17088,12 @@ fn get_view_for_ts_type_alias_decl<'a>(inner: &'a swc_ast::TsTypeAliasDecl, pare
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTypeAnn"))]
 pub struct TsTypeAnn<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeAnn,
-  pub span: Span,
   pub type_ann: TsType<'a>,
 }
 
@@ -17268,7 +17146,6 @@ impl<'a> CastableNode<'a> for TsTypeAnn<'a> {
 fn get_view_for_ts_type_ann<'a>(inner: &'a swc_ast::TsTypeAnn, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeAnn<'a> {
   let node = bump.alloc(TsTypeAnn {
     inner,
-    span: inner.span(),
     parent,
     type_ann: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -17277,14 +17154,12 @@ fn get_view_for_ts_type_ann<'a>(inner: &'a swc_ast::TsTypeAnn, parent: Node<'a>,
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTypeAssertion"))]
 pub struct TsTypeAssertion<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeAssertion,
-  pub span: Span,
   pub expr: Expr<'a>,
   pub type_ann: TsType<'a>,
 }
@@ -17339,7 +17214,6 @@ impl<'a> CastableNode<'a> for TsTypeAssertion<'a> {
 fn get_view_for_ts_type_assertion<'a>(inner: &'a swc_ast::TsTypeAssertion, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeAssertion<'a> {
   let node = bump.alloc(TsTypeAssertion {
     inner,
-    span: inner.span(),
     parent,
     expr: unsafe { MaybeUninit::uninit().assume_init() },
     type_ann: unsafe { MaybeUninit::uninit().assume_init() },
@@ -17350,14 +17224,12 @@ fn get_view_for_ts_type_assertion<'a>(inner: &'a swc_ast::TsTypeAssertion, paren
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTypeLit"))]
 pub struct TsTypeLit<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeLit,
-  pub span: Span,
   pub members: Vec<TsTypeElement<'a>>,
 }
 
@@ -17412,7 +17284,6 @@ impl<'a> CastableNode<'a> for TsTypeLit<'a> {
 fn get_view_for_ts_type_lit<'a>(inner: &'a swc_ast::TsTypeLit, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeLit<'a> {
   let node = bump.alloc(TsTypeLit {
     inner,
-    span: inner.span(),
     parent,
     members: Vec::with_capacity(inner.members.len()),
   });
@@ -17421,16 +17292,19 @@ fn get_view_for_ts_type_lit<'a>(inner: &'a swc_ast::TsTypeLit, parent: Node<'a>,
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTypeOperator"))]
 pub struct TsTypeOperator<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeOperator,
-  pub span: Span,
   pub type_ann: TsType<'a>,
-  pub op: TsTypeOperatorOp,
+}
+
+impl<'a> TsTypeOperator<'a> {
+  pub fn op(&self) -> TsTypeOperatorOp {
+    self.inner.op
+  }
 }
 
 impl<'a> Spanned for TsTypeOperator<'a> {
@@ -17482,24 +17356,20 @@ impl<'a> CastableNode<'a> for TsTypeOperator<'a> {
 fn get_view_for_ts_type_operator<'a>(inner: &'a swc_ast::TsTypeOperator, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeOperator<'a> {
   let node = bump.alloc(TsTypeOperator {
     inner,
-    span: inner.span(),
     parent,
     type_ann: unsafe { MaybeUninit::uninit().assume_init() },
-    op: inner.op,
   });
   let parent: Node<'a> = (&*node).into();
   node.type_ann = get_view_for_ts_type(&inner.type_ann, parent, bump);
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTypeParam"))]
 pub struct TsTypeParam<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeParam,
-  pub span: Span,
   pub name: &'a Ident<'a>,
   pub constraint: Option<TsType<'a>>,
   pub default: Option<TsType<'a>>,
@@ -17560,7 +17430,6 @@ impl<'a> CastableNode<'a> for TsTypeParam<'a> {
 fn get_view_for_ts_type_param<'a>(inner: &'a swc_ast::TsTypeParam, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeParam<'a> {
   let node = bump.alloc(TsTypeParam {
     inner,
-    span: inner.span(),
     parent,
     name: unsafe { MaybeUninit::uninit().assume_init() },
     constraint: None,
@@ -17579,14 +17448,12 @@ fn get_view_for_ts_type_param<'a>(inner: &'a swc_ast::TsTypeParam, parent: Node<
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTypeParamDecl"))]
 pub struct TsTypeParamDecl<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeParamDecl,
-  pub span: Span,
   pub params: Vec<&'a TsTypeParam<'a>>,
 }
 
@@ -17641,7 +17508,6 @@ impl<'a> CastableNode<'a> for TsTypeParamDecl<'a> {
 fn get_view_for_ts_type_param_decl<'a>(inner: &'a swc_ast::TsTypeParamDecl, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeParamDecl<'a> {
   let node = bump.alloc(TsTypeParamDecl {
     inner,
-    span: inner.span(),
     parent,
     params: Vec::with_capacity(inner.params.len()),
   });
@@ -17650,14 +17516,12 @@ fn get_view_for_ts_type_param_decl<'a>(inner: &'a swc_ast::TsTypeParamDecl, pare
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTypeParamInstantiation"))]
 pub struct TsTypeParamInstantiation<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeParamInstantiation,
-  pub span: Span,
   pub params: Vec<TsType<'a>>,
 }
 
@@ -17712,7 +17576,6 @@ impl<'a> CastableNode<'a> for TsTypeParamInstantiation<'a> {
 fn get_view_for_ts_type_param_instantiation<'a>(inner: &'a swc_ast::TsTypeParamInstantiation, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeParamInstantiation<'a> {
   let node = bump.alloc(TsTypeParamInstantiation {
     inner,
-    span: inner.span(),
     parent,
     params: Vec::with_capacity(inner.params.len()),
   });
@@ -17721,17 +17584,20 @@ fn get_view_for_ts_type_param_instantiation<'a>(inner: &'a swc_ast::TsTypeParamI
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTypePredicate"))]
 pub struct TsTypePredicate<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsTypePredicate,
-  pub span: Span,
   pub param_name: TsThisTypeOrIdent<'a>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
-  pub asserts: bool,
+}
+
+impl<'a> TsTypePredicate<'a> {
+  pub fn asserts(&self) -> bool {
+    self.inner.asserts
+  }
 }
 
 impl<'a> Spanned for TsTypePredicate<'a> {
@@ -17786,11 +17652,9 @@ impl<'a> CastableNode<'a> for TsTypePredicate<'a> {
 fn get_view_for_ts_type_predicate<'a>(inner: &'a swc_ast::TsTypePredicate, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypePredicate<'a> {
   let node = bump.alloc(TsTypePredicate {
     inner,
-    span: inner.span(),
     parent,
     param_name: unsafe { MaybeUninit::uninit().assume_init() },
     type_ann: None,
-    asserts: inner.asserts,
   });
   let parent: Node<'a> = (&*node).into();
   node.param_name = get_view_for_ts_this_type_or_ident(&inner.param_name, parent.clone(), bump);
@@ -17802,14 +17666,12 @@ fn get_view_for_ts_type_predicate<'a>(inner: &'a swc_ast::TsTypePredicate, paren
 }
 
 /// `typeof` operator
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTypeQuery"))]
 pub struct TsTypeQuery<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeQuery,
-  pub span: Span,
   pub expr_name: TsTypeQueryExpr<'a>,
 }
 
@@ -17862,7 +17724,6 @@ impl<'a> CastableNode<'a> for TsTypeQuery<'a> {
 fn get_view_for_ts_type_query<'a>(inner: &'a swc_ast::TsTypeQuery, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeQuery<'a> {
   let node = bump.alloc(TsTypeQuery {
     inner,
-    span: inner.span(),
     parent,
     expr_name: unsafe { MaybeUninit::uninit().assume_init() },
   });
@@ -17871,14 +17732,12 @@ fn get_view_for_ts_type_query<'a>(inner: &'a swc_ast::TsTypeQuery, parent: Node<
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTypeRef"))]
 pub struct TsTypeRef<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsTypeRef,
-  pub span: Span,
   pub type_name: TsEntityName<'a>,
   pub type_params: Option<&'a TsTypeParamInstantiation<'a>>,
 }
@@ -17935,7 +17794,6 @@ impl<'a> CastableNode<'a> for TsTypeRef<'a> {
 fn get_view_for_ts_type_ref<'a>(inner: &'a swc_ast::TsTypeRef, parent: Node<'a>, bump: &'a Bump) -> &'a TsTypeRef<'a> {
   let node = bump.alloc(TsTypeRef {
     inner,
-    span: inner.span(),
     parent,
     type_name: unsafe { MaybeUninit::uninit().assume_init() },
     type_params: None,
@@ -17949,14 +17807,12 @@ fn get_view_for_ts_type_ref<'a>(inner: &'a swc_ast::TsTypeRef, parent: Node<'a>,
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsUnionType"))]
 pub struct TsUnionType<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::TsUnionType,
-  pub span: Span,
   pub types: Vec<TsType<'a>>,
 }
 
@@ -18011,7 +17867,6 @@ impl<'a> CastableNode<'a> for TsUnionType<'a> {
 fn get_view_for_ts_union_type<'a>(inner: &'a swc_ast::TsUnionType, parent: Node<'a>, bump: &'a Bump) -> &'a TsUnionType<'a> {
   let node = bump.alloc(TsUnionType {
     inner,
-    span: inner.span(),
     parent,
     types: Vec::with_capacity(inner.types.len()),
   });
@@ -18020,16 +17875,19 @@ fn get_view_for_ts_union_type<'a>(inner: &'a swc_ast::TsUnionType, parent: Node<
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableUnaryExpr"))]
 pub struct UnaryExpr<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::UnaryExpr,
-  pub span: Span,
   pub arg: Expr<'a>,
-  pub op: UnaryOp,
+}
+
+impl<'a> UnaryExpr<'a> {
+  pub fn op(&self) -> UnaryOp {
+    self.inner.op
+  }
 }
 
 impl<'a> Spanned for UnaryExpr<'a> {
@@ -18081,27 +17939,31 @@ impl<'a> CastableNode<'a> for UnaryExpr<'a> {
 fn get_view_for_unary_expr<'a>(inner: &'a swc_ast::UnaryExpr, parent: Node<'a>, bump: &'a Bump) -> &'a UnaryExpr<'a> {
   let node = bump.alloc(UnaryExpr {
     inner,
-    span: inner.span(),
     parent,
     arg: unsafe { MaybeUninit::uninit().assume_init() },
-    op: inner.op,
   });
   let parent: Node<'a> = (&*node).into();
   node.arg = get_view_for_expr(&inner.arg, parent, bump);
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableUpdateExpr"))]
 pub struct UpdateExpr<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::UpdateExpr,
-  pub span: Span,
   pub arg: Expr<'a>,
-  pub op: UpdateOp,
-  pub prefix: bool,
+}
+
+impl<'a> UpdateExpr<'a> {
+  pub fn op(&self) -> UpdateOp {
+    self.inner.op
+  }
+
+  pub fn prefix(&self) -> bool {
+    self.inner.prefix
+  }
 }
 
 impl<'a> Spanned for UpdateExpr<'a> {
@@ -18153,28 +18015,31 @@ impl<'a> CastableNode<'a> for UpdateExpr<'a> {
 fn get_view_for_update_expr<'a>(inner: &'a swc_ast::UpdateExpr, parent: Node<'a>, bump: &'a Bump) -> &'a UpdateExpr<'a> {
   let node = bump.alloc(UpdateExpr {
     inner,
-    span: inner.span(),
     parent,
     arg: unsafe { MaybeUninit::uninit().assume_init() },
-    op: inner.op,
-    prefix: inner.prefix,
   });
   let parent: Node<'a> = (&*node).into();
   node.arg = get_view_for_expr(&inner.arg, parent, bump);
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableVarDecl"))]
 pub struct VarDecl<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::VarDecl,
-  pub span: Span,
   pub decls: Vec<&'a VarDeclarator<'a>>,
-  pub kind: VarDeclKind,
-  pub declare: bool,
+}
+
+impl<'a> VarDecl<'a> {
+  pub fn kind(&self) -> VarDeclKind {
+    self.inner.kind
+  }
+
+  pub fn declare(&self) -> bool {
+    self.inner.declare
+  }
 }
 
 impl<'a> Spanned for VarDecl<'a> {
@@ -18228,30 +18093,30 @@ impl<'a> CastableNode<'a> for VarDecl<'a> {
 fn get_view_for_var_decl<'a>(inner: &'a swc_ast::VarDecl, parent: Node<'a>, bump: &'a Bump) -> &'a VarDecl<'a> {
   let node = bump.alloc(VarDecl {
     inner,
-    span: inner.span(),
     parent,
     decls: Vec::with_capacity(inner.decls.len()),
-    kind: inner.kind,
-    declare: inner.declare,
   });
   let parent: Node<'a> = (&*node).into();
   node.decls.extend(inner.decls.iter().map(|value| get_view_for_var_declarator(value, parent.clone(), bump)));
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableVarDeclarator"))]
 pub struct VarDeclarator<'a> {
-  #[serde(skip)]
   pub parent: &'a VarDecl<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::VarDeclarator,
-  pub span: Span,
   pub name: Pat<'a>,
   /// Initialization expression.
   pub init: Option<Expr<'a>>,
+}
+
+impl<'a> VarDeclarator<'a> {
   /// Typescript only
-  pub definite: bool,
+  pub fn definite(&self) -> bool {
+    self.inner.definite
+  }
 }
 
 impl<'a> Spanned for VarDeclarator<'a> {
@@ -18306,11 +18171,9 @@ impl<'a> CastableNode<'a> for VarDeclarator<'a> {
 fn get_view_for_var_declarator<'a>(inner: &'a swc_ast::VarDeclarator, parent: Node<'a>, bump: &'a Bump) -> &'a VarDeclarator<'a> {
   let node = bump.alloc(VarDeclarator {
     inner,
-    span: inner.span(),
     parent: parent.expect::<VarDecl>(),
     name: unsafe { MaybeUninit::uninit().assume_init() },
     init: None,
-    definite: inner.definite,
   });
   let parent: Node<'a> = (&*node).into();
   node.name = get_view_for_pat(&inner.name, parent.clone(), bump);
@@ -18321,14 +18184,12 @@ fn get_view_for_var_declarator<'a>(inner: &'a swc_ast::VarDeclarator, parent: No
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableWhileStmt"))]
 pub struct WhileStmt<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::WhileStmt,
-  pub span: Span,
   pub test: Expr<'a>,
   pub body: Stmt<'a>,
 }
@@ -18383,7 +18244,6 @@ impl<'a> CastableNode<'a> for WhileStmt<'a> {
 fn get_view_for_while_stmt<'a>(inner: &'a swc_ast::WhileStmt, parent: Node<'a>, bump: &'a Bump) -> &'a WhileStmt<'a> {
   let node = bump.alloc(WhileStmt {
     inner,
-    span: inner.span(),
     parent,
     test: unsafe { MaybeUninit::uninit().assume_init() },
     body: unsafe { MaybeUninit::uninit().assume_init() },
@@ -18394,14 +18254,12 @@ fn get_view_for_while_stmt<'a>(inner: &'a swc_ast::WhileStmt, parent: Node<'a>, 
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableWithStmt"))]
 pub struct WithStmt<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::WithStmt,
-  pub span: Span,
   pub obj: Expr<'a>,
   pub body: Stmt<'a>,
 }
@@ -18456,7 +18314,6 @@ impl<'a> CastableNode<'a> for WithStmt<'a> {
 fn get_view_for_with_stmt<'a>(inner: &'a swc_ast::WithStmt, parent: Node<'a>, bump: &'a Bump) -> &'a WithStmt<'a> {
   let node = bump.alloc(WithStmt {
     inner,
-    span: inner.span(),
     parent,
     obj: unsafe { MaybeUninit::uninit().assume_init() },
     body: unsafe { MaybeUninit::uninit().assume_init() },
@@ -18467,16 +18324,19 @@ fn get_view_for_with_stmt<'a>(inner: &'a swc_ast::WithStmt, parent: Node<'a>, bu
   node
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase", tag = "nodeKind")]
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableYieldExpr"))]
 pub struct YieldExpr<'a> {
-  #[serde(skip)]
   pub parent: Node<'a>,
-  #[serde(skip)]
   pub inner: &'a swc_ast::YieldExpr,
-  pub span: Span,
   pub arg: Option<Expr<'a>>,
-  pub delegate: bool,
+}
+
+impl<'a> YieldExpr<'a> {
+  pub fn delegate(&self) -> bool {
+    self.inner.delegate
+  }
 }
 
 impl<'a> Spanned for YieldExpr<'a> {
@@ -18530,10 +18390,8 @@ impl<'a> CastableNode<'a> for YieldExpr<'a> {
 fn get_view_for_yield_expr<'a>(inner: &'a swc_ast::YieldExpr, parent: Node<'a>, bump: &'a Bump) -> &'a YieldExpr<'a> {
   let node = bump.alloc(YieldExpr {
     inner,
-    span: inner.span(),
     parent,
     arg: None,
-    delegate: inner.delegate,
   });
   let parent: Node<'a> = (&*node).into();
   node.arg = match &inner.arg {
