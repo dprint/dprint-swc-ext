@@ -5,6 +5,7 @@
     "end": 13,
     "ctxt": 0
   },
+  "shebang": null,
   "body": [
     {
       "nodeKind": "VarDecl",
@@ -13,6 +14,8 @@
         "end": 13,
         "ctxt": 0
       },
+      "kind": "let",
+      "declare": false,
       "decls": [
         {
           "nodeKind": "VarDeclarator",
@@ -21,6 +24,7 @@
             "end": 12,
             "ctxt": 0
           },
+          "definite": false,
           "name": {
             "nodeKind": "BindingIdent",
             "span": {
@@ -48,13 +52,9 @@
               "ctxt": 0
             },
             "value": 42.0
-          },
-          "definite": false
+          }
         }
-      ],
-      "kind": "let",
-      "declare": false
+      ]
     }
-  ],
-  "shebang": null
+  ]
 }

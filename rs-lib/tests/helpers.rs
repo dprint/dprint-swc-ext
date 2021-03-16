@@ -1,4 +1,4 @@
-use std::{fs, path::Path};
+use std::path::Path;
 use swc_common::{
   comments::SingleThreadedComments,
   errors::{DiagnosticBuilder, Emitter, Handler},
@@ -153,13 +153,13 @@ pub fn get_swc_script(
   .unwrap();
 }
 
+#[cfg(feature = "serialize")]
 pub fn run_serialize_test(file_text: &str, expected_json_path: impl AsRef<Path>) {
   let file_path = Path::new("test.ts");
   run_test_with_module(&file_path, file_text, |module| {
     let result = serde_json::to_string_pretty(&module).unwrap();
-    eprintln!("{}", &result);
-    let expected = fs::read_to_string(expected_json_path.as_ref()).unwrap();
-    assert_eq!(result, expected.trim());
+    let expected = std::fs::read_to_string(expected_json_path.as_ref()).unwrap();
+    pretty_assertions::assert_eq!(result, expected.trim());
   });
 }
 
