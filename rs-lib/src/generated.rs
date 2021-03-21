@@ -1,5 +1,5 @@
 // This code is code generated.
-// Run `deno run -A generation/main.ts` from the root directory to regenerate it.
+// Run `./scripts/generate.sh` from the root directory to regenerate it.
 use std::mem::{self, MaybeUninit};
 use bumpalo::Bump;
 use swc_common::{Span, Spanned};
@@ -7,6 +7,9 @@ pub use swc_ecmascript::ast::{self as swc_ast, Accessibility, AssignOp, BinaryOp
 use crate::comments::*;
 use crate::tokens::*;
 use crate::types::*;
+
+#[cfg(feature = "serialize")]
+use serde::Serialize;
 
 thread_local! {
   static LOCAL_BUMP_ALLOCATOR: std::cell::RefCell<Bump> = std::cell::RefCell::new(Bump::new());
@@ -1401,6 +1404,8 @@ impl std::fmt::Display for NodeKind {
 
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum BlockStmtOrExpr<'a> {
   BlockStmt(&'a BlockStmt<'a>),
   Expr(Expr<'a>),
@@ -1490,6 +1495,8 @@ fn get_view_for_block_stmt_or_expr<'a>(inner: &'a swc_ast::BlockStmtOrExpr, pare
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum ClassMember<'a> {
   Constructor(&'a Constructor<'a>),
   /// `es2015`
@@ -1626,6 +1633,8 @@ fn get_view_for_class_member<'a>(inner: &'a swc_ast::ClassMember, parent: Node<'
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum Decl<'a> {
   Class(&'a ClassDecl<'a>),
   Fn(&'a FnDecl<'a>),
@@ -1760,6 +1769,8 @@ fn get_view_for_decl<'a>(inner: &'a swc_ast::Decl, parent: Node<'a>, bump: &'a B
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum DefaultDecl<'a> {
   Class(&'a ClassExpr<'a>),
   Fn(&'a FnExpr<'a>),
@@ -1858,6 +1869,8 @@ fn get_view_for_default_decl<'a>(inner: &'a swc_ast::DefaultDecl, parent: Node<'
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum ExportSpecifier<'a> {
   Namespace(&'a ExportNamespaceSpecifier<'a>),
   Default(&'a ExportDefaultSpecifier<'a>),
@@ -1956,6 +1969,8 @@ fn get_view_for_export_specifier<'a>(inner: &'a swc_ast::ExportSpecifier, parent
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum Expr<'a> {
   This(&'a ThisExpr<'a>),
   Array(&'a ArrayLit<'a>),
@@ -2349,6 +2364,8 @@ fn get_view_for_expr<'a>(inner: &'a swc_ast::Expr, parent: Node<'a>, bump: &'a B
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum ExprOrSuper<'a> {
   Super(&'a Super<'a>),
   Expr(Expr<'a>),
@@ -2438,6 +2455,8 @@ fn get_view_for_expr_or_super<'a>(inner: &'a swc_ast::ExprOrSuper, parent: Node<
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum ImportSpecifier<'a> {
   Named(&'a ImportNamedSpecifier<'a>),
   Default(&'a ImportDefaultSpecifier<'a>),
@@ -2536,6 +2555,8 @@ fn get_view_for_import_specifier<'a>(inner: &'a swc_ast::ImportSpecifier, parent
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum JSXAttrName<'a> {
   Ident(&'a Ident<'a>),
   JSXNamespacedName(&'a JSXNamespacedName<'a>),
@@ -2625,6 +2646,8 @@ fn get_view_for_jsxattr_name<'a>(inner: &'a swc_ast::JSXAttrName, parent: Node<'
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum JSXAttrOrSpread<'a> {
   JSXAttr(&'a JSXAttr<'a>),
   SpreadElement(&'a SpreadElement<'a>),
@@ -2714,6 +2737,8 @@ fn get_view_for_jsxattr_or_spread<'a>(inner: &'a swc_ast::JSXAttrOrSpread, paren
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum JSXAttrValue<'a> {
   Lit(Lit<'a>),
   JSXExprContainer(&'a JSXExprContainer<'a>),
@@ -2821,6 +2846,8 @@ fn get_view_for_jsxattr_value<'a>(inner: &'a swc_ast::JSXAttrValue, parent: Node
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum JSXElementChild<'a> {
   JSXText(&'a JSXText<'a>),
   JSXExprContainer(&'a JSXExprContainer<'a>),
@@ -2937,6 +2964,8 @@ fn get_view_for_jsxelement_child<'a>(inner: &'a swc_ast::JSXElementChild, parent
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum JSXElementName<'a> {
   Ident(&'a Ident<'a>),
   JSXMemberExpr(&'a JSXMemberExpr<'a>),
@@ -3035,6 +3064,8 @@ fn get_view_for_jsxelement_name<'a>(inner: &'a swc_ast::JSXElementName, parent: 
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum JSXExpr<'a> {
   JSXEmptyExpr(&'a JSXEmptyExpr<'a>),
   Expr(Expr<'a>),
@@ -3125,6 +3156,8 @@ fn get_view_for_jsxexpr<'a>(inner: &'a swc_ast::JSXExpr, parent: Node<'a>, bump:
 
 /// Used for `obj` property of `JSXMemberExpr`.
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum JSXObject<'a> {
   JSXMemberExpr(&'a JSXMemberExpr<'a>),
   Ident(&'a Ident<'a>),
@@ -3214,6 +3247,8 @@ fn get_view_for_jsxobject<'a>(inner: &'a swc_ast::JSXObject, parent: Node<'a>, b
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum Lit<'a> {
   Str(&'a Str<'a>),
   Bool(&'a Bool<'a>),
@@ -3348,6 +3383,8 @@ fn get_view_for_lit<'a>(inner: &'a swc_ast::Lit, parent: Node<'a>, bump: &'a Bum
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum ModuleDecl<'a> {
   Import(&'a ImportDecl<'a>),
   ExportDecl(&'a ExportDecl<'a>),
@@ -3500,6 +3537,8 @@ fn get_view_for_module_decl<'a>(inner: &'a swc_ast::ModuleDecl, parent: Node<'a>
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum ModuleItem<'a> {
   ModuleDecl(ModuleDecl<'a>),
   Stmt(Stmt<'a>),
@@ -3589,6 +3628,8 @@ fn get_view_for_module_item<'a>(inner: &'a swc_ast::ModuleItem, parent: Node<'a>
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum ObjectPatProp<'a> {
   KeyValue(&'a KeyValuePatProp<'a>),
   Assign(&'a AssignPatProp<'a>),
@@ -3687,6 +3728,8 @@ fn get_view_for_object_pat_prop<'a>(inner: &'a swc_ast::ObjectPatProp, parent: N
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum ParamOrTsParamProp<'a> {
   TsParamProp(&'a TsParamProp<'a>),
   Param(&'a Param<'a>),
@@ -3776,6 +3819,8 @@ fn get_view_for_param_or_ts_param_prop<'a>(inner: &'a swc_ast::ParamOrTsParamPro
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum Pat<'a> {
   Ident(&'a BindingIdent<'a>),
   Array(&'a ArrayPat<'a>),
@@ -3911,6 +3956,8 @@ fn get_view_for_pat<'a>(inner: &'a swc_ast::Pat, parent: Node<'a>, bump: &'a Bum
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum PatOrExpr<'a> {
   Expr(Expr<'a>),
   Pat(Pat<'a>),
@@ -4000,6 +4047,8 @@ fn get_view_for_pat_or_expr<'a>(inner: &'a swc_ast::PatOrExpr, parent: Node<'a>,
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum Prop<'a> {
   /// `a` in `{ a, }`
   Shorthand(&'a Ident<'a>),
@@ -4128,6 +4177,8 @@ fn get_view_for_prop<'a>(inner: &'a swc_ast::Prop, parent: Node<'a>, bump: &'a B
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum PropName<'a> {
   Ident(&'a Ident<'a>),
   /// String literal.
@@ -4246,6 +4297,8 @@ fn get_view_for_prop_name<'a>(inner: &'a swc_ast::PropName, parent: Node<'a>, bu
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum PropOrSpread<'a> {
   /// Spread properties, e.g., `{a: 1, ...obj, b: 2}`.
   Spread(&'a SpreadElement<'a>),
@@ -4336,6 +4389,8 @@ fn get_view_for_prop_or_spread<'a>(inner: &'a swc_ast::PropOrSpread, parent: Nod
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum Stmt<'a> {
   Block(&'a BlockStmt<'a>),
   Empty(&'a EmptyStmt<'a>),
@@ -4579,6 +4634,8 @@ fn get_view_for_stmt<'a>(inner: &'a swc_ast::Stmt, parent: Node<'a>, bump: &'a B
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsEntityName<'a> {
   TsQualifiedName(&'a TsQualifiedName<'a>),
   Ident(&'a Ident<'a>),
@@ -4670,6 +4727,8 @@ fn get_view_for_ts_entity_name<'a>(inner: &'a swc_ast::TsEntityName, parent: Nod
 ///
 /// - Invalid: [Ident] with empty symbol.
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsEnumMemberId<'a> {
   Ident(&'a Ident<'a>),
   Str(&'a Str<'a>),
@@ -4759,6 +4818,8 @@ fn get_view_for_ts_enum_member_id<'a>(inner: &'a swc_ast::TsEnumMemberId, parent
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsFnOrConstructorType<'a> {
   TsFnType(&'a TsFnType<'a>),
   TsConstructorType(&'a TsConstructorType<'a>),
@@ -4848,6 +4909,8 @@ fn get_view_for_ts_fn_or_constructor_type<'a>(inner: &'a swc_ast::TsFnOrConstruc
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsFnParam<'a> {
   Ident(&'a BindingIdent<'a>),
   Array(&'a ArrayPat<'a>),
@@ -4955,6 +5018,8 @@ fn get_view_for_ts_fn_param<'a>(inner: &'a swc_ast::TsFnParam, parent: Node<'a>,
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsLit<'a> {
   Number(&'a Number<'a>),
   Str(&'a Str<'a>),
@@ -5071,6 +5136,8 @@ fn get_view_for_ts_lit<'a>(inner: &'a swc_ast::TsLit, parent: Node<'a>, bump: &'
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsModuleName<'a> {
   Ident(&'a Ident<'a>),
   Str(&'a Str<'a>),
@@ -5160,6 +5227,8 @@ fn get_view_for_ts_module_name<'a>(inner: &'a swc_ast::TsModuleName, parent: Nod
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsModuleRef<'a> {
   TsEntityName(TsEntityName<'a>),
   TsExternalModuleRef(&'a TsExternalModuleRef<'a>),
@@ -5251,6 +5320,8 @@ fn get_view_for_ts_module_ref<'a>(inner: &'a swc_ast::TsModuleRef, parent: Node<
 /// `namespace A.B { }` is a namespace named `A` with another TsNamespaceDecl as
 /// its body.
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsNamespaceBody<'a> {
   TsModuleBlock(&'a TsModuleBlock<'a>),
   TsNamespaceDecl(&'a TsNamespaceDecl<'a>),
@@ -5340,6 +5411,8 @@ fn get_view_for_ts_namespace_body<'a>(inner: &'a swc_ast::TsNamespaceBody, paren
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsParamPropParam<'a> {
   Ident(&'a BindingIdent<'a>),
   Assign(&'a AssignPat<'a>),
@@ -5429,6 +5502,8 @@ fn get_view_for_ts_param_prop_param<'a>(inner: &'a swc_ast::TsParamPropParam, pa
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsThisTypeOrIdent<'a> {
   TsThisType(&'a TsThisType<'a>),
   Ident(&'a Ident<'a>),
@@ -5518,6 +5593,8 @@ fn get_view_for_ts_this_type_or_ident<'a>(inner: &'a swc_ast::TsThisTypeOrIdent,
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsType<'a> {
   TsKeywordType(&'a TsKeywordType<'a>),
   TsThisType(&'a TsThisType<'a>),
@@ -5769,6 +5846,8 @@ fn get_view_for_ts_type<'a>(inner: &'a swc_ast::TsType, parent: Node<'a>, bump: 
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsTypeElement<'a> {
   TsCallSignatureDecl(&'a TsCallSignatureDecl<'a>),
   TsConstructSignatureDecl(&'a TsConstructSignatureDecl<'a>),
@@ -5885,6 +5964,8 @@ fn get_view_for_ts_type_element<'a>(inner: &'a swc_ast::TsTypeElement, parent: N
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsTypeQueryExpr<'a> {
   TsEntityName(TsEntityName<'a>),
   Import(&'a TsImportType<'a>),
@@ -5974,6 +6055,8 @@ fn get_view_for_ts_type_query_expr<'a>(inner: &'a swc_ast::TsTypeQueryExpr, pare
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum TsUnionOrIntersectionType<'a> {
   TsUnionType(&'a TsUnionType<'a>),
   TsIntersectionType(&'a TsIntersectionType<'a>),
@@ -6063,6 +6146,8 @@ fn get_view_for_ts_union_or_intersection_type<'a>(inner: &'a swc_ast::TsUnionOrI
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum VarDeclOrExpr<'a> {
   VarDecl(&'a VarDecl<'a>),
   Expr(Expr<'a>),
@@ -6152,6 +6237,8 @@ fn get_view_for_var_decl_or_expr<'a>(inner: &'a swc_ast::VarDeclOrExpr, parent: 
 }
 
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum VarDeclOrPat<'a> {
   VarDecl(&'a VarDecl<'a>),
   Pat(Pat<'a>),
@@ -6241,6 +6328,9 @@ fn get_view_for_var_decl_or_pat<'a>(inner: &'a swc_ast::VarDeclOrPat, parent: No
 }
 
 /// Array literal.
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableArrayLit"))]
 pub struct ArrayLit<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::ArrayLit,
@@ -6311,6 +6401,9 @@ fn get_view_for_array_lit<'a>(inner: &'a swc_ast::ArrayLit, parent: Node<'a>, bu
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableArrayPat"))]
 pub struct ArrayPat<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::ArrayPat,
@@ -6397,6 +6490,9 @@ fn get_view_for_array_pat<'a>(inner: &'a swc_ast::ArrayPat, parent: Node<'a>, bu
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableArrowExpr"))]
 pub struct ArrowExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::ArrowExpr,
@@ -6494,6 +6590,9 @@ fn get_view_for_arrow_expr<'a>(inner: &'a swc_ast::ArrowExpr, parent: Node<'a>, 
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableAssignExpr"))]
 pub struct AssignExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::AssignExpr,
@@ -6567,6 +6666,9 @@ fn get_view_for_assign_expr<'a>(inner: &'a swc_ast::AssignExpr, parent: Node<'a>
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableAssignPat"))]
 pub struct AssignPat<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::AssignPat,
@@ -6644,6 +6746,9 @@ fn get_view_for_assign_pat<'a>(inner: &'a swc_ast::AssignPat, parent: Node<'a>, 
 }
 
 /// `{key}` or `{key = value}`
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableAssignPatProp"))]
 pub struct AssignPatProp<'a> {
   pub parent: &'a ObjectPat<'a>,
   pub inner: &'a swc_ast::AssignPatProp,
@@ -6716,6 +6821,9 @@ fn get_view_for_assign_pat_prop<'a>(inner: &'a swc_ast::AssignPatProp, parent: N
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableAssignProp"))]
 pub struct AssignProp<'a> {
   pub parent: &'a ObjectLit<'a>,
   pub inner: &'a swc_ast::AssignProp,
@@ -6783,6 +6891,9 @@ fn get_view_for_assign_prop<'a>(inner: &'a swc_ast::AssignProp, parent: Node<'a>
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableAwaitExpr"))]
 pub struct AwaitExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::AwaitExpr,
@@ -6846,6 +6957,9 @@ fn get_view_for_await_expr<'a>(inner: &'a swc_ast::AwaitExpr, parent: Node<'a>, 
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableBigInt"))]
 pub struct BigInt<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::BigInt,
@@ -6909,6 +7023,9 @@ fn get_view_for_big_int<'a>(inner: &'a swc_ast::BigInt, parent: Node<'a>, bump: 
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableBinExpr"))]
 pub struct BinExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::BinExpr,
@@ -6983,6 +7100,9 @@ fn get_view_for_bin_expr<'a>(inner: &'a swc_ast::BinExpr, parent: Node<'a>, bump
 }
 
 /// Identifer used as a pattern.
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableBindingIdent"))]
 pub struct BindingIdent<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::BindingIdent,
@@ -7056,6 +7176,9 @@ fn get_view_for_binding_ident<'a>(inner: &'a swc_ast::BindingIdent, parent: Node
 }
 
 /// Use when only block statements are allowed.
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableBlockStmt"))]
 pub struct BlockStmt<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::BlockStmt,
@@ -7121,6 +7244,9 @@ fn get_view_for_block_stmt<'a>(inner: &'a swc_ast::BlockStmt, parent: Node<'a>, 
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableBool"))]
 pub struct Bool<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::Bool,
@@ -7184,6 +7310,9 @@ fn get_view_for_bool<'a>(inner: &'a swc_ast::Bool, parent: Node<'a>, bump: &'a B
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableBreakStmt"))]
 pub struct BreakStmt<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::BreakStmt,
@@ -7252,6 +7381,9 @@ fn get_view_for_break_stmt<'a>(inner: &'a swc_ast::BreakStmt, parent: Node<'a>, 
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableCallExpr"))]
 pub struct CallExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::CallExpr,
@@ -7330,6 +7462,9 @@ fn get_view_for_call_expr<'a>(inner: &'a swc_ast::CallExpr, parent: Node<'a>, bu
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableCatchClause"))]
 pub struct CatchClause<'a> {
   pub parent: &'a TryStmt<'a>,
   pub inner: &'a swc_ast::CatchClause,
@@ -7406,6 +7541,9 @@ fn get_view_for_catch_clause<'a>(inner: &'a swc_ast::CatchClause, parent: Node<'
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableClass"))]
 pub struct Class<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::Class,
@@ -7517,6 +7655,9 @@ fn get_view_for_class<'a>(inner: &'a swc_ast::Class, parent: Node<'a>, bump: &'a
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableClassDecl"))]
 pub struct ClassDecl<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::ClassDecl,
@@ -7591,6 +7732,9 @@ fn get_view_for_class_decl<'a>(inner: &'a swc_ast::ClassDecl, parent: Node<'a>, 
 }
 
 /// Class expression.
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableClassExpr"))]
 pub struct ClassExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::ClassExpr,
@@ -7663,6 +7807,9 @@ fn get_view_for_class_expr<'a>(inner: &'a swc_ast::ClassExpr, parent: Node<'a>, 
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableClassMethod"))]
 pub struct ClassMethod<'a> {
   pub parent: &'a Class<'a>,
   pub inner: &'a swc_ast::ClassMethod,
@@ -7754,6 +7901,9 @@ fn get_view_for_class_method<'a>(inner: &'a swc_ast::ClassMethod, parent: Node<'
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableClassProp"))]
 pub struct ClassProp<'a> {
   pub parent: &'a Class<'a>,
   pub inner: &'a swc_ast::ClassProp,
@@ -7877,6 +8027,9 @@ fn get_view_for_class_prop<'a>(inner: &'a swc_ast::ClassProp, parent: Node<'a>, 
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableComputedPropName"))]
 pub struct ComputedPropName<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::ComputedPropName,
@@ -7940,6 +8093,9 @@ fn get_view_for_computed_prop_name<'a>(inner: &'a swc_ast::ComputedPropName, par
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableCondExpr"))]
 pub struct CondExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::CondExpr,
@@ -8011,6 +8167,9 @@ fn get_view_for_cond_expr<'a>(inner: &'a swc_ast::CondExpr, parent: Node<'a>, bu
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableConstructor"))]
 pub struct Constructor<'a> {
   pub parent: &'a Class<'a>,
   pub inner: &'a swc_ast::Constructor,
@@ -8099,6 +8258,9 @@ fn get_view_for_constructor<'a>(inner: &'a swc_ast::Constructor, parent: Node<'a
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableContinueStmt"))]
 pub struct ContinueStmt<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::ContinueStmt,
@@ -8167,6 +8329,9 @@ fn get_view_for_continue_stmt<'a>(inner: &'a swc_ast::ContinueStmt, parent: Node
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableDebuggerStmt"))]
 pub struct DebuggerStmt<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::DebuggerStmt,
@@ -8224,6 +8389,9 @@ fn get_view_for_debugger_stmt<'a>(inner: &'a swc_ast::DebuggerStmt, parent: Node
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableDecorator"))]
 pub struct Decorator<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::Decorator,
@@ -8287,6 +8455,9 @@ fn get_view_for_decorator<'a>(inner: &'a swc_ast::Decorator, parent: Node<'a>, b
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableDoWhileStmt"))]
 pub struct DoWhileStmt<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::DoWhileStmt,
@@ -8354,6 +8525,9 @@ fn get_view_for_do_while_stmt<'a>(inner: &'a swc_ast::DoWhileStmt, parent: Node<
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableEmptyStmt"))]
 pub struct EmptyStmt<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::EmptyStmt,
@@ -8412,6 +8586,9 @@ fn get_view_for_empty_stmt<'a>(inner: &'a swc_ast::EmptyStmt, parent: Node<'a>, 
 }
 
 /// `export * from 'mod'`
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableExportAll"))]
 pub struct ExportAll<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::ExportAll,
@@ -8484,6 +8661,9 @@ fn get_view_for_export_all<'a>(inner: &'a swc_ast::ExportAll, parent: Node<'a>, 
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableExportDecl"))]
 pub struct ExportDecl<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::ExportDecl,
@@ -8547,6 +8727,9 @@ fn get_view_for_export_decl<'a>(inner: &'a swc_ast::ExportDecl, parent: Node<'a>
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableExportDefaultDecl"))]
 pub struct ExportDefaultDecl<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::ExportDefaultDecl,
@@ -8610,6 +8793,9 @@ fn get_view_for_export_default_decl<'a>(inner: &'a swc_ast::ExportDefaultDecl, p
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableExportDefaultExpr"))]
 pub struct ExportDefaultExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::ExportDefaultExpr,
@@ -8673,6 +8859,9 @@ fn get_view_for_export_default_expr<'a>(inner: &'a swc_ast::ExportDefaultExpr, p
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableExportDefaultSpecifier"))]
 pub struct ExportDefaultSpecifier<'a> {
   pub parent: &'a NamedExport<'a>,
   pub inner: &'a swc_ast::ExportDefaultSpecifier,
@@ -8736,6 +8925,9 @@ fn get_view_for_export_default_specifier<'a>(inner: &'a swc_ast::ExportDefaultSp
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableExportNamedSpecifier"))]
 pub struct ExportNamedSpecifier<'a> {
   pub parent: &'a NamedExport<'a>,
   pub inner: &'a swc_ast::ExportNamedSpecifier,
@@ -8811,6 +9003,9 @@ fn get_view_for_export_named_specifier<'a>(inner: &'a swc_ast::ExportNamedSpecif
 }
 
 /// `export * as foo from 'src';`
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableExportNamespaceSpecifier"))]
 pub struct ExportNamespaceSpecifier<'a> {
   pub parent: &'a NamedExport<'a>,
   pub inner: &'a swc_ast::ExportNamespaceSpecifier,
@@ -8874,6 +9069,9 @@ fn get_view_for_export_namespace_specifier<'a>(inner: &'a swc_ast::ExportNamespa
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableExprOrSpread"))]
 pub struct ExprOrSpread<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::ExprOrSpread,
@@ -8943,6 +9141,9 @@ fn get_view_for_expr_or_spread<'a>(inner: &'a swc_ast::ExprOrSpread, parent: Nod
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableExprStmt"))]
 pub struct ExprStmt<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::ExprStmt,
@@ -9006,6 +9207,9 @@ fn get_view_for_expr_stmt<'a>(inner: &'a swc_ast::ExprStmt, parent: Node<'a>, bu
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableFnDecl"))]
 pub struct FnDecl<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::FnDecl,
@@ -9080,6 +9284,9 @@ fn get_view_for_fn_decl<'a>(inner: &'a swc_ast::FnDecl, parent: Node<'a>, bump: 
 }
 
 /// Function expression.
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableFnExpr"))]
 pub struct FnExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::FnExpr,
@@ -9152,6 +9359,9 @@ fn get_view_for_fn_expr<'a>(inner: &'a swc_ast::FnExpr, parent: Node<'a>, bump: 
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableForInStmt"))]
 pub struct ForInStmt<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::ForInStmt,
@@ -9223,6 +9433,9 @@ fn get_view_for_for_in_stmt<'a>(inner: &'a swc_ast::ForInStmt, parent: Node<'a>,
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableForOfStmt"))]
 pub struct ForOfStmt<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::ForOfStmt,
@@ -9305,6 +9518,9 @@ fn get_view_for_for_of_stmt<'a>(inner: &'a swc_ast::ForOfStmt, parent: Node<'a>,
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableForStmt"))]
 pub struct ForStmt<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::ForStmt,
@@ -9396,6 +9612,9 @@ fn get_view_for_for_stmt<'a>(inner: &'a swc_ast::ForStmt, parent: Node<'a>, bump
 }
 
 /// Common parts of function and method.
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableFunction"))]
 pub struct Function<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::Function,
@@ -9506,6 +9725,9 @@ fn get_view_for_function<'a>(inner: &'a swc_ast::Function, parent: Node<'a>, bum
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableGetterProp"))]
 pub struct GetterProp<'a> {
   pub parent: &'a ObjectLit<'a>,
   pub inner: &'a swc_ast::GetterProp,
@@ -9588,6 +9810,9 @@ fn get_view_for_getter_prop<'a>(inner: &'a swc_ast::GetterProp, parent: Node<'a>
 }
 
 /// Ident with span.
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableIdent"))]
 pub struct Ident<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::Ident,
@@ -9656,6 +9881,9 @@ fn get_view_for_ident<'a>(inner: &'a swc_ast::Ident, parent: Node<'a>, bump: &'a
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableIfStmt"))]
 pub struct IfStmt<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::IfStmt,
@@ -9732,6 +9960,9 @@ fn get_view_for_if_stmt<'a>(inner: &'a swc_ast::IfStmt, parent: Node<'a>, bump: 
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableImportDecl"))]
 pub struct ImportDecl<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::ImportDecl,
@@ -9817,6 +10048,9 @@ fn get_view_for_import_decl<'a>(inner: &'a swc_ast::ImportDecl, parent: Node<'a>
 }
 
 /// e.g. `import foo from 'mod.js'`
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableImportDefaultSpecifier"))]
 pub struct ImportDefaultSpecifier<'a> {
   pub parent: &'a ImportDecl<'a>,
   pub inner: &'a swc_ast::ImportDefaultSpecifier,
@@ -9883,6 +10117,9 @@ fn get_view_for_import_default_specifier<'a>(inner: &'a swc_ast::ImportDefaultSp
 /// e.g. local = foo, imported = None `import { foo } from 'mod.js'`
 /// e.g. local = bar, imported = Some(foo) for `import { foo as bar } from
 /// 'mod.js'`
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableImportNamedSpecifier"))]
 pub struct ImportNamedSpecifier<'a> {
   pub parent: &'a ImportDecl<'a>,
   pub inner: &'a swc_ast::ImportNamedSpecifier,
@@ -9956,6 +10193,9 @@ fn get_view_for_import_named_specifier<'a>(inner: &'a swc_ast::ImportNamedSpecif
 }
 
 /// e.g. `import * as foo from 'mod.js'`.
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableImportStarAsSpecifier"))]
 pub struct ImportStarAsSpecifier<'a> {
   pub parent: &'a ImportDecl<'a>,
   pub inner: &'a swc_ast::ImportStarAsSpecifier,
@@ -10020,6 +10260,9 @@ fn get_view_for_import_star_as_specifier<'a>(inner: &'a swc_ast::ImportStarAsSpe
 }
 
 /// Represents a invalid node.
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableInvalid"))]
 pub struct Invalid<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::Invalid,
@@ -10077,6 +10320,9 @@ fn get_view_for_invalid<'a>(inner: &'a swc_ast::Invalid, parent: Node<'a>, bump:
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXAttr"))]
 pub struct JSXAttr<'a> {
   pub parent: &'a JSXOpeningElement<'a>,
   pub inner: &'a swc_ast::JSXAttr,
@@ -10150,6 +10396,9 @@ fn get_view_for_jsxattr<'a>(inner: &'a swc_ast::JSXAttr, parent: Node<'a>, bump:
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXClosingElement"))]
 pub struct JSXClosingElement<'a> {
   pub parent: &'a JSXElement<'a>,
   pub inner: &'a swc_ast::JSXClosingElement,
@@ -10213,6 +10462,9 @@ fn get_view_for_jsxclosing_element<'a>(inner: &'a swc_ast::JSXClosingElement, pa
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXClosingFragment"))]
 pub struct JSXClosingFragment<'a> {
   pub parent: &'a JSXFragment<'a>,
   pub inner: &'a swc_ast::JSXClosingFragment,
@@ -10270,6 +10522,9 @@ fn get_view_for_jsxclosing_fragment<'a>(inner: &'a swc_ast::JSXClosingFragment, 
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXElement"))]
 pub struct JSXElement<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::JSXElement,
@@ -10348,6 +10603,9 @@ fn get_view_for_jsxelement<'a>(inner: &'a swc_ast::JSXElement, parent: Node<'a>,
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXEmptyExpr"))]
 pub struct JSXEmptyExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::JSXEmptyExpr,
@@ -10405,6 +10663,9 @@ fn get_view_for_jsxempty_expr<'a>(inner: &'a swc_ast::JSXEmptyExpr, parent: Node
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXExprContainer"))]
 pub struct JSXExprContainer<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::JSXExprContainer,
@@ -10468,6 +10729,9 @@ fn get_view_for_jsxexpr_container<'a>(inner: &'a swc_ast::JSXExprContainer, pare
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXFragment"))]
 pub struct JSXFragment<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::JSXFragment,
@@ -10541,6 +10805,9 @@ fn get_view_for_jsxfragment<'a>(inner: &'a swc_ast::JSXFragment, parent: Node<'a
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXMemberExpr"))]
 pub struct JSXMemberExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::JSXMemberExpr,
@@ -10609,6 +10876,9 @@ fn get_view_for_jsxmember_expr<'a>(inner: &'a swc_ast::JSXMemberExpr, parent: No
 }
 
 /// XML-based namespace syntax:
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXNamespacedName"))]
 pub struct JSXNamespacedName<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::JSXNamespacedName,
@@ -10676,6 +10946,9 @@ fn get_view_for_jsxnamespaced_name<'a>(inner: &'a swc_ast::JSXNamespacedName, pa
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXOpeningElement"))]
 pub struct JSXOpeningElement<'a> {
   pub parent: &'a JSXElement<'a>,
   pub inner: &'a swc_ast::JSXOpeningElement,
@@ -10762,6 +11035,9 @@ fn get_view_for_jsxopening_element<'a>(inner: &'a swc_ast::JSXOpeningElement, pa
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXOpeningFragment"))]
 pub struct JSXOpeningFragment<'a> {
   pub parent: &'a JSXFragment<'a>,
   pub inner: &'a swc_ast::JSXOpeningFragment,
@@ -10819,6 +11095,9 @@ fn get_view_for_jsxopening_fragment<'a>(inner: &'a swc_ast::JSXOpeningFragment, 
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXSpreadChild"))]
 pub struct JSXSpreadChild<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::JSXSpreadChild,
@@ -10882,6 +11161,9 @@ fn get_view_for_jsxspread_child<'a>(inner: &'a swc_ast::JSXSpreadChild, parent: 
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableJSXText"))]
 pub struct JSXText<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::JSXText,
@@ -10950,6 +11232,9 @@ fn get_view_for_jsxtext<'a>(inner: &'a swc_ast::JSXText, parent: Node<'a>, bump:
 }
 
 /// `{key: value}`
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableKeyValuePatProp"))]
 pub struct KeyValuePatProp<'a> {
   pub parent: &'a ObjectPat<'a>,
   pub inner: &'a swc_ast::KeyValuePatProp,
@@ -11017,6 +11302,9 @@ fn get_view_for_key_value_pat_prop<'a>(inner: &'a swc_ast::KeyValuePatProp, pare
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableKeyValueProp"))]
 pub struct KeyValueProp<'a> {
   pub parent: &'a ObjectLit<'a>,
   pub inner: &'a swc_ast::KeyValueProp,
@@ -11084,6 +11372,9 @@ fn get_view_for_key_value_prop<'a>(inner: &'a swc_ast::KeyValueProp, parent: Nod
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableLabeledStmt"))]
 pub struct LabeledStmt<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::LabeledStmt,
@@ -11151,6 +11442,9 @@ fn get_view_for_labeled_stmt<'a>(inner: &'a swc_ast::LabeledStmt, parent: Node<'
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableMemberExpr"))]
 pub struct MemberExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::MemberExpr,
@@ -11224,6 +11518,9 @@ fn get_view_for_member_expr<'a>(inner: &'a swc_ast::MemberExpr, parent: Node<'a>
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableMetaPropExpr"))]
 pub struct MetaPropExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::MetaPropExpr,
@@ -11291,6 +11588,9 @@ fn get_view_for_meta_prop_expr<'a>(inner: &'a swc_ast::MetaPropExpr, parent: Nod
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableMethodProp"))]
 pub struct MethodProp<'a> {
   pub parent: &'a ObjectLit<'a>,
   pub inner: &'a swc_ast::MethodProp,
@@ -11358,6 +11658,9 @@ fn get_view_for_method_prop<'a>(inner: &'a swc_ast::MethodProp, parent: Node<'a>
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableModule"))]
 pub struct Module<'a> {
   pub source_file: Option<&'a swc_common::SourceFile>,
   pub tokens: Option<&'a TokenContainer<'a>>,
@@ -11442,6 +11745,9 @@ fn get_view_for_module<'a>(source_file_info: &'a ModuleInfo<'a>, bump: &'a Bump)
 
 /// `export { foo } from 'mod'`
 /// `export { foo as bar } from 'mod'`
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableNamedExport"))]
 pub struct NamedExport<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::NamedExport,
@@ -11531,6 +11837,9 @@ fn get_view_for_named_export<'a>(inner: &'a swc_ast::NamedExport, parent: Node<'
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableNewExpr"))]
 pub struct NewExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::NewExpr,
@@ -11614,6 +11923,9 @@ fn get_view_for_new_expr<'a>(inner: &'a swc_ast::NewExpr, parent: Node<'a>, bump
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableNull"))]
 pub struct Null<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::Null,
@@ -11671,6 +11983,9 @@ fn get_view_for_null<'a>(inner: &'a swc_ast::Null, parent: Node<'a>, bump: &'a B
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableNumber"))]
 pub struct Number<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::Number,
@@ -11738,6 +12053,9 @@ fn get_view_for_number<'a>(inner: &'a swc_ast::Number, parent: Node<'a>, bump: &
 }
 
 /// Object literal.
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableObjectLit"))]
 pub struct ObjectLit<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::ObjectLit,
@@ -11803,6 +12121,9 @@ fn get_view_for_object_lit<'a>(inner: &'a swc_ast::ObjectLit, parent: Node<'a>, 
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableObjectPat"))]
 pub struct ObjectPat<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::ObjectPat,
@@ -11884,6 +12205,9 @@ fn get_view_for_object_pat<'a>(inner: &'a swc_ast::ObjectPat, parent: Node<'a>, 
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableOptChainExpr"))]
 pub struct OptChainExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::OptChainExpr,
@@ -11953,6 +12277,9 @@ fn get_view_for_opt_chain_expr<'a>(inner: &'a swc_ast::OptChainExpr, parent: Nod
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableParam"))]
 pub struct Param<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::Param,
@@ -12022,6 +12349,9 @@ fn get_view_for_param<'a>(inner: &'a swc_ast::Param, parent: Node<'a>, bump: &'a
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableParenExpr"))]
 pub struct ParenExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::ParenExpr,
@@ -12085,6 +12415,9 @@ fn get_view_for_paren_expr<'a>(inner: &'a swc_ast::ParenExpr, parent: Node<'a>, 
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializablePrivateMethod"))]
 pub struct PrivateMethod<'a> {
   pub parent: &'a Class<'a>,
   pub inner: &'a swc_ast::PrivateMethod,
@@ -12176,6 +12509,9 @@ fn get_view_for_private_method<'a>(inner: &'a swc_ast::PrivateMethod, parent: No
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializablePrivateName"))]
 pub struct PrivateName<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::PrivateName,
@@ -12239,6 +12575,9 @@ fn get_view_for_private_name<'a>(inner: &'a swc_ast::PrivateName, parent: Node<'
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializablePrivateProp"))]
 pub struct PrivateProp<'a> {
   pub parent: &'a Class<'a>,
   pub inner: &'a swc_ast::PrivateProp,
@@ -12358,6 +12697,9 @@ fn get_view_for_private_prop<'a>(inner: &'a swc_ast::PrivateProp, parent: Node<'
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableRegex"))]
 pub struct Regex<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::Regex,
@@ -12426,6 +12768,9 @@ fn get_view_for_regex<'a>(inner: &'a swc_ast::Regex, parent: Node<'a>, bump: &'a
 }
 
 /// EsTree `RestElement`
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableRestPat"))]
 pub struct RestPat<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::RestPat,
@@ -12504,6 +12849,9 @@ fn get_view_for_rest_pat<'a>(inner: &'a swc_ast::RestPat, parent: Node<'a>, bump
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableReturnStmt"))]
 pub struct ReturnStmt<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::ReturnStmt,
@@ -12572,6 +12920,9 @@ fn get_view_for_return_stmt<'a>(inner: &'a swc_ast::ReturnStmt, parent: Node<'a>
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableScript"))]
 pub struct Script<'a> {
   pub source_file: Option<&'a swc_common::SourceFile>,
   pub tokens: Option<&'a TokenContainer<'a>>,
@@ -12654,6 +13005,9 @@ fn get_view_for_script<'a>(source_file_info: &'a ScriptInfo<'a>, bump: &'a Bump)
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableSeqExpr"))]
 pub struct SeqExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::SeqExpr,
@@ -12719,6 +13073,9 @@ fn get_view_for_seq_expr<'a>(inner: &'a swc_ast::SeqExpr, parent: Node<'a>, bump
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableSetterProp"))]
 pub struct SetterProp<'a> {
   pub parent: &'a ObjectLit<'a>,
   pub inner: &'a swc_ast::SetterProp,
@@ -12795,6 +13152,9 @@ fn get_view_for_setter_prop<'a>(inner: &'a swc_ast::SetterProp, parent: Node<'a>
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableSpreadElement"))]
 pub struct SpreadElement<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::SpreadElement,
@@ -12864,6 +13224,9 @@ fn get_view_for_spread_element<'a>(inner: &'a swc_ast::SpreadElement, parent: No
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableStr"))]
 pub struct Str<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::Str,
@@ -12936,6 +13299,9 @@ fn get_view_for_str<'a>(inner: &'a swc_ast::Str, parent: Node<'a>, bump: &'a Bum
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableSuper"))]
 pub struct Super<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::Super,
@@ -12993,6 +13359,9 @@ fn get_view_for_super<'a>(inner: &'a swc_ast::Super, parent: Node<'a>, bump: &'a
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableSwitchCase"))]
 pub struct SwitchCase<'a> {
   pub parent: &'a SwitchStmt<'a>,
   pub inner: &'a swc_ast::SwitchCase,
@@ -13068,6 +13437,9 @@ fn get_view_for_switch_case<'a>(inner: &'a swc_ast::SwitchCase, parent: Node<'a>
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableSwitchStmt"))]
 pub struct SwitchStmt<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::SwitchStmt,
@@ -13137,6 +13509,9 @@ fn get_view_for_switch_stmt<'a>(inner: &'a swc_ast::SwitchStmt, parent: Node<'a>
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTaggedTpl"))]
 pub struct TaggedTpl<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TaggedTpl,
@@ -13221,6 +13596,9 @@ fn get_view_for_tagged_tpl<'a>(inner: &'a swc_ast::TaggedTpl, parent: Node<'a>, 
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableThisExpr"))]
 pub struct ThisExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::ThisExpr,
@@ -13278,6 +13656,9 @@ fn get_view_for_this_expr<'a>(inner: &'a swc_ast::ThisExpr, parent: Node<'a>, bu
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableThrowStmt"))]
 pub struct ThrowStmt<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::ThrowStmt,
@@ -13341,6 +13722,9 @@ fn get_view_for_throw_stmt<'a>(inner: &'a swc_ast::ThrowStmt, parent: Node<'a>, 
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTpl"))]
 pub struct Tpl<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::Tpl,
@@ -13412,6 +13796,9 @@ fn get_view_for_tpl<'a>(inner: &'a swc_ast::Tpl, parent: Node<'a>, bump: &'a Bum
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTplElement"))]
 pub struct TplElement<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TplElement,
@@ -13490,6 +13877,9 @@ fn get_view_for_tpl_element<'a>(inner: &'a swc_ast::TplElement, parent: Node<'a>
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTryStmt"))]
 pub struct TryStmt<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TryStmt,
@@ -13571,6 +13961,9 @@ fn get_view_for_try_stmt<'a>(inner: &'a swc_ast::TryStmt, parent: Node<'a>, bump
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsArrayType"))]
 pub struct TsArrayType<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsArrayType,
@@ -13634,6 +14027,9 @@ fn get_view_for_ts_array_type<'a>(inner: &'a swc_ast::TsArrayType, parent: Node<
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsAsExpr"))]
 pub struct TsAsExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsAsExpr,
@@ -13701,6 +14097,9 @@ fn get_view_for_ts_as_expr<'a>(inner: &'a swc_ast::TsAsExpr, parent: Node<'a>, b
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsCallSignatureDecl"))]
 pub struct TsCallSignatureDecl<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsCallSignatureDecl,
@@ -13784,6 +14183,9 @@ fn get_view_for_ts_call_signature_decl<'a>(inner: &'a swc_ast::TsCallSignatureDe
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsConditionalType"))]
 pub struct TsConditionalType<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsConditionalType,
@@ -13859,6 +14261,9 @@ fn get_view_for_ts_conditional_type<'a>(inner: &'a swc_ast::TsConditionalType, p
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsConstAssertion"))]
 pub struct TsConstAssertion<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsConstAssertion,
@@ -13922,6 +14327,9 @@ fn get_view_for_ts_const_assertion<'a>(inner: &'a swc_ast::TsConstAssertion, par
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsConstructSignatureDecl"))]
 pub struct TsConstructSignatureDecl<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsConstructSignatureDecl,
@@ -14005,6 +14413,9 @@ fn get_view_for_ts_construct_signature_decl<'a>(inner: &'a swc_ast::TsConstructS
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsConstructorType"))]
 pub struct TsConstructorType<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsConstructorType,
@@ -14089,6 +14500,9 @@ fn get_view_for_ts_constructor_type<'a>(inner: &'a swc_ast::TsConstructorType, p
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsEnumDecl"))]
 pub struct TsEnumDecl<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsEnumDecl,
@@ -14168,6 +14582,9 @@ fn get_view_for_ts_enum_decl<'a>(inner: &'a swc_ast::TsEnumDecl, parent: Node<'a
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsEnumMember"))]
 pub struct TsEnumMember<'a> {
   pub parent: &'a TsEnumDecl<'a>,
   pub inner: &'a swc_ast::TsEnumMember,
@@ -14243,6 +14660,9 @@ fn get_view_for_ts_enum_member<'a>(inner: &'a swc_ast::TsEnumMember, parent: Nod
 /// TypeScript's own parser uses ExportAssignment for both `export default` and
 /// `export =`. But for @babel/parser, `export default` is an ExportDefaultDecl,
 /// so a TsExportAssignment is always `export =`.
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsExportAssignment"))]
 pub struct TsExportAssignment<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsExportAssignment,
@@ -14306,6 +14726,9 @@ fn get_view_for_ts_export_assignment<'a>(inner: &'a swc_ast::TsExportAssignment,
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsExprWithTypeArgs"))]
 pub struct TsExprWithTypeArgs<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsExprWithTypeArgs,
@@ -14378,6 +14801,9 @@ fn get_view_for_ts_expr_with_type_args<'a>(inner: &'a swc_ast::TsExprWithTypeArg
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsExternalModuleRef"))]
 pub struct TsExternalModuleRef<'a> {
   pub parent: &'a TsImportEqualsDecl<'a>,
   pub inner: &'a swc_ast::TsExternalModuleRef,
@@ -14441,6 +14867,9 @@ fn get_view_for_ts_external_module_ref<'a>(inner: &'a swc_ast::TsExternalModuleR
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsFnType"))]
 pub struct TsFnType<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsFnType,
@@ -14519,6 +14948,9 @@ fn get_view_for_ts_fn_type<'a>(inner: &'a swc_ast::TsFnType, parent: Node<'a>, b
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsImportEqualsDecl"))]
 pub struct TsImportEqualsDecl<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsImportEqualsDecl,
@@ -14596,6 +15028,9 @@ fn get_view_for_ts_import_equals_decl<'a>(inner: &'a swc_ast::TsImportEqualsDecl
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsImportType"))]
 pub struct TsImportType<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsImportType,
@@ -14677,6 +15112,9 @@ fn get_view_for_ts_import_type<'a>(inner: &'a swc_ast::TsImportType, parent: Nod
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsIndexSignature"))]
 pub struct TsIndexSignature<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsIndexSignature,
@@ -14757,6 +15195,9 @@ fn get_view_for_ts_index_signature<'a>(inner: &'a swc_ast::TsIndexSignature, par
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsIndexedAccessType"))]
 pub struct TsIndexedAccessType<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsIndexedAccessType,
@@ -14830,6 +15271,9 @@ fn get_view_for_ts_indexed_access_type<'a>(inner: &'a swc_ast::TsIndexedAccessTy
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsInferType"))]
 pub struct TsInferType<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsInferType,
@@ -14893,6 +15337,9 @@ fn get_view_for_ts_infer_type<'a>(inner: &'a swc_ast::TsInferType, parent: Node<
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsInterfaceBody"))]
 pub struct TsInterfaceBody<'a> {
   pub parent: &'a TsInterfaceDecl<'a>,
   pub inner: &'a swc_ast::TsInterfaceBody,
@@ -14958,6 +15405,9 @@ fn get_view_for_ts_interface_body<'a>(inner: &'a swc_ast::TsInterfaceBody, paren
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsInterfaceDecl"))]
 pub struct TsInterfaceDecl<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsInterfaceDecl,
@@ -15046,6 +15496,9 @@ fn get_view_for_ts_interface_decl<'a>(inner: &'a swc_ast::TsInterfaceDecl, paren
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsIntersectionType"))]
 pub struct TsIntersectionType<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsIntersectionType,
@@ -15111,6 +15564,9 @@ fn get_view_for_ts_intersection_type<'a>(inner: &'a swc_ast::TsIntersectionType,
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsKeywordType"))]
 pub struct TsKeywordType<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsKeywordType,
@@ -15174,6 +15630,9 @@ fn get_view_for_ts_keyword_type<'a>(inner: &'a swc_ast::TsKeywordType, parent: N
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsLitType"))]
 pub struct TsLitType<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsLitType,
@@ -15237,6 +15696,9 @@ fn get_view_for_ts_lit_type<'a>(inner: &'a swc_ast::TsLitType, parent: Node<'a>,
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsMappedType"))]
 pub struct TsMappedType<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsMappedType,
@@ -15328,6 +15790,9 @@ fn get_view_for_ts_mapped_type<'a>(inner: &'a swc_ast::TsMappedType, parent: Nod
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsMethodSignature"))]
 pub struct TsMethodSignature<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsMethodSignature,
@@ -15429,6 +15894,9 @@ fn get_view_for_ts_method_signature<'a>(inner: &'a swc_ast::TsMethodSignature, p
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsModuleBlock"))]
 pub struct TsModuleBlock<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsModuleBlock,
@@ -15494,6 +15962,9 @@ fn get_view_for_ts_module_block<'a>(inner: &'a swc_ast::TsModuleBlock, parent: N
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsModuleDecl"))]
 pub struct TsModuleDecl<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsModuleDecl,
@@ -15577,6 +16048,9 @@ fn get_view_for_ts_module_decl<'a>(inner: &'a swc_ast::TsModuleDecl, parent: Nod
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsNamespaceDecl"))]
 pub struct TsNamespaceDecl<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsNamespaceDecl,
@@ -15655,6 +16129,9 @@ fn get_view_for_ts_namespace_decl<'a>(inner: &'a swc_ast::TsNamespaceDecl, paren
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsNamespaceExportDecl"))]
 pub struct TsNamespaceExportDecl<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsNamespaceExportDecl,
@@ -15718,6 +16195,9 @@ fn get_view_for_ts_namespace_export_decl<'a>(inner: &'a swc_ast::TsNamespaceExpo
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsNonNullExpr"))]
 pub struct TsNonNullExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsNonNullExpr,
@@ -15781,6 +16261,9 @@ fn get_view_for_ts_non_null_expr<'a>(inner: &'a swc_ast::TsNonNullExpr, parent: 
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsOptionalType"))]
 pub struct TsOptionalType<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsOptionalType,
@@ -15844,6 +16327,9 @@ fn get_view_for_ts_optional_type<'a>(inner: &'a swc_ast::TsOptionalType, parent:
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsParamProp"))]
 pub struct TsParamProp<'a> {
   pub parent: &'a Constructor<'a>,
   pub inner: &'a swc_ast::TsParamProp,
@@ -15924,6 +16410,9 @@ fn get_view_for_ts_param_prop<'a>(inner: &'a swc_ast::TsParamProp, parent: Node<
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsParenthesizedType"))]
 pub struct TsParenthesizedType<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsParenthesizedType,
@@ -15987,6 +16476,9 @@ fn get_view_for_ts_parenthesized_type<'a>(inner: &'a swc_ast::TsParenthesizedTyp
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsPropertySignature"))]
 pub struct TsPropertySignature<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsPropertySignature,
@@ -16097,6 +16589,9 @@ fn get_view_for_ts_property_signature<'a>(inner: &'a swc_ast::TsPropertySignatur
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsQualifiedName"))]
 pub struct TsQualifiedName<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsQualifiedName,
@@ -16164,6 +16659,9 @@ fn get_view_for_ts_qualified_name<'a>(inner: &'a swc_ast::TsQualifiedName, paren
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsRestType"))]
 pub struct TsRestType<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsRestType,
@@ -16227,6 +16725,9 @@ fn get_view_for_ts_rest_type<'a>(inner: &'a swc_ast::TsRestType, parent: Node<'a
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsThisType"))]
 pub struct TsThisType<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsThisType,
@@ -16284,6 +16785,9 @@ fn get_view_for_ts_this_type<'a>(inner: &'a swc_ast::TsThisType, parent: Node<'a
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTplLitType"))]
 pub struct TsTplLitType<'a> {
   pub parent: &'a TsLitType<'a>,
   pub inner: &'a swc_ast::TsTplLitType,
@@ -16355,6 +16859,9 @@ fn get_view_for_ts_tpl_lit_type<'a>(inner: &'a swc_ast::TsTplLitType, parent: No
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTupleElement"))]
 pub struct TsTupleElement<'a> {
   pub parent: &'a TsTupleType<'a>,
   pub inner: &'a swc_ast::TsTupleElement,
@@ -16428,6 +16935,9 @@ fn get_view_for_ts_tuple_element<'a>(inner: &'a swc_ast::TsTupleElement, parent:
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTupleType"))]
 pub struct TsTupleType<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsTupleType,
@@ -16493,6 +17003,9 @@ fn get_view_for_ts_tuple_type<'a>(inner: &'a swc_ast::TsTupleType, parent: Node<
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTypeAliasDecl"))]
 pub struct TsTypeAliasDecl<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsTypeAliasDecl,
@@ -16575,6 +17088,9 @@ fn get_view_for_ts_type_alias_decl<'a>(inner: &'a swc_ast::TsTypeAliasDecl, pare
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTypeAnn"))]
 pub struct TsTypeAnn<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsTypeAnn,
@@ -16638,6 +17154,9 @@ fn get_view_for_ts_type_ann<'a>(inner: &'a swc_ast::TsTypeAnn, parent: Node<'a>,
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTypeAssertion"))]
 pub struct TsTypeAssertion<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsTypeAssertion,
@@ -16705,6 +17224,9 @@ fn get_view_for_ts_type_assertion<'a>(inner: &'a swc_ast::TsTypeAssertion, paren
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTypeLit"))]
 pub struct TsTypeLit<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsTypeLit,
@@ -16770,6 +17292,9 @@ fn get_view_for_ts_type_lit<'a>(inner: &'a swc_ast::TsTypeLit, parent: Node<'a>,
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTypeOperator"))]
 pub struct TsTypeOperator<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsTypeOperator,
@@ -16839,6 +17364,9 @@ fn get_view_for_ts_type_operator<'a>(inner: &'a swc_ast::TsTypeOperator, parent:
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTypeParam"))]
 pub struct TsTypeParam<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsTypeParam,
@@ -16920,6 +17448,9 @@ fn get_view_for_ts_type_param<'a>(inner: &'a swc_ast::TsTypeParam, parent: Node<
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTypeParamDecl"))]
 pub struct TsTypeParamDecl<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsTypeParamDecl,
@@ -16985,6 +17516,9 @@ fn get_view_for_ts_type_param_decl<'a>(inner: &'a swc_ast::TsTypeParamDecl, pare
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTypeParamInstantiation"))]
 pub struct TsTypeParamInstantiation<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsTypeParamInstantiation,
@@ -17050,6 +17584,9 @@ fn get_view_for_ts_type_param_instantiation<'a>(inner: &'a swc_ast::TsTypeParamI
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTypePredicate"))]
 pub struct TsTypePredicate<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsTypePredicate,
@@ -17129,6 +17666,9 @@ fn get_view_for_ts_type_predicate<'a>(inner: &'a swc_ast::TsTypePredicate, paren
 }
 
 /// `typeof` operator
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTypeQuery"))]
 pub struct TsTypeQuery<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsTypeQuery,
@@ -17192,6 +17732,9 @@ fn get_view_for_ts_type_query<'a>(inner: &'a swc_ast::TsTypeQuery, parent: Node<
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsTypeRef"))]
 pub struct TsTypeRef<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsTypeRef,
@@ -17264,6 +17807,9 @@ fn get_view_for_ts_type_ref<'a>(inner: &'a swc_ast::TsTypeRef, parent: Node<'a>,
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableTsUnionType"))]
 pub struct TsUnionType<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TsUnionType,
@@ -17329,6 +17875,9 @@ fn get_view_for_ts_union_type<'a>(inner: &'a swc_ast::TsUnionType, parent: Node<
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableUnaryExpr"))]
 pub struct UnaryExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::UnaryExpr,
@@ -17398,6 +17947,9 @@ fn get_view_for_unary_expr<'a>(inner: &'a swc_ast::UnaryExpr, parent: Node<'a>, 
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableUpdateExpr"))]
 pub struct UpdateExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::UpdateExpr,
@@ -17471,6 +18023,9 @@ fn get_view_for_update_expr<'a>(inner: &'a swc_ast::UpdateExpr, parent: Node<'a>
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableVarDecl"))]
 pub struct VarDecl<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::VarDecl,
@@ -17546,6 +18101,9 @@ fn get_view_for_var_decl<'a>(inner: &'a swc_ast::VarDecl, parent: Node<'a>, bump
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableVarDeclarator"))]
 pub struct VarDeclarator<'a> {
   pub parent: &'a VarDecl<'a>,
   pub inner: &'a swc_ast::VarDeclarator,
@@ -17626,6 +18184,9 @@ fn get_view_for_var_declarator<'a>(inner: &'a swc_ast::VarDeclarator, parent: No
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableWhileStmt"))]
 pub struct WhileStmt<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::WhileStmt,
@@ -17693,6 +18254,9 @@ fn get_view_for_while_stmt<'a>(inner: &'a swc_ast::WhileStmt, parent: Node<'a>, 
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableWithStmt"))]
 pub struct WithStmt<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::WithStmt,
@@ -17760,6 +18324,9 @@ fn get_view_for_with_stmt<'a>(inner: &'a swc_ast::WithStmt, parent: Node<'a>, bu
   node
 }
 
+#[derive(Clone)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::SerializableYieldExpr"))]
 pub struct YieldExpr<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::YieldExpr,
