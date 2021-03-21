@@ -3,29 +3,29 @@ export interface AnalysisResult {
     enums: EnumDefinition[];
 }
 
-export interface StructDefinition {
+export interface NamedDefinition {
     name: string;
+}
+
+export interface StructDefinition extends NamedDefinition {
     docs: string | undefined;
     fields: StructFieldDefinition[];
     parents: StructDefinition[];
 }
 
-export interface EnumDefinition {
-    name: string;
+export interface EnumDefinition extends NamedDefinition {
     docs: string | undefined;
     /** If it only contains "plain" variants, meaning no tuple or struct variants. */
     isPlain: boolean;
     variants: EnumVariantDefinition[];
 }
 
-export interface EnumVariantDefinition {
-    name: string;
+export interface EnumVariantDefinition extends NamedDefinition {
     docs: string | undefined;
     tuple_args: TypeDefinition[] | undefined;
 }
 
-export interface StructFieldDefinition {
-    name: string;
+export interface StructFieldDefinition extends NamedDefinition {
     docs: string;
     type: TypeDefinition;
 }
@@ -37,9 +37,8 @@ export interface PrimitiveTypeDefinition {
     text: string;
 }
 
-export interface TypeReferenceDefinition {
+export interface TypeReferenceDefinition extends NamedDefinition {
     kind: "reference";
-    name: string;
     path: string[];
     generic_args: TypeDefinition[];
 }

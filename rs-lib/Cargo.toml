@@ -1,6 +1,6 @@
 [package]
 name = "dprint-swc-ecma-ast-view"
-version = "0.11.0"
+version = "0.12.0"
 authors = ["David Sherret <dsherret@gmail.com>"]
 description = "View of the swc AST that's easier to navigate."
 edition = "2018"
@@ -13,12 +13,12 @@ default = []
 serialize = ["serde"]
 
 [dependencies]
-swc_common = "0.10.12"
+swc_common = "0.10.13"
 swc_atoms = "0.2.5"
-swc_ecmascript = { version = "0.25.0", features = ["parser"] }
+swc_ecmascript = { version = "0.27.0", features = ["parser"] }
 num-bigint = "0.2"
-bumpalo = "3.4.0"
-fnv = "1.0.3"
+bumpalo = "3.6.1"
+fnv = "1.0.7"
 serde = { version = "1.0.124", features = ["derive"], optional = true }
 
 [dev-dependencies]

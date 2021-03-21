@@ -1,13 +1,22 @@
-import type { AnalysisResult, EnumDefinition, EnumVariantDefinition, StructDefinition, StructFieldDefinition, TypeDefinition } from "./analysis_types.ts";
+import type {
+    AnalysisResult,
+    EnumDefinition,
+    EnumVariantDefinition,
+    NamedDefinition,
+    StructDefinition,
+    StructFieldDefinition,
+    TypeDefinition,
+} from "./analysis_types.ts";
 import type { Crate, EnumInner, EnumVariantInner, Item, ItemSummary, ResolvedPathTypeInner, StructInner, TypeInner } from "./doc_types.ts";
 
 export function analyze(): AnalysisResult {
     const file: Crate = JSON.parse(Deno.readTextFileSync("swc_ecma_ast.json"));
     const structs = Array.from(getStructs());
     const enums = Array.from(getEnums());
+    const compareFn = (a: NamedDefinition, b: NamedDefinition) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
 
-    structs.sort((a, b) => a.name.localeCompare(b.name));
-    enums.sort((a, b) => a.name.localeCompare(b.name));
+    structs.sort(compareFn);
+    enums.sort(compareFn);
 
     fillStructParents({ structs, enums });
 
