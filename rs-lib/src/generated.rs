@@ -24,7 +24,7 @@ pub fn with_ast_view<'a, T>(info: ProgramInfo, with_view: impl FnOnce(Program<'a
         tokens: info.tokens,
         comments: info.comments,
       }, |module| with_view(Program::Module(module)))
-    },
+    }
     swc_ast::Program::Script(script) => {
       with_ast_view_for_script(ScriptInfo {
         script,
@@ -32,7 +32,7 @@ pub fn with_ast_view<'a, T>(info: ProgramInfo, with_view: impl FnOnce(Program<'a
         tokens: info.tokens,
         comments: info.comments,
       }, |script| with_view(Program::Script(script)))
-    },
+    }
   }
 }
 
@@ -1401,7 +1401,6 @@ impl std::fmt::Display for NodeKind {
     })
   }
 }
-
 
 #[derive(Copy, Clone)]
 #[cfg_attr(feature = "serialize", derive(Serialize))]
@@ -6382,6 +6381,7 @@ impl<'a> CastableNode<'a> for ArrayLit<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ArrayLit
   }
@@ -6466,6 +6466,7 @@ impl<'a> CastableNode<'a> for ArrayPat<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ArrayPat
   }
@@ -6562,6 +6563,7 @@ impl<'a> CastableNode<'a> for ArrowExpr<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ArrowExpr
   }
@@ -6648,6 +6650,7 @@ impl<'a> CastableNode<'a> for AssignExpr<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::AssignExpr
   }
@@ -6722,6 +6725,7 @@ impl<'a> CastableNode<'a> for AssignPat<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::AssignPat
   }
@@ -6800,6 +6804,7 @@ impl<'a> CastableNode<'a> for AssignPatProp<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::AssignPatProp
   }
@@ -6873,6 +6878,7 @@ impl<'a> CastableNode<'a> for AssignProp<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::AssignProp
   }
@@ -6941,6 +6947,7 @@ impl<'a> CastableNode<'a> for AwaitExpr<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::AwaitExpr
   }
@@ -7010,6 +7017,7 @@ impl<'a> CastableNode<'a> for BigInt<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::BigInt
   }
@@ -7081,6 +7089,7 @@ impl<'a> CastableNode<'a> for BinExpr<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::BinExpr
   }
@@ -7154,6 +7163,7 @@ impl<'a> CastableNode<'a> for BindingIdent<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::BindingIdent
   }
@@ -7228,6 +7238,7 @@ impl<'a> CastableNode<'a> for BlockStmt<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::BlockStmt
   }
@@ -7297,6 +7308,7 @@ impl<'a> CastableNode<'a> for Bool<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::Bool
   }
@@ -7362,6 +7374,7 @@ impl<'a> CastableNode<'a> for BreakStmt<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::BreakStmt
   }
@@ -7439,6 +7452,7 @@ impl<'a> CastableNode<'a> for CallExpr<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::CallExpr
   }
@@ -7520,6 +7534,7 @@ impl<'a> CastableNode<'a> for CatchClause<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::CatchClause
   }
@@ -7620,6 +7635,7 @@ impl<'a> CastableNode<'a> for Class<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::Class
   }
@@ -7713,6 +7729,7 @@ impl<'a> CastableNode<'a> for ClassDecl<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ClassDecl
   }
@@ -7786,6 +7803,7 @@ impl<'a> CastableNode<'a> for ClassExpr<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ClassExpr
   }
@@ -7883,6 +7901,7 @@ impl<'a> CastableNode<'a> for ClassMethod<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ClassMethod
   }
@@ -7999,6 +8018,7 @@ impl<'a> CastableNode<'a> for ClassProp<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ClassProp
   }
@@ -8077,6 +8097,7 @@ impl<'a> CastableNode<'a> for ComputedPropName<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ComputedPropName
   }
@@ -8147,6 +8168,7 @@ impl<'a> CastableNode<'a> for CondExpr<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::CondExpr
   }
@@ -8235,6 +8257,7 @@ impl<'a> CastableNode<'a> for Constructor<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::Constructor
   }
@@ -8310,6 +8333,7 @@ impl<'a> CastableNode<'a> for ContinueStmt<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ContinueStmt
   }
@@ -8376,6 +8400,7 @@ impl<'a> CastableNode<'a> for DebuggerStmt<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::DebuggerStmt
   }
@@ -8439,6 +8464,7 @@ impl<'a> CastableNode<'a> for Decorator<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::Decorator
   }
@@ -8507,6 +8533,7 @@ impl<'a> CastableNode<'a> for DoWhileStmt<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::DoWhileStmt
   }
@@ -8572,6 +8599,7 @@ impl<'a> CastableNode<'a> for EmptyStmt<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::EmptyStmt
   }
@@ -8640,6 +8668,7 @@ impl<'a> CastableNode<'a> for ExportAll<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ExportAll
   }
@@ -8711,6 +8740,7 @@ impl<'a> CastableNode<'a> for ExportDecl<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ExportDecl
   }
@@ -8777,6 +8807,7 @@ impl<'a> CastableNode<'a> for ExportDefaultDecl<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ExportDefaultDecl
   }
@@ -8843,6 +8874,7 @@ impl<'a> CastableNode<'a> for ExportDefaultExpr<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ExportDefaultExpr
   }
@@ -8909,6 +8941,7 @@ impl<'a> CastableNode<'a> for ExportDefaultSpecifier<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ExportDefaultSpecifier
   }
@@ -8981,6 +9014,7 @@ impl<'a> CastableNode<'a> for ExportNamedSpecifier<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ExportNamedSpecifier
   }
@@ -9053,6 +9087,7 @@ impl<'a> CastableNode<'a> for ExportNamespaceSpecifier<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ExportNamespaceSpecifier
   }
@@ -9125,6 +9160,7 @@ impl<'a> CastableNode<'a> for ExprOrSpread<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ExprOrSpread
   }
@@ -9191,6 +9227,7 @@ impl<'a> CastableNode<'a> for ExprStmt<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ExprStmt
   }
@@ -9265,6 +9302,7 @@ impl<'a> CastableNode<'a> for FnDecl<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::FnDecl
   }
@@ -9338,6 +9376,7 @@ impl<'a> CastableNode<'a> for FnExpr<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::FnExpr
   }
@@ -9413,6 +9452,7 @@ impl<'a> CastableNode<'a> for ForInStmt<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ForInStmt
   }
@@ -9498,6 +9538,7 @@ impl<'a> CastableNode<'a> for ForOfStmt<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ForOfStmt
   }
@@ -9580,6 +9621,7 @@ impl<'a> CastableNode<'a> for ForStmt<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ForStmt
   }
@@ -9692,6 +9734,7 @@ impl<'a> CastableNode<'a> for Function<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::Function
   }
@@ -9783,6 +9826,7 @@ impl<'a> CastableNode<'a> for GetterProp<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::GetterProp
   }
@@ -9868,6 +9912,7 @@ impl<'a> CastableNode<'a> for Ident<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::Ident
   }
@@ -9937,6 +9982,7 @@ impl<'a> CastableNode<'a> for IfStmt<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::IfStmt
   }
@@ -10024,6 +10070,7 @@ impl<'a> CastableNode<'a> for ImportDecl<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ImportDecl
   }
@@ -10098,6 +10145,7 @@ impl<'a> CastableNode<'a> for ImportDefaultSpecifier<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ImportDefaultSpecifier
   }
@@ -10171,6 +10219,7 @@ impl<'a> CastableNode<'a> for ImportNamedSpecifier<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ImportNamedSpecifier
   }
@@ -10243,6 +10292,7 @@ impl<'a> CastableNode<'a> for ImportStarAsSpecifier<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ImportStarAsSpecifier
   }
@@ -10307,6 +10357,7 @@ impl<'a> CastableNode<'a> for Invalid<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::Invalid
   }
@@ -10375,6 +10426,7 @@ impl<'a> CastableNode<'a> for JSXAttr<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::JSXAttr
   }
@@ -10446,6 +10498,7 @@ impl<'a> CastableNode<'a> for JSXClosingElement<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::JSXClosingElement
   }
@@ -10509,6 +10562,7 @@ impl<'a> CastableNode<'a> for JSXClosingFragment<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::JSXClosingFragment
   }
@@ -10580,6 +10634,7 @@ impl<'a> CastableNode<'a> for JSXElement<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::JSXElement
   }
@@ -10650,6 +10705,7 @@ impl<'a> CastableNode<'a> for JSXEmptyExpr<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::JSXEmptyExpr
   }
@@ -10713,6 +10769,7 @@ impl<'a> CastableNode<'a> for JSXExprContainer<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::JSXExprContainer
   }
@@ -10785,6 +10842,7 @@ impl<'a> CastableNode<'a> for JSXFragment<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::JSXFragment
   }
@@ -10857,6 +10915,7 @@ impl<'a> CastableNode<'a> for JSXMemberExpr<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::JSXMemberExpr
   }
@@ -10928,6 +10987,7 @@ impl<'a> CastableNode<'a> for JSXNamespacedName<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::JSXNamespacedName
   }
@@ -11012,6 +11072,7 @@ impl<'a> CastableNode<'a> for JSXOpeningElement<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::JSXOpeningElement
   }
@@ -11082,6 +11143,7 @@ impl<'a> CastableNode<'a> for JSXOpeningFragment<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::JSXOpeningFragment
   }
@@ -11145,6 +11207,7 @@ impl<'a> CastableNode<'a> for JSXSpreadChild<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::JSXSpreadChild
   }
@@ -11218,6 +11281,7 @@ impl<'a> CastableNode<'a> for JSXText<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::JSXText
   }
@@ -11284,6 +11348,7 @@ impl<'a> CastableNode<'a> for KeyValuePatProp<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::KeyValuePatProp
   }
@@ -11354,6 +11419,7 @@ impl<'a> CastableNode<'a> for KeyValueProp<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::KeyValueProp
   }
@@ -11424,6 +11490,7 @@ impl<'a> CastableNode<'a> for LabeledStmt<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::LabeledStmt
   }
@@ -11500,6 +11567,7 @@ impl<'a> CastableNode<'a> for MemberExpr<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::MemberExpr
   }
@@ -11570,6 +11638,7 @@ impl<'a> CastableNode<'a> for MetaPropExpr<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::MetaPropExpr
   }
@@ -11640,6 +11709,7 @@ impl<'a> CastableNode<'a> for MethodProp<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::MethodProp
   }
@@ -11718,6 +11788,7 @@ impl<'a> CastableNode<'a> for Module<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::Module
   }
@@ -11811,6 +11882,7 @@ impl<'a> CastableNode<'a> for NamedExport<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::NamedExport
   }
@@ -11897,6 +11969,7 @@ impl<'a> CastableNode<'a> for NewExpr<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::NewExpr
   }
@@ -11970,6 +12043,7 @@ impl<'a> CastableNode<'a> for Null<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::Null
   }
@@ -12039,6 +12113,7 @@ impl<'a> CastableNode<'a> for Number<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::Number
   }
@@ -12105,6 +12180,7 @@ impl<'a> CastableNode<'a> for ObjectLit<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ObjectLit
   }
@@ -12184,6 +12260,7 @@ impl<'a> CastableNode<'a> for ObjectPat<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ObjectPat
   }
@@ -12261,6 +12338,7 @@ impl<'a> CastableNode<'a> for OptChainExpr<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::OptChainExpr
   }
@@ -12331,6 +12409,7 @@ impl<'a> CastableNode<'a> for Param<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::Param
   }
@@ -12399,6 +12478,7 @@ impl<'a> CastableNode<'a> for ParenExpr<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ParenExpr
   }
@@ -12491,6 +12571,7 @@ impl<'a> CastableNode<'a> for PrivateMethod<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::PrivateMethod
   }
@@ -12559,6 +12640,7 @@ impl<'a> CastableNode<'a> for PrivateName<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::PrivateName
   }
@@ -12669,6 +12751,7 @@ impl<'a> CastableNode<'a> for PrivateProp<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::PrivateProp
   }
@@ -12754,6 +12837,7 @@ impl<'a> CastableNode<'a> for Regex<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::Regex
   }
@@ -12828,6 +12912,7 @@ impl<'a> CastableNode<'a> for RestPat<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::RestPat
   }
@@ -12901,6 +12986,7 @@ impl<'a> CastableNode<'a> for ReturnStmt<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ReturnStmt
   }
@@ -12980,6 +13066,7 @@ impl<'a> CastableNode<'a> for Script<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::Script
   }
@@ -13057,6 +13144,7 @@ impl<'a> CastableNode<'a> for SeqExpr<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::SeqExpr
   }
@@ -13129,6 +13217,7 @@ impl<'a> CastableNode<'a> for SetterProp<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::SetterProp
   }
@@ -13208,6 +13297,7 @@ impl<'a> CastableNode<'a> for SpreadElement<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::SpreadElement
   }
@@ -13286,6 +13376,7 @@ impl<'a> CastableNode<'a> for Str<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::Str
   }
@@ -13346,6 +13437,7 @@ impl<'a> CastableNode<'a> for Super<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::Super
   }
@@ -13416,6 +13508,7 @@ impl<'a> CastableNode<'a> for SwitchCase<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::SwitchCase
   }
@@ -13491,6 +13584,7 @@ impl<'a> CastableNode<'a> for SwitchStmt<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::SwitchStmt
   }
@@ -13571,6 +13665,7 @@ impl<'a> CastableNode<'a> for TaggedTpl<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TaggedTpl
   }
@@ -13643,6 +13738,7 @@ impl<'a> CastableNode<'a> for ThisExpr<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ThisExpr
   }
@@ -13706,6 +13802,7 @@ impl<'a> CastableNode<'a> for ThrowStmt<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::ThrowStmt
   }
@@ -13778,6 +13875,7 @@ impl<'a> CastableNode<'a> for Tpl<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::Tpl
   }
@@ -13856,6 +13954,7 @@ impl<'a> CastableNode<'a> for TplElement<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TplElement
   }
@@ -13935,6 +14034,7 @@ impl<'a> CastableNode<'a> for TryStmt<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TryStmt
   }
@@ -14011,6 +14111,7 @@ impl<'a> CastableNode<'a> for TsArrayType<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsArrayType
   }
@@ -14079,6 +14180,7 @@ impl<'a> CastableNode<'a> for TsAsExpr<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsAsExpr
   }
@@ -14157,6 +14259,7 @@ impl<'a> CastableNode<'a> for TsCallSignatureDecl<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsCallSignatureDecl
   }
@@ -14239,6 +14342,7 @@ impl<'a> CastableNode<'a> for TsConditionalType<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsConditionalType
   }
@@ -14311,6 +14415,7 @@ impl<'a> CastableNode<'a> for TsConstAssertion<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsConstAssertion
   }
@@ -14387,6 +14492,7 @@ impl<'a> CastableNode<'a> for TsConstructSignatureDecl<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsConstructSignatureDecl
   }
@@ -14477,6 +14583,7 @@ impl<'a> CastableNode<'a> for TsConstructorType<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsConstructorType
   }
@@ -14564,6 +14671,7 @@ impl<'a> CastableNode<'a> for TsEnumDecl<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsEnumDecl
   }
@@ -14636,6 +14744,7 @@ impl<'a> CastableNode<'a> for TsEnumMember<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsEnumMember
   }
@@ -14710,6 +14819,7 @@ impl<'a> CastableNode<'a> for TsExportAssignment<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsExportAssignment
   }
@@ -14780,6 +14890,7 @@ impl<'a> CastableNode<'a> for TsExprWithTypeArgs<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsExprWithTypeArgs
   }
@@ -14851,6 +14962,7 @@ impl<'a> CastableNode<'a> for TsExternalModuleRef<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsExternalModuleRef
   }
@@ -14925,6 +15037,7 @@ impl<'a> CastableNode<'a> for TsFnType<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsFnType
   }
@@ -15010,6 +15123,7 @@ impl<'a> CastableNode<'a> for TsImportEqualsDecl<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsImportEqualsDecl
   }
@@ -15086,6 +15200,7 @@ impl<'a> CastableNode<'a> for TsImportType<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsImportType
   }
@@ -15174,6 +15289,7 @@ impl<'a> CastableNode<'a> for TsIndexSignature<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsIndexSignature
   }
@@ -15253,6 +15369,7 @@ impl<'a> CastableNode<'a> for TsIndexedAccessType<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsIndexedAccessType
   }
@@ -15321,6 +15438,7 @@ impl<'a> CastableNode<'a> for TsInferType<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsInferType
   }
@@ -15389,6 +15507,7 @@ impl<'a> CastableNode<'a> for TsInterfaceBody<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsInterfaceBody
   }
@@ -15471,6 +15590,7 @@ impl<'a> CastableNode<'a> for TsInterfaceDecl<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsInterfaceDecl
   }
@@ -15548,6 +15668,7 @@ impl<'a> CastableNode<'a> for TsIntersectionType<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsIntersectionType
   }
@@ -15617,6 +15738,7 @@ impl<'a> CastableNode<'a> for TsKeywordType<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsKeywordType
   }
@@ -15680,6 +15802,7 @@ impl<'a> CastableNode<'a> for TsLitType<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsLitType
   }
@@ -15764,6 +15887,7 @@ impl<'a> CastableNode<'a> for TsMappedType<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsMappedType
   }
@@ -15866,6 +15990,7 @@ impl<'a> CastableNode<'a> for TsMethodSignature<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsMethodSignature
   }
@@ -15946,6 +16071,7 @@ impl<'a> CastableNode<'a> for TsModuleBlock<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsModuleBlock
   }
@@ -16027,6 +16153,7 @@ impl<'a> CastableNode<'a> for TsModuleDecl<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsModuleDecl
   }
@@ -16111,6 +16238,7 @@ impl<'a> CastableNode<'a> for TsNamespaceDecl<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsNamespaceDecl
   }
@@ -16179,6 +16307,7 @@ impl<'a> CastableNode<'a> for TsNamespaceExportDecl<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsNamespaceExportDecl
   }
@@ -16245,6 +16374,7 @@ impl<'a> CastableNode<'a> for TsNonNullExpr<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsNonNullExpr
   }
@@ -16311,6 +16441,7 @@ impl<'a> CastableNode<'a> for TsOptionalType<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsOptionalType
   }
@@ -16392,6 +16523,7 @@ impl<'a> CastableNode<'a> for TsParamProp<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsParamProp
   }
@@ -16460,6 +16592,7 @@ impl<'a> CastableNode<'a> for TsParenthesizedType<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsParenthesizedType
   }
@@ -16556,6 +16689,7 @@ impl<'a> CastableNode<'a> for TsPropertySignature<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsPropertySignature
   }
@@ -16641,6 +16775,7 @@ impl<'a> CastableNode<'a> for TsQualifiedName<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsQualifiedName
   }
@@ -16709,6 +16844,7 @@ impl<'a> CastableNode<'a> for TsRestType<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsRestType
   }
@@ -16772,6 +16908,7 @@ impl<'a> CastableNode<'a> for TsThisType<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsThisType
   }
@@ -16841,6 +16978,7 @@ impl<'a> CastableNode<'a> for TsTplLitType<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsTplLitType
   }
@@ -16914,6 +17052,7 @@ impl<'a> CastableNode<'a> for TsTupleElement<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsTupleElement
   }
@@ -16987,6 +17126,7 @@ impl<'a> CastableNode<'a> for TsTupleType<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsTupleType
   }
@@ -17065,6 +17205,7 @@ impl<'a> CastableNode<'a> for TsTypeAliasDecl<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsTypeAliasDecl
   }
@@ -17138,6 +17279,7 @@ impl<'a> CastableNode<'a> for TsTypeAnn<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsTypeAnn
   }
@@ -17206,6 +17348,7 @@ impl<'a> CastableNode<'a> for TsTypeAssertion<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsTypeAssertion
   }
@@ -17276,6 +17419,7 @@ impl<'a> CastableNode<'a> for TsTypeLit<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsTypeLit
   }
@@ -17348,6 +17492,7 @@ impl<'a> CastableNode<'a> for TsTypeOperator<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsTypeOperator
   }
@@ -17422,6 +17567,7 @@ impl<'a> CastableNode<'a> for TsTypeParam<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsTypeParam
   }
@@ -17500,6 +17646,7 @@ impl<'a> CastableNode<'a> for TsTypeParamDecl<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsTypeParamDecl
   }
@@ -17568,6 +17715,7 @@ impl<'a> CastableNode<'a> for TsTypeParamInstantiation<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsTypeParamInstantiation
   }
@@ -17644,6 +17792,7 @@ impl<'a> CastableNode<'a> for TsTypePredicate<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsTypePredicate
   }
@@ -17716,6 +17865,7 @@ impl<'a> CastableNode<'a> for TsTypeQuery<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsTypeQuery
   }
@@ -17786,6 +17936,7 @@ impl<'a> CastableNode<'a> for TsTypeRef<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsTypeRef
   }
@@ -17859,6 +18010,7 @@ impl<'a> CastableNode<'a> for TsUnionType<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::TsUnionType
   }
@@ -17931,6 +18083,7 @@ impl<'a> CastableNode<'a> for UnaryExpr<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::UnaryExpr
   }
@@ -18007,6 +18160,7 @@ impl<'a> CastableNode<'a> for UpdateExpr<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::UpdateExpr
   }
@@ -18085,6 +18239,7 @@ impl<'a> CastableNode<'a> for VarDecl<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::VarDecl
   }
@@ -18163,6 +18318,7 @@ impl<'a> CastableNode<'a> for VarDeclarator<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::VarDeclarator
   }
@@ -18236,6 +18392,7 @@ impl<'a> CastableNode<'a> for WhileStmt<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::WhileStmt
   }
@@ -18306,6 +18463,7 @@ impl<'a> CastableNode<'a> for WithStmt<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::WithStmt
   }
@@ -18382,6 +18540,7 @@ impl<'a> CastableNode<'a> for YieldExpr<'a> {
       None
     }
   }
+
   fn kind() -> NodeKind {
     NodeKind::YieldExpr
   }

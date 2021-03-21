@@ -1,19 +1,21 @@
 import { AnalysisResult, StructDefinition } from "../analyze/analysis_types.ts";
-import { writeHeader, getIsForImpl, writeType } from "../utils/generationUtils.ts";
-import { Writer } from "./writer.ts";
+import { createWriter } from "../utils/createWriter.ts";
+import { getIsForImpl, writeHeader, writeType } from "../utils/generationUtils.ts";
 
 export function generateSerialize(analysisResult: AnalysisResult): string {
-    const writer = new Writer();
+    const writer = createWriter();
 
     writeHeader(writer);
     writeUseDeclarations();
 
     for (const struct of analysisResult.structs) {
-        writer.newLine();
+        writer.blankLine();
         writeSerializableStruct(struct);
-        writer.newLine();
+        writer.blankLine();
         writeFromImpl(struct);
     }
+
+    writer.newLineIfLastNot();
 
     return writer.toString();
 
@@ -30,8 +32,7 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
 
         writer.writeLine("#[derive(Serialize)]");
         writer.writeLine(`#[serde(rename = "${struct.name}", rename_all = "camelCase", tag = "nodeKind")]`);
-        writer.writeLine(`pub struct Serializable${struct.name}<'a> {`);
-        writer.indent(() => {
+        writer.write(`pub struct Serializable${struct.name}<'a>`).block(() => {
             writer.writeLine(`span: Span,`);
 
             for (const field of implFields) {
@@ -51,19 +52,15 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
             writer.writeLine("#[serde(skip)]");
             writer.writeLine(`_phantom: PhantomData<&'a ()>,`);
         });
-        writer.writeLine("}");
     }
 
     function writeFromImpl(struct: StructDefinition) {
         const implFields = struct.fields.filter(f => getIsForImpl(analysisResult, f.type));
         const structFields = struct.fields.filter(f => !getIsForImpl(analysisResult, f.type) && f.name !== "span");
 
-        writer.writeLine(`impl<'a> From<${struct.name}<'a>> for Serializable${struct.name}<'a> {`);
-        writer.indent(() => {
-            writer.writeLine(`fn from(orig: ${struct.name}<'a>) -> Self {`);
-            writer.indent(() => {
-                writer.writeLine("Self {");
-                writer.indent(() => {
+        writer.write(`impl<'a> From<${struct.name}<'a>> for Serializable${struct.name}<'a>`).block(() => {
+            writer.write(`fn from(orig: ${struct.name}<'a>) -> Self`).block(() => {
+                writer.write("Self").block(() => {
                     writer.writeLine(`span: orig.span(),`);
 
                     for (const field of implFields) {
@@ -76,11 +73,7 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
 
                     writer.writeLine(`_phantom: PhantomData,`);
                 });
-                writer.writeLine("}");
             });
-            writer.writeLine("}");
         });
-        writer.writeLine("}");
     }
 }
-

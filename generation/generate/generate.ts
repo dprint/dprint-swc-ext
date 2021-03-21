@@ -1,21 +1,10 @@
-import {
-    AnalysisResult,
-    EnumDefinition,
-    EnumVariantDefinition,
-    StructDefinition,
-    TypeDefinition,
-} from "../analyze/analysis_types.ts";
+import { AnalysisResult, EnumDefinition, EnumVariantDefinition, StructDefinition, TypeDefinition } from "../analyze/analysis_types.ts";
+import { createWriter } from "../utils/createWriter.ts";
+import { getIsForImpl, getIsReferenceType, writeHeader, writeType } from "../utils/generationUtils.ts";
 import { nameToSnakeCase } from "../utils/stringUtils.ts";
-import { 
-    writeHeader,
-    getIsForImpl,
-    writeType,
-    getIsReferenceType,
-} from "../utils/generationUtils.ts";
-import { Writer } from "./writer.ts";
 
 export function generate(analysisResult: AnalysisResult): string {
-    const writer = new Writer();
+    const writer = createWriter();
 
     writeHeader(writer);
     writeUseDeclarations();
@@ -24,14 +13,16 @@ export function generate(analysisResult: AnalysisResult): string {
     writeNode();
 
     for (const enumDef of analysisResult.enums.filter(e => !e.isPlain)) {
-        writer.newLine();
+        writer.blankLine();
         writeEnum(enumDef);
     }
 
     for (const struct of analysisResult.structs) {
-        writer.newLine();
+        writer.blankLine();
         handleStruct(struct);
     }
+
+    writer.newLineIfLastNot();
 
     return writer.toString();
 
@@ -45,55 +36,43 @@ export function generate(analysisResult: AnalysisResult): string {
         writer.writeLine("use crate::comments::*;");
         writer.writeLine("use crate::tokens::*;");
         writer.writeLine("use crate::types::*;");
-        writer.newLine();
+        writer.blankLine();
         writer.writeLine(`#[cfg(feature = "serialize")]`);
         writer.writeLine("use serde::Serialize;");
-        writer.newLine();
+        writer.blankLine();
     }
 
     function writeBumpAllocator() {
         // todo: probably do something else... how would this work across many files on different threads?
-        writer.writeLine("thread_local! {");
-        writer.indent(() => {
+        writer.write("thread_local!").block(() => {
             writer.writeLine("static LOCAL_BUMP_ALLOCATOR: std::cell::RefCell<Bump> = std::cell::RefCell::new(Bump::new());");
-        }).write("}").newLine().newLine();
+        }).blankLine();
     }
 
     function writePublicFunctions() {
-        writer.writeLine("pub fn with_ast_view<'a, T>(info: ProgramInfo, with_view: impl FnOnce(Program<'a>) -> T) -> T {");
-        writer.indent(() => {
-            writer.writeLine("match info.program {");
-            writer.indent(() => {
-                writer.writeLine("swc_ast::Program::Module(module) => {");
-                writer.indent(() => {
-                    writer.writeLine("with_ast_view_for_module(ModuleInfo {");
-                    writer.indent(() => {
+        writer.write("pub fn with_ast_view<'a, T>(info: ProgramInfo, with_view: impl FnOnce(Program<'a>) -> T) -> T").block(() => {
+            writer.write("match info.program").block(() => {
+                writer.write("swc_ast::Program::Module(module) =>").block(() => {
+                    writer.write("with_ast_view_for_module(ModuleInfo ").inlineBlock(() => {
                         writer.writeLine("module,");
                         writer.writeLine("source_file: info.source_file,");
                         writer.writeLine("tokens: info.tokens,");
                         writer.writeLine("comments: info.comments,");
-                    }).write("}, |module| with_view(Program::Module(module)))").newLine();
+                    }).write(", |module| with_view(Program::Module(module)))");
                 });
-                writer.writeLine("},");
-                writer.writeLine("swc_ast::Program::Script(script) => {");
-                writer.indent(() => {
-                    writer.writeLine("with_ast_view_for_script(ScriptInfo {");
-                    writer.indent(() => {
+                writer.write("swc_ast::Program::Script(script) =>").block(() => {
+                    writer.write("with_ast_view_for_script(ScriptInfo ").inlineBlock(() => {
                         writer.writeLine("script,");
                         writer.writeLine("source_file: info.source_file,");
                         writer.writeLine("tokens: info.tokens,");
                         writer.writeLine("comments: info.comments,");
-                    }).write("}, |script| with_view(Program::Script(script)))").newLine();
+                    }).write(", |script| with_view(Program::Script(script)))");
                 });
-                writer.writeLine("},");
             });
-            writer.writeLine("}");
-        }).write("}").newLine().newLine();
+        }).blankLine();
 
-        writer.writeLine("pub fn with_ast_view_for_module<'a, T>(info: ModuleInfo, with_view: impl FnOnce(&'a Module<'a>) -> T) -> T {");
-        writer.indent(() => {
-            writer.writeLine("LOCAL_BUMP_ALLOCATOR.with(|bump_cell| {");
-            writer.indent(() => {
+        writer.write("pub fn with_ast_view_for_module<'a, T>(info: ModuleInfo, with_view: impl FnOnce(&'a Module<'a>) -> T) -> T").block(() => {
+            writer.write("LOCAL_BUMP_ALLOCATOR.with(|bump_cell| ").inlineBlock(() => {
                 writer.writeLine("let mut bump_borrow = bump_cell.borrow_mut();");
                 // hack to avoid yet another lifetime
                 writer.writeLine("let bump_ref = unsafe { mem::transmute::<&Bump, &'a Bump>(&bump_borrow) };");
@@ -102,13 +81,11 @@ export function generate(analysisResult: AnalysisResult): string {
                 writer.writeLine(`let result = with_view(ast_view);`);
                 writer.writeLine("bump_borrow.reset();");
                 writer.writeLine("result");
-            }).write("})").newLine();
-        }).write("}").newLine().newLine();
+            }).write(")").newLine();
+        }).blankLine();
 
-        writer.writeLine("pub fn with_ast_view_for_script<'a, T>(info: ScriptInfo, with_view: impl FnOnce(&'a Script<'a>) -> T) -> T {");
-        writer.indent(() => {
-            writer.writeLine("LOCAL_BUMP_ALLOCATOR.with(|bump_cell| {");
-            writer.indent(() => {
+        writer.write("pub fn with_ast_view_for_script<'a, T>(info: ScriptInfo, with_view: impl FnOnce(&'a Script<'a>) -> T) -> T").block(() => {
+            writer.write("LOCAL_BUMP_ALLOCATOR.with(|bump_cell| ").inlineBlock(() => {
                 writer.writeLine("let mut bump_borrow = bump_cell.borrow_mut();");
                 // hack to avoid yet another lifetime
                 writer.writeLine("let bump_ref = unsafe { mem::transmute::<&Bump, &'a Bump>(&bump_borrow) };");
@@ -117,86 +94,71 @@ export function generate(analysisResult: AnalysisResult): string {
                 writer.writeLine(`let result = with_view(ast_view);`);
                 writer.writeLine("bump_borrow.reset();");
                 writer.writeLine("result");
-            }).write("})").newLine();
-        }).write("}").newLine().newLine();
+            }).write(")").newLine();
+        }).blankLine();
     }
 
     function writeNode() {
         writer.writeLine("#[derive(Clone, Copy)]");
-        writer.writeLine("pub enum Node<'a> {");
-        writer.indent(() => {
+        writer.write("pub enum Node<'a>").block(() => {
             for (const struct of analysisResult.structs) {
                 writer.writeLine(`${struct.name}(&'a ${struct.name}<'a>),`);
             }
-        });
-        writer.writeLine("}").newLine();
+        }).blankLine();
 
-        writer.writeLine("impl<'a> Node<'a> {");
-        writer.indent(() => {
-            writer.writeLine("pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {");
-            writer.indent(() => {
+        writer.write("impl<'a> Node<'a>").block(() => {
+            writer.write("pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T>").block(() => {
                 writer.writeLine("T::to(self)");
-            }).write("}").newLine().newLine();
+            }).blankLine();
 
-            writer.writeLine("pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {");
-            writer.indent(() => {
-                writer.writeLine("if let Some(result) = T::to(self) {");
-                writer.indent(() => {
+            writer.write("pub fn expect<T: CastableNode<'a>>(&self) -> &'a T").block(() => {
+                writer.write("if let Some(result) = T::to(self) ").inlineBlock(() => {
                     writer.writeLine("result");
-                }).write("} else {").newLine();
-                writer.indent(() => {
+                }).write(" else ").inlineBlock(() => {
                     writer.writeLine(`panic!("Tried to cast node of type {} to {}.", self.kind(), T::kind())`);
                 });
-                writer.write("}").newLine();
-            }).write("}").newLine().newLine();
+            }).blankLine();
 
-            writer.writeLine("pub fn is<T: CastableNode<'a>>(&self) -> bool {");
-            writer.indent(() => {
+            writer.write("pub fn is<T: CastableNode<'a>>(&self) -> bool").block(() => {
                 writer.writeLine("self.kind() == T::kind()");
-            }).write("}").newLine();
-        }).write("}").newLine().newLine();
+            });
+        }).blankLine();
 
         writeTrait("Spanned", "Node<'a>", () => {
             implementTraitMethod("span", "Span");
         });
-        writer.newLine();
+        writer.blankLine();
 
         writeTrait("NodeTrait<'a>", "Node<'a>", () => {
             implementTraitMethod("parent", "Option<Node<'a>>");
-            writer.newLine();
+            writer.blankLine();
             implementTraitMethod("children", "Vec<Node<'a>>");
-            writer.newLine();
+            writer.blankLine();
             implementTraitMethod("into_node", "Node<'a>");
-            writer.newLine();
+            writer.blankLine();
 
             implementTraitMethod("kind", "NodeKind", false, (fullName, struct) => {
                 writer.write(`${fullName}(_) => NodeKind::${struct.name}`);
             });
         });
-        writer.newLine();
+        writer.blankLine();
 
         writer.writeLine("#[derive(Clone, PartialEq, Debug, Copy)]");
-        writer.writeLine("pub enum NodeKind {");
-        writer.indent(() => {
+        writer.write("pub enum NodeKind").block(() => {
             for (const struct of analysisResult.structs) {
                 writer.writeLine(`${struct.name},`);
             }
-        });
-        writer.writeLine("}").newLine();
+        }).blankLine();
 
-        writer.writeLine("impl std::fmt::Display for NodeKind {");
-        writer.indent(() => {
-            writer.writeLine("fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {");
-            writer.indent(() => {
-                writer.writeLine(`write!(f, "{}", match self {`);
-                writer.indent(() => {
+        writer.write("impl std::fmt::Display for NodeKind").block(() => {
+            writer.write("fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result").block(() => {
+                writer.write(`write!(f, "{}", match self `).inlineBlock(() => {
                     for (const struct of analysisResult.structs) {
                         writer.writeLine(`NodeKind::${struct.name} => "${struct.name}",`);
                     }
-                }).write("})").newLine();
-            }).write("}").newLine();
+                }).write(")");
+            });
         });
-        writer.writeLine("}").newLine();
 
         function implementTraitMethod(
             methodName: string,
@@ -212,10 +174,8 @@ export function generate(analysisResult: AnalysisResult): string {
             if (hasLifetime) {
                 writer.write("'a ");
             }
-            writer.write(`self) -> ${returnType} {`).newLine();
-            writer.indent(() => {
-                writer.writeLine("match self {");
-                writer.indent(() => {
+            writer.write(`self) -> ${returnType}`).block(() => {
+                writer.write("match self").block(() => {
                     for (const struct of analysisResult.structs) {
                         const fullName = `Node::${struct.name}`;
                         if (customMatchWrite != null) {
@@ -226,14 +186,14 @@ export function generate(analysisResult: AnalysisResult): string {
                         writer.write(",");
                         writer.newLine();
                     }
-                }).write("}").newLine();
-            }).write("}").newLine();
+                });
+            });
         }
     }
 
     function writeEnum(enumDef: EnumDefinition) {
         writeEnum();
-        writer.newLine();
+        writer.blankLine();
         writeEnumFunctions();
 
         function writeEnum() {
@@ -241,10 +201,9 @@ export function generate(analysisResult: AnalysisResult): string {
             writer.writeLine("#[derive(Copy, Clone)]");
             writer.writeLine(`#[cfg_attr(feature = "serialize", derive(Serialize))]`);
             writer.writeLine(`#[cfg_attr(feature = "serialize", serde(untagged))]`);
-            writer.write(`pub enum ${enumDef.name}<'a> {`);
-            writer.indent(() => {
+            writer.write(`pub enum ${enumDef.name}<'a>`).block(() => {
                 for (const variant of enumDef.variants) {
-                    writer.newLine();
+                    writer.newLineIfLastNot();
                     writeDocs(variant.docs);
                     writer.write(`${variant.name}`);
                     if (variant.tuple_args != null) {
@@ -259,45 +218,39 @@ export function generate(analysisResult: AnalysisResult): string {
                     }
                     writer.write(",");
                 }
-            }).newLine();
-            writer.write("}").newLine().newLine();
+            }).blankLine();
 
-            writer.writeLine(`impl<'a> ${enumDef.name}<'a> {`).indent(() => {
-                writer.writeLine("pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {");
-                writer.indent(() => {
+            writer.write(`impl<'a> ${enumDef.name}<'a>`).block(() => {
+                writer.write("pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T>").block(() => {
                     writer.writeLine("T::to(&self.into())");
-                }).write("}").newLine().newLine();
+                }).blankLine();
 
-                writer.writeLine("pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {");
-                writer.indent(() => {
+                writer.write("pub fn expect<T: CastableNode<'a>>(&self) -> &'a T").block(() => {
                     writer.writeLine(`let node: Node<'a> = self.into();`);
-                    writer.writeLine("if let Some(result) = T::to(&node) {");
-                    writer.indent(() => {
+                    writer.write("if let Some(result) = T::to(&node) ").inlineBlock(() => {
                         writer.writeLine("result");
-                    }).write("} else {").newLine();
-                    writer.indent(() => {
+                    }).write(" else ").inlineBlock(() => {
                         writer.writeLine(`panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())`);
                     });
-                    writer.write("}").newLine();
-                }).write("}").newLine().newLine();
+                }).blankLine();
 
-                writer.writeLine("pub fn is<T: CastableNode<'a>>(&self) -> bool {");
-                writer.indent(() => {
+                writer.write("pub fn is<T: CastableNode<'a>>(&self) -> bool").block(() => {
                     writer.writeLine("self.kind() == T::kind()");
-                }).write("}").newLine();
-            }).write("}").newLine().newLine();
+                });
+            }).blankLine();
 
             writeTrait("Spanned", `${enumDef.name}<'a>`, () => {
                 implementTraitMethod("span", "Span");
             });
-            writer.newLine();
+            writer.blankLine();
+
             writeTrait("NodeTrait<'a>", `${enumDef.name}<'a>`, () => {
                 implementTraitMethod("parent", "Option<Node<'a>>", false);
-                writer.newLine();
+                writer.blankLine();
                 implementTraitMethod("children", "Vec<Node<'a>>", false);
-                writer.newLine();
+                writer.blankLine();
                 implementTraitMethod("into_node", "Node<'a>", false);
-                writer.newLine();
+                writer.blankLine();
                 implementTraitMethod("kind", "NodeKind", false, (fullName, variant) => {
                     if (variant.tuple_args?.length === 1 && isSwcStructType(variant.tuple_args[0])) {
                         const variantType = variant.tuple_args[0];
@@ -310,13 +263,11 @@ export function generate(analysisResult: AnalysisResult): string {
                     }
                 });
             });
-            writer.newLine();
+            writer.blankLine();
 
             writeTrait(`From<&${enumDef.name}<'a>>`, "Node<'a>", () => {
-                writer.writeLine(`fn from(node: &${enumDef.name}<'a>) -> Node<'a> {`);
-                writer.indent(() => {
-                    writer.writeLine("match node {");
-                    writer.indent(() => {
+                writer.write(`fn from(node: &${enumDef.name}<'a>) -> Node<'a>`).block(() => {
+                    writer.write("match node").block(() => {
                         for (const variant of enumDef.variants) {
                             const fullName = `${enumDef.name}::${variant.name}`;
                             writer.write(`${fullName}(node) => `);
@@ -327,23 +278,21 @@ export function generate(analysisResult: AnalysisResult): string {
                             }
                             writer.newLine();
                         }
-                    }).write("}").newLine();
-                }).write("}").newLine();
+                    });
+                });
             });
-            writer.newLine();
+            writer.blankLine();
 
             writeTrait(`From<${enumDef.name}<'a>>`, "Node<'a>", () => {
-                writer.writeLine(`fn from(node: ${enumDef.name}<'a>) -> Node<'a> {`);
-                writer.indent(() => {
-                    writer.writeLine("match node {");
-                    writer.indent(() => {
+                writer.write(`fn from(node: ${enumDef.name}<'a>) -> Node<'a>`).block(() => {
+                    writer.write("match node").block(() => {
                         for (const variant of enumDef.variants) {
                             const fullName = `${enumDef.name}::${variant.name}`;
                             writer.write(`${fullName}(node) => node.into(),`);
                             writer.newLine();
                         }
-                    }).write("}").newLine();
-                }).write("}").newLine();
+                    });
+                });
             });
 
             function implementTraitMethod(
@@ -360,10 +309,8 @@ export function generate(analysisResult: AnalysisResult): string {
                 if (hasSelfLifetime) {
                     writer.write("'a ");
                 }
-                writer.write(`self) -> ${returnType} {`).newLine();
-                writer.indent(() => {
-                    writer.writeLine("match self {");
-                    writer.indent(() => {
+                writer.write(`self) -> ${returnType}`).block(() => {
+                    writer.write("match self").block(() => {
                         for (const variant of enumDef.variants) {
                             const fullName = `${enumDef.name}::${variant.name}`;
                             if (customMatchWrite != null) {
@@ -374,22 +321,17 @@ export function generate(analysisResult: AnalysisResult): string {
                             writer.write(",");
                             writer.newLine();
                         }
-                    }).write("}").newLine();
-                }).write("}").newLine();
+                    });
+                });
             }
         }
 
         function writeEnumFunctions() {
             writer.write(
-                `fn ${
-                    getViewForFunctionName(enumDef.name)
-                }<'a>(inner: &'a swc_ast::${enumDef.name}, parent: Node<'a>, bump: &'a Bump) -> ${enumDef.name}<'a> {`,
-            )
-                .newLine();
-            writer.indent(() => {
+                `fn ${getViewForFunctionName(enumDef.name)}<'a>(inner: &'a swc_ast::${enumDef.name}, parent: Node<'a>, bump: &'a Bump) -> ${enumDef.name}<'a>`,
+            ).block(() => {
                 // writer.writeLine(`println!("Entered ${enumDef.name}");`);
-                writer.writeLine("match inner {");
-                writer.indent(() => {
+                writer.write("match inner").block(() => {
                     for (const variant of enumDef.variants) {
                         const fullName = `${enumDef.name}::${variant.name}`;
                         writer.write(`swc_ast::${fullName}(value) => ${fullName}(`);
@@ -400,8 +342,8 @@ export function generate(analysisResult: AnalysisResult): string {
                         writer.write("),");
                         writer.newLine();
                     }
-                }).write("}").newLine();
-            }).write("}").newLine();
+                });
+            });
         }
     }
 
@@ -410,7 +352,7 @@ export function generate(analysisResult: AnalysisResult): string {
         const structFields = struct.fields.filter(f => !getIsForImpl(analysisResult, f.type) && f.name !== "span");
 
         writeStruct();
-        writer.newLine();
+        writer.blankLine();
         writeStructFunction();
 
         function writeStruct() {
@@ -418,8 +360,7 @@ export function generate(analysisResult: AnalysisResult): string {
             writer.writeLine("#[derive(Clone)]");
             writer.writeLine(`#[cfg_attr(feature = "serialize", derive(Serialize))]`);
             writer.writeLine(`#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::Serializable${struct.name}"))]`);
-            writer.writeLine(`pub struct ${struct.name}<'a> {`);
-            writer.indent(() => {
+            writer.write(`pub struct ${struct.name}<'a>`).block(() => {
                 if (struct.parents.length > 0) {
                     if (struct.parents.length === 1) {
                         writer.writeLine(`pub parent: &'a ${struct.parents[0].name}<'a>,`);
@@ -441,15 +382,15 @@ export function generate(analysisResult: AnalysisResult): string {
                     writer.write(",").newLine();
                 }
             });
-            writer.write("}").newLine();
 
             if (implFields.length > 0) {
-                writer.newLine();
-                writer.write(`impl<'a> ${struct.name}<'a> {`);
-                writer.indent(() => {
+                writer.blankLineIfLastNot();
+                writer.write(`impl<'a> ${struct.name}<'a>`).block(() => {
                     for (const field of implFields) {
                         const isReferenceType = getIsReferenceType(analysisResult, field.type);
-                        writer.newLine();
+                        if (!writer.isAtStartOfFirstLineOfBlock()) {
+                            writer.blankLineIfLastNot();
+                        }
 
                         writeDocs(field.docs);
                         writer.write(`pub fn ${field.name}(&self) -> `);
@@ -457,39 +398,35 @@ export function generate(analysisResult: AnalysisResult): string {
                             writer.write("&");
                         }
                         writeType(writer, analysisResult, field.type, false);
-                        writer.write(` {`).newLine();
-                        writer.indent(() => {
+                        writer.block(() => {
                             if (isReferenceType) {
                                 writer.write("&");
                             }
                             writer.write(`self.inner.${field.name}`).newLine();
-                        }).write("}").newLine();
+                        });
                     }
-                }).write("}").newLine();
+                });
             }
 
-            writer.newLine();
+            writer.blankLineIfLastNot();
             writeTrait("Spanned", `${struct.name}<'a>`, () => {
-                writer.writeLine("fn span(&self) -> Span {");
-                writer.indent(() => {
+                writer.write("fn span(&self) -> Span").block(() => {
                     writer.writeLine("self.inner.span()");
-                }).write("}").newLine();
+                });
             });
 
-            writer.newLine();
+            writer.blankLine();
             writeTrait(`From<&${struct.name}<'a>>`, "Node<'a>", () => {
-                writer.writeLine(`fn from(node: &${struct.name}<'a>) -> Node<'a> {`);
-                writer.indent(() => {
+                writer.write(`fn from(node: &${struct.name}<'a>) -> Node<'a>`).block(() => {
                     // hack to not require people having to specify the lifetime twice
                     writer.writeLine(`let node = unsafe { mem::transmute::<&${struct.name}<'a>, &'a ${struct.name}<'a>>(node) };`);
                     writer.writeLine(`Node::${struct.name}(node)`);
-                }).write("}").newLine();
+                });
             });
 
-            writer.newLine();
+            writer.blankLine();
             writeTrait("NodeTrait<'a>", `${struct.name}<'a>`, () => {
-                writer.writeLine("fn parent(&self) -> Option<Node<'a>> {");
-                writer.indent(() => {
+                writer.write("fn parent(&self) -> Option<Node<'a>>").block(() => {
                     if (struct.parents.length === 0) {
                         writer.write("None");
                     } else {
@@ -500,11 +437,10 @@ export function generate(analysisResult: AnalysisResult): string {
                         }
                     }
                     writer.newLine();
-                }).write("}").newLine();
-                writer.newLine();
+                });
+                writer.blankLine();
 
-                writer.writeLine("fn children(&self) -> Vec<Node<'a>> {");
-                writer.indent(() => {
+                writer.write("fn children(&self) -> Vec<Node<'a>>").block(() => {
                     if (structFields.length === 0) {
                         writer.write("Vec::with_capacity(0)");
                     } else {
@@ -515,38 +451,32 @@ export function generate(analysisResult: AnalysisResult): string {
                         writer.write("children");
                     }
                     writer.newLine();
-                }).write("}").newLine();
-                writer.newLine();
+                });
+                writer.blankLine();
 
-                writer.writeLine("fn into_node(&self) -> Node<'a> {");
-                writer.indent(() => {
+                writer.write("fn into_node(&self) -> Node<'a>").block(() => {
                     writer.writeLine("self.into()");
-                }).write("}").newLine();
-                writer.newLine();
+                });
+                writer.blankLine();
 
-                writer.writeLine("fn kind(&self) -> NodeKind {");
-                writer.indent(() => {
+                writer.write("fn kind(&self) -> NodeKind").block(() => {
                     writer.writeLine(`NodeKind::${struct.name}`);
-                }).write("}").newLine();
+                });
             });
 
-            writer.newLine();
+            writer.blankLine();
             writeTrait("CastableNode<'a>", `${struct.name}<'a>`, () => {
-                writer.writeLine("fn to(node: &Node<'a>) -> Option<&'a Self> {");
-                writer.indent(() => {
-                    writer.writeLine(`if let Node::${struct.name}(node) = node {`);
-                    writer.indent(() => {
+                writer.write("fn to(node: &Node<'a>) -> Option<&'a Self>").block(() => {
+                    writer.write(`if let Node::${struct.name}(node) = node `).inlineBlock(() => {
                         writer.writeLine("Some(node)");
-                    }).write("} else {").newLine();
-                    writer.indent(() => {
+                    }).write(" else ").inlineBlock(() => {
                         writer.writeLine("None");
-                    }).write("}").newLine();
-                }).write("}").newLine();
+                    });
+                }).blankLine();
 
-                writer.writeLine("fn kind() -> NodeKind {");
-                writer.indent(() => {
+                writer.write("fn kind() -> NodeKind").block(() => {
                     writer.writeLine(`NodeKind::${struct.name}`);
-                }).write("}").newLine();
+                });
             });
 
             function writeAppendChild(type: TypeDefinition, name: string, inOption: boolean, inVec: boolean) {
@@ -558,15 +488,13 @@ export function generate(analysisResult: AnalysisResult): string {
                     if (isSwcNodeEnumType(type.generic_args[0]) || isVecType(type.generic_args[0])) {
                         writer.write(".as_ref()");
                     }
-                    writer.write(" {").newLine();
-                    writer.indent(() => {
+                    writer.block(() => {
                         writeAppendChild(type.generic_args[0], "child", true, inVec);
-                    }).write("}").newLine();
+                    });
                 } else if (type.name === "Vec") {
-                    writer.writeLine(`for child in ${name}.iter() {`);
-                    writer.indent(() => {
+                    writer.write(`for child in ${name}.iter()`).block(() => {
                         writeAppendChild(type.generic_args[0], "child", false, true);
-                    }).write("}").newLine();
+                    });
                     return `${name}.len()`;
                 } else {
                     writer.write(`children.push(`);
@@ -645,8 +573,8 @@ export function generate(analysisResult: AnalysisResult): string {
                 writer.write(`parent: Node<'a>`);
             }
             writer.write(", bump: &'a Bump");
-            writer.write(`) -> &'a ${struct.name}<'a> {`).newLine();
-            writer.indent(() => {
+            writer.write(`) -> &'a ${struct.name}<'a>`);
+            writer.block(() => {
                 if (struct.name === "Module") {
                     writer.writeLine("let inner = source_file_info.module;");
                 } else if (struct.name === "Script") {
@@ -666,8 +594,7 @@ export function generate(analysisResult: AnalysisResult): string {
                 }
                 // writer.writeLine(`println!("Entered ${struct.name}");`);
 
-                writer.write(`let node = bump.alloc(${struct.name} {`).newLine();
-                writer.indent(() => {
+                writer.write(`let node = bump.alloc(${struct.name} `).inlineBlock(() => {
                     writer.write("inner,").newLine();
                     if (struct.parents.length > 0) {
                         if (struct.parents.length === 1) {
@@ -691,7 +618,7 @@ export function generate(analysisResult: AnalysisResult): string {
                             writer.writeLine(`${field.name}: unsafe { MaybeUninit::uninit().assume_init() },`);
                         }
                     }
-                }).write("});").newLine();
+                }).write(");").newLine();
                 if (structFields.length > 0) {
                     // hack to get it to avoid the borrow checker (because `.into()` will do a transmute)
                     writer.writeLine(`let parent: Node<'a> = (&*node).into();`);
@@ -714,7 +641,7 @@ export function generate(analysisResult: AnalysisResult): string {
 
                 // writer.writeLine(`println!("Exited ${struct.name}");`);
                 writer.writeLine("node");
-            }).write("}").newLine();
+            });
         }
     }
 
@@ -723,10 +650,9 @@ export function generate(analysisResult: AnalysisResult): string {
         if (traitName.endsWith("<'a>") || name.endsWith("<'a>")) {
             writer.write("<'a>");
         }
-        writer.write(` ${traitName} for ${name} {`).newLine();
-        writer.indent(() => {
+        writer.write(` ${traitName} for ${name}`).block(() => {
             body();
-        }).write("}").newLine();
+        });
     }
 
     function writeGetViewTypeExpression(type: TypeDefinition, shouldCloneParent: boolean, name: string) {
@@ -735,8 +661,7 @@ export function generate(analysisResult: AnalysisResult): string {
         }
 
         if (type.name === "Option") {
-            writer.writeLine(`match ${name} {`);
-            writer.indent(() => {
+            writer.write(`match ${name} `).inlineBlock(() => {
                 writer.write("Some(value) => Some(");
                 writeGetViewTypeExpression(type.generic_args[0], shouldCloneParent, "value");
                 if (isVecType(type.generic_args[0])) {
@@ -744,22 +669,11 @@ export function generate(analysisResult: AnalysisResult): string {
                 }
                 writer.write("),").newLine();
                 writer.writeLine("None => None,");
-            }).write("}");
+            });
         } else if (type.name === "Vec") {
             writer.write(`${name.replace(/^&/, "")}.iter().map(|value| `);
             writeGetViewTypeExpression(type.generic_args[0], true, "value");
             writer.write(")");
-            /*writer.write("{").newLine();
-            writer.indent(() => {
-                writer.writeLine("let mut vec = BumpVec::with_capacity_in(value.len(), bump);");
-                writer.writeLine("for value in value.iter() {");
-                writer.indent(() => {
-                    writer.write("vec.push(");
-                    writeGetViewTypeExpression(type.generic_args[0]);
-                    writer.write(")").newLine();
-                }).write("}").newLine();
-                writer.writeLine("vec");
-            }).write("}");*/
         } else {
             writer.write(`${getViewForFunctionName(type.name)}(${name}, parent`);
             if (shouldCloneParent) {

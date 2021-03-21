@@ -1,10 +1,5 @@
-import {
-    AnalysisResult,
-    TypeDefinition,
-    PrimitiveTypeDefinition,
-    TypeReferenceDefinition,
-} from "../analyze/analysis_types.ts";
-import { Writer } from "../generate/writer.ts";
+import { AnalysisResult, PrimitiveTypeDefinition, TypeDefinition, TypeReferenceDefinition } from "../analyze/analysis_types.ts";
+import { Writer } from "../deps.ts";
 
 export function writeHeader(writer: Writer) {
     writer.writeLine("// This code is code generated.");
@@ -77,4 +72,3 @@ export function getIsReferenceType(analysisResult: AnalysisResult, type: TypeDef
     }
     return true;
 }
-
