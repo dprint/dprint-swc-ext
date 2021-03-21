@@ -31,7 +31,7 @@ jobs:
 
     - name: Install bvm binaries
       if: matrix.config.kind == 'test_debug'
-      uses: bvm/gh-action@v1.0.1
+      uses: bvm/gh-action@v1.1.0
 
     - name: Ensure code generation same
       if: matrix.config.kind == 'test_debug'
