@@ -31,7 +31,7 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
         const structFields = struct.fields.filter(f => !getIsForImpl(analysisResult, f.type) && f.name !== "span");
 
         writer.writeLine("#[derive(Serialize)]");
-        writer.writeLine(`#[serde(rename = "${struct.name}", rename_all = "camelCase", tag = "nodeKind")]`);
+        writer.writeLine(`#[serde(rename = "${struct.name}", rename_all = "camelCase", tag = "kind")]`);
         writer.write(`pub struct Serializable${struct.name}<'a>`).block(() => {
             writer.writeLine(`span: Span,`);
 

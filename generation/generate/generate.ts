@@ -402,7 +402,7 @@ export function generate(analysisResult: AnalysisResult): string {
                             if (isReferenceType) {
                                 writer.write("&");
                             }
-                            writer.write(`self.inner.${field.name}`).newLine();
+                            writer.write(`self.inner.${field.inner_name}`).newLine();
                         });
                     }
                 });

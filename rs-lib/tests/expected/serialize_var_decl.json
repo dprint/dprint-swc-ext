@@ -1,5 +1,5 @@
 {
-  "nodeKind": "Module",
+  "kind": "Module",
   "span": {
     "start": 0,
     "end": 13,
@@ -8,17 +8,17 @@
   "shebang": null,
   "body": [
     {
-      "nodeKind": "VarDecl",
+      "kind": "VarDecl",
       "span": {
         "start": 0,
         "end": 13,
         "ctxt": 0
       },
-      "kind": "let",
+      "varDeclKind": "let",
       "declare": false,
       "decls": [
         {
-          "nodeKind": "VarDeclarator",
+          "kind": "VarDeclarator",
           "span": {
             "start": 4,
             "end": 12,
@@ -26,14 +26,14 @@
           },
           "definite": false,
           "name": {
-            "nodeKind": "BindingIdent",
+            "kind": "BindingIdent",
             "span": {
               "start": 4,
               "end": 7,
               "ctxt": 0
             },
             "id": {
-              "nodeKind": "Ident",
+              "kind": "Ident",
               "span": {
                 "start": 4,
                 "end": 7,
@@ -45,7 +45,7 @@
             "typeAnn": null
           },
           "init": {
-            "nodeKind": "Number",
+            "kind": "Number",
             "span": {
               "start": 10,
               "end": 12,

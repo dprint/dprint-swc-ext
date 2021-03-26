@@ -1,22 +1,22 @@
 {
-  "nodeKind": "Module",
+  "kind": "Module",
   "span": {
     "start": 0,
-    "end": 67,
+    "end": 68,
     "ctxt": 0
   },
   "shebang": null,
   "body": [
     {
-      "nodeKind": "FnDecl",
+      "kind": "FnDecl",
       "span": {
         "start": 0,
-        "end": 67,
+        "end": 68,
         "ctxt": 0
       },
       "declare": false,
       "ident": {
-        "nodeKind": "Ident",
+        "kind": "Ident",
         "span": {
           "start": 9,
           "end": 12,
@@ -26,17 +26,17 @@
         "optional": false
       },
       "function": {
-        "nodeKind": "Function",
+        "kind": "Function",
         "span": {
           "start": 0,
-          "end": 67,
+          "end": 68,
           "ctxt": 0
         },
         "isGenerator": false,
         "isAsync": false,
         "params": [
           {
-            "nodeKind": "Param",
+            "kind": "Param",
             "span": {
               "start": 13,
               "end": 33,
@@ -44,7 +44,7 @@
             },
             "decorators": [],
             "pat": {
-              "nodeKind": "ObjectPat",
+              "kind": "ObjectPat",
               "span": {
                 "start": 13,
                 "end": 33,
@@ -53,14 +53,14 @@
               "optional": false,
               "props": [
                 {
-                  "nodeKind": "AssignPatProp",
+                  "kind": "AssignPatProp",
                   "span": {
                     "start": 15,
                     "end": 16,
                     "ctxt": 0
                   },
                   "key": {
-                    "nodeKind": "Ident",
+                    "kind": "Ident",
                     "span": {
                       "start": 15,
                       "end": 16,
@@ -73,14 +73,14 @@
                 }
               ],
               "typeAnn": {
-                "nodeKind": "TsTypeAnn",
+                "kind": "TsTypeAnn",
                 "span": {
                   "start": 18,
                   "end": 33,
                   "ctxt": 0
                 },
                 "typeAnn": {
-                  "nodeKind": "TsTypeLit",
+                  "kind": "TsTypeLit",
                   "span": {
                     "start": 20,
                     "end": 33,
@@ -88,7 +88,7 @@
                   },
                   "members": [
                     {
-                      "nodeKind": "TsPropertySignature",
+                      "kind": "TsPropertySignature",
                       "span": {
                         "start": 22,
                         "end": 31,
@@ -98,7 +98,7 @@
                       "computed": false,
                       "optional": false,
                       "key": {
-                        "nodeKind": "Ident",
+                        "kind": "Ident",
                         "span": {
                           "start": 22,
                           "end": 23,
@@ -110,20 +110,20 @@
                       "init": null,
                       "params": [],
                       "typeAnn": {
-                        "nodeKind": "TsTypeAnn",
+                        "kind": "TsTypeAnn",
                         "span": {
                           "start": 23,
                           "end": 31,
                           "ctxt": 0
                         },
                         "typeAnn": {
-                          "nodeKind": "TsKeywordType",
+                          "kind": "TsKeywordType",
                           "span": {
                             "start": 25,
                             "end": 31,
                             "ctxt": 0
                           },
-                          "kind": "number"
+                          "keywordKind": "number"
                         }
                       },
                       "typeParams": null
@@ -136,38 +136,38 @@
         ],
         "decorators": [],
         "body": {
-          "nodeKind": "BlockStmt",
+          "kind": "BlockStmt",
           "span": {
             "start": 44,
-            "end": 67,
+            "end": 68,
             "ctxt": 0
           },
           "stmts": [
             {
-              "nodeKind": "ReturnStmt",
+              "kind": "ReturnStmt",
               "span": {
                 "start": 46,
-                "end": 65,
+                "end": 66,
                 "ctxt": 0
               },
               "arg": {
-                "nodeKind": "BinExpr",
+                "kind": "BinExpr",
                 "span": {
                   "start": 53,
-                  "end": 64,
+                  "end": 65,
                   "ctxt": 0
                 },
                 "op": "===",
                 "left": {
-                  "nodeKind": "BinExpr",
+                  "kind": "BinExpr",
                   "span": {
                     "start": 53,
-                    "end": 58,
+                    "end": 59,
                     "ctxt": 0
                   },
                   "op": "%",
                   "left": {
-                    "nodeKind": "Ident",
+                    "kind": "Ident",
                     "span": {
                       "start": 53,
                       "end": 54,
@@ -177,20 +177,25 @@
                     "optional": false
                   },
                   "right": {
-                    "nodeKind": "Number",
+                    "kind": "BigInt",
                     "span": {
                       "start": 57,
-                      "end": 58,
+                      "end": 59,
                       "ctxt": 0
                     },
-                    "value": 2.0
+                    "value": [
+                      1,
+                      [
+                        2
+                      ]
+                    ]
                   }
                 },
                 "right": {
-                  "nodeKind": "Number",
+                  "kind": "Number",
                   "span": {
-                    "start": 63,
-                    "end": 64,
+                    "start": 64,
+                    "end": 65,
                     "ctxt": 0
                   },
                   "value": 0.0
@@ -201,20 +206,20 @@
         },
         "typeParams": null,
         "returnType": {
-          "nodeKind": "TsTypeAnn",
+          "kind": "TsTypeAnn",
           "span": {
             "start": 34,
             "end": 43,
             "ctxt": 0
           },
           "typeAnn": {
-            "nodeKind": "TsKeywordType",
+            "kind": "TsKeywordType",
             "span": {
               "start": 36,
               "end": 43,
               "ctxt": 0
             },
-            "kind": "boolean"
+            "keywordKind": "boolean"
           }
         }
       }

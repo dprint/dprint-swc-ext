@@ -21,7 +21,7 @@ fn it_shoule_be_serialized_to_json() {
   let tests = [
     ("let foo = 42;", "./tests/expected/serialize_var_decl.json"),
     (
-      "function foo({ a }: { a: number }): boolean { return a % 2 === 0; }",
+      "function foo({ a }: { a: number }): boolean { return a % 2n === 0; }",
       "./tests/expected/serialize_ts_function.json",
     ),
   ];

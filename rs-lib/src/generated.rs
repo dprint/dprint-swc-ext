@@ -7836,7 +7836,7 @@ pub struct ClassMethod<'a> {
 }
 
 impl<'a> ClassMethod<'a> {
-  pub fn kind(&self) -> MethodKind {
+  pub fn method_kind(&self) -> MethodKind {
     self.inner.kind
   }
 
@@ -12506,7 +12506,7 @@ pub struct PrivateMethod<'a> {
 }
 
 impl<'a> PrivateMethod<'a> {
-  pub fn kind(&self) -> MethodKind {
+  pub fn method_kind(&self) -> MethodKind {
     self.inner.kind
   }
 
@@ -13332,7 +13332,7 @@ impl<'a> Str<'a> {
     self.inner.has_escape
   }
 
-  pub fn kind(&self) -> StrKind {
+  pub fn str_kind(&self) -> StrKind {
     self.inner.kind
   }
 }
@@ -15694,7 +15694,7 @@ pub struct TsKeywordType<'a> {
 }
 
 impl<'a> TsKeywordType<'a> {
-  pub fn kind(&self) -> TsKeywordTypeKind {
+  pub fn keyword_kind(&self) -> TsKeywordTypeKind {
     self.inner.kind
   }
 }
@@ -18187,7 +18187,7 @@ pub struct VarDecl<'a> {
 }
 
 impl<'a> VarDecl<'a> {
-  pub fn kind(&self) -> VarDeclKind {
+  pub fn var_decl_kind(&self) -> VarDeclKind {
     self.inner.kind
   }
 

@@ -155,9 +155,9 @@ pub fn get_swc_script(
 
 #[cfg(feature = "serialize")]
 pub fn run_serialize_test(file_text: &str, expected_json_path: impl AsRef<Path>) {
-  let file_path = Path::new("test.ts");
-  run_test_with_module(&file_path, file_text, |module| {
+  run_test_with_module(&Path::new("test.ts"), file_text, |module| {
     let result = serde_json::to_string_pretty(&module).unwrap();
+    // std::fs::write(&expected_json_path, &result).unwrap();
     let expected = std::fs::read_to_string(expected_json_path.as_ref()).unwrap();
     pretty_assertions::assert_eq!(result, expected.trim());
   });

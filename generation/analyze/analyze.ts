@@ -59,10 +59,31 @@ export function analyze(): AnalysisResult {
                     continue;
                 }
                 yield {
-                    name: item.name,
+                    name: getNewFieldName(item.name),
+                    inner_name: item.name,
                     docs: item.docs,
                     type: getTypeDefinition(item.inner as TypeInner),
                 };
+            }
+        }
+
+        function getNewFieldName(fieldName: string) {
+            if (fieldName === "kind") {
+                switch (item.name) {
+                    case "VarDecl":
+                        return "var_decl_kind";
+                    case "ClassMethod":
+                    case "PrivateMethod":
+                        return "method_kind";
+                    case "TsKeywordType":
+                        return "keyword_kind";
+                    case "Str":
+                        return "str_kind";
+                    default:
+                        throw new Error(`Unhandled custom name for ${item.name}.`);
+                }
+            } else {
+                return fieldName;
             }
         }
     }

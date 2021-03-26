@@ -6,7 +6,7 @@ use swc_common::{Span, Spanned};
 use crate::generated::*;
 
 #[derive(Serialize)]
-#[serde(rename = "ArrayLit", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ArrayLit", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableArrayLit<'a> {
   span: Span,
   elems: Vec<Option<&'a ExprOrSpread<'a>>>,
@@ -27,7 +27,7 @@ impl<'a> From<ArrayLit<'a>> for SerializableArrayLit<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ArrayPat", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ArrayPat", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableArrayPat<'a> {
   span: Span,
   optional: bool,
@@ -52,7 +52,7 @@ impl<'a> From<ArrayPat<'a>> for SerializableArrayPat<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ArrowExpr", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ArrowExpr", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableArrowExpr<'a> {
   span: Span,
   is_async: bool,
@@ -83,7 +83,7 @@ impl<'a> From<ArrowExpr<'a>> for SerializableArrowExpr<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "AssignExpr", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "AssignExpr", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableAssignExpr<'a> {
   span: Span,
   op: AssignOp,
@@ -108,7 +108,7 @@ impl<'a> From<AssignExpr<'a>> for SerializableAssignExpr<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "AssignPat", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "AssignPat", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableAssignPat<'a> {
   span: Span,
   left: Pat<'a>,
@@ -133,7 +133,7 @@ impl<'a> From<AssignPat<'a>> for SerializableAssignPat<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "AssignPatProp", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "AssignPatProp", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableAssignPatProp<'a> {
   span: Span,
   key: &'a Ident<'a>,
@@ -156,7 +156,7 @@ impl<'a> From<AssignPatProp<'a>> for SerializableAssignPatProp<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "AssignProp", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "AssignProp", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableAssignProp<'a> {
   span: Span,
   key: &'a Ident<'a>,
@@ -179,7 +179,7 @@ impl<'a> From<AssignProp<'a>> for SerializableAssignProp<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "AwaitExpr", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "AwaitExpr", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableAwaitExpr<'a> {
   span: Span,
   arg: Expr<'a>,
@@ -200,7 +200,7 @@ impl<'a> From<AwaitExpr<'a>> for SerializableAwaitExpr<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "BigInt", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "BigInt", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableBigInt<'a> {
   span: Span,
   value: num_bigint::BigInt,
@@ -221,7 +221,7 @@ impl<'a> From<BigInt<'a>> for SerializableBigInt<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "BinExpr", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "BinExpr", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableBinExpr<'a> {
   span: Span,
   op: BinaryOp,
@@ -246,7 +246,7 @@ impl<'a> From<BinExpr<'a>> for SerializableBinExpr<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "BindingIdent", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "BindingIdent", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableBindingIdent<'a> {
   span: Span,
   id: &'a Ident<'a>,
@@ -269,7 +269,7 @@ impl<'a> From<BindingIdent<'a>> for SerializableBindingIdent<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "BlockStmt", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "BlockStmt", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableBlockStmt<'a> {
   span: Span,
   stmts: Vec<Stmt<'a>>,
@@ -290,7 +290,7 @@ impl<'a> From<BlockStmt<'a>> for SerializableBlockStmt<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "Bool", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "Bool", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableBool<'a> {
   span: Span,
   value: bool,
@@ -311,7 +311,7 @@ impl<'a> From<Bool<'a>> for SerializableBool<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "BreakStmt", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "BreakStmt", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableBreakStmt<'a> {
   span: Span,
   label: Option<&'a Ident<'a>>,
@@ -332,7 +332,7 @@ impl<'a> From<BreakStmt<'a>> for SerializableBreakStmt<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "CallExpr", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "CallExpr", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableCallExpr<'a> {
   span: Span,
   callee: ExprOrSuper<'a>,
@@ -357,7 +357,7 @@ impl<'a> From<CallExpr<'a>> for SerializableCallExpr<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "CatchClause", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "CatchClause", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableCatchClause<'a> {
   span: Span,
   param: Option<Pat<'a>>,
@@ -380,7 +380,7 @@ impl<'a> From<CatchClause<'a>> for SerializableCatchClause<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "Class", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "Class", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableClass<'a> {
   span: Span,
   is_abstract: bool,
@@ -413,7 +413,7 @@ impl<'a> From<Class<'a>> for SerializableClass<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ClassDecl", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ClassDecl", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableClassDecl<'a> {
   span: Span,
   declare: bool,
@@ -438,7 +438,7 @@ impl<'a> From<ClassDecl<'a>> for SerializableClassDecl<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ClassExpr", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ClassExpr", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableClassExpr<'a> {
   span: Span,
   ident: Option<&'a Ident<'a>>,
@@ -461,10 +461,10 @@ impl<'a> From<ClassExpr<'a>> for SerializableClassExpr<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ClassMethod", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ClassMethod", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableClassMethod<'a> {
   span: Span,
-  kind: MethodKind,
+  method_kind: MethodKind,
   is_static: bool,
   accessibility: Option<Accessibility>,
   is_abstract: bool,
@@ -481,7 +481,7 @@ impl<'a> From<ClassMethod<'a>> for SerializableClassMethod<'a> {
   fn from(orig: ClassMethod<'a>) -> Self {
     Self {
       span: orig.span(),
-      kind: orig.kind().clone(),
+      method_kind: orig.method_kind().clone(),
       is_static: orig.is_static().clone(),
       accessibility: orig.accessibility().clone(),
       is_abstract: orig.is_abstract().clone(),
@@ -494,7 +494,7 @@ impl<'a> From<ClassMethod<'a>> for SerializableClassMethod<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ClassProp", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ClassProp", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableClassProp<'a> {
   span: Span,
   is_static: bool,
@@ -537,7 +537,7 @@ impl<'a> From<ClassProp<'a>> for SerializableClassProp<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ComputedPropName", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ComputedPropName", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableComputedPropName<'a> {
   span: Span,
   expr: Expr<'a>,
@@ -558,7 +558,7 @@ impl<'a> From<ComputedPropName<'a>> for SerializableComputedPropName<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "CondExpr", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "CondExpr", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableCondExpr<'a> {
   span: Span,
   test: Expr<'a>,
@@ -583,7 +583,7 @@ impl<'a> From<CondExpr<'a>> for SerializableCondExpr<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "Constructor", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "Constructor", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableConstructor<'a> {
   span: Span,
   accessibility: Option<Accessibility>,
@@ -612,7 +612,7 @@ impl<'a> From<Constructor<'a>> for SerializableConstructor<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ContinueStmt", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ContinueStmt", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableContinueStmt<'a> {
   span: Span,
   label: Option<&'a Ident<'a>>,
@@ -633,7 +633,7 @@ impl<'a> From<ContinueStmt<'a>> for SerializableContinueStmt<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "DebuggerStmt", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "DebuggerStmt", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableDebuggerStmt<'a> {
   span: Span,
 
@@ -652,7 +652,7 @@ impl<'a> From<DebuggerStmt<'a>> for SerializableDebuggerStmt<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "Decorator", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "Decorator", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableDecorator<'a> {
   span: Span,
   expr: Expr<'a>,
@@ -673,7 +673,7 @@ impl<'a> From<Decorator<'a>> for SerializableDecorator<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "DoWhileStmt", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "DoWhileStmt", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableDoWhileStmt<'a> {
   span: Span,
   test: Expr<'a>,
@@ -696,7 +696,7 @@ impl<'a> From<DoWhileStmt<'a>> for SerializableDoWhileStmt<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "EmptyStmt", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "EmptyStmt", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableEmptyStmt<'a> {
   span: Span,
 
@@ -715,7 +715,7 @@ impl<'a> From<EmptyStmt<'a>> for SerializableEmptyStmt<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ExportAll", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ExportAll", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableExportAll<'a> {
   span: Span,
   src: &'a Str<'a>,
@@ -738,7 +738,7 @@ impl<'a> From<ExportAll<'a>> for SerializableExportAll<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ExportDecl", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ExportDecl", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableExportDecl<'a> {
   span: Span,
   decl: Decl<'a>,
@@ -759,7 +759,7 @@ impl<'a> From<ExportDecl<'a>> for SerializableExportDecl<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ExportDefaultDecl", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ExportDefaultDecl", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableExportDefaultDecl<'a> {
   span: Span,
   decl: DefaultDecl<'a>,
@@ -780,7 +780,7 @@ impl<'a> From<ExportDefaultDecl<'a>> for SerializableExportDefaultDecl<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ExportDefaultExpr", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ExportDefaultExpr", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableExportDefaultExpr<'a> {
   span: Span,
   expr: Expr<'a>,
@@ -801,7 +801,7 @@ impl<'a> From<ExportDefaultExpr<'a>> for SerializableExportDefaultExpr<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ExportDefaultSpecifier", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ExportDefaultSpecifier", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableExportDefaultSpecifier<'a> {
   span: Span,
   exported: &'a Ident<'a>,
@@ -822,7 +822,7 @@ impl<'a> From<ExportDefaultSpecifier<'a>> for SerializableExportDefaultSpecifier
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ExportNamedSpecifier", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ExportNamedSpecifier", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableExportNamedSpecifier<'a> {
   span: Span,
   orig: &'a Ident<'a>,
@@ -845,7 +845,7 @@ impl<'a> From<ExportNamedSpecifier<'a>> for SerializableExportNamedSpecifier<'a>
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ExportNamespaceSpecifier", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ExportNamespaceSpecifier", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableExportNamespaceSpecifier<'a> {
   span: Span,
   name: &'a Ident<'a>,
@@ -866,7 +866,7 @@ impl<'a> From<ExportNamespaceSpecifier<'a>> for SerializableExportNamespaceSpeci
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ExprOrSpread", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ExprOrSpread", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableExprOrSpread<'a> {
   span: Span,
   spread: Option<swc_common::Span>,
@@ -889,7 +889,7 @@ impl<'a> From<ExprOrSpread<'a>> for SerializableExprOrSpread<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ExprStmt", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ExprStmt", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableExprStmt<'a> {
   span: Span,
   expr: Expr<'a>,
@@ -910,7 +910,7 @@ impl<'a> From<ExprStmt<'a>> for SerializableExprStmt<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "FnDecl", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "FnDecl", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableFnDecl<'a> {
   span: Span,
   declare: bool,
@@ -935,7 +935,7 @@ impl<'a> From<FnDecl<'a>> for SerializableFnDecl<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "FnExpr", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "FnExpr", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableFnExpr<'a> {
   span: Span,
   ident: Option<&'a Ident<'a>>,
@@ -958,7 +958,7 @@ impl<'a> From<FnExpr<'a>> for SerializableFnExpr<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ForInStmt", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ForInStmt", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableForInStmt<'a> {
   span: Span,
   left: VarDeclOrPat<'a>,
@@ -983,7 +983,7 @@ impl<'a> From<ForInStmt<'a>> for SerializableForInStmt<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ForOfStmt", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ForOfStmt", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableForOfStmt<'a> {
   span: Span,
   await_token: Option<swc_common::Span>,
@@ -1010,7 +1010,7 @@ impl<'a> From<ForOfStmt<'a>> for SerializableForOfStmt<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ForStmt", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ForStmt", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableForStmt<'a> {
   span: Span,
   init: Option<VarDeclOrExpr<'a>>,
@@ -1037,7 +1037,7 @@ impl<'a> From<ForStmt<'a>> for SerializableForStmt<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "Function", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "Function", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableFunction<'a> {
   span: Span,
   is_generator: bool,
@@ -1070,7 +1070,7 @@ impl<'a> From<Function<'a>> for SerializableFunction<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "GetterProp", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "GetterProp", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableGetterProp<'a> {
   span: Span,
   key: PropName<'a>,
@@ -1095,7 +1095,7 @@ impl<'a> From<GetterProp<'a>> for SerializableGetterProp<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "Ident", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "Ident", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableIdent<'a> {
   span: Span,
   sym: swc_atoms::JsWord,
@@ -1118,7 +1118,7 @@ impl<'a> From<Ident<'a>> for SerializableIdent<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "IfStmt", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "IfStmt", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableIfStmt<'a> {
   span: Span,
   test: Expr<'a>,
@@ -1143,7 +1143,7 @@ impl<'a> From<IfStmt<'a>> for SerializableIfStmt<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ImportDecl", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ImportDecl", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableImportDecl<'a> {
   span: Span,
   type_only: bool,
@@ -1170,7 +1170,7 @@ impl<'a> From<ImportDecl<'a>> for SerializableImportDecl<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ImportDefaultSpecifier", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ImportDefaultSpecifier", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableImportDefaultSpecifier<'a> {
   span: Span,
   local: &'a Ident<'a>,
@@ -1191,7 +1191,7 @@ impl<'a> From<ImportDefaultSpecifier<'a>> for SerializableImportDefaultSpecifier
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ImportNamedSpecifier", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ImportNamedSpecifier", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableImportNamedSpecifier<'a> {
   span: Span,
   local: &'a Ident<'a>,
@@ -1214,7 +1214,7 @@ impl<'a> From<ImportNamedSpecifier<'a>> for SerializableImportNamedSpecifier<'a>
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ImportStarAsSpecifier", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ImportStarAsSpecifier", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableImportStarAsSpecifier<'a> {
   span: Span,
   local: &'a Ident<'a>,
@@ -1235,7 +1235,7 @@ impl<'a> From<ImportStarAsSpecifier<'a>> for SerializableImportStarAsSpecifier<'
 }
 
 #[derive(Serialize)]
-#[serde(rename = "Invalid", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "Invalid", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableInvalid<'a> {
   span: Span,
 
@@ -1254,7 +1254,7 @@ impl<'a> From<Invalid<'a>> for SerializableInvalid<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "JSXAttr", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "JSXAttr", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableJSXAttr<'a> {
   span: Span,
   name: JSXAttrName<'a>,
@@ -1277,7 +1277,7 @@ impl<'a> From<JSXAttr<'a>> for SerializableJSXAttr<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "JSXClosingElement", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "JSXClosingElement", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableJSXClosingElement<'a> {
   span: Span,
   name: JSXElementName<'a>,
@@ -1298,7 +1298,7 @@ impl<'a> From<JSXClosingElement<'a>> for SerializableJSXClosingElement<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "JSXClosingFragment", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "JSXClosingFragment", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableJSXClosingFragment<'a> {
   span: Span,
 
@@ -1317,7 +1317,7 @@ impl<'a> From<JSXClosingFragment<'a>> for SerializableJSXClosingFragment<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "JSXElement", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "JSXElement", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableJSXElement<'a> {
   span: Span,
   opening: &'a JSXOpeningElement<'a>,
@@ -1342,7 +1342,7 @@ impl<'a> From<JSXElement<'a>> for SerializableJSXElement<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "JSXEmptyExpr", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "JSXEmptyExpr", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableJSXEmptyExpr<'a> {
   span: Span,
 
@@ -1361,7 +1361,7 @@ impl<'a> From<JSXEmptyExpr<'a>> for SerializableJSXEmptyExpr<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "JSXExprContainer", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "JSXExprContainer", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableJSXExprContainer<'a> {
   span: Span,
   expr: JSXExpr<'a>,
@@ -1382,7 +1382,7 @@ impl<'a> From<JSXExprContainer<'a>> for SerializableJSXExprContainer<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "JSXFragment", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "JSXFragment", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableJSXFragment<'a> {
   span: Span,
   opening: &'a JSXOpeningFragment<'a>,
@@ -1407,7 +1407,7 @@ impl<'a> From<JSXFragment<'a>> for SerializableJSXFragment<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "JSXMemberExpr", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "JSXMemberExpr", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableJSXMemberExpr<'a> {
   span: Span,
   obj: JSXObject<'a>,
@@ -1430,7 +1430,7 @@ impl<'a> From<JSXMemberExpr<'a>> for SerializableJSXMemberExpr<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "JSXNamespacedName", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "JSXNamespacedName", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableJSXNamespacedName<'a> {
   span: Span,
   ns: &'a Ident<'a>,
@@ -1453,7 +1453,7 @@ impl<'a> From<JSXNamespacedName<'a>> for SerializableJSXNamespacedName<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "JSXOpeningElement", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "JSXOpeningElement", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableJSXOpeningElement<'a> {
   span: Span,
   self_closing: bool,
@@ -1480,7 +1480,7 @@ impl<'a> From<JSXOpeningElement<'a>> for SerializableJSXOpeningElement<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "JSXOpeningFragment", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "JSXOpeningFragment", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableJSXOpeningFragment<'a> {
   span: Span,
 
@@ -1499,7 +1499,7 @@ impl<'a> From<JSXOpeningFragment<'a>> for SerializableJSXOpeningFragment<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "JSXSpreadChild", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "JSXSpreadChild", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableJSXSpreadChild<'a> {
   span: Span,
   expr: Expr<'a>,
@@ -1520,7 +1520,7 @@ impl<'a> From<JSXSpreadChild<'a>> for SerializableJSXSpreadChild<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "JSXText", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "JSXText", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableJSXText<'a> {
   span: Span,
   value: swc_atoms::JsWord,
@@ -1543,7 +1543,7 @@ impl<'a> From<JSXText<'a>> for SerializableJSXText<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "KeyValuePatProp", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "KeyValuePatProp", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableKeyValuePatProp<'a> {
   span: Span,
   key: PropName<'a>,
@@ -1566,7 +1566,7 @@ impl<'a> From<KeyValuePatProp<'a>> for SerializableKeyValuePatProp<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "KeyValueProp", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "KeyValueProp", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableKeyValueProp<'a> {
   span: Span,
   key: PropName<'a>,
@@ -1589,7 +1589,7 @@ impl<'a> From<KeyValueProp<'a>> for SerializableKeyValueProp<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "LabeledStmt", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "LabeledStmt", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableLabeledStmt<'a> {
   span: Span,
   label: &'a Ident<'a>,
@@ -1612,7 +1612,7 @@ impl<'a> From<LabeledStmt<'a>> for SerializableLabeledStmt<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "MemberExpr", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "MemberExpr", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableMemberExpr<'a> {
   span: Span,
   computed: bool,
@@ -1637,7 +1637,7 @@ impl<'a> From<MemberExpr<'a>> for SerializableMemberExpr<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "MetaPropExpr", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "MetaPropExpr", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableMetaPropExpr<'a> {
   span: Span,
   meta: &'a Ident<'a>,
@@ -1660,7 +1660,7 @@ impl<'a> From<MetaPropExpr<'a>> for SerializableMetaPropExpr<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "MethodProp", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "MethodProp", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableMethodProp<'a> {
   span: Span,
   key: PropName<'a>,
@@ -1683,7 +1683,7 @@ impl<'a> From<MethodProp<'a>> for SerializableMethodProp<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "Module", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "Module", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableModule<'a> {
   span: Span,
   shebang: Option<swc_atoms::JsWord>,
@@ -1706,7 +1706,7 @@ impl<'a> From<Module<'a>> for SerializableModule<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "NamedExport", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "NamedExport", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableNamedExport<'a> {
   span: Span,
   type_only: bool,
@@ -1733,7 +1733,7 @@ impl<'a> From<NamedExport<'a>> for SerializableNamedExport<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "NewExpr", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "NewExpr", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableNewExpr<'a> {
   span: Span,
   callee: Expr<'a>,
@@ -1758,7 +1758,7 @@ impl<'a> From<NewExpr<'a>> for SerializableNewExpr<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "Null", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "Null", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableNull<'a> {
   span: Span,
 
@@ -1777,7 +1777,7 @@ impl<'a> From<Null<'a>> for SerializableNull<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "Number", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "Number", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableNumber<'a> {
   span: Span,
   value: f64,
@@ -1798,7 +1798,7 @@ impl<'a> From<Number<'a>> for SerializableNumber<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ObjectLit", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ObjectLit", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableObjectLit<'a> {
   span: Span,
   props: Vec<PropOrSpread<'a>>,
@@ -1819,7 +1819,7 @@ impl<'a> From<ObjectLit<'a>> for SerializableObjectLit<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ObjectPat", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ObjectPat", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableObjectPat<'a> {
   span: Span,
   optional: bool,
@@ -1844,7 +1844,7 @@ impl<'a> From<ObjectPat<'a>> for SerializableObjectPat<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "OptChainExpr", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "OptChainExpr", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableOptChainExpr<'a> {
   span: Span,
   question_dot_token: swc_common::Span,
@@ -1867,7 +1867,7 @@ impl<'a> From<OptChainExpr<'a>> for SerializableOptChainExpr<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "Param", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "Param", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableParam<'a> {
   span: Span,
   decorators: Vec<&'a Decorator<'a>>,
@@ -1890,7 +1890,7 @@ impl<'a> From<Param<'a>> for SerializableParam<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ParenExpr", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ParenExpr", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableParenExpr<'a> {
   span: Span,
   expr: Expr<'a>,
@@ -1911,10 +1911,10 @@ impl<'a> From<ParenExpr<'a>> for SerializableParenExpr<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "PrivateMethod", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "PrivateMethod", rename_all = "camelCase", tag = "kind")]
 pub struct SerializablePrivateMethod<'a> {
   span: Span,
-  kind: MethodKind,
+  method_kind: MethodKind,
   is_static: bool,
   accessibility: Option<Accessibility>,
   is_abstract: bool,
@@ -1931,7 +1931,7 @@ impl<'a> From<PrivateMethod<'a>> for SerializablePrivateMethod<'a> {
   fn from(orig: PrivateMethod<'a>) -> Self {
     Self {
       span: orig.span(),
-      kind: orig.kind().clone(),
+      method_kind: orig.method_kind().clone(),
       is_static: orig.is_static().clone(),
       accessibility: orig.accessibility().clone(),
       is_abstract: orig.is_abstract().clone(),
@@ -1944,7 +1944,7 @@ impl<'a> From<PrivateMethod<'a>> for SerializablePrivateMethod<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "PrivateName", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "PrivateName", rename_all = "camelCase", tag = "kind")]
 pub struct SerializablePrivateName<'a> {
   span: Span,
   id: &'a Ident<'a>,
@@ -1965,7 +1965,7 @@ impl<'a> From<PrivateName<'a>> for SerializablePrivateName<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "PrivateProp", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "PrivateProp", rename_all = "camelCase", tag = "kind")]
 pub struct SerializablePrivateProp<'a> {
   span: Span,
   is_static: bool,
@@ -2006,7 +2006,7 @@ impl<'a> From<PrivateProp<'a>> for SerializablePrivateProp<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "Regex", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "Regex", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableRegex<'a> {
   span: Span,
   exp: swc_atoms::JsWord,
@@ -2029,7 +2029,7 @@ impl<'a> From<Regex<'a>> for SerializableRegex<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "RestPat", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "RestPat", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableRestPat<'a> {
   span: Span,
   dot3_token: swc_common::Span,
@@ -2054,7 +2054,7 @@ impl<'a> From<RestPat<'a>> for SerializableRestPat<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ReturnStmt", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ReturnStmt", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableReturnStmt<'a> {
   span: Span,
   arg: Option<Expr<'a>>,
@@ -2075,7 +2075,7 @@ impl<'a> From<ReturnStmt<'a>> for SerializableReturnStmt<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "Script", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "Script", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableScript<'a> {
   span: Span,
   shebang: Option<swc_atoms::JsWord>,
@@ -2098,7 +2098,7 @@ impl<'a> From<Script<'a>> for SerializableScript<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "SeqExpr", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "SeqExpr", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableSeqExpr<'a> {
   span: Span,
   exprs: Vec<Expr<'a>>,
@@ -2119,7 +2119,7 @@ impl<'a> From<SeqExpr<'a>> for SerializableSeqExpr<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "SetterProp", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "SetterProp", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableSetterProp<'a> {
   span: Span,
   key: PropName<'a>,
@@ -2144,7 +2144,7 @@ impl<'a> From<SetterProp<'a>> for SerializableSetterProp<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "SpreadElement", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "SpreadElement", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableSpreadElement<'a> {
   span: Span,
   dot3_token: swc_common::Span,
@@ -2167,12 +2167,12 @@ impl<'a> From<SpreadElement<'a>> for SerializableSpreadElement<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "Str", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "Str", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableStr<'a> {
   span: Span,
   value: swc_atoms::JsWord,
   has_escape: bool,
-  kind: StrKind,
+  str_kind: StrKind,
 
   #[doc(hidden)]
   #[serde(skip)]
@@ -2185,14 +2185,14 @@ impl<'a> From<Str<'a>> for SerializableStr<'a> {
       span: orig.span(),
       value: orig.value().clone(),
       has_escape: orig.has_escape().clone(),
-      kind: orig.kind().clone(),
+      str_kind: orig.str_kind().clone(),
       _phantom: PhantomData,
     }
   }
 }
 
 #[derive(Serialize)]
-#[serde(rename = "Super", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "Super", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableSuper<'a> {
   span: Span,
 
@@ -2211,7 +2211,7 @@ impl<'a> From<Super<'a>> for SerializableSuper<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "SwitchCase", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "SwitchCase", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableSwitchCase<'a> {
   span: Span,
   test: Option<Expr<'a>>,
@@ -2234,7 +2234,7 @@ impl<'a> From<SwitchCase<'a>> for SerializableSwitchCase<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "SwitchStmt", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "SwitchStmt", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableSwitchStmt<'a> {
   span: Span,
   discriminant: Expr<'a>,
@@ -2257,7 +2257,7 @@ impl<'a> From<SwitchStmt<'a>> for SerializableSwitchStmt<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TaggedTpl", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TaggedTpl", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTaggedTpl<'a> {
   span: Span,
   tag: Expr<'a>,
@@ -2284,7 +2284,7 @@ impl<'a> From<TaggedTpl<'a>> for SerializableTaggedTpl<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ThisExpr", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ThisExpr", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableThisExpr<'a> {
   span: Span,
 
@@ -2303,7 +2303,7 @@ impl<'a> From<ThisExpr<'a>> for SerializableThisExpr<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ThrowStmt", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "ThrowStmt", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableThrowStmt<'a> {
   span: Span,
   arg: Expr<'a>,
@@ -2324,7 +2324,7 @@ impl<'a> From<ThrowStmt<'a>> for SerializableThrowStmt<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "Tpl", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "Tpl", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTpl<'a> {
   span: Span,
   exprs: Vec<Expr<'a>>,
@@ -2347,7 +2347,7 @@ impl<'a> From<Tpl<'a>> for SerializableTpl<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TplElement", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TplElement", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTplElement<'a> {
   span: Span,
   tail: bool,
@@ -2372,7 +2372,7 @@ impl<'a> From<TplElement<'a>> for SerializableTplElement<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TryStmt", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TryStmt", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTryStmt<'a> {
   span: Span,
   block: &'a BlockStmt<'a>,
@@ -2397,7 +2397,7 @@ impl<'a> From<TryStmt<'a>> for SerializableTryStmt<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsArrayType", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsArrayType", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsArrayType<'a> {
   span: Span,
   elem_type: TsType<'a>,
@@ -2418,7 +2418,7 @@ impl<'a> From<TsArrayType<'a>> for SerializableTsArrayType<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsAsExpr", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsAsExpr", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsAsExpr<'a> {
   span: Span,
   expr: Expr<'a>,
@@ -2441,7 +2441,7 @@ impl<'a> From<TsAsExpr<'a>> for SerializableTsAsExpr<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsCallSignatureDecl", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsCallSignatureDecl", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsCallSignatureDecl<'a> {
   span: Span,
   params: Vec<TsFnParam<'a>>,
@@ -2466,7 +2466,7 @@ impl<'a> From<TsCallSignatureDecl<'a>> for SerializableTsCallSignatureDecl<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsConditionalType", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsConditionalType", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsConditionalType<'a> {
   span: Span,
   check_type: TsType<'a>,
@@ -2493,7 +2493,7 @@ impl<'a> From<TsConditionalType<'a>> for SerializableTsConditionalType<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsConstAssertion", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsConstAssertion", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsConstAssertion<'a> {
   span: Span,
   expr: Expr<'a>,
@@ -2514,7 +2514,7 @@ impl<'a> From<TsConstAssertion<'a>> for SerializableTsConstAssertion<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsConstructSignatureDecl", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsConstructSignatureDecl", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsConstructSignatureDecl<'a> {
   span: Span,
   params: Vec<TsFnParam<'a>>,
@@ -2539,7 +2539,7 @@ impl<'a> From<TsConstructSignatureDecl<'a>> for SerializableTsConstructSignature
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsConstructorType", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsConstructorType", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsConstructorType<'a> {
   span: Span,
   is_abstract: bool,
@@ -2566,7 +2566,7 @@ impl<'a> From<TsConstructorType<'a>> for SerializableTsConstructorType<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsEnumDecl", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsEnumDecl", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsEnumDecl<'a> {
   span: Span,
   declare: bool,
@@ -2593,7 +2593,7 @@ impl<'a> From<TsEnumDecl<'a>> for SerializableTsEnumDecl<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsEnumMember", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsEnumMember", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsEnumMember<'a> {
   span: Span,
   id: TsEnumMemberId<'a>,
@@ -2616,7 +2616,7 @@ impl<'a> From<TsEnumMember<'a>> for SerializableTsEnumMember<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsExportAssignment", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsExportAssignment", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsExportAssignment<'a> {
   span: Span,
   expr: Expr<'a>,
@@ -2637,7 +2637,7 @@ impl<'a> From<TsExportAssignment<'a>> for SerializableTsExportAssignment<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsExprWithTypeArgs", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsExprWithTypeArgs", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsExprWithTypeArgs<'a> {
   span: Span,
   expr: TsEntityName<'a>,
@@ -2660,7 +2660,7 @@ impl<'a> From<TsExprWithTypeArgs<'a>> for SerializableTsExprWithTypeArgs<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsExternalModuleRef", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsExternalModuleRef", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsExternalModuleRef<'a> {
   span: Span,
   expr: &'a Str<'a>,
@@ -2681,7 +2681,7 @@ impl<'a> From<TsExternalModuleRef<'a>> for SerializableTsExternalModuleRef<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsFnType", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsFnType", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsFnType<'a> {
   span: Span,
   params: Vec<TsFnParam<'a>>,
@@ -2706,7 +2706,7 @@ impl<'a> From<TsFnType<'a>> for SerializableTsFnType<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsImportEqualsDecl", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsImportEqualsDecl", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsImportEqualsDecl<'a> {
   span: Span,
   declare: bool,
@@ -2733,7 +2733,7 @@ impl<'a> From<TsImportEqualsDecl<'a>> for SerializableTsImportEqualsDecl<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsImportType", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsImportType", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsImportType<'a> {
   span: Span,
   arg: &'a Str<'a>,
@@ -2758,7 +2758,7 @@ impl<'a> From<TsImportType<'a>> for SerializableTsImportType<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsIndexSignature", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsIndexSignature", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsIndexSignature<'a> {
   span: Span,
   readonly: bool,
@@ -2783,7 +2783,7 @@ impl<'a> From<TsIndexSignature<'a>> for SerializableTsIndexSignature<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsIndexedAccessType", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsIndexedAccessType", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsIndexedAccessType<'a> {
   span: Span,
   readonly: bool,
@@ -2808,7 +2808,7 @@ impl<'a> From<TsIndexedAccessType<'a>> for SerializableTsIndexedAccessType<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsInferType", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsInferType", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsInferType<'a> {
   span: Span,
   type_param: &'a TsTypeParam<'a>,
@@ -2829,7 +2829,7 @@ impl<'a> From<TsInferType<'a>> for SerializableTsInferType<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsInterfaceBody", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsInterfaceBody", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsInterfaceBody<'a> {
   span: Span,
   body: Vec<TsTypeElement<'a>>,
@@ -2850,7 +2850,7 @@ impl<'a> From<TsInterfaceBody<'a>> for SerializableTsInterfaceBody<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsInterfaceDecl", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsInterfaceDecl", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsInterfaceDecl<'a> {
   span: Span,
   declare: bool,
@@ -2879,7 +2879,7 @@ impl<'a> From<TsInterfaceDecl<'a>> for SerializableTsInterfaceDecl<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsIntersectionType", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsIntersectionType", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsIntersectionType<'a> {
   span: Span,
   types: Vec<TsType<'a>>,
@@ -2900,10 +2900,10 @@ impl<'a> From<TsIntersectionType<'a>> for SerializableTsIntersectionType<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsKeywordType", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsKeywordType", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsKeywordType<'a> {
   span: Span,
-  kind: TsKeywordTypeKind,
+  keyword_kind: TsKeywordTypeKind,
 
   #[doc(hidden)]
   #[serde(skip)]
@@ -2914,14 +2914,14 @@ impl<'a> From<TsKeywordType<'a>> for SerializableTsKeywordType<'a> {
   fn from(orig: TsKeywordType<'a>) -> Self {
     Self {
       span: orig.span(),
-      kind: orig.kind().clone(),
+      keyword_kind: orig.keyword_kind().clone(),
       _phantom: PhantomData,
     }
   }
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsLitType", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsLitType", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsLitType<'a> {
   span: Span,
   lit: TsLit<'a>,
@@ -2942,7 +2942,7 @@ impl<'a> From<TsLitType<'a>> for SerializableTsLitType<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsMappedType", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsMappedType", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsMappedType<'a> {
   span: Span,
   readonly: Option<TruePlusMinus>,
@@ -2971,7 +2971,7 @@ impl<'a> From<TsMappedType<'a>> for SerializableTsMappedType<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsMethodSignature", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsMethodSignature", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsMethodSignature<'a> {
   span: Span,
   readonly: bool,
@@ -3004,7 +3004,7 @@ impl<'a> From<TsMethodSignature<'a>> for SerializableTsMethodSignature<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsModuleBlock", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsModuleBlock", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsModuleBlock<'a> {
   span: Span,
   body: Vec<ModuleItem<'a>>,
@@ -3025,7 +3025,7 @@ impl<'a> From<TsModuleBlock<'a>> for SerializableTsModuleBlock<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsModuleDecl", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsModuleDecl", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsModuleDecl<'a> {
   span: Span,
   declare: bool,
@@ -3052,7 +3052,7 @@ impl<'a> From<TsModuleDecl<'a>> for SerializableTsModuleDecl<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsNamespaceDecl", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsNamespaceDecl", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsNamespaceDecl<'a> {
   span: Span,
   declare: bool,
@@ -3079,7 +3079,7 @@ impl<'a> From<TsNamespaceDecl<'a>> for SerializableTsNamespaceDecl<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsNamespaceExportDecl", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsNamespaceExportDecl", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsNamespaceExportDecl<'a> {
   span: Span,
   id: &'a Ident<'a>,
@@ -3100,7 +3100,7 @@ impl<'a> From<TsNamespaceExportDecl<'a>> for SerializableTsNamespaceExportDecl<'
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsNonNullExpr", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsNonNullExpr", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsNonNullExpr<'a> {
   span: Span,
   expr: Expr<'a>,
@@ -3121,7 +3121,7 @@ impl<'a> From<TsNonNullExpr<'a>> for SerializableTsNonNullExpr<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsOptionalType", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsOptionalType", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsOptionalType<'a> {
   span: Span,
   type_ann: TsType<'a>,
@@ -3142,7 +3142,7 @@ impl<'a> From<TsOptionalType<'a>> for SerializableTsOptionalType<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsParamProp", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsParamProp", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsParamProp<'a> {
   span: Span,
   accessibility: Option<Accessibility>,
@@ -3169,7 +3169,7 @@ impl<'a> From<TsParamProp<'a>> for SerializableTsParamProp<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsParenthesizedType", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsParenthesizedType", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsParenthesizedType<'a> {
   span: Span,
   type_ann: TsType<'a>,
@@ -3190,7 +3190,7 @@ impl<'a> From<TsParenthesizedType<'a>> for SerializableTsParenthesizedType<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsPropertySignature", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsPropertySignature", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsPropertySignature<'a> {
   span: Span,
   readonly: bool,
@@ -3225,7 +3225,7 @@ impl<'a> From<TsPropertySignature<'a>> for SerializableTsPropertySignature<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsQualifiedName", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsQualifiedName", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsQualifiedName<'a> {
   span: Span,
   left: TsEntityName<'a>,
@@ -3248,7 +3248,7 @@ impl<'a> From<TsQualifiedName<'a>> for SerializableTsQualifiedName<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsRestType", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsRestType", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsRestType<'a> {
   span: Span,
   type_ann: TsType<'a>,
@@ -3269,7 +3269,7 @@ impl<'a> From<TsRestType<'a>> for SerializableTsRestType<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsThisType", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsThisType", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsThisType<'a> {
   span: Span,
 
@@ -3288,7 +3288,7 @@ impl<'a> From<TsThisType<'a>> for SerializableTsThisType<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsTplLitType", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsTplLitType", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsTplLitType<'a> {
   span: Span,
   types: Vec<TsType<'a>>,
@@ -3311,7 +3311,7 @@ impl<'a> From<TsTplLitType<'a>> for SerializableTsTplLitType<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsTupleElement", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsTupleElement", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsTupleElement<'a> {
   span: Span,
   label: Option<Pat<'a>>,
@@ -3334,7 +3334,7 @@ impl<'a> From<TsTupleElement<'a>> for SerializableTsTupleElement<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsTupleType", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsTupleType", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsTupleType<'a> {
   span: Span,
   elem_types: Vec<&'a TsTupleElement<'a>>,
@@ -3355,7 +3355,7 @@ impl<'a> From<TsTupleType<'a>> for SerializableTsTupleType<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsTypeAliasDecl", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsTypeAliasDecl", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsTypeAliasDecl<'a> {
   span: Span,
   declare: bool,
@@ -3382,7 +3382,7 @@ impl<'a> From<TsTypeAliasDecl<'a>> for SerializableTsTypeAliasDecl<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsTypeAnn", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsTypeAnn", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsTypeAnn<'a> {
   span: Span,
   type_ann: TsType<'a>,
@@ -3403,7 +3403,7 @@ impl<'a> From<TsTypeAnn<'a>> for SerializableTsTypeAnn<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsTypeAssertion", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsTypeAssertion", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsTypeAssertion<'a> {
   span: Span,
   expr: Expr<'a>,
@@ -3426,7 +3426,7 @@ impl<'a> From<TsTypeAssertion<'a>> for SerializableTsTypeAssertion<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsTypeLit", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsTypeLit", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsTypeLit<'a> {
   span: Span,
   members: Vec<TsTypeElement<'a>>,
@@ -3447,7 +3447,7 @@ impl<'a> From<TsTypeLit<'a>> for SerializableTsTypeLit<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsTypeOperator", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsTypeOperator", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsTypeOperator<'a> {
   span: Span,
   op: TsTypeOperatorOp,
@@ -3470,7 +3470,7 @@ impl<'a> From<TsTypeOperator<'a>> for SerializableTsTypeOperator<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsTypeParam", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsTypeParam", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsTypeParam<'a> {
   span: Span,
   name: &'a Ident<'a>,
@@ -3495,7 +3495,7 @@ impl<'a> From<TsTypeParam<'a>> for SerializableTsTypeParam<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsTypeParamDecl", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsTypeParamDecl", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsTypeParamDecl<'a> {
   span: Span,
   params: Vec<&'a TsTypeParam<'a>>,
@@ -3516,7 +3516,7 @@ impl<'a> From<TsTypeParamDecl<'a>> for SerializableTsTypeParamDecl<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsTypeParamInstantiation", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsTypeParamInstantiation", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsTypeParamInstantiation<'a> {
   span: Span,
   params: Vec<TsType<'a>>,
@@ -3537,7 +3537,7 @@ impl<'a> From<TsTypeParamInstantiation<'a>> for SerializableTsTypeParamInstantia
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsTypePredicate", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsTypePredicate", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsTypePredicate<'a> {
   span: Span,
   asserts: bool,
@@ -3562,7 +3562,7 @@ impl<'a> From<TsTypePredicate<'a>> for SerializableTsTypePredicate<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsTypeQuery", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsTypeQuery", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsTypeQuery<'a> {
   span: Span,
   expr_name: TsTypeQueryExpr<'a>,
@@ -3583,7 +3583,7 @@ impl<'a> From<TsTypeQuery<'a>> for SerializableTsTypeQuery<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsTypeRef", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsTypeRef", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsTypeRef<'a> {
   span: Span,
   type_name: TsEntityName<'a>,
@@ -3606,7 +3606,7 @@ impl<'a> From<TsTypeRef<'a>> for SerializableTsTypeRef<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "TsUnionType", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "TsUnionType", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableTsUnionType<'a> {
   span: Span,
   types: Vec<TsType<'a>>,
@@ -3627,7 +3627,7 @@ impl<'a> From<TsUnionType<'a>> for SerializableTsUnionType<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "UnaryExpr", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "UnaryExpr", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableUnaryExpr<'a> {
   span: Span,
   op: UnaryOp,
@@ -3650,7 +3650,7 @@ impl<'a> From<UnaryExpr<'a>> for SerializableUnaryExpr<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "UpdateExpr", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "UpdateExpr", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableUpdateExpr<'a> {
   span: Span,
   op: UpdateOp,
@@ -3675,10 +3675,10 @@ impl<'a> From<UpdateExpr<'a>> for SerializableUpdateExpr<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "VarDecl", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "VarDecl", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableVarDecl<'a> {
   span: Span,
-  kind: VarDeclKind,
+  var_decl_kind: VarDeclKind,
   declare: bool,
   decls: Vec<&'a VarDeclarator<'a>>,
 
@@ -3691,7 +3691,7 @@ impl<'a> From<VarDecl<'a>> for SerializableVarDecl<'a> {
   fn from(orig: VarDecl<'a>) -> Self {
     Self {
       span: orig.span(),
-      kind: orig.kind().clone(),
+      var_decl_kind: orig.var_decl_kind().clone(),
       declare: orig.declare().clone(),
       decls: orig.decls,
       _phantom: PhantomData,
@@ -3700,7 +3700,7 @@ impl<'a> From<VarDecl<'a>> for SerializableVarDecl<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "VarDeclarator", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "VarDeclarator", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableVarDeclarator<'a> {
   span: Span,
   definite: bool,
@@ -3725,7 +3725,7 @@ impl<'a> From<VarDeclarator<'a>> for SerializableVarDeclarator<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "WhileStmt", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "WhileStmt", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableWhileStmt<'a> {
   span: Span,
   test: Expr<'a>,
@@ -3748,7 +3748,7 @@ impl<'a> From<WhileStmt<'a>> for SerializableWhileStmt<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "WithStmt", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "WithStmt", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableWithStmt<'a> {
   span: Span,
   obj: Expr<'a>,
@@ -3771,7 +3771,7 @@ impl<'a> From<WithStmt<'a>> for SerializableWithStmt<'a> {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "YieldExpr", rename_all = "camelCase", tag = "nodeKind")]
+#[serde(rename = "YieldExpr", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableYieldExpr<'a> {
   span: Span,
   delegate: bool,

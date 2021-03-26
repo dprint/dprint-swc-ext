@@ -26,6 +26,7 @@ export interface EnumVariantDefinition extends NamedDefinition {
 }
 
 export interface StructFieldDefinition extends NamedDefinition {
+    inner_name: string;
     docs: string;
     type: TypeDefinition;
 }

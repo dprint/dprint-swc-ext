@@ -14,6 +14,7 @@
     "**/*-lock.json",
     "./swc",
     "./swc_ecma_ast.json",
+    "**/*.generated.ts",
     "./rs-lib/src/generated.rs",
     "./rs-lib/src/generated_serialize.rs"
   ],
