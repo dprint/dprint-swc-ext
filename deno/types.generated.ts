@@ -4514,7 +4514,7 @@ export class VarDecl extends Node {
     | TsModuleBlock
     | WhileStmt
     | WithStmt;
-  var_decl_kind!: VarDeclKind;
+  decl_kind!: VarDeclKind;
   declare!: boolean;
   decls!: Array<VarDeclarator>;
 }

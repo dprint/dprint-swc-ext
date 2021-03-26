@@ -3678,7 +3678,7 @@ impl<'a> From<UpdateExpr<'a>> for SerializableUpdateExpr<'a> {
 #[serde(rename = "VarDecl", rename_all = "camelCase", tag = "kind")]
 pub struct SerializableVarDecl<'a> {
   span: Span,
-  var_decl_kind: VarDeclKind,
+  decl_kind: VarDeclKind,
   declare: bool,
   decls: Vec<&'a VarDeclarator<'a>>,
 
@@ -3691,7 +3691,7 @@ impl<'a> From<VarDecl<'a>> for SerializableVarDecl<'a> {
   fn from(orig: VarDecl<'a>) -> Self {
     Self {
       span: orig.span(),
-      var_decl_kind: orig.var_decl_kind().clone(),
+      decl_kind: orig.decl_kind().clone(),
       declare: orig.declare().clone(),
       decls: orig.decls,
       _phantom: PhantomData,

@@ -16,6 +16,7 @@ export function generateTypeScriptTypes(analysisResult: AnalysisResult): string 
             writer.writeLine(`kind!: "${struct.name}";`);
             if (struct.parents.length > 0) {
                 writer.write("parent!: ");
+                // todo: analyze enums (type aliases) and use them here
                 for (const [i, parent] of struct.parents.entries()) {
                     if (i > 0) {
                         writer.newLine();

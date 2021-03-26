@@ -18187,7 +18187,7 @@ pub struct VarDecl<'a> {
 }
 
 impl<'a> VarDecl<'a> {
-  pub fn var_decl_kind(&self) -> VarDeclKind {
+  pub fn decl_kind(&self) -> VarDeclKind {
     self.inner.kind
   }
 

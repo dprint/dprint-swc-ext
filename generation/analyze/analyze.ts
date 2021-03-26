@@ -71,7 +71,7 @@ export function analyze(): AnalysisResult {
             if (fieldName === "kind") {
                 switch (item.name) {
                     case "VarDecl":
-                        return "var_decl_kind";
+                        return "decl_kind";
                     case "ClassMethod":
                     case "PrivateMethod":
                         return "method_kind";
