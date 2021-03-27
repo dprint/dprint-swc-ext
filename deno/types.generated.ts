@@ -110,9 +110,7 @@ export type JSXExpr =
   | JSXEmptyExpr
   | Expr;
 
-/**
- * Used for `obj` property of `JSXMemberExpr`.
- */
+/** Used for `obj` property of `JSXMemberExpr`. */
 export type JSXObject =
   | JSXMemberExpr
   | Ident;
@@ -308,172 +306,90 @@ export enum Accessibility {
 }
 
 export enum AssignOp {
-  /**
-   * `=`
-   */
+  /** `=` */
   Assign,
-  /**
-   * `+=`
-   */
+  /** `+=` */
   AddAssign,
-  /**
-   * `-=`
-   */
+  /** `-=` */
   SubAssign,
-  /**
-   * `*=`
-   */
+  /** `*=` */
   MulAssign,
-  /**
-   * `/=`
-   */
+  /** `/=` */
   DivAssign,
-  /**
-   * `%=`
-   */
+  /** `%=` */
   ModAssign,
-  /**
-   * `<<=`
-   */
+  /** `<<=` */
   LShiftAssign,
-  /**
-   * `>>=`
-   */
+  /** `>>=` */
   RShiftAssign,
-  /**
-   * `>>>=`
-   */
+  /** `>>>=` */
   ZeroFillRShiftAssign,
-  /**
-   * `|=`
-   */
+  /** `|=` */
   BitOrAssign,
-  /**
-   * `^=`
-   */
+  /** `^=` */
   BitXorAssign,
-  /**
-   * `&=`
-   */
+  /** `&=` */
   BitAndAssign,
-  /**
-   * `**=`
-   */
+  /** `**=` */
   ExpAssign,
-  /**
-   * `&&=`
-   */
+  /** `&&=` */
   AndAssign,
-  /**
-   * `||=`
-   */
+  /** `||=` */
   OrAssign,
-  /**
-   * `??=`
-   */
+  /** `??=` */
   NullishAssign,
 }
 
 export enum BinaryOp {
-  /**
-   * `==`
-   */
+  /** `==` */
   EqEq,
-  /**
-   * `!=`
-   */
+  /** `!=` */
   NotEq,
-  /**
-   * `===`
-   */
+  /** `===` */
   EqEqEq,
-  /**
-   * `!==`
-   */
+  /** `!==` */
   NotEqEq,
-  /**
-   * `<`
-   */
+  /** `<` */
   Lt,
-  /**
-   * `<=`
-   */
+  /** `<=` */
   LtEq,
-  /**
-   * `>`
-   */
+  /** `>` */
   Gt,
-  /**
-   * `>=`
-   */
+  /** `>=` */
   GtEq,
-  /**
-   * `<<`
-   */
+  /** `<<` */
   LShift,
-  /**
-   * `>>`
-   */
+  /** `>>` */
   RShift,
-  /**
-   * `>>>`
-   */
+  /** `>>>` */
   ZeroFillRShift,
-  /**
-   * `+`
-   */
+  /** `+` */
   Add,
-  /**
-   * `-`
-   */
+  /** `-` */
   Sub,
-  /**
-   * `*`
-   */
+  /** `*` */
   Mul,
-  /**
-   * `/`
-   */
+  /** `/` */
   Div,
-  /**
-   * `%`
-   */
+  /** `%` */
   Mod,
-  /**
-   * `|`
-   */
+  /** `|` */
   BitOr,
-  /**
-   * `^`
-   */
+  /** `^` */
   BitXor,
-  /**
-   * `&`
-   */
+  /** `&` */
   BitAnd,
-  /**
-   * `||`
-   */
+  /** `||` */
   LogicalOr,
-  /**
-   * `&&`
-   */
+  /** `&&` */
   LogicalAnd,
-  /**
-   * `in`
-   */
+  /** `in` */
   In,
-  /**
-   * `instanceof`
-   */
+  /** `instanceof` */
   InstanceOf,
-  /**
-   * `**`
-   */
+  /** `**` */
   Exp,
-  /**
-   * `??`
-   */
+  /** `??` */
   NullishCoalescing,
 }
 
@@ -494,9 +410,7 @@ export enum MethodKind {
   Setter,
 }
 
-/**
- * THis enum determines how string literal should be printed.
- */
+/** THis enum determines how string literal should be printed. */
 export enum StrKind {
   /**
    * Span of string points to original source code, and codegen should use
@@ -535,194 +449,513 @@ export enum TsKeywordTypeKind {
 }
 
 export enum TsTypeOperatorOp {
-  /**
-   * `keyof`
-   */
+  /** `keyof` */
   KeyOf,
-  /**
-   * `unique`
-   */
+  /** `unique` */
   Unique,
-  /**
-   * `readonly`
-   */
+  /** `readonly` */
   ReadOnly,
 }
 
 export enum UnaryOp {
-  /**
-   * `-`
-   */
+  /** `-` */
   Minus,
-  /**
-   * `+`
-   */
+  /** `+` */
   Plus,
-  /**
-   * `!`
-   */
+  /** `!` */
   Bang,
-  /**
-   * `~`
-   */
+  /** `~` */
   Tilde,
-  /**
-   * `typeof`
-   */
+  /** `typeof` */
   TypeOf,
-  /**
-   * `void`
-   */
+  /** `void` */
   Void,
-  /**
-   * `delete`
-   */
+  /** `delete` */
   Delete,
 }
 
 export enum UpdateOp {
-  /**
-   * `++`
-   */
+  /** `++` */
   PlusPlus,
-  /**
-   * `--`
-   */
+  /** `--` */
   MinusMinus,
 }
 
 export enum VarDeclKind {
-  /**
-   * `var`
-   */
+  /** `var` */
   Var,
-  /**
-   * `let`
-   */
+  /** `let` */
   Let,
-  /**
-   * `const`
-   */
+  /** `const` */
   Const,
 }
 
-export enum BinOpToken {
-  /**
-   * `==`
-   */
-  EqEq,
-  /**
-   * `!=`
-   */
-  NotEq,
-  /**
-   * `===`
-   */
-  EqEqEq,
-  /**
-   * `!==`
-   */
-  NotEqEq,
-  /**
-   * `<`
-   */
-  Lt,
-  /**
-   * `<=`
-   */
-  LtEq,
-  /**
-   * `>`
-   */
-  Gt,
-  /**
-   * `>=`
-   */
-  GtEq,
-  /**
-   * `<<`
-   */
-  LShift,
-  /**
-   * `>>`
-   */
-  RShift,
-  /**
-   * `>>>`
-   */
-  ZeroFillRShift,
-  /**
-   * `+`
-   */
-  Add,
-  /**
-   * `-`
-   */
-  Sub,
-  /**
-   * `*`
-   */
-  Mul,
-  /**
-   * `/`
-   */
-  Div,
-  /**
-   * `%`
-   */
-  Mod,
-  /**
-   * `|`
-   */
-  BitOr,
-  /**
-   * `^`
-   */
-  BitXor,
-  /**
-   * `&`
-   */
-  BitAnd,
-  /**
-   * `**`
-   */
-  Exp,
-  /**
-   * `||`
-   */
-  LogicalOr,
-  /**
-   * `&&`
-   */
-  LogicalAnd,
-  /**
-   * `??`
-   */
-  NullishCoalescing,
+/** Keywords */
+export enum Keyword {
+  /** Spec says this might be identifier. */
+  Await,
+  Break,
+  Case,
+  Catch,
+  Continue,
+  Debugger,
+  Default_,
+  Do,
+  Else,
+  Finally,
+  For,
+  Function,
+  If,
+  Return,
+  Switch,
+  Throw,
+  Try,
+  Var,
+  Let,
+  Const,
+  While,
+  With,
+  New,
+  This,
+  Super,
+  Class,
+  Extends,
+  Export,
+  Import,
+  /** Spec says this might be identifier. */
+  Yield,
+  In,
+  InstanceOf,
+  TypeOf,
+  Void,
+  Delete,
+}
+
+export type Token =
+  | TokenWord
+  | TokenKind.Arrow
+  | TokenKind.Hash
+  | TokenKind.At
+  | TokenKind.Dot
+  | TokenKind.DotDotDot
+  | TokenKind.Bang
+  | TokenKind.LParen
+  | TokenKind.RParen
+  | TokenKind.LBracket
+  | TokenKind.RBracket
+  | TokenKind.LBrace
+  | TokenKind.RBrace
+  | TokenKind.Semi
+  | TokenKind.Comma
+  | TokenKind.BackQuote
+  | TokenTemplate
+  | TokenKind.Colon
+  | TokenKind.ColonColon
+  | TokenBinOp
+  | TokenAssignOp
+  | TokenKind.DollarLBrace
+  | TokenKind.QuestionMark
+  | TokenKind.PlusPlus
+  | TokenKind.MinusMinus
+  | TokenKind.Tilde
+  | TokenStr
+  | TokenRegex
+  | TokenNum
+  | TokenBigInt
+  | TokenJSXName
+  | TokenJSXText
+  | TokenKind.JSXTagStart
+  | TokenKind.JSXTagEnd
+  | TokenShebang
+  | TokenError;
+
+export enum TokenKind {
+  Word,
+  /** '=>' */
+  Arrow,
+  /** '#' */
+  Hash,
+  /** '@' */
+  At,
+  /** '.' */
+  Dot,
+  /** '...' */
+  DotDotDot,
+  /** '!' */
+  Bang,
+  /** '(' */
+  LParen,
+  /** ')' */
+  RParen,
+  /** `[` */
+  LBracket,
+  /** ']' */
+  RBracket,
+  /** '{' */
+  LBrace,
+  /** '}' */
+  RBrace,
+  /** ';' */
+  Semi,
+  /** ',' */
+  Comma,
+  /** '`' */
+  BackQuote,
+  Template,
+  /** ':' */
+  Colon,
+  /** '::' */
+  ColonColon,
+  BinOp,
+  AssignOp,
+  /** '${' */
+  DollarLBrace,
+  /** '?' */
+  QuestionMark,
+  /** `++` */
+  PlusPlus,
+  /** `--` */
+  MinusMinus,
+  /** `~` */
+  Tilde,
+  Str,
+  Regex,
+  Num,
+  BigInt,
+  JSXName,
+  JSXText,
+  JSXTagStart,
+  JSXTagEnd,
+  Shebang,
+  Error,
 }
 
 /**
- * Array literal.
+ * Identifier, "null", "true", "false".
+ * 
+ * Contains `null` and ``
  */
+export interface TokenWord {
+  kind: TokenKind.Word;
+  inner: Word;
+}
+
+export interface TokenTemplate {
+  kind: TokenKind.Template;
+  raw: JsWord;
+  cooked: JsWord | undefined;
+  has_escape: boolean;
+}
+
+export interface TokenBinOp {
+  kind: TokenKind.BinOp;
+  inner: BinOpToken;
+}
+
+export interface TokenAssignOp {
+  kind: TokenKind.AssignOp;
+  inner: AssignOp;
+}
+
+/** String literal. Span of this token contains quote. */
+export interface TokenStr {
+  kind: TokenKind.Str;
+  value: JsWord;
+  has_escape: boolean;
+}
+
+/** Regexp literal. */
+export interface TokenRegex {
+  kind: TokenKind.Regex;
+  inner: [JsWord, JsWord];
+}
+
+/** TODO: Make Num as enum and separate decimal, binary, ..etc */
+export interface TokenNum {
+  kind: TokenKind.Num;
+  inner: number;
+}
+
+export interface TokenBigInt {
+  kind: TokenKind.BigInt;
+  inner: BigIntValue;
+}
+
+export interface TokenJSXName {
+  kind: TokenKind.JSXName;
+  name: JsWord;
+}
+
+export interface TokenJSXText {
+  kind: TokenKind.JSXText;
+  raw: JsWord;
+}
+
+export interface TokenShebang {
+  kind: TokenKind.Shebang;
+  inner: JsWord;
+}
+
+export interface TokenError {
+  kind: TokenKind.Error;
+  inner: Error;
+}
+
+export enum BinOpToken {
+  /** `==` */
+  EqEq,
+  /** `!=` */
+  NotEq,
+  /** `===` */
+  EqEqEq,
+  /** `!==` */
+  NotEqEq,
+  /** `<` */
+  Lt,
+  /** `<=` */
+  LtEq,
+  /** `>` */
+  Gt,
+  /** `>=` */
+  GtEq,
+  /** `<<` */
+  LShift,
+  /** `>>` */
+  RShift,
+  /** `>>>` */
+  ZeroFillRShift,
+  /** `+` */
+  Add,
+  /** `-` */
+  Sub,
+  /** `*` */
+  Mul,
+  /** `/` */
+  Div,
+  /** `%` */
+  Mod,
+  /** `|` */
+  BitOr,
+  /** `^` */
+  BitXor,
+  /** `&` */
+  BitAnd,
+  /** `**` */
+  Exp,
+  /** `||` */
+  LogicalOr,
+  /** `&&` */
+  LogicalAnd,
+  /** `??` */
+  NullishCoalescing,
+}
+
+export type Word =
+  | WordKeyword
+  | WordKind.Null
+  | WordKind.True
+  | WordKind.False
+  | WordIdent;
+
+export enum WordKind {
+  Keyword,
+  Null,
+  True,
+  False,
+  Ident,
+}
+
+export interface WordKeyword {
+  kind: WordKind.Keyword;
+  inner: Keyword;
+}
+
+export interface WordIdent {
+  kind: WordKind.Ident;
+  inner: JsWord;
+}
+
+export enum NodeKind {
+  ArrayLit,
+  ArrayPat,
+  ArrowExpr,
+  AssignExpr,
+  AssignPat,
+  AssignPatProp,
+  AssignProp,
+  AwaitExpr,
+  BigInt,
+  BinExpr,
+  BindingIdent,
+  BlockStmt,
+  Bool,
+  BreakStmt,
+  CallExpr,
+  CatchClause,
+  Class,
+  ClassDecl,
+  ClassExpr,
+  ClassMethod,
+  ClassProp,
+  ComputedPropName,
+  CondExpr,
+  Constructor,
+  ContinueStmt,
+  DebuggerStmt,
+  Decorator,
+  DoWhileStmt,
+  EmptyStmt,
+  ExportAll,
+  ExportDecl,
+  ExportDefaultDecl,
+  ExportDefaultExpr,
+  ExportDefaultSpecifier,
+  ExportNamedSpecifier,
+  ExportNamespaceSpecifier,
+  ExprOrSpread,
+  ExprStmt,
+  FnDecl,
+  FnExpr,
+  ForInStmt,
+  ForOfStmt,
+  ForStmt,
+  Function,
+  GetterProp,
+  Ident,
+  IfStmt,
+  ImportDecl,
+  ImportDefaultSpecifier,
+  ImportNamedSpecifier,
+  ImportStarAsSpecifier,
+  Invalid,
+  JSXAttr,
+  JSXClosingElement,
+  JSXClosingFragment,
+  JSXElement,
+  JSXEmptyExpr,
+  JSXExprContainer,
+  JSXFragment,
+  JSXMemberExpr,
+  JSXNamespacedName,
+  JSXOpeningElement,
+  JSXOpeningFragment,
+  JSXSpreadChild,
+  JSXText,
+  KeyValuePatProp,
+  KeyValueProp,
+  LabeledStmt,
+  MemberExpr,
+  MetaPropExpr,
+  MethodProp,
+  Module,
+  NamedExport,
+  NewExpr,
+  Null,
+  Number,
+  ObjectLit,
+  ObjectPat,
+  OptChainExpr,
+  Param,
+  ParenExpr,
+  PrivateMethod,
+  PrivateName,
+  PrivateProp,
+  Regex,
+  RestPat,
+  ReturnStmt,
+  Script,
+  SeqExpr,
+  SetterProp,
+  SpreadElement,
+  Str,
+  Super,
+  SwitchCase,
+  SwitchStmt,
+  TaggedTpl,
+  ThisExpr,
+  ThrowStmt,
+  Tpl,
+  TplElement,
+  TryStmt,
+  TsArrayType,
+  TsAsExpr,
+  TsCallSignatureDecl,
+  TsConditionalType,
+  TsConstAssertion,
+  TsConstructSignatureDecl,
+  TsConstructorType,
+  TsEnumDecl,
+  TsEnumMember,
+  TsExportAssignment,
+  TsExprWithTypeArgs,
+  TsExternalModuleRef,
+  TsFnType,
+  TsImportEqualsDecl,
+  TsImportType,
+  TsIndexSignature,
+  TsIndexedAccessType,
+  TsInferType,
+  TsInterfaceBody,
+  TsInterfaceDecl,
+  TsIntersectionType,
+  TsKeywordType,
+  TsLitType,
+  TsMappedType,
+  TsMethodSignature,
+  TsModuleBlock,
+  TsModuleDecl,
+  TsNamespaceDecl,
+  TsNamespaceExportDecl,
+  TsNonNullExpr,
+  TsOptionalType,
+  TsParamProp,
+  TsParenthesizedType,
+  TsPropertySignature,
+  TsQualifiedName,
+  TsRestType,
+  TsThisType,
+  TsTplLitType,
+  TsTupleElement,
+  TsTupleType,
+  TsTypeAliasDecl,
+  TsTypeAnn,
+  TsTypeAssertion,
+  TsTypeLit,
+  TsTypeOperator,
+  TsTypeParam,
+  TsTypeParamDecl,
+  TsTypeParamInstantiation,
+  TsTypePredicate,
+  TsTypeQuery,
+  TsTypeRef,
+  TsUnionType,
+  UnaryExpr,
+  UpdateExpr,
+  VarDecl,
+  VarDeclarator,
+  WhileStmt,
+  WithStmt,
+  YieldExpr,
+}
+
+/** Array literal. */
 export class ArrayLit extends Node {
-  kind!: "ArrayLit";
+  kind!: NodeKind.ArrayLit;
   parent!: Node;
   elems!: Array<ExprOrSpread | undefined>;
 }
 
 export class ArrayPat extends Node {
-  kind!: "ArrayPat";
+  kind!: NodeKind.ArrayPat;
   parent!: Node;
   elems!: Array<Pat | undefined>;
-  /**
-   * Only in an ambient context
-   */
+  /** Only in an ambient context */
   optional!: boolean;
   type_ann!: TsTypeAnn | undefined;
 }
 
 export class ArrowExpr extends Node {
-  kind!: "ArrowExpr";
+  kind!: NodeKind.ArrowExpr;
   parent!: Node;
   params!: Array<Pat>;
   body!: BlockStmtOrExpr;
@@ -733,7 +966,7 @@ export class ArrowExpr extends Node {
 }
 
 export class AssignExpr extends Node {
-  kind!: "AssignExpr";
+  kind!: NodeKind.AssignExpr;
   parent!: Node;
   op!: AssignOp;
   left!: PatOrExpr;
@@ -741,83 +974,77 @@ export class AssignExpr extends Node {
 }
 
 export class AssignPat extends Node {
-  kind!: "AssignPat";
+  kind!: NodeKind.AssignPat;
   parent!: Node;
   left!: Pat;
   right!: Expr;
   type_ann!: TsTypeAnn | undefined;
 }
 
-/**
- * `{key}` or `{key = value}`
- */
+/** `{key}` or `{key = value}` */
 export class AssignPatProp extends Node {
-  kind!: "AssignPatProp";
+  kind!: NodeKind.AssignPatProp;
   parent!: ObjectPat;
   key!: Ident;
   value!: Expr | undefined;
 }
 
 export class AssignProp extends Node {
-  kind!: "AssignProp";
+  kind!: NodeKind.AssignProp;
   parent!: ObjectLit;
   key!: Ident;
   value!: Expr;
 }
 
 export class AwaitExpr extends Node {
-  kind!: "AwaitExpr";
+  kind!: NodeKind.AwaitExpr;
   parent!: Node;
   arg!: Expr;
 }
 
 export class BigInt extends Node {
-  kind!: "BigInt";
+  kind!: NodeKind.BigInt;
   parent!: Node;
   value!: BigIntValue;
 }
 
 export class BinExpr extends Node {
-  kind!: "BinExpr";
+  kind!: NodeKind.BinExpr;
   parent!: Node;
   op!: BinaryOp;
   left!: Expr;
   right!: Expr;
 }
 
-/**
- * Identifer used as a pattern.
- */
+/** Identifer used as a pattern. */
 export class BindingIdent extends Node {
-  kind!: "BindingIdent";
+  kind!: NodeKind.BindingIdent;
   parent!: Node;
   id!: Ident;
   type_ann!: TsTypeAnn | undefined;
 }
 
-/**
- * Use when only block statements are allowed.
- */
+/** Use when only block statements are allowed. */
 export class BlockStmt extends Node {
-  kind!: "BlockStmt";
+  kind!: NodeKind.BlockStmt;
   parent!: Node;
   stmts!: Array<Stmt>;
 }
 
 export class Bool extends Node {
-  kind!: "Bool";
+  kind!: NodeKind.Bool;
   parent!: Node;
   value!: boolean;
 }
 
 export class BreakStmt extends Node {
-  kind!: "BreakStmt";
+  kind!: NodeKind.BreakStmt;
   parent!: Node;
   label!: Ident | undefined;
 }
 
 export class CallExpr extends Node {
-  kind!: "CallExpr";
+  kind!: NodeKind.CallExpr;
   parent!: Node;
   callee!: ExprOrSuper;
   args!: Array<ExprOrSpread>;
@@ -825,7 +1052,7 @@ export class CallExpr extends Node {
 }
 
 export class CatchClause extends Node {
-  kind!: "CatchClause";
+  kind!: NodeKind.CatchClause;
   parent!: TryStmt;
   /**
    * es2019
@@ -838,7 +1065,7 @@ export class CatchClause extends Node {
 }
 
 export class Class extends Node {
-  kind!: "Class";
+  kind!: NodeKind.Class;
   parent!: ClassDecl
     | ClassExpr;
   decorators!: Array<Decorator>;
@@ -847,50 +1074,42 @@ export class Class extends Node {
   is_abstract!: boolean;
   type_params!: TsTypeParamDecl | undefined;
   super_type_params!: TsTypeParamInstantiation | undefined;
-  /**
-   * Typescript extension.
-   */
+  /** Typescript extension. */
   implements!: Array<TsExprWithTypeArgs>;
 }
 
 export class ClassDecl extends Node {
-  kind!: "ClassDecl";
+  kind!: NodeKind.ClassDecl;
   parent!: Node;
   ident!: Ident;
   declare!: boolean;
   class!: Class;
 }
 
-/**
- * Class expression.
- */
+/** Class expression. */
 export class ClassExpr extends Node {
-  kind!: "ClassExpr";
+  kind!: NodeKind.ClassExpr;
   parent!: Node;
   ident!: Ident | undefined;
   class!: Class;
 }
 
 export class ClassMethod extends Node {
-  kind!: "ClassMethod";
+  kind!: NodeKind.ClassMethod;
   parent!: Class;
   key!: PropName;
   function!: Function;
   method_kind!: MethodKind;
   is_static!: boolean;
-  /**
-   * Typescript extension.
-   */
+  /** Typescript extension. */
   accessibility!: Accessibility | undefined;
-  /**
-   * Typescript extension.
-   */
+  /** Typescript extension. */
   is_abstract!: boolean;
   is_optional!: boolean;
 }
 
 export class ClassProp extends Node {
-  kind!: "ClassProp";
+  kind!: NodeKind.ClassProp;
   parent!: Class;
   key!: Expr;
   value!: Expr | undefined;
@@ -898,13 +1117,9 @@ export class ClassProp extends Node {
   is_static!: boolean;
   decorators!: Array<Decorator>;
   computed!: boolean;
-  /**
-   * Typescript extension.
-   */
+  /** Typescript extension. */
   accessibility!: Accessibility | undefined;
-  /**
-   * Typescript extension.
-   */
+  /** Typescript extension. */
   is_abstract!: boolean;
   is_optional!: boolean;
   readonly!: boolean;
@@ -913,13 +1128,13 @@ export class ClassProp extends Node {
 }
 
 export class ComputedPropName extends Node {
-  kind!: "ComputedPropName";
+  kind!: NodeKind.ComputedPropName;
   parent!: Node;
   expr!: Expr;
 }
 
 export class CondExpr extends Node {
-  kind!: "CondExpr";
+  kind!: NodeKind.CondExpr;
   parent!: Node;
   test!: Expr;
   cons!: Expr;
@@ -927,7 +1142,7 @@ export class CondExpr extends Node {
 }
 
 export class Constructor extends Node {
-  kind!: "Constructor";
+  kind!: NodeKind.Constructor;
   parent!: Class;
   key!: PropName;
   params!: Array<ParamOrTsParamProp>;
@@ -937,39 +1152,37 @@ export class Constructor extends Node {
 }
 
 export class ContinueStmt extends Node {
-  kind!: "ContinueStmt";
+  kind!: NodeKind.ContinueStmt;
   parent!: Node;
   label!: Ident | undefined;
 }
 
 export class DebuggerStmt extends Node {
-  kind!: "DebuggerStmt";
+  kind!: NodeKind.DebuggerStmt;
   parent!: Node;
 }
 
 export class Decorator extends Node {
-  kind!: "Decorator";
+  kind!: NodeKind.Decorator;
   parent!: Node;
   expr!: Expr;
 }
 
 export class DoWhileStmt extends Node {
-  kind!: "DoWhileStmt";
+  kind!: NodeKind.DoWhileStmt;
   parent!: Node;
   test!: Expr;
   body!: Stmt;
 }
 
 export class EmptyStmt extends Node {
-  kind!: "EmptyStmt";
+  kind!: NodeKind.EmptyStmt;
   parent!: Node;
 }
 
-/**
- * `export * from 'mod'`
- */
+/** `export * from 'mod'` */
 export class ExportAll extends Node {
-  kind!: "ExportAll";
+  kind!: NodeKind.ExportAll;
   parent!: Module
     | TsModuleBlock;
   src!: Str;
@@ -977,56 +1190,50 @@ export class ExportAll extends Node {
 }
 
 export class ExportDecl extends Node {
-  kind!: "ExportDecl";
+  kind!: NodeKind.ExportDecl;
   parent!: Module
     | TsModuleBlock;
   decl!: Decl;
 }
 
 export class ExportDefaultDecl extends Node {
-  kind!: "ExportDefaultDecl";
+  kind!: NodeKind.ExportDefaultDecl;
   parent!: Module
     | TsModuleBlock;
   decl!: DefaultDecl;
 }
 
 export class ExportDefaultExpr extends Node {
-  kind!: "ExportDefaultExpr";
+  kind!: NodeKind.ExportDefaultExpr;
   parent!: Module
     | TsModuleBlock;
   expr!: Expr;
 }
 
 export class ExportDefaultSpecifier extends Node {
-  kind!: "ExportDefaultSpecifier";
+  kind!: NodeKind.ExportDefaultSpecifier;
   parent!: NamedExport;
   exported!: Ident;
 }
 
 export class ExportNamedSpecifier extends Node {
-  kind!: "ExportNamedSpecifier";
+  kind!: NodeKind.ExportNamedSpecifier;
   parent!: NamedExport;
-  /**
-   * `foo` in `export { foo as bar }`
-   */
+  /** `foo` in `export { foo as bar }` */
   orig!: Ident;
-  /**
-   * `Some(bar)` in `export { foo as bar }`
-   */
+  /** `Some(bar)` in `export { foo as bar }` */
   exported!: Ident | undefined;
 }
 
-/**
- * `export * as foo from 'src';`
- */
+/** `export * as foo from 'src';` */
 export class ExportNamespaceSpecifier extends Node {
-  kind!: "ExportNamespaceSpecifier";
+  kind!: NodeKind.ExportNamespaceSpecifier;
   parent!: NamedExport;
   name!: Ident;
 }
 
 export class ExprOrSpread extends Node {
-  kind!: "ExprOrSpread";
+  kind!: NodeKind.ExprOrSpread;
   parent!: ArrayLit
     | CallExpr
     | NewExpr;
@@ -1035,31 +1242,29 @@ export class ExprOrSpread extends Node {
 }
 
 export class ExprStmt extends Node {
-  kind!: "ExprStmt";
+  kind!: NodeKind.ExprStmt;
   parent!: Node;
   expr!: Expr;
 }
 
 export class FnDecl extends Node {
-  kind!: "FnDecl";
+  kind!: NodeKind.FnDecl;
   parent!: Node;
   ident!: Ident;
   declare!: boolean;
   function!: Function;
 }
 
-/**
- * Function expression.
- */
+/** Function expression. */
 export class FnExpr extends Node {
-  kind!: "FnExpr";
+  kind!: NodeKind.FnExpr;
   parent!: Node;
   ident!: Ident | undefined;
   function!: Function;
 }
 
 export class ForInStmt extends Node {
-  kind!: "ForInStmt";
+  kind!: NodeKind.ForInStmt;
   parent!: Node;
   left!: VarDeclOrPat;
   right!: Expr;
@@ -1067,7 +1272,7 @@ export class ForInStmt extends Node {
 }
 
 export class ForOfStmt extends Node {
-  kind!: "ForOfStmt";
+  kind!: NodeKind.ForOfStmt;
   parent!: Node;
   /**
    * Span of the await token.
@@ -1083,7 +1288,7 @@ export class ForOfStmt extends Node {
 }
 
 export class ForStmt extends Node {
-  kind!: "ForStmt";
+  kind!: NodeKind.ForStmt;
   parent!: Node;
   init!: VarDeclOrExpr | undefined;
   test!: Expr | undefined;
@@ -1091,50 +1296,40 @@ export class ForStmt extends Node {
   body!: Stmt;
 }
 
-/**
- * Common parts of function and method.
- */
+/** Common parts of function and method. */
 export class Function extends Node {
-  kind!: "Function";
+  kind!: NodeKind.Function;
   parent!: Node;
   params!: Array<Param>;
   decorators!: Array<Decorator>;
   body!: BlockStmt | undefined;
-  /**
-   * if it's a generator.
-   */
+  /** if it's a generator. */
   is_generator!: boolean;
-  /**
-   * if it's an async function.
-   */
+  /** if it's an async function. */
   is_async!: boolean;
   type_params!: TsTypeParamDecl | undefined;
   return_type!: TsTypeAnn | undefined;
 }
 
 export class GetterProp extends Node {
-  kind!: "GetterProp";
+  kind!: NodeKind.GetterProp;
   parent!: ObjectLit;
   key!: PropName;
   type_ann!: TsTypeAnn | undefined;
   body!: BlockStmt | undefined;
 }
 
-/**
- * Ident with span.
- */
+/** Ident with span. */
 export class Ident extends Node {
-  kind!: "Ident";
+  kind!: NodeKind.Ident;
   parent!: Node;
   sym!: JsWord;
-  /**
-   * TypeScript only. Used in case of an optional parameter.
-   */
+  /** TypeScript only. Used in case of an optional parameter. */
   optional!: boolean;
 }
 
 export class IfStmt extends Node {
-  kind!: "IfStmt";
+  kind!: NodeKind.IfStmt;
   parent!: Node;
   test!: Expr;
   cons!: Stmt;
@@ -1142,7 +1337,7 @@ export class IfStmt extends Node {
 }
 
 export class ImportDecl extends Node {
-  kind!: "ImportDecl";
+  kind!: NodeKind.ImportDecl;
   parent!: Module
     | TsModuleBlock;
   specifiers!: Array<ImportSpecifier>;
@@ -1151,11 +1346,9 @@ export class ImportDecl extends Node {
   asserts!: ObjectLit | undefined;
 }
 
-/**
- * e.g. `import foo from 'mod.js'`
- */
+/** e.g. `import foo from 'mod.js'` */
 export class ImportDefaultSpecifier extends Node {
-  kind!: "ImportDefaultSpecifier";
+  kind!: NodeKind.ImportDefaultSpecifier;
   parent!: ImportDecl;
   local!: Ident;
 }
@@ -1166,52 +1359,46 @@ export class ImportDefaultSpecifier extends Node {
  * 'mod.js'`
  */
 export class ImportNamedSpecifier extends Node {
-  kind!: "ImportNamedSpecifier";
+  kind!: NodeKind.ImportNamedSpecifier;
   parent!: ImportDecl;
   local!: Ident;
   imported!: Ident | undefined;
 }
 
-/**
- * e.g. `import * as foo from 'mod.js'`.
- */
+/** e.g. `import * as foo from 'mod.js'`. */
 export class ImportStarAsSpecifier extends Node {
-  kind!: "ImportStarAsSpecifier";
+  kind!: NodeKind.ImportStarAsSpecifier;
   parent!: ImportDecl;
   local!: Ident;
 }
 
-/**
- * Represents a invalid node.
- */
+/** Represents a invalid node. */
 export class Invalid extends Node {
-  kind!: "Invalid";
+  kind!: NodeKind.Invalid;
   parent!: Node;
 }
 
 export class JSXAttr extends Node {
-  kind!: "JSXAttr";
+  kind!: NodeKind.JSXAttr;
   parent!: JSXOpeningElement;
   name!: JSXAttrName;
-  /**
-   * Babel uses Expr instead of JSXAttrValue
-   */
+  /** Babel uses Expr instead of JSXAttrValue */
   value!: JSXAttrValue | undefined;
 }
 
 export class JSXClosingElement extends Node {
-  kind!: "JSXClosingElement";
+  kind!: NodeKind.JSXClosingElement;
   parent!: JSXElement;
   name!: JSXElementName;
 }
 
 export class JSXClosingFragment extends Node {
-  kind!: "JSXClosingFragment";
+  kind!: NodeKind.JSXClosingFragment;
   parent!: JSXFragment;
 }
 
 export class JSXElement extends Node {
-  kind!: "JSXElement";
+  kind!: NodeKind.JSXElement;
   parent!: Node;
   opening!: JSXOpeningElement;
   children!: Array<JSXElementChild>;
@@ -1219,12 +1406,12 @@ export class JSXElement extends Node {
 }
 
 export class JSXEmptyExpr extends Node {
-  kind!: "JSXEmptyExpr";
+  kind!: NodeKind.JSXEmptyExpr;
   parent!: Node;
 }
 
 export class JSXExprContainer extends Node {
-  kind!: "JSXExprContainer";
+  kind!: NodeKind.JSXExprContainer;
   parent!: JSXAttr
     | JSXElement
     | JSXFragment;
@@ -1232,7 +1419,7 @@ export class JSXExprContainer extends Node {
 }
 
 export class JSXFragment extends Node {
-  kind!: "JSXFragment";
+  kind!: NodeKind.JSXFragment;
   parent!: Node;
   opening!: JSXOpeningFragment;
   children!: Array<JSXElementChild>;
@@ -1240,24 +1427,22 @@ export class JSXFragment extends Node {
 }
 
 export class JSXMemberExpr extends Node {
-  kind!: "JSXMemberExpr";
+  kind!: NodeKind.JSXMemberExpr;
   parent!: Node;
   obj!: JSXObject;
   prop!: Ident;
 }
 
-/**
- * XML-based namespace syntax:
- */
+/** XML-based namespace syntax: */
 export class JSXNamespacedName extends Node {
-  kind!: "JSXNamespacedName";
+  kind!: NodeKind.JSXNamespacedName;
   parent!: Node;
   ns!: Ident;
   name!: Ident;
 }
 
 export class JSXOpeningElement extends Node {
-  kind!: "JSXOpeningElement";
+  kind!: NodeKind.JSXOpeningElement;
   parent!: JSXElement;
   name!: JSXElementName;
   attrs!: Array<JSXAttrOrSpread>;
@@ -1270,50 +1455,48 @@ export class JSXOpeningElement extends Node {
 }
 
 export class JSXOpeningFragment extends Node {
-  kind!: "JSXOpeningFragment";
+  kind!: NodeKind.JSXOpeningFragment;
   parent!: JSXFragment;
 }
 
 export class JSXSpreadChild extends Node {
-  kind!: "JSXSpreadChild";
+  kind!: NodeKind.JSXSpreadChild;
   parent!: JSXElement
     | JSXFragment;
   expr!: Expr;
 }
 
 export class JSXText extends Node {
-  kind!: "JSXText";
+  kind!: NodeKind.JSXText;
   parent!: Node;
   value!: JsWord;
   raw!: JsWord;
 }
 
-/**
- * `{key: value}`
- */
+/** `{key: value}` */
 export class KeyValuePatProp extends Node {
-  kind!: "KeyValuePatProp";
+  kind!: NodeKind.KeyValuePatProp;
   parent!: ObjectPat;
   key!: PropName;
   value!: Pat;
 }
 
 export class KeyValueProp extends Node {
-  kind!: "KeyValueProp";
+  kind!: NodeKind.KeyValueProp;
   parent!: ObjectLit;
   key!: PropName;
   value!: Expr;
 }
 
 export class LabeledStmt extends Node {
-  kind!: "LabeledStmt";
+  kind!: NodeKind.LabeledStmt;
   parent!: Node;
   label!: Ident;
   body!: Stmt;
 }
 
 export class MemberExpr extends Node {
-  kind!: "MemberExpr";
+  kind!: NodeKind.MemberExpr;
   parent!: Node;
   obj!: ExprOrSuper;
   prop!: Expr;
@@ -1321,21 +1504,21 @@ export class MemberExpr extends Node {
 }
 
 export class MetaPropExpr extends Node {
-  kind!: "MetaPropExpr";
+  kind!: NodeKind.MetaPropExpr;
   parent!: Node;
   meta!: Ident;
   prop!: Ident;
 }
 
 export class MethodProp extends Node {
-  kind!: "MethodProp";
+  kind!: NodeKind.MethodProp;
   parent!: ObjectLit;
   key!: PropName;
   function!: Function;
 }
 
 export class Module extends Node {
-  kind!: "Module";
+  kind!: NodeKind.Module;
   body!: Array<ModuleItem>;
   shebang!: JsWord | undefined;
 }
@@ -1345,7 +1528,7 @@ export class Module extends Node {
  * `export { foo as bar } from 'mod'`
  */
 export class NamedExport extends Node {
-  kind!: "NamedExport";
+  kind!: NodeKind.NamedExport;
   parent!: Module
     | TsModuleBlock;
   specifiers!: Array<ExportSpecifier>;
@@ -1355,7 +1538,7 @@ export class NamedExport extends Node {
 }
 
 export class NewExpr extends Node {
-  kind!: "NewExpr";
+  kind!: NodeKind.NewExpr;
   parent!: Node;
   callee!: Expr;
   args!: Array<ExprOrSpread> | undefined;
@@ -1363,12 +1546,12 @@ export class NewExpr extends Node {
 }
 
 export class Null extends Node {
-  kind!: "Null";
+  kind!: NodeKind.Null;
   parent!: Node;
 }
 
 export class Number extends Node {
-  kind!: "Number";
+  kind!: NodeKind.Number;
   parent!: Node;
   /**
    * **Note**: This should not be `NaN`. Use [crate::Ident] to represent NaN.
@@ -1378,35 +1561,31 @@ export class Number extends Node {
   value!: number;
 }
 
-/**
- * Object literal.
- */
+/** Object literal. */
 export class ObjectLit extends Node {
-  kind!: "ObjectLit";
+  kind!: NodeKind.ObjectLit;
   parent!: Node;
   props!: Array<PropOrSpread>;
 }
 
 export class ObjectPat extends Node {
-  kind!: "ObjectPat";
+  kind!: NodeKind.ObjectPat;
   parent!: Node;
   props!: Array<ObjectPatProp>;
-  /**
-   * Only in an ambient context
-   */
+  /** Only in an ambient context */
   optional!: boolean;
   type_ann!: TsTypeAnn | undefined;
 }
 
 export class OptChainExpr extends Node {
-  kind!: "OptChainExpr";
+  kind!: NodeKind.OptChainExpr;
   parent!: Node;
   question_dot_token!: Span;
   expr!: Expr;
 }
 
 export class Param extends Node {
-  kind!: "Param";
+  kind!: NodeKind.Param;
   parent!: Constructor
     | Function;
   decorators!: Array<Decorator>;
@@ -1414,37 +1593,33 @@ export class Param extends Node {
 }
 
 export class ParenExpr extends Node {
-  kind!: "ParenExpr";
+  kind!: NodeKind.ParenExpr;
   parent!: Node;
   expr!: Expr;
 }
 
 export class PrivateMethod extends Node {
-  kind!: "PrivateMethod";
+  kind!: NodeKind.PrivateMethod;
   parent!: Class;
   key!: PrivateName;
   function!: Function;
   method_kind!: MethodKind;
   is_static!: boolean;
-  /**
-   * Typescript extension.
-   */
+  /** Typescript extension. */
   accessibility!: Accessibility | undefined;
-  /**
-   * Typescript extension.
-   */
+  /** Typescript extension. */
   is_abstract!: boolean;
   is_optional!: boolean;
 }
 
 export class PrivateName extends Node {
-  kind!: "PrivateName";
+  kind!: NodeKind.PrivateName;
   parent!: Node;
   id!: Ident;
 }
 
 export class PrivateProp extends Node {
-  kind!: "PrivateProp";
+  kind!: NodeKind.PrivateProp;
   parent!: Class;
   key!: PrivateName;
   value!: Expr | undefined;
@@ -1452,13 +1627,9 @@ export class PrivateProp extends Node {
   is_static!: boolean;
   decorators!: Array<Decorator>;
   computed!: boolean;
-  /**
-   * Typescript extension.
-   */
+  /** Typescript extension. */
   accessibility!: Accessibility | undefined;
-  /**
-   * Typescript extension.
-   */
+  /** Typescript extension. */
   is_abstract!: boolean;
   is_optional!: boolean;
   readonly!: boolean;
@@ -1466,17 +1637,15 @@ export class PrivateProp extends Node {
 }
 
 export class Regex extends Node {
-  kind!: "Regex";
+  kind!: NodeKind.Regex;
   parent!: Node;
   exp!: JsWord;
   flags!: JsWord;
 }
 
-/**
- * EsTree `RestElement`
- */
+/** EsTree `RestElement` */
 export class RestPat extends Node {
-  kind!: "RestPat";
+  kind!: NodeKind.RestPat;
   parent!: Node;
   dot3_token!: Span;
   arg!: Pat;
@@ -1484,25 +1653,25 @@ export class RestPat extends Node {
 }
 
 export class ReturnStmt extends Node {
-  kind!: "ReturnStmt";
+  kind!: NodeKind.ReturnStmt;
   parent!: Node;
   arg!: Expr | undefined;
 }
 
 export class Script extends Node {
-  kind!: "Script";
+  kind!: NodeKind.Script;
   body!: Array<Stmt>;
   shebang!: JsWord | undefined;
 }
 
 export class SeqExpr extends Node {
-  kind!: "SeqExpr";
+  kind!: NodeKind.SeqExpr;
   parent!: Node;
   exprs!: Array<Expr>;
 }
 
 export class SetterProp extends Node {
-  kind!: "SetterProp";
+  kind!: NodeKind.SetterProp;
   parent!: ObjectLit;
   key!: PropName;
   param!: Pat;
@@ -1510,7 +1679,7 @@ export class SetterProp extends Node {
 }
 
 export class SpreadElement extends Node {
-  kind!: "SpreadElement";
+  kind!: NodeKind.SpreadElement;
   parent!: JSXOpeningElement
     | ObjectLit;
   dot3_token!: Span;
@@ -1518,41 +1687,37 @@ export class SpreadElement extends Node {
 }
 
 export class Str extends Node {
-  kind!: "Str";
+  kind!: NodeKind.Str;
   parent!: Node;
   value!: JsWord;
-  /**
-   * This includes line escape.
-   */
+  /** This includes line escape. */
   has_escape!: boolean;
   str_kind!: StrKind;
 }
 
 export class Super extends Node {
-  kind!: "Super";
+  kind!: NodeKind.Super;
   parent!: CallExpr
     | MemberExpr;
 }
 
 export class SwitchCase extends Node {
-  kind!: "SwitchCase";
+  kind!: NodeKind.SwitchCase;
   parent!: SwitchStmt;
-  /**
-   * None for `default:`
-   */
+  /** None for `default:` */
   test!: Expr | undefined;
   cons!: Array<Stmt>;
 }
 
 export class SwitchStmt extends Node {
-  kind!: "SwitchStmt";
+  kind!: NodeKind.SwitchStmt;
   parent!: Node;
   discriminant!: Expr;
   cases!: Array<SwitchCase>;
 }
 
 export class TaggedTpl extends Node {
-  kind!: "TaggedTpl";
+  kind!: NodeKind.TaggedTpl;
   parent!: Node;
   tag!: Expr;
   exprs!: Array<Expr>;
@@ -1561,25 +1726,25 @@ export class TaggedTpl extends Node {
 }
 
 export class ThisExpr extends Node {
-  kind!: "ThisExpr";
+  kind!: NodeKind.ThisExpr;
   parent!: Node;
 }
 
 export class ThrowStmt extends Node {
-  kind!: "ThrowStmt";
+  kind!: NodeKind.ThrowStmt;
   parent!: Node;
   arg!: Expr;
 }
 
 export class Tpl extends Node {
-  kind!: "Tpl";
+  kind!: NodeKind.Tpl;
   parent!: Node;
   exprs!: Array<Expr>;
   quasis!: Array<TplElement>;
 }
 
 export class TplElement extends Node {
-  kind!: "TplElement";
+  kind!: NodeKind.TplElement;
   parent!: TaggedTpl
     | Tpl
     | TsTplLitType;
@@ -1589,7 +1754,7 @@ export class TplElement extends Node {
 }
 
 export class TryStmt extends Node {
-  kind!: "TryStmt";
+  kind!: NodeKind.TryStmt;
   parent!: Node;
   block!: BlockStmt;
   handler!: CatchClause | undefined;
@@ -1597,20 +1762,20 @@ export class TryStmt extends Node {
 }
 
 export class TsArrayType extends Node {
-  kind!: "TsArrayType";
+  kind!: NodeKind.TsArrayType;
   parent!: Node;
   elem_type!: TsType;
 }
 
 export class TsAsExpr extends Node {
-  kind!: "TsAsExpr";
+  kind!: NodeKind.TsAsExpr;
   parent!: Node;
   expr!: Expr;
   type_ann!: TsType;
 }
 
 export class TsCallSignatureDecl extends Node {
-  kind!: "TsCallSignatureDecl";
+  kind!: NodeKind.TsCallSignatureDecl;
   parent!: TsInterfaceBody
     | TsTypeLit;
   params!: Array<TsFnParam>;
@@ -1619,7 +1784,7 @@ export class TsCallSignatureDecl extends Node {
 }
 
 export class TsConditionalType extends Node {
-  kind!: "TsConditionalType";
+  kind!: NodeKind.TsConditionalType;
   parent!: Node;
   check_type!: TsType;
   extends_type!: TsType;
@@ -1628,13 +1793,13 @@ export class TsConditionalType extends Node {
 }
 
 export class TsConstAssertion extends Node {
-  kind!: "TsConstAssertion";
+  kind!: NodeKind.TsConstAssertion;
   parent!: Node;
   expr!: Expr;
 }
 
 export class TsConstructSignatureDecl extends Node {
-  kind!: "TsConstructSignatureDecl";
+  kind!: NodeKind.TsConstructSignatureDecl;
   parent!: TsInterfaceBody
     | TsTypeLit;
   params!: Array<TsFnParam>;
@@ -1643,7 +1808,7 @@ export class TsConstructSignatureDecl extends Node {
 }
 
 export class TsConstructorType extends Node {
-  kind!: "TsConstructorType";
+  kind!: NodeKind.TsConstructorType;
   parent!: Node;
   params!: Array<TsFnParam>;
   type_params!: TsTypeParamDecl | undefined;
@@ -1652,7 +1817,7 @@ export class TsConstructorType extends Node {
 }
 
 export class TsEnumDecl extends Node {
-  kind!: "TsEnumDecl";
+  kind!: NodeKind.TsEnumDecl;
   parent!: Node;
   declare!: boolean;
   is_const!: boolean;
@@ -1661,7 +1826,7 @@ export class TsEnumDecl extends Node {
 }
 
 export class TsEnumMember extends Node {
-  kind!: "TsEnumMember";
+  kind!: NodeKind.TsEnumMember;
   parent!: TsEnumDecl;
   id!: TsEnumMemberId;
   init!: Expr | undefined;
@@ -1673,14 +1838,14 @@ export class TsEnumMember extends Node {
  * so a TsExportAssignment is always `export =`.
  */
 export class TsExportAssignment extends Node {
-  kind!: "TsExportAssignment";
+  kind!: NodeKind.TsExportAssignment;
   parent!: Module
     | TsModuleBlock;
   expr!: Expr;
 }
 
 export class TsExprWithTypeArgs extends Node {
-  kind!: "TsExprWithTypeArgs";
+  kind!: NodeKind.TsExprWithTypeArgs;
   parent!: Class
     | TsInterfaceDecl;
   expr!: TsEntityName;
@@ -1688,13 +1853,13 @@ export class TsExprWithTypeArgs extends Node {
 }
 
 export class TsExternalModuleRef extends Node {
-  kind!: "TsExternalModuleRef";
+  kind!: NodeKind.TsExternalModuleRef;
   parent!: TsImportEqualsDecl;
   expr!: Str;
 }
 
 export class TsFnType extends Node {
-  kind!: "TsFnType";
+  kind!: NodeKind.TsFnType;
   parent!: Node;
   params!: Array<TsFnParam>;
   type_params!: TsTypeParamDecl | undefined;
@@ -1702,7 +1867,7 @@ export class TsFnType extends Node {
 }
 
 export class TsImportEqualsDecl extends Node {
-  kind!: "TsImportEqualsDecl";
+  kind!: NodeKind.TsImportEqualsDecl;
   parent!: Module
     | TsModuleBlock;
   declare!: boolean;
@@ -1712,7 +1877,7 @@ export class TsImportEqualsDecl extends Node {
 }
 
 export class TsImportType extends Node {
-  kind!: "TsImportType";
+  kind!: NodeKind.TsImportType;
   parent!: Node;
   arg!: Str;
   qualifier!: TsEntityName | undefined;
@@ -1720,7 +1885,7 @@ export class TsImportType extends Node {
 }
 
 export class TsIndexSignature extends Node {
-  kind!: "TsIndexSignature";
+  kind!: NodeKind.TsIndexSignature;
   parent!: Class
     | TsInterfaceBody
     | TsTypeLit;
@@ -1730,7 +1895,7 @@ export class TsIndexSignature extends Node {
 }
 
 export class TsIndexedAccessType extends Node {
-  kind!: "TsIndexedAccessType";
+  kind!: NodeKind.TsIndexedAccessType;
   parent!: Node;
   readonly!: boolean;
   obj_type!: TsType;
@@ -1738,19 +1903,19 @@ export class TsIndexedAccessType extends Node {
 }
 
 export class TsInferType extends Node {
-  kind!: "TsInferType";
+  kind!: NodeKind.TsInferType;
   parent!: Node;
   type_param!: TsTypeParam;
 }
 
 export class TsInterfaceBody extends Node {
-  kind!: "TsInterfaceBody";
+  kind!: NodeKind.TsInterfaceBody;
   parent!: TsInterfaceDecl;
   body!: Array<TsTypeElement>;
 }
 
 export class TsInterfaceDecl extends Node {
-  kind!: "TsInterfaceDecl";
+  kind!: NodeKind.TsInterfaceDecl;
   parent!: Node;
   id!: Ident;
   declare!: boolean;
@@ -1760,25 +1925,25 @@ export class TsInterfaceDecl extends Node {
 }
 
 export class TsIntersectionType extends Node {
-  kind!: "TsIntersectionType";
+  kind!: NodeKind.TsIntersectionType;
   parent!: Node;
   types!: Array<TsType>;
 }
 
 export class TsKeywordType extends Node {
-  kind!: "TsKeywordType";
+  kind!: NodeKind.TsKeywordType;
   parent!: Node;
   keyword_kind!: TsKeywordTypeKind;
 }
 
 export class TsLitType extends Node {
-  kind!: "TsLitType";
+  kind!: NodeKind.TsLitType;
   parent!: Node;
   lit!: TsLit;
 }
 
 export class TsMappedType extends Node {
-  kind!: "TsMappedType";
+  kind!: NodeKind.TsMappedType;
   parent!: Node;
   readonly!: TruePlusMinus | undefined;
   type_param!: TsTypeParam;
@@ -1788,7 +1953,7 @@ export class TsMappedType extends Node {
 }
 
 export class TsMethodSignature extends Node {
-  kind!: "TsMethodSignature";
+  kind!: NodeKind.TsMethodSignature;
   parent!: TsInterfaceBody
     | TsTypeLit;
   readonly!: boolean;
@@ -1801,76 +1966,70 @@ export class TsMethodSignature extends Node {
 }
 
 export class TsModuleBlock extends Node {
-  kind!: "TsModuleBlock";
+  kind!: NodeKind.TsModuleBlock;
   parent!: TsModuleDecl
     | TsNamespaceDecl;
   body!: Array<ModuleItem>;
 }
 
 export class TsModuleDecl extends Node {
-  kind!: "TsModuleDecl";
+  kind!: NodeKind.TsModuleDecl;
   parent!: Node;
   declare!: boolean;
-  /**
-   * In TypeScript, this is only available through`node.flags`.
-   */
+  /** In TypeScript, this is only available through`node.flags`. */
   global!: boolean;
   id!: TsModuleName;
   body!: TsNamespaceBody | undefined;
 }
 
 export class TsNamespaceDecl extends Node {
-  kind!: "TsNamespaceDecl";
+  kind!: NodeKind.TsNamespaceDecl;
   parent!: TsModuleDecl
     | TsNamespaceDecl;
   declare!: boolean;
-  /**
-   * In TypeScript, this is only available through`node.flags`.
-   */
+  /** In TypeScript, this is only available through`node.flags`. */
   global!: boolean;
   id!: Ident;
   body!: TsNamespaceBody;
 }
 
 export class TsNamespaceExportDecl extends Node {
-  kind!: "TsNamespaceExportDecl";
+  kind!: NodeKind.TsNamespaceExportDecl;
   parent!: Module
     | TsModuleBlock;
   id!: Ident;
 }
 
 export class TsNonNullExpr extends Node {
-  kind!: "TsNonNullExpr";
+  kind!: NodeKind.TsNonNullExpr;
   parent!: Node;
   expr!: Expr;
 }
 
 export class TsOptionalType extends Node {
-  kind!: "TsOptionalType";
+  kind!: NodeKind.TsOptionalType;
   parent!: Node;
   type_ann!: TsType;
 }
 
 export class TsParamProp extends Node {
-  kind!: "TsParamProp";
+  kind!: NodeKind.TsParamProp;
   parent!: Constructor;
   decorators!: Array<Decorator>;
-  /**
-   * At least one of `accessibility` or `readonly` must be set.
-   */
+  /** At least one of `accessibility` or `readonly` must be set. */
   accessibility!: Accessibility | undefined;
   readonly!: boolean;
   param!: TsParamPropParam;
 }
 
 export class TsParenthesizedType extends Node {
-  kind!: "TsParenthesizedType";
+  kind!: NodeKind.TsParenthesizedType;
   parent!: Node;
   type_ann!: TsType;
 }
 
 export class TsPropertySignature extends Node {
-  kind!: "TsPropertySignature";
+  kind!: NodeKind.TsPropertySignature;
   parent!: TsInterfaceBody
     | TsTypeLit;
   readonly!: boolean;
@@ -1884,48 +2043,46 @@ export class TsPropertySignature extends Node {
 }
 
 export class TsQualifiedName extends Node {
-  kind!: "TsQualifiedName";
+  kind!: NodeKind.TsQualifiedName;
   parent!: Node;
   left!: TsEntityName;
   right!: Ident;
 }
 
 export class TsRestType extends Node {
-  kind!: "TsRestType";
+  kind!: NodeKind.TsRestType;
   parent!: Node;
   type_ann!: TsType;
 }
 
 export class TsThisType extends Node {
-  kind!: "TsThisType";
+  kind!: NodeKind.TsThisType;
   parent!: Node;
 }
 
 export class TsTplLitType extends Node {
-  kind!: "TsTplLitType";
+  kind!: NodeKind.TsTplLitType;
   parent!: TsLitType;
   types!: Array<TsType>;
   quasis!: Array<TplElement>;
 }
 
 export class TsTupleElement extends Node {
-  kind!: "TsTupleElement";
+  kind!: NodeKind.TsTupleElement;
   parent!: TsTupleType;
-  /**
-   * `Ident` or `RestPat { arg: Ident }`
-   */
+  /** `Ident` or `RestPat { arg: Ident }` */
   label!: Pat | undefined;
   ty!: TsType;
 }
 
 export class TsTupleType extends Node {
-  kind!: "TsTupleType";
+  kind!: NodeKind.TsTupleType;
   parent!: Node;
   elem_types!: Array<TsTupleElement>;
 }
 
 export class TsTypeAliasDecl extends Node {
-  kind!: "TsTypeAliasDecl";
+  kind!: NodeKind.TsTypeAliasDecl;
   parent!: Node;
   declare!: boolean;
   id!: Ident;
@@ -1934,33 +2091,33 @@ export class TsTypeAliasDecl extends Node {
 }
 
 export class TsTypeAnn extends Node {
-  kind!: "TsTypeAnn";
+  kind!: NodeKind.TsTypeAnn;
   parent!: Node;
   type_ann!: TsType;
 }
 
 export class TsTypeAssertion extends Node {
-  kind!: "TsTypeAssertion";
+  kind!: NodeKind.TsTypeAssertion;
   parent!: Node;
   expr!: Expr;
   type_ann!: TsType;
 }
 
 export class TsTypeLit extends Node {
-  kind!: "TsTypeLit";
+  kind!: NodeKind.TsTypeLit;
   parent!: Node;
   members!: Array<TsTypeElement>;
 }
 
 export class TsTypeOperator extends Node {
-  kind!: "TsTypeOperator";
+  kind!: NodeKind.TsTypeOperator;
   parent!: Node;
   op!: TsTypeOperatorOp;
   type_ann!: TsType;
 }
 
 export class TsTypeParam extends Node {
-  kind!: "TsTypeParam";
+  kind!: NodeKind.TsTypeParam;
   parent!: TsInferType
     | TsMappedType
     | TsTypeParamDecl;
@@ -1970,56 +2127,54 @@ export class TsTypeParam extends Node {
 }
 
 export class TsTypeParamDecl extends Node {
-  kind!: "TsTypeParamDecl";
+  kind!: NodeKind.TsTypeParamDecl;
   parent!: Node;
   params!: Array<TsTypeParam>;
 }
 
 export class TsTypeParamInstantiation extends Node {
-  kind!: "TsTypeParamInstantiation";
+  kind!: NodeKind.TsTypeParamInstantiation;
   parent!: Node;
   params!: Array<TsType>;
 }
 
 export class TsTypePredicate extends Node {
-  kind!: "TsTypePredicate";
+  kind!: NodeKind.TsTypePredicate;
   parent!: Node;
   asserts!: boolean;
   param_name!: TsThisTypeOrIdent;
   type_ann!: TsTypeAnn | undefined;
 }
 
-/**
- * `typeof` operator
- */
+/** `typeof` operator */
 export class TsTypeQuery extends Node {
-  kind!: "TsTypeQuery";
+  kind!: NodeKind.TsTypeQuery;
   parent!: Node;
   expr_name!: TsTypeQueryExpr;
 }
 
 export class TsTypeRef extends Node {
-  kind!: "TsTypeRef";
+  kind!: NodeKind.TsTypeRef;
   parent!: Node;
   type_name!: TsEntityName;
   type_params!: TsTypeParamInstantiation | undefined;
 }
 
 export class TsUnionType extends Node {
-  kind!: "TsUnionType";
+  kind!: NodeKind.TsUnionType;
   parent!: Node;
   types!: Array<TsType>;
 }
 
 export class UnaryExpr extends Node {
-  kind!: "UnaryExpr";
+  kind!: NodeKind.UnaryExpr;
   parent!: Node;
   op!: UnaryOp;
   arg!: Expr;
 }
 
 export class UpdateExpr extends Node {
-  kind!: "UpdateExpr";
+  kind!: NodeKind.UpdateExpr;
   parent!: Node;
   op!: UpdateOp;
   prefix!: boolean;
@@ -2027,7 +2182,7 @@ export class UpdateExpr extends Node {
 }
 
 export class VarDecl extends Node {
-  kind!: "VarDecl";
+  kind!: NodeKind.VarDecl;
   parent!: Node;
   decl_kind!: VarDeclKind;
   declare!: boolean;
@@ -2035,35 +2190,31 @@ export class VarDecl extends Node {
 }
 
 export class VarDeclarator extends Node {
-  kind!: "VarDeclarator";
+  kind!: NodeKind.VarDeclarator;
   parent!: VarDecl;
   name!: Pat;
-  /**
-   * Initialization expression.
-   */
+  /** Initialization expression. */
   init!: Expr | undefined;
-  /**
-   * Typescript only
-   */
+  /** Typescript only */
   definite!: boolean;
 }
 
 export class WhileStmt extends Node {
-  kind!: "WhileStmt";
+  kind!: NodeKind.WhileStmt;
   parent!: Node;
   test!: Expr;
   body!: Stmt;
 }
 
 export class WithStmt extends Node {
-  kind!: "WithStmt";
+  kind!: NodeKind.WithStmt;
   parent!: Node;
   obj!: Expr;
   body!: Stmt;
 }
 
 export class YieldExpr extends Node {
-  kind!: "YieldExpr";
+  kind!: NodeKind.YieldExpr;
   parent!: Node;
   arg!: Expr | undefined;
   delegate!: boolean;

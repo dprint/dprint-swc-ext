@@ -22,7 +22,8 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
     function writeUseDeclarations() {
         writer.writeLine("use std::marker::PhantomData;");
         writer.writeLine("use serde::Serialize;");
-        writer.writeLine("use swc_common::{Span, Spanned};");
+        writer.writeLine("use swc_common::{Span, Spanned, comments::{Comment}};");
+        writer.writeLine("use swc_ecmascript::parser::token::TokenAndSpan;");
         writer.writeLine("use crate::generated::*;");
     }
 

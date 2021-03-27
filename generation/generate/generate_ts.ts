@@ -29,20 +29,27 @@ export function generateTypeScriptTypes(analysisResult: AnalysisResult): string 
     }
 
     for (const enumDef of analysisResult.tokenEnums) {
+        writer.blankLine();
         const isPlain = enumDef.variants.every(v => v.kind === "Plain");
         if (isPlain) {
-            writer.blankLine();
             writePlainEnum(enumDef);
         } else {
-            // todo... this
+            writeTokenEnum(enumDef);
         }
     }
+
+    writer.blankLine();
+    writer.write(`export enum NodeKind`).block(() => {
+        for (const struct of analysisResult.astStructs) {
+            writer.writeLine(`${struct.name},`);
+        }
+    });
 
     for (const struct of analysisResult.astStructs) {
         writer.blankLine();
         writeJsDocs(struct);
         writer.write(`export class ${struct.name} extends Node`).block(() => {
-            writer.writeLine(`kind!: "${struct.name}";`);
+            writer.writeLine(`kind!: NodeKind.${struct.name};`);
             if (struct.parents.length > 0) {
                 writer.write("parent!: ");
                 // settled on this number arbitrarily... it's too noisy to write them all
@@ -81,6 +88,61 @@ export function generateTypeScriptTypes(analysisResult: AnalysisResult): string 
         });
     }
 
+    function writeTokenEnum(enumDef: EnumDefinition) {
+        writeJsDocs(enumDef);
+        writer.write(`export type ${enumDef.name} =`);
+        for (const variant of enumDef.variants) {
+            writer.newLine().indent().write("| ");
+            if (variant.kind === "Plain") {
+                writer.write(`${enumDef.name}Kind.${variant.name}`);
+            } else {
+                writer.write(`${enumDef.name}${variant.name}`);
+            }
+        }
+        writer.write(";");
+
+        writer.blankLine();
+        writer.write(`export enum ${enumDef.name}Kind`).block(() => {
+            for (const variant of enumDef.variants) {
+                if (variant.kind === "Plain") {
+                    writeJsDocs(variant);
+                }
+                writer.writeLine(`${variant.name},`);
+            }
+        });
+
+        for (const variant of enumDef.variants.filter(v => v.kind !== "Plain")) {
+            writer.blankLine();
+            writeJsDocs(variant);
+            writer.write(`export interface ${enumDef.name}${variant.name}`).block(() => {
+                writer.writeLine(`kind: ${enumDef.name}Kind.${variant.name};`);
+                switch (variant.kind) {
+                    case "Struct":
+                        for (const field of variant.fields) {
+                            writer.write(`${field.name}: `);
+                            writeType(field.type);
+                            writer.write(";").newLine();
+                        }
+                        break;
+                    case "Tuple":
+                        writer.write(`inner: `);
+                        if (variant.tupleArgs.length == 1) {
+                            writeType(variant.tupleArgs[0]);
+                            writer.write(";").newLine();
+                        } else {
+                            writer.write(`[`);
+                            for (const [i, tupleArg] of variant.tupleArgs.entries()) {
+                                writer.conditionalWrite(i > 0, ", ");
+                                writeType(tupleArg);
+                            }
+                            writer.write(`];`).newLine();
+                        }
+                        break;
+                }
+            });
+        }
+    }
+
     function writeType(type: TypeDefinition) {
         switch (type.kind) {
             case "Primitive":
@@ -106,6 +168,8 @@ export function generateTypeScriptTypes(analysisResult: AnalysisResult): string 
                     writer.write("Array<");
                     writeType(type.genericArgs[0]);
                     writer.write(">");
+                } else if (type.name === "AssignOpToken") {
+                    writer.write("AssignOp");
                 } else {
                     writer.write(type.name);
                     if (type.genericArgs.length > 0) {
@@ -125,11 +189,16 @@ export function generateTypeScriptTypes(analysisResult: AnalysisResult): string 
         if (node.docs == null) {
             return;
         }
-        writer.writeLine("/**");
-        for (const line of node.docs.split(/\r?\n/)) {
-            writer.writeLine(` * ${line}`);
+        const lines = node.docs.split(/\r?\n/);
+        if (lines.length === 1 && lines[0].trim().length > 0) {
+            writer.writeLine(`/** ${lines[0].trim()} */`);
+        } else if (lines.length > 1) {
+            writer.writeLine("/**");
+            for (const line of lines) {
+                writer.writeLine(` * ${line.trim()}`);
+            }
+            writer.writeLine(" */");
         }
-        writer.writeLine(" */");
     }
 }
 

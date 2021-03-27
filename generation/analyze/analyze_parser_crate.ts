@@ -9,7 +9,7 @@ export function analyzeParserCrate() {
     };
 
     function* getEnums() {
-        const allowedEnums = new Set(["Token", "BinOpToken", "Word"]);
+        const allowedEnums = new Set(["Token", "BinOpToken", "Word", "Keyword"]);
         const enums = Object.keys(crate.index).map(key => crate.index[key])
             .filter(item => item.kind === "enum");
         for (const enumDec of enums) {
