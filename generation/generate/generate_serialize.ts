@@ -18,6 +18,8 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
 
     writer.blankLine();
     writeTokenSerialization();
+    writer.blankLine();
+    writeCommentSerialization();
 
     writer.newLineIfLastNot();
 
@@ -28,7 +30,7 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
         writer.writeLine("use std::io::{Error, Write};");
         writer.writeLine("use serde::Serialize;");
         writer.writeLine("use serde_json::ser::{Formatter as JsonFormatter, to_string as to_json_string};");
-        writer.writeLine("use swc_common::{Span, Spanned, comments::{Comment}};");
+        writer.writeLine("use swc_common::{Span, Spanned, comments::{Comment, CommentKind, SingleThreadedCommentsMapInner}};");
         writer.writeLine("use swc_ecmascript::parser::token::{BinOpToken, Keyword, Token, TokenAndSpan, Word};");
         writer.writeLine("use crate::generated::*;");
     }
@@ -220,6 +222,91 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
         }
     }
 
+    function writeCommentSerialization() {
+        writeCommentsSerializationFunction();
+        writeCommentVecSerializationFunction();
+        writeCommentSerializationFunction();
+    }
+
+    function writeCommentsSerializationFunction() {
+        writer.write(
+            `pub fn serialize_comments(w: &mut impl Write, f: &mut impl JsonFormatter, `
+                + `leading: &SingleThreadedCommentsMapInner, trailing: &SingleThreadedCommentsMapInner`
+                + `) -> Result<(), Error>`,
+        ).block(() => {
+            writeObject(() => {
+                // leading
+                writeObjectStrKey("leading", true);
+                writeObjectValue(() => {
+                    writeHashMapSerialization("leading");
+                });
+
+                // trailing
+                writeObjectStrKey("trailing", false);
+                writeObjectValue(() => {
+                    writeHashMapSerialization("trailing");
+                });
+            });
+            writer.writeLine("Ok(())");
+        });
+
+        function writeHashMapSerialization(name: string) {
+            writeObject(() => {
+                writer.write(`for (i, (key, value)) in ${name}.iter().enumerate()`).block(() => {
+                    writeObjectKey(() => {
+                        writeString(() => {
+                            writer.writeLine(`f.write_string_fragment(w, &key.0.to_string())?;`);
+                        });
+                    }, "i == 0");
+                    writeObjectValue(() => {
+                        writer.writeLine("serialize_comment_vec(w, f, value)?;");
+                    });
+                });
+            });
+        }
+    }
+
+    function writeCommentVecSerializationFunction() {
+        writer.write(`pub fn serialize_comment_vec(w: &mut impl Write, f: &mut impl JsonFormatter, comments: &Vec<Comment>) -> Result<(), Error>`).block(() => {
+            writeArray(() => {
+                writer.write(`for (i, comment) in comments.iter().enumerate()`).block(() => {
+                    writeArrayValue(() => {
+                        writer.writeLine("serialize_comment(w, f, comment)?;");
+                    }, "i == 0");
+                });
+            });
+            writer.writeLine("Ok(())");
+        });
+    }
+
+    function writeCommentSerializationFunction() {
+        // not worth downloading swc_common to analyze this, so hardcode it
+        writer.write(`pub fn serialize_comment(w: &mut impl Write, f: &mut impl JsonFormatter, comment: &Comment) -> Result<(), Error>`).block(() => {
+            writeObject(() => {
+                // span
+                writeObjectStrKey("span", true);
+                writeObjectValue(() => writer.writeLine(`write!(w, "{}", to_json_string(&comment.span)?)?;`));
+                // text
+                writeObjectStrKey("text", false);
+                writeObjectValue(() =>
+                    writeString(() => {
+                        writer.writeLine("f.write_string_fragment(w, &comment.text);");
+                    })
+                );
+                // kind
+                writeObjectStrKey("kind", false);
+                writeObjectValue(() => {
+                    writer.write("f.write_u32(w, ");
+                    writer.write("match comment.kind ").inlineBlock(() => {
+                        writer.writeLine("CommentKind::Line => 0,");
+                        writer.writeLine("CommentKind::Block => 1,");
+                    }).write(")?;").newLine();
+                });
+            });
+            writer.writeLine("Ok(())");
+        });
+    }
+
     function writeArray(inner: () => void) {
         writer.writeLine("f.begin_array(w)?;");
         inner();
@@ -240,13 +327,19 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
 
     function writeObjectStrKey(name: string, isFirst: boolean) {
         writeObjectKey(() => {
-            writer.writeLine("f.begin_string(w)?;");
-            writer.writeLine(`f.write_string_fragment(w, "${name}")?;`);
-            writer.writeLine("f.end_string(w)?;");
+            writeString(() => {
+                writer.writeLine(`f.write_string_fragment(w, "${name}")?;`);
+            });
         }, isFirst);
     }
 
-    function writeObjectKey(inner: () => void, isFirst: boolean) {
+    function writeString(inner: () => void) {
+        writer.writeLine("f.begin_string(w)?;");
+        inner();
+        writer.writeLine("f.end_string(w)?;");
+    }
+
+    function writeObjectKey(inner: () => void, isFirst: boolean | string) {
         writer.writeLine(`f.begin_object_key(w, ${isFirst})?;`);
         inner();
         writer.writeLine("f.end_object_key(w)?;");

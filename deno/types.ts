@@ -21,3 +21,14 @@ export interface BigIntValue {
 export interface JsWord {
     // todo
 }
+
+export interface Comment {
+    kind: CommentKind;
+    span: Span;
+    text: string;
+}
+
+export enum CommentKind {
+    Line,
+    Block,
+}

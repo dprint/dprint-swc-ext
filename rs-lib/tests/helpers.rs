@@ -171,7 +171,27 @@ pub fn run_serialize_test(file_text: &str, expected_json_path: impl AsRef<Path>)
       expected_json_path.set_extension("tokens.json");
       let mut formatter = serde_json::ser::PrettyFormatter::new();
       let mut buffer = Vec::new();
-      serialize_token_and_spans(&mut buffer, &mut formatter, module.tokens.unwrap().tokens);
+      serialize_token_and_spans(&mut buffer, &mut formatter, module.tokens.unwrap().tokens)
+        .unwrap();
+      // std::fs::write(&expected_json_path, &buffer).unwrap();
+      let expected = std::fs::read_to_string(&expected_json_path).unwrap();
+      pretty_assertions::assert_eq!(String::from_utf8(buffer).unwrap(), expected.trim());
+    }
+
+    // check comments
+    {
+      let mut expected_json_path = PathBuf::from(expected_json_path.as_ref());
+      expected_json_path.set_extension("comments.json");
+      let mut formatter = serde_json::ser::PrettyFormatter::new();
+      let mut buffer = Vec::new();
+      let comments_container = module.comments.unwrap();
+      serialize_comments(
+        &mut buffer,
+        &mut formatter,
+        &comments_container.leading,
+        &comments_container.trailing,
+      )
+      .unwrap();
       // std::fs::write(&expected_json_path, &buffer).unwrap();
       let expected = std::fs::read_to_string(&expected_json_path).unwrap();
       pretty_assertions::assert_eq!(String::from_utf8(buffer).unwrap(), expected.trim());

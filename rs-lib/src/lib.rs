@@ -12,7 +12,7 @@ pub use types::*;
 
 // temporary and for testing purposes...
 #[cfg(feature = "serialize")]
-pub use generated_serialize::serialize_token_and_spans;
+pub use generated_serialize::{serialize_comments, serialize_token_and_spans};
 
 // swc re-exports
 pub use swc_common::comments::{Comment, CommentKind};

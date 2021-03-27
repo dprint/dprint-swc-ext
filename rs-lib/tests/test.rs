@@ -19,7 +19,10 @@ fn it_should_get_children() {
 #[test]
 fn it_should_be_serialized_to_json() {
   let tests = [
-    ("let foo = 42;", "./tests/expected/serialize_var_decl.json"),
+    (
+      "/*1*/ let foo = 42; // 2",
+      "./tests/expected/serialize_var_decl.json",
+    ),
     (
       "function foo({ a }: { a: number }): boolean { return a % 2n === 0; }",
       "./tests/expected/serialize_ts_function.json",

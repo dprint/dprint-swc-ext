@@ -1,8 +1,8 @@
 {
   "kind": "Module",
   "span": {
-    "start": 0,
-    "end": 13,
+    "start": 6,
+    "end": 19,
     "ctxt": 0
   },
   "shebang": null,
@@ -10,8 +10,8 @@
     {
       "kind": "VarDecl",
       "span": {
-        "start": 0,
-        "end": 13,
+        "start": 6,
+        "end": 19,
         "ctxt": 0
       },
       "declKind": "let",
@@ -20,23 +20,23 @@
         {
           "kind": "VarDeclarator",
           "span": {
-            "start": 4,
-            "end": 12,
+            "start": 10,
+            "end": 18,
             "ctxt": 0
           },
           "definite": false,
           "name": {
             "kind": "BindingIdent",
             "span": {
-              "start": 4,
-              "end": 7,
+              "start": 10,
+              "end": 13,
               "ctxt": 0
             },
             "id": {
               "kind": "Ident",
               "span": {
-                "start": 4,
-                "end": 7,
+                "start": 10,
+                "end": 13,
                 "ctxt": 0
               },
               "sym": "foo",
@@ -47,8 +47,8 @@
           "init": {
             "kind": "Number",
             "span": {
-              "start": 10,
-              "end": 12,
+              "start": 16,
+              "end": 18,
               "ctxt": 0
             },
             "value": 42.0

@@ -4,7 +4,7 @@ use std::marker::PhantomData;
 use std::io::{Error, Write};
 use serde::Serialize;
 use serde_json::ser::{Formatter as JsonFormatter, to_string as to_json_string};
-use swc_common::{Span, Spanned, comments::{Comment}};
+use swc_common::{Span, Spanned, comments::{Comment, CommentKind, SingleThreadedCommentsMapInner}};
 use swc_ecmascript::parser::token::{BinOpToken, Keyword, Token, TokenAndSpan, Word};
 use crate::generated::*;
 
@@ -4258,5 +4258,93 @@ fn serialize_word(w: &mut impl Write, f: &mut impl JsonFormatter, value: &Word) 
       f.end_object(w)?;
     }
   }
+  Ok(())
+}
+
+pub fn serialize_comments(w: &mut impl Write, f: &mut impl JsonFormatter, leading: &SingleThreadedCommentsMapInner, trailing: &SingleThreadedCommentsMapInner) -> Result<(), Error> {
+  f.begin_object(w)?;
+  f.begin_object_key(w, true)?;
+  f.begin_string(w)?;
+  f.write_string_fragment(w, "leading")?;
+  f.end_string(w)?;
+  f.end_object_key(w)?;
+  f.begin_object_value(w)?;
+  f.begin_object(w)?;
+  for (i, (key, value)) in leading.iter().enumerate() {
+    f.begin_object_key(w, i == 0)?;
+    f.begin_string(w)?;
+    f.write_string_fragment(w, &key.0.to_string())?;
+    f.end_string(w)?;
+    f.end_object_key(w)?;
+    f.begin_object_value(w)?;
+    serialize_comment_vec(w, f, value)?;
+    f.end_object_value(w)?;
+  }
+  f.end_object(w)?;
+  f.end_object_value(w)?;
+  f.begin_object_key(w, false)?;
+  f.begin_string(w)?;
+  f.write_string_fragment(w, "trailing")?;
+  f.end_string(w)?;
+  f.end_object_key(w)?;
+  f.begin_object_value(w)?;
+  f.begin_object(w)?;
+  for (i, (key, value)) in trailing.iter().enumerate() {
+    f.begin_object_key(w, i == 0)?;
+    f.begin_string(w)?;
+    f.write_string_fragment(w, &key.0.to_string())?;
+    f.end_string(w)?;
+    f.end_object_key(w)?;
+    f.begin_object_value(w)?;
+    serialize_comment_vec(w, f, value)?;
+    f.end_object_value(w)?;
+  }
+  f.end_object(w)?;
+  f.end_object_value(w)?;
+  f.end_object(w)?;
+  Ok(())
+}
+pub fn serialize_comment_vec(w: &mut impl Write, f: &mut impl JsonFormatter, comments: &Vec<Comment>) -> Result<(), Error> {
+  f.begin_array(w)?;
+  for (i, comment) in comments.iter().enumerate() {
+    f.begin_array_value(w, i == 0)?;
+    serialize_comment(w, f, comment)?;
+    f.end_array_value(w)?;
+  }
+  f.end_array(w)?;
+  Ok(())
+}
+pub fn serialize_comment(w: &mut impl Write, f: &mut impl JsonFormatter, comment: &Comment) -> Result<(), Error> {
+  f.begin_object(w)?;
+  f.begin_object_key(w, true)?;
+  f.begin_string(w)?;
+  f.write_string_fragment(w, "span")?;
+  f.end_string(w)?;
+  f.end_object_key(w)?;
+  f.begin_object_value(w)?;
+  write!(w, "{}", to_json_string(&comment.span)?)?;
+  f.end_object_value(w)?;
+  f.begin_object_key(w, false)?;
+  f.begin_string(w)?;
+  f.write_string_fragment(w, "text")?;
+  f.end_string(w)?;
+  f.end_object_key(w)?;
+  f.begin_object_value(w)?;
+  f.begin_string(w)?;
+  f.write_string_fragment(w, &comment.text);
+  f.end_string(w)?;
+  f.end_object_value(w)?;
+  f.begin_object_key(w, false)?;
+  f.begin_string(w)?;
+  f.write_string_fragment(w, "kind")?;
+  f.end_string(w)?;
+  f.end_object_key(w)?;
+  f.begin_object_value(w)?;
+  f.write_u32(w, match comment.kind {
+    CommentKind::Line => 0,
+    CommentKind::Block => 1,
+  })?;
+  f.end_object_value(w)?;
+  f.end_object(w)?;
   Ok(())
 }
