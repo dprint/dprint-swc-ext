@@ -1,4 +1,5 @@
-use std::path::Path;
+use dprint_swc_ecma_ast_view::*;
+use std::path::{Path, PathBuf};
 use swc_common::{
   comments::SingleThreadedComments,
   errors::{DiagnosticBuilder, Emitter, Handler},
@@ -156,10 +157,25 @@ pub fn get_swc_script(
 #[cfg(feature = "serialize")]
 pub fn run_serialize_test(file_text: &str, expected_json_path: impl AsRef<Path>) {
   run_test_with_module(&Path::new("test.ts"), file_text, |module| {
-    let result = serde_json::to_string_pretty(&module).unwrap();
-    // std::fs::write(&expected_json_path, &result).unwrap();
-    let expected = std::fs::read_to_string(expected_json_path.as_ref()).unwrap();
-    pretty_assertions::assert_eq!(result, expected.trim());
+    // check AST
+    {
+      let result = serde_json::to_string_pretty(&module).unwrap();
+      // std::fs::write(&expected_json_path, &result).unwrap();
+      let expected = std::fs::read_to_string(expected_json_path.as_ref()).unwrap();
+      pretty_assertions::assert_eq!(result, expected.trim());
+    }
+
+    // check tokens
+    {
+      let mut expected_json_path = PathBuf::from(expected_json_path.as_ref());
+      expected_json_path.set_extension("tokens.json");
+      let mut formatter = serde_json::ser::PrettyFormatter::new();
+      let mut buffer = Vec::new();
+      serialize_token_and_spans(&mut buffer, &mut formatter, module.tokens.unwrap().tokens);
+      // std::fs::write(&expected_json_path, &buffer).unwrap();
+      let expected = std::fs::read_to_string(&expected_json_path).unwrap();
+      pretty_assertions::assert_eq!(String::from_utf8(buffer).unwrap(), expected.trim());
+    }
   });
 }
 

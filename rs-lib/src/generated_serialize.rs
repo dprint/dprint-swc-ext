@@ -1,8 +1,11 @@
 // This code is code generated.
 // Run `./scripts/generate.sh` from the root directory to regenerate it.
 use std::marker::PhantomData;
+use std::io::{Error, Write};
 use serde::Serialize;
-use swc_common::{Span, Spanned};
+use serde_json::ser::{Formatter as JsonFormatter, to_string as to_json_string};
+use swc_common::{Span, Spanned, comments::{Comment}};
+use swc_ecmascript::parser::token::{BinOpToken, Keyword, Token, TokenAndSpan, Word};
 use crate::generated::*;
 
 #[derive(Serialize)]
@@ -3791,4 +3794,469 @@ impl<'a> From<YieldExpr<'a>> for SerializableYieldExpr<'a> {
       _phantom: PhantomData,
     }
   }
+}
+
+pub fn serialize_token_and_spans(w: &mut impl Write, f: &mut impl JsonFormatter, tokens: &Vec<TokenAndSpan>) -> Result<(), Error> {
+  f.begin_array(w)?;
+  for (i, token_and_span) in tokens.iter().enumerate() {
+    f.begin_array_value(w, i == 0)?;
+    serialize_token_and_span(w, f, &token_and_span)?;
+    f.end_array_value(w)?;
+  }
+  f.end_array(w)?;
+  Ok(())
+}
+
+pub fn serialize_token_and_span(w: &mut impl Write, f: &mut impl JsonFormatter, token_and_span: &TokenAndSpan) -> Result<(), Error> {
+  f.begin_object(w)?;
+  f.begin_object_key(w, true)?;
+  f.begin_string(w)?;
+  f.write_string_fragment(w, "span")?;
+  f.end_string(w)?;
+  f.end_object_key(w)?;
+  f.begin_object_value(w)?;
+  write!(w, "{}", to_json_string(&token_and_span.span)?)?;
+  f.end_object_value(w)?;
+  f.begin_object_key(w, false)?;
+  f.begin_string(w)?;
+  f.write_string_fragment(w, "hadLineBreak")?;
+  f.end_string(w)?;
+  f.end_object_key(w)?;
+  f.begin_object_value(w)?;
+  f.write_bool(w, token_and_span.had_line_break)?;
+  f.end_object_value(w)?;
+  f.begin_object_key(w, false)?;
+  f.begin_string(w)?;
+  f.write_string_fragment(w, "token")?;
+  f.end_string(w)?;
+  f.end_object_key(w)?;
+  f.begin_object_value(w)?;
+  serialize_token(w, f, &token_and_span.token)?;
+  f.end_object_value(w)?;
+  f.end_object(w)?;
+  Ok(())
+}
+
+fn serialize_bin_op_token(w: &mut impl Write, f: &mut impl JsonFormatter, value: &BinOpToken) -> Result<(), Error> {
+  match value {
+    BinOpToken::EqEq => f.write_u32(w, 0)?,
+    BinOpToken::NotEq => f.write_u32(w, 1)?,
+    BinOpToken::EqEqEq => f.write_u32(w, 2)?,
+    BinOpToken::NotEqEq => f.write_u32(w, 3)?,
+    BinOpToken::Lt => f.write_u32(w, 4)?,
+    BinOpToken::LtEq => f.write_u32(w, 5)?,
+    BinOpToken::Gt => f.write_u32(w, 6)?,
+    BinOpToken::GtEq => f.write_u32(w, 7)?,
+    BinOpToken::LShift => f.write_u32(w, 8)?,
+    BinOpToken::RShift => f.write_u32(w, 9)?,
+    BinOpToken::ZeroFillRShift => f.write_u32(w, 10)?,
+    BinOpToken::Add => f.write_u32(w, 11)?,
+    BinOpToken::Sub => f.write_u32(w, 12)?,
+    BinOpToken::Mul => f.write_u32(w, 13)?,
+    BinOpToken::Div => f.write_u32(w, 14)?,
+    BinOpToken::Mod => f.write_u32(w, 15)?,
+    BinOpToken::BitOr => f.write_u32(w, 16)?,
+    BinOpToken::BitXor => f.write_u32(w, 17)?,
+    BinOpToken::BitAnd => f.write_u32(w, 18)?,
+    BinOpToken::Exp => f.write_u32(w, 19)?,
+    BinOpToken::LogicalOr => f.write_u32(w, 20)?,
+    BinOpToken::LogicalAnd => f.write_u32(w, 21)?,
+    BinOpToken::NullishCoalescing => f.write_u32(w, 22)?,
+  }
+  Ok(())
+}
+
+fn serialize_keyword(w: &mut impl Write, f: &mut impl JsonFormatter, value: &Keyword) -> Result<(), Error> {
+  match value {
+    Keyword::Await => f.write_u32(w, 0)?,
+    Keyword::Break => f.write_u32(w, 1)?,
+    Keyword::Case => f.write_u32(w, 2)?,
+    Keyword::Catch => f.write_u32(w, 3)?,
+    Keyword::Continue => f.write_u32(w, 4)?,
+    Keyword::Debugger => f.write_u32(w, 5)?,
+    Keyword::Default_ => f.write_u32(w, 6)?,
+    Keyword::Do => f.write_u32(w, 7)?,
+    Keyword::Else => f.write_u32(w, 8)?,
+    Keyword::Finally => f.write_u32(w, 9)?,
+    Keyword::For => f.write_u32(w, 10)?,
+    Keyword::Function => f.write_u32(w, 11)?,
+    Keyword::If => f.write_u32(w, 12)?,
+    Keyword::Return => f.write_u32(w, 13)?,
+    Keyword::Switch => f.write_u32(w, 14)?,
+    Keyword::Throw => f.write_u32(w, 15)?,
+    Keyword::Try => f.write_u32(w, 16)?,
+    Keyword::Var => f.write_u32(w, 17)?,
+    Keyword::Let => f.write_u32(w, 18)?,
+    Keyword::Const => f.write_u32(w, 19)?,
+    Keyword::While => f.write_u32(w, 20)?,
+    Keyword::With => f.write_u32(w, 21)?,
+    Keyword::New => f.write_u32(w, 22)?,
+    Keyword::This => f.write_u32(w, 23)?,
+    Keyword::Super => f.write_u32(w, 24)?,
+    Keyword::Class => f.write_u32(w, 25)?,
+    Keyword::Extends => f.write_u32(w, 26)?,
+    Keyword::Export => f.write_u32(w, 27)?,
+    Keyword::Import => f.write_u32(w, 28)?,
+    Keyword::Yield => f.write_u32(w, 29)?,
+    Keyword::In => f.write_u32(w, 30)?,
+    Keyword::InstanceOf => f.write_u32(w, 31)?,
+    Keyword::TypeOf => f.write_u32(w, 32)?,
+    Keyword::Void => f.write_u32(w, 33)?,
+    Keyword::Delete => f.write_u32(w, 34)?,
+  }
+  Ok(())
+}
+
+fn serialize_token(w: &mut impl Write, f: &mut impl JsonFormatter, value: &Token) -> Result<(), Error> {
+  match value {
+    Token::Word(item0) => {
+      f.begin_object(w)?;
+      f.begin_object_key(w, true)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "kind")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      f.write_u32(w, 0)?;
+      f.end_object_value(w)?;
+      f.begin_object_key(w, false)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "inner")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      serialize_word(w, f, &item0)?;
+      f.end_object_value(w)?;
+      f.end_object(w)?;
+    }
+    Token::Arrow => f.write_u32(w, 1)?,
+    Token::Hash => f.write_u32(w, 2)?,
+    Token::At => f.write_u32(w, 3)?,
+    Token::Dot => f.write_u32(w, 4)?,
+    Token::DotDotDot => f.write_u32(w, 5)?,
+    Token::Bang => f.write_u32(w, 6)?,
+    Token::LParen => f.write_u32(w, 7)?,
+    Token::RParen => f.write_u32(w, 8)?,
+    Token::LBracket => f.write_u32(w, 9)?,
+    Token::RBracket => f.write_u32(w, 10)?,
+    Token::LBrace => f.write_u32(w, 11)?,
+    Token::RBrace => f.write_u32(w, 12)?,
+    Token::Semi => f.write_u32(w, 13)?,
+    Token::Comma => f.write_u32(w, 14)?,
+    Token::BackQuote => f.write_u32(w, 15)?,
+    Token::Template {
+      raw,
+      cooked,
+      has_escape,
+    } => {
+      f.begin_object(w)?;
+      f.begin_object_key(w, true)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "kind")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      f.write_u32(w, 16)?;
+      f.end_object_value(w)?;
+      f.begin_object_key(w, false)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "raw")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      write!(w, "{}", to_json_string(&raw)?)?;
+      f.end_object_value(w)?;
+      f.begin_object_key(w, false)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "cooked")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      write!(w, "{}", to_json_string(&cooked)?)?;
+      f.end_object_value(w)?;
+      f.begin_object_key(w, false)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "hasEscape")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      write!(w, "{}", to_json_string(&has_escape)?)?;
+      f.end_object_value(w)?;
+      f.end_object(w)?;
+    }
+    Token::Colon => f.write_u32(w, 17)?,
+    Token::ColonColon => f.write_u32(w, 18)?,
+    Token::BinOp(item0) => {
+      f.begin_object(w)?;
+      f.begin_object_key(w, true)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "kind")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      f.write_u32(w, 19)?;
+      f.end_object_value(w)?;
+      f.begin_object_key(w, false)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "inner")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      serialize_bin_op_token(w, f, &item0)?;
+      f.end_object_value(w)?;
+      f.end_object(w)?;
+    }
+    Token::AssignOp(item0) => {
+      f.begin_object(w)?;
+      f.begin_object_key(w, true)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "kind")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      f.write_u32(w, 20)?;
+      f.end_object_value(w)?;
+      f.begin_object_key(w, false)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "inner")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      write!(w, "{}", to_json_string(&item0)?)?;
+      f.end_object_value(w)?;
+      f.end_object(w)?;
+    }
+    Token::DollarLBrace => f.write_u32(w, 21)?,
+    Token::QuestionMark => f.write_u32(w, 22)?,
+    Token::PlusPlus => f.write_u32(w, 23)?,
+    Token::MinusMinus => f.write_u32(w, 24)?,
+    Token::Tilde => f.write_u32(w, 25)?,
+    Token::Str {
+      value,
+      has_escape,
+    } => {
+      f.begin_object(w)?;
+      f.begin_object_key(w, true)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "kind")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      f.write_u32(w, 26)?;
+      f.end_object_value(w)?;
+      f.begin_object_key(w, false)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "value")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      write!(w, "{}", to_json_string(&value)?)?;
+      f.end_object_value(w)?;
+      f.begin_object_key(w, false)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "hasEscape")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      write!(w, "{}", to_json_string(&has_escape)?)?;
+      f.end_object_value(w)?;
+      f.end_object(w)?;
+    }
+    Token::Regex(item0, item1) => {
+      f.begin_object(w)?;
+      f.begin_object_key(w, true)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "kind")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      f.write_u32(w, 27)?;
+      f.end_object_value(w)?;
+      f.begin_array(w)?;
+      f.begin_array_value(w, true)?;
+      write!(w, "{}", to_json_string(&item0)?)?;
+      f.end_array_value(w)?;
+      f.begin_array_value(w, false)?;
+      write!(w, "{}", to_json_string(&item1)?)?;
+      f.end_array_value(w)?;
+      f.end_array(w)?;
+      f.end_object(w)?;
+    }
+    Token::Num(item0) => {
+      f.begin_object(w)?;
+      f.begin_object_key(w, true)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "kind")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      f.write_u32(w, 28)?;
+      f.end_object_value(w)?;
+      f.begin_object_key(w, false)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "inner")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      write!(w, "{}", to_json_string(&item0)?)?;
+      f.end_object_value(w)?;
+      f.end_object(w)?;
+    }
+    Token::BigInt(item0) => {
+      f.begin_object(w)?;
+      f.begin_object_key(w, true)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "kind")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      f.write_u32(w, 29)?;
+      f.end_object_value(w)?;
+      f.begin_object_key(w, false)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "inner")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      write!(w, "{}", to_json_string(&item0)?)?;
+      f.end_object_value(w)?;
+      f.end_object(w)?;
+    }
+    Token::JSXName {
+      name,
+    } => {
+      f.begin_object(w)?;
+      f.begin_object_key(w, true)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "kind")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      f.write_u32(w, 30)?;
+      f.end_object_value(w)?;
+      f.begin_object_key(w, false)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "name")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      write!(w, "{}", to_json_string(&name)?)?;
+      f.end_object_value(w)?;
+      f.end_object(w)?;
+    }
+    Token::JSXText {
+      raw,
+    } => {
+      f.begin_object(w)?;
+      f.begin_object_key(w, true)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "kind")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      f.write_u32(w, 31)?;
+      f.end_object_value(w)?;
+      f.begin_object_key(w, false)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "raw")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      write!(w, "{}", to_json_string(&raw)?)?;
+      f.end_object_value(w)?;
+      f.end_object(w)?;
+    }
+    Token::JSXTagStart => f.write_u32(w, 32)?,
+    Token::JSXTagEnd => f.write_u32(w, 33)?,
+    Token::Shebang(item0) => {
+      f.begin_object(w)?;
+      f.begin_object_key(w, true)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "kind")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      f.write_u32(w, 34)?;
+      f.end_object_value(w)?;
+      f.begin_object_key(w, false)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "inner")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      write!(w, "{}", to_json_string(&item0)?)?;
+      f.end_object_value(w)?;
+      f.end_object(w)?;
+    }
+    Token::Error(item0) => {
+      f.begin_object(w)?;
+      f.begin_object_key(w, true)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "kind")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      f.write_u32(w, 35)?;
+      f.end_object_value(w)?;
+      f.begin_object_key(w, false)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "inner")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      panic!("Serializing an AST containing an Error is not currently supported.");
+      f.end_object_value(w)?;
+      f.end_object(w)?;
+    }
+  }
+  Ok(())
+}
+
+fn serialize_word(w: &mut impl Write, f: &mut impl JsonFormatter, value: &Word) -> Result<(), Error> {
+  match value {
+    Word::Keyword(item0) => {
+      f.begin_object(w)?;
+      f.begin_object_key(w, true)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "kind")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      f.write_u32(w, 0)?;
+      f.end_object_value(w)?;
+      f.begin_object_key(w, false)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "inner")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      serialize_keyword(w, f, &item0)?;
+      f.end_object_value(w)?;
+      f.end_object(w)?;
+    }
+    Word::Null => f.write_u32(w, 1)?,
+    Word::True => f.write_u32(w, 2)?,
+    Word::False => f.write_u32(w, 3)?,
+    Word::Ident(item0) => {
+      f.begin_object(w)?;
+      f.begin_object_key(w, true)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "kind")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      f.write_u32(w, 4)?;
+      f.end_object_value(w)?;
+      f.begin_object_key(w, false)?;
+      f.begin_string(w)?;
+      f.write_string_fragment(w, "inner")?;
+      f.end_string(w)?;
+      f.end_object_key(w)?;
+      f.begin_object_value(w)?;
+      write!(w, "{}", to_json_string(&item0)?)?;
+      f.end_object_value(w)?;
+      f.end_object(w)?;
+    }
+  }
+  Ok(())
 }

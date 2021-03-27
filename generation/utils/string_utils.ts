@@ -1,5 +1,5 @@
-// https://github.com/dsherret/tsconf-talk/blob/master/scripts/utils/nameToSnakeCase.ts
 export function nameToSnakeCase(name: string) {
+    // https://github.com/dsherret/tsconf-talk/blob/master/scripts/utils/nameToSnakeCase.ts
     let snakeCaseName = "";
     let canNextBeUnderscore = false;
 
@@ -14,4 +14,9 @@ export function nameToSnakeCase(name: string) {
     }
 
     return snakeCaseName;
+}
+
+export function snakeCaseToCamel(name: string) {
+    const parts = name.split("_");
+    return parts[0] + parts.slice(1).map(name => name[0].toUpperCase() + name.slice(1)).join("");
 }

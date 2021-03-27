@@ -17,7 +17,7 @@ fn it_should_get_children() {
 
 #[cfg(feature = "serialize")]
 #[test]
-fn it_shoule_be_serialized_to_json() {
+fn it_should_be_serialized_to_json() {
   let tests = [
     ("let foo = 42;", "./tests/expected/serialize_var_decl.json"),
     (

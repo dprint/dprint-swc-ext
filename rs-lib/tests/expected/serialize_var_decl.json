@@ -14,7 +14,7 @@
         "end": 13,
         "ctxt": 0
       },
-      "varDeclKind": "let",
+      "declKind": "let",
       "declare": false,
       "decls": [
         {
