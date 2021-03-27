@@ -2,6 +2,705 @@
 // Run `./scripts/generate.sh` from the root directory to regenerate it.
 import { BigIntValue, JsWord, Node, Span } from "./types.ts";
 
+export type BlockStmtOrExpr =
+  | BlockStmt
+  | Expr;
+
+export type ClassMember =
+  | Constructor
+  | ClassMethod
+  | PrivateMethod
+  | ClassProp
+  | PrivateProp
+  | TsIndexSignature
+  | EmptyStmt;
+
+export type Decl =
+  | ClassDecl
+  | FnDecl
+  | VarDecl
+  | TsInterfaceDecl
+  | TsTypeAliasDecl
+  | TsEnumDecl
+  | TsModuleDecl;
+
+export type DefaultDecl =
+  | ClassExpr
+  | FnExpr
+  | TsInterfaceDecl;
+
+export type ExportSpecifier =
+  | ExportNamespaceSpecifier
+  | ExportDefaultSpecifier
+  | ExportNamedSpecifier;
+
+export type Expr =
+  | ThisExpr
+  | ArrayLit
+  | ObjectLit
+  | FnExpr
+  | UnaryExpr
+  | UpdateExpr
+  | BinExpr
+  | AssignExpr
+  | MemberExpr
+  | CondExpr
+  | CallExpr
+  | NewExpr
+  | SeqExpr
+  | Ident
+  | Lit
+  | Tpl
+  | TaggedTpl
+  | ArrowExpr
+  | ClassExpr
+  | YieldExpr
+  | MetaPropExpr
+  | AwaitExpr
+  | ParenExpr
+  | JSXMemberExpr
+  | JSXNamespacedName
+  | JSXEmptyExpr
+  | JSXElement
+  | JSXFragment
+  | TsTypeAssertion
+  | TsConstAssertion
+  | TsNonNullExpr
+  | TsAsExpr
+  | PrivateName
+  | OptChainExpr
+  | Invalid;
+
+export type ExprOrSuper =
+  | Super
+  | Expr;
+
+export type ImportSpecifier =
+  | ImportNamedSpecifier
+  | ImportDefaultSpecifier
+  | ImportStarAsSpecifier;
+
+export type JSXAttrName =
+  | Ident
+  | JSXNamespacedName;
+
+export type JSXAttrOrSpread =
+  | JSXAttr
+  | SpreadElement;
+
+export type JSXAttrValue =
+  | Lit
+  | JSXExprContainer
+  | JSXElement
+  | JSXFragment;
+
+export type JSXElementChild =
+  | JSXText
+  | JSXExprContainer
+  | JSXSpreadChild
+  | JSXElement
+  | JSXFragment;
+
+export type JSXElementName =
+  | Ident
+  | JSXMemberExpr
+  | JSXNamespacedName;
+
+export type JSXExpr =
+  | JSXEmptyExpr
+  | Expr;
+
+/**
+ * Used for `obj` property of `JSXMemberExpr`.
+ */
+export type JSXObject =
+  | JSXMemberExpr
+  | Ident;
+
+export type Lit =
+  | Str
+  | Bool
+  | Null
+  | Number
+  | BigInt
+  | Regex
+  | JSXText;
+
+export type ModuleDecl =
+  | ImportDecl
+  | ExportDecl
+  | NamedExport
+  | ExportDefaultDecl
+  | ExportDefaultExpr
+  | ExportAll
+  | TsImportEqualsDecl
+  | TsExportAssignment
+  | TsNamespaceExportDecl;
+
+export type ModuleItem =
+  | ModuleDecl
+  | Stmt;
+
+export type ObjectPatProp =
+  | KeyValuePatProp
+  | AssignPatProp
+  | RestPat;
+
+export type ParamOrTsParamProp =
+  | TsParamProp
+  | Param;
+
+export type Pat =
+  | BindingIdent
+  | ArrayPat
+  | RestPat
+  | ObjectPat
+  | AssignPat
+  | Invalid
+  | Expr;
+
+export type PatOrExpr =
+  | Expr
+  | Pat;
+
+export type Prop =
+  | Ident
+  | KeyValueProp
+  | AssignProp
+  | GetterProp
+  | SetterProp
+  | MethodProp;
+
+export type PropName =
+  | Ident
+  | Str
+  | Number
+  | ComputedPropName
+  | BigInt;
+
+export type PropOrSpread =
+  | SpreadElement
+  | Prop;
+
+export type Stmt =
+  | BlockStmt
+  | EmptyStmt
+  | DebuggerStmt
+  | WithStmt
+  | ReturnStmt
+  | LabeledStmt
+  | BreakStmt
+  | ContinueStmt
+  | IfStmt
+  | SwitchStmt
+  | ThrowStmt
+  | TryStmt
+  | WhileStmt
+  | DoWhileStmt
+  | ForStmt
+  | ForInStmt
+  | ForOfStmt
+  | Decl
+  | ExprStmt;
+
+export type TsEntityName =
+  | TsQualifiedName
+  | Ident;
+
+/**
+ * 
+ * - Invalid: [Ident] with empty symbol.
+ */
+export type TsEnumMemberId =
+  | Ident
+  | Str;
+
+export type TsFnOrConstructorType =
+  | TsFnType
+  | TsConstructorType;
+
+export type TsFnParam =
+  | BindingIdent
+  | ArrayPat
+  | RestPat
+  | ObjectPat;
+
+export type TsLit =
+  | Number
+  | Str
+  | Bool
+  | BigInt
+  | TsTplLitType;
+
+export type TsModuleName =
+  | Ident
+  | Str;
+
+export type TsModuleRef =
+  | TsEntityName
+  | TsExternalModuleRef;
+
+/**
+ * `namespace A.B { }` is a namespace named `A` with another TsNamespaceDecl as
+ * its body.
+ */
+export type TsNamespaceBody =
+  | TsModuleBlock
+  | TsNamespaceDecl;
+
+export type TsParamPropParam =
+  | BindingIdent
+  | AssignPat;
+
+export type TsThisTypeOrIdent =
+  | TsThisType
+  | Ident;
+
+export type TsType =
+  | TsKeywordType
+  | TsThisType
+  | TsFnOrConstructorType
+  | TsTypeRef
+  | TsTypeQuery
+  | TsTypeLit
+  | TsArrayType
+  | TsTupleType
+  | TsOptionalType
+  | TsRestType
+  | TsUnionOrIntersectionType
+  | TsConditionalType
+  | TsInferType
+  | TsParenthesizedType
+  | TsTypeOperator
+  | TsIndexedAccessType
+  | TsMappedType
+  | TsLitType
+  | TsTypePredicate
+  | TsImportType;
+
+export type TsTypeElement =
+  | TsCallSignatureDecl
+  | TsConstructSignatureDecl
+  | TsPropertySignature
+  | TsMethodSignature
+  | TsIndexSignature;
+
+export type TsTypeQueryExpr =
+  | TsEntityName
+  | TsImportType;
+
+export type TsUnionOrIntersectionType =
+  | TsUnionType
+  | TsIntersectionType;
+
+export type VarDeclOrExpr =
+  | VarDecl
+  | Expr;
+
+export type VarDeclOrPat =
+  | VarDecl
+  | Pat;
+
+export enum Accessibility {
+  Public,
+  Protected,
+  Private,
+}
+
+export enum AssignOp {
+  /**
+   * `=`
+   */
+  Assign,
+  /**
+   * `+=`
+   */
+  AddAssign,
+  /**
+   * `-=`
+   */
+  SubAssign,
+  /**
+   * `*=`
+   */
+  MulAssign,
+  /**
+   * `/=`
+   */
+  DivAssign,
+  /**
+   * `%=`
+   */
+  ModAssign,
+  /**
+   * `<<=`
+   */
+  LShiftAssign,
+  /**
+   * `>>=`
+   */
+  RShiftAssign,
+  /**
+   * `>>>=`
+   */
+  ZeroFillRShiftAssign,
+  /**
+   * `|=`
+   */
+  BitOrAssign,
+  /**
+   * `^=`
+   */
+  BitXorAssign,
+  /**
+   * `&=`
+   */
+  BitAndAssign,
+  /**
+   * `**=`
+   */
+  ExpAssign,
+  /**
+   * `&&=`
+   */
+  AndAssign,
+  /**
+   * `||=`
+   */
+  OrAssign,
+  /**
+   * `??=`
+   */
+  NullishAssign,
+}
+
+export enum BinaryOp {
+  /**
+   * `==`
+   */
+  EqEq,
+  /**
+   * `!=`
+   */
+  NotEq,
+  /**
+   * `===`
+   */
+  EqEqEq,
+  /**
+   * `!==`
+   */
+  NotEqEq,
+  /**
+   * `<`
+   */
+  Lt,
+  /**
+   * `<=`
+   */
+  LtEq,
+  /**
+   * `>`
+   */
+  Gt,
+  /**
+   * `>=`
+   */
+  GtEq,
+  /**
+   * `<<`
+   */
+  LShift,
+  /**
+   * `>>`
+   */
+  RShift,
+  /**
+   * `>>>`
+   */
+  ZeroFillRShift,
+  /**
+   * `+`
+   */
+  Add,
+  /**
+   * `-`
+   */
+  Sub,
+  /**
+   * `*`
+   */
+  Mul,
+  /**
+   * `/`
+   */
+  Div,
+  /**
+   * `%`
+   */
+  Mod,
+  /**
+   * `|`
+   */
+  BitOr,
+  /**
+   * `^`
+   */
+  BitXor,
+  /**
+   * `&`
+   */
+  BitAnd,
+  /**
+   * `||`
+   */
+  LogicalOr,
+  /**
+   * `&&`
+   */
+  LogicalAnd,
+  /**
+   * `in`
+   */
+  In,
+  /**
+   * `instanceof`
+   */
+  InstanceOf,
+  /**
+   * `**`
+   */
+  Exp,
+  /**
+   * `??`
+   */
+  NullishCoalescing,
+}
+
+export enum EsVersion {
+  Es3,
+  Es5,
+  Es2015,
+  Es2016,
+  Es2017,
+  Es2018,
+  Es2019,
+  Es2020,
+}
+
+export enum MethodKind {
+  Method,
+  Getter,
+  Setter,
+}
+
+/**
+ * THis enum determines how string literal should be printed.
+ */
+export enum StrKind {
+  /**
+   * Span of string points to original source code, and codegen should use
+   * it.
+   * **Note**: Giving wrong value to this field will result in invalid
+   * codegen.
+   */
+  Normal,
+  /**
+   * If the span of string does not point a string literal, mainly because
+   * this string is synthesized, this variant should be used.
+   */
+  Synthesized,
+}
+
+export enum TruePlusMinus {
+  True,
+  Plus,
+  Minus,
+}
+
+export enum TsKeywordTypeKind {
+  TsAnyKeyword,
+  TsUnknownKeyword,
+  TsNumberKeyword,
+  TsObjectKeyword,
+  TsBooleanKeyword,
+  TsBigIntKeyword,
+  TsStringKeyword,
+  TsSymbolKeyword,
+  TsVoidKeyword,
+  TsUndefinedKeyword,
+  TsNullKeyword,
+  TsNeverKeyword,
+  TsIntrinsicKeyword,
+}
+
+export enum TsTypeOperatorOp {
+  /**
+   * `keyof`
+   */
+  KeyOf,
+  /**
+   * `unique`
+   */
+  Unique,
+  /**
+   * `readonly`
+   */
+  ReadOnly,
+}
+
+export enum UnaryOp {
+  /**
+   * `-`
+   */
+  Minus,
+  /**
+   * `+`
+   */
+  Plus,
+  /**
+   * `!`
+   */
+  Bang,
+  /**
+   * `~`
+   */
+  Tilde,
+  /**
+   * `typeof`
+   */
+  TypeOf,
+  /**
+   * `void`
+   */
+  Void,
+  /**
+   * `delete`
+   */
+  Delete,
+}
+
+export enum UpdateOp {
+  /**
+   * `++`
+   */
+  PlusPlus,
+  /**
+   * `--`
+   */
+  MinusMinus,
+}
+
+export enum VarDeclKind {
+  /**
+   * `var`
+   */
+  Var,
+  /**
+   * `let`
+   */
+  Let,
+  /**
+   * `const`
+   */
+  Const,
+}
+
+export enum BinOpToken {
+  /**
+   * `==`
+   */
+  EqEq,
+  /**
+   * `!=`
+   */
+  NotEq,
+  /**
+   * `===`
+   */
+  EqEqEq,
+  /**
+   * `!==`
+   */
+  NotEqEq,
+  /**
+   * `<`
+   */
+  Lt,
+  /**
+   * `<=`
+   */
+  LtEq,
+  /**
+   * `>`
+   */
+  Gt,
+  /**
+   * `>=`
+   */
+  GtEq,
+  /**
+   * `<<`
+   */
+  LShift,
+  /**
+   * `>>`
+   */
+  RShift,
+  /**
+   * `>>>`
+   */
+  ZeroFillRShift,
+  /**
+   * `+`
+   */
+  Add,
+  /**
+   * `-`
+   */
+  Sub,
+  /**
+   * `*`
+   */
+  Mul,
+  /**
+   * `/`
+   */
+  Div,
+  /**
+   * `%`
+   */
+  Mod,
+  /**
+   * `|`
+   */
+  BitOr,
+  /**
+   * `^`
+   */
+  BitXor,
+  /**
+   * `&`
+   */
+  BitAnd,
+  /**
+   * `**`
+   */
+  Exp,
+  /**
+   * `||`
+   */
+  LogicalOr,
+  /**
+   * `&&`
+   */
+  LogicalAnd,
+  /**
+   * `??`
+   */
+  NullishCoalescing,
+}
+
 /**
  * Array literal.
  */
@@ -1369,607 +2068,3 @@ export class YieldExpr extends Node {
   arg!: Expr | undefined;
   delegate!: boolean;
 }
-
-export enum Accessibility {
-  Public,
-  Protected,
-  Private,
-}
-
-export enum AssignOp {
-  /**
-   * `=`
-   */
-  Assign,
-  /**
-   * `+=`
-   */
-  AddAssign,
-  /**
-   * `-=`
-   */
-  SubAssign,
-  /**
-   * `*=`
-   */
-  MulAssign,
-  /**
-   * `/=`
-   */
-  DivAssign,
-  /**
-   * `%=`
-   */
-  ModAssign,
-  /**
-   * `<<=`
-   */
-  LShiftAssign,
-  /**
-   * `>>=`
-   */
-  RShiftAssign,
-  /**
-   * `>>>=`
-   */
-  ZeroFillRShiftAssign,
-  /**
-   * `|=`
-   */
-  BitOrAssign,
-  /**
-   * `^=`
-   */
-  BitXorAssign,
-  /**
-   * `&=`
-   */
-  BitAndAssign,
-  /**
-   * `**=`
-   */
-  ExpAssign,
-  /**
-   * `&&=`
-   */
-  AndAssign,
-  /**
-   * `||=`
-   */
-  OrAssign,
-  /**
-   * `??=`
-   */
-  NullishAssign,
-}
-
-export enum BinaryOp {
-  /**
-   * `==`
-   */
-  EqEq,
-  /**
-   * `!=`
-   */
-  NotEq,
-  /**
-   * `===`
-   */
-  EqEqEq,
-  /**
-   * `!==`
-   */
-  NotEqEq,
-  /**
-   * `<`
-   */
-  Lt,
-  /**
-   * `<=`
-   */
-  LtEq,
-  /**
-   * `>`
-   */
-  Gt,
-  /**
-   * `>=`
-   */
-  GtEq,
-  /**
-   * `<<`
-   */
-  LShift,
-  /**
-   * `>>`
-   */
-  RShift,
-  /**
-   * `>>>`
-   */
-  ZeroFillRShift,
-  /**
-   * `+`
-   */
-  Add,
-  /**
-   * `-`
-   */
-  Sub,
-  /**
-   * `*`
-   */
-  Mul,
-  /**
-   * `/`
-   */
-  Div,
-  /**
-   * `%`
-   */
-  Mod,
-  /**
-   * `|`
-   */
-  BitOr,
-  /**
-   * `^`
-   */
-  BitXor,
-  /**
-   * `&`
-   */
-  BitAnd,
-  /**
-   * `||`
-   */
-  LogicalOr,
-  /**
-   * `&&`
-   */
-  LogicalAnd,
-  /**
-   * `in`
-   */
-  In,
-  /**
-   * `instanceof`
-   */
-  InstanceOf,
-  /**
-   * `**`
-   */
-  Exp,
-  /**
-   * `??`
-   */
-  NullishCoalescing,
-}
-
-export type BlockStmtOrExpr =
-  | BlockStmt
-  | Expr;
-
-export type ClassMember =
-  | Constructor
-  | ClassMethod
-  | PrivateMethod
-  | ClassProp
-  | PrivateProp
-  | TsIndexSignature
-  | EmptyStmt;
-
-export type Decl =
-  | ClassDecl
-  | FnDecl
-  | VarDecl
-  | TsInterfaceDecl
-  | TsTypeAliasDecl
-  | TsEnumDecl
-  | TsModuleDecl;
-
-export type DefaultDecl =
-  | ClassExpr
-  | FnExpr
-  | TsInterfaceDecl;
-
-export enum EsVersion {
-  Es3,
-  Es5,
-  Es2015,
-  Es2016,
-  Es2017,
-  Es2018,
-  Es2019,
-  Es2020,
-}
-
-export type ExportSpecifier =
-  | ExportNamespaceSpecifier
-  | ExportDefaultSpecifier
-  | ExportNamedSpecifier;
-
-export type Expr =
-  | ThisExpr
-  | ArrayLit
-  | ObjectLit
-  | FnExpr
-  | UnaryExpr
-  | UpdateExpr
-  | BinExpr
-  | AssignExpr
-  | MemberExpr
-  | CondExpr
-  | CallExpr
-  | NewExpr
-  | SeqExpr
-  | Ident
-  | Lit
-  | Tpl
-  | TaggedTpl
-  | ArrowExpr
-  | ClassExpr
-  | YieldExpr
-  | MetaPropExpr
-  | AwaitExpr
-  | ParenExpr
-  | JSXMemberExpr
-  | JSXNamespacedName
-  | JSXEmptyExpr
-  | JSXElement
-  | JSXFragment
-  | TsTypeAssertion
-  | TsConstAssertion
-  | TsNonNullExpr
-  | TsAsExpr
-  | PrivateName
-  | OptChainExpr
-  | Invalid;
-
-export type ExprOrSuper =
-  | Super
-  | Expr;
-
-export type ImportSpecifier =
-  | ImportNamedSpecifier
-  | ImportDefaultSpecifier
-  | ImportStarAsSpecifier;
-
-export type JSXAttrName =
-  | Ident
-  | JSXNamespacedName;
-
-export type JSXAttrOrSpread =
-  | JSXAttr
-  | SpreadElement;
-
-export type JSXAttrValue =
-  | Lit
-  | JSXExprContainer
-  | JSXElement
-  | JSXFragment;
-
-export type JSXElementChild =
-  | JSXText
-  | JSXExprContainer
-  | JSXSpreadChild
-  | JSXElement
-  | JSXFragment;
-
-export type JSXElementName =
-  | Ident
-  | JSXMemberExpr
-  | JSXNamespacedName;
-
-export type JSXExpr =
-  | JSXEmptyExpr
-  | Expr;
-
-/**
- * Used for `obj` property of `JSXMemberExpr`.
- */
-export type JSXObject =
-  | JSXMemberExpr
-  | Ident;
-
-export type Lit =
-  | Str
-  | Bool
-  | Null
-  | Number
-  | BigInt
-  | Regex
-  | JSXText;
-
-export enum MethodKind {
-  Method,
-  Getter,
-  Setter,
-}
-
-export type ModuleDecl =
-  | ImportDecl
-  | ExportDecl
-  | NamedExport
-  | ExportDefaultDecl
-  | ExportDefaultExpr
-  | ExportAll
-  | TsImportEqualsDecl
-  | TsExportAssignment
-  | TsNamespaceExportDecl;
-
-export type ModuleItem =
-  | ModuleDecl
-  | Stmt;
-
-export type ObjectPatProp =
-  | KeyValuePatProp
-  | AssignPatProp
-  | RestPat;
-
-export type ParamOrTsParamProp =
-  | TsParamProp
-  | Param;
-
-export type Pat =
-  | BindingIdent
-  | ArrayPat
-  | RestPat
-  | ObjectPat
-  | AssignPat
-  | Invalid
-  | Expr;
-
-export type PatOrExpr =
-  | Expr
-  | Pat;
-
-export type Prop =
-  | Ident
-  | KeyValueProp
-  | AssignProp
-  | GetterProp
-  | SetterProp
-  | MethodProp;
-
-export type PropName =
-  | Ident
-  | Str
-  | Number
-  | ComputedPropName
-  | BigInt;
-
-export type PropOrSpread =
-  | SpreadElement
-  | Prop;
-
-export type Stmt =
-  | BlockStmt
-  | EmptyStmt
-  | DebuggerStmt
-  | WithStmt
-  | ReturnStmt
-  | LabeledStmt
-  | BreakStmt
-  | ContinueStmt
-  | IfStmt
-  | SwitchStmt
-  | ThrowStmt
-  | TryStmt
-  | WhileStmt
-  | DoWhileStmt
-  | ForStmt
-  | ForInStmt
-  | ForOfStmt
-  | Decl
-  | ExprStmt;
-
-/**
- * THis enum determines how string literal should be printed.
- */
-export enum StrKind {
-  /**
-   * Span of string points to original source code, and codegen should use
-   * it.
-   * **Note**: Giving wrong value to this field will result in invalid
-   * codegen.
-   */
-  Normal,
-  /**
-   * If the span of string does not point a string literal, mainly because
-   * this string is synthesized, this variant should be used.
-   */
-  Synthesized,
-}
-
-export enum TruePlusMinus {
-  True,
-  Plus,
-  Minus,
-}
-
-export type TsEntityName =
-  | TsQualifiedName
-  | Ident;
-
-/**
- * 
- * - Invalid: [Ident] with empty symbol.
- */
-export type TsEnumMemberId =
-  | Ident
-  | Str;
-
-export type TsFnOrConstructorType =
-  | TsFnType
-  | TsConstructorType;
-
-export type TsFnParam =
-  | BindingIdent
-  | ArrayPat
-  | RestPat
-  | ObjectPat;
-
-export enum TsKeywordTypeKind {
-  TsAnyKeyword,
-  TsUnknownKeyword,
-  TsNumberKeyword,
-  TsObjectKeyword,
-  TsBooleanKeyword,
-  TsBigIntKeyword,
-  TsStringKeyword,
-  TsSymbolKeyword,
-  TsVoidKeyword,
-  TsUndefinedKeyword,
-  TsNullKeyword,
-  TsNeverKeyword,
-  TsIntrinsicKeyword,
-}
-
-export type TsLit =
-  | Number
-  | Str
-  | Bool
-  | BigInt
-  | TsTplLitType;
-
-export type TsModuleName =
-  | Ident
-  | Str;
-
-export type TsModuleRef =
-  | TsEntityName
-  | TsExternalModuleRef;
-
-/**
- * `namespace A.B { }` is a namespace named `A` with another TsNamespaceDecl as
- * its body.
- */
-export type TsNamespaceBody =
-  | TsModuleBlock
-  | TsNamespaceDecl;
-
-export type TsParamPropParam =
-  | BindingIdent
-  | AssignPat;
-
-export type TsThisTypeOrIdent =
-  | TsThisType
-  | Ident;
-
-export type TsType =
-  | TsKeywordType
-  | TsThisType
-  | TsFnOrConstructorType
-  | TsTypeRef
-  | TsTypeQuery
-  | TsTypeLit
-  | TsArrayType
-  | TsTupleType
-  | TsOptionalType
-  | TsRestType
-  | TsUnionOrIntersectionType
-  | TsConditionalType
-  | TsInferType
-  | TsParenthesizedType
-  | TsTypeOperator
-  | TsIndexedAccessType
-  | TsMappedType
-  | TsLitType
-  | TsTypePredicate
-  | TsImportType;
-
-export type TsTypeElement =
-  | TsCallSignatureDecl
-  | TsConstructSignatureDecl
-  | TsPropertySignature
-  | TsMethodSignature
-  | TsIndexSignature;
-
-export enum TsTypeOperatorOp {
-  /**
-   * `keyof`
-   */
-  KeyOf,
-  /**
-   * `unique`
-   */
-  Unique,
-  /**
-   * `readonly`
-   */
-  ReadOnly,
-}
-
-export type TsTypeQueryExpr =
-  | TsEntityName
-  | TsImportType;
-
-export type TsUnionOrIntersectionType =
-  | TsUnionType
-  | TsIntersectionType;
-
-export enum UnaryOp {
-  /**
-   * `-`
-   */
-  Minus,
-  /**
-   * `+`
-   */
-  Plus,
-  /**
-   * `!`
-   */
-  Bang,
-  /**
-   * `~`
-   */
-  Tilde,
-  /**
-   * `typeof`
-   */
-  TypeOf,
-  /**
-   * `void`
-   */
-  Void,
-  /**
-   * `delete`
-   */
-  Delete,
-}
-
-export enum UpdateOp {
-  /**
-   * `++`
-   */
-  PlusPlus,
-  /**
-   * `--`
-   */
-  MinusMinus,
-}
-
-export enum VarDeclKind {
-  /**
-   * `var`
-   */
-  Var,
-  /**
-   * `let`
-   */
-  Let,
-  /**
-   * `const`
-   */
-  Const,
-}
-
-export type VarDeclOrExpr =
-  | VarDecl
-  | Expr;
-
-export type VarDeclOrPat =
-  | VarDecl
-  | Pat;

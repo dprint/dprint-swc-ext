@@ -1,6 +1,6 @@
-import { AnalysisResult, StructDefinition } from "../analyze/analysis_types.ts";
-import { createWriter } from "../utils/createWriter.ts";
-import { getIsForImpl, writeHeader, writeType } from "../utils/generationUtils.ts";
+import { AnalysisResult, AstStructDefinition } from "../analyze/analysis_types.ts";
+import { createWriter } from "../utils/create_writer.ts";
+import { getIsForImpl, writeHeader, writeType } from "../utils/generation_utils.ts";
 
 export function generateSerialize(analysisResult: AnalysisResult): string {
     const writer = createWriter();
@@ -8,7 +8,7 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
     writeHeader(writer);
     writeUseDeclarations();
 
-    for (const struct of analysisResult.structs) {
+    for (const struct of analysisResult.astStructs) {
         writer.blankLine();
         writeSerializableStruct(struct);
         writer.blankLine();
@@ -26,7 +26,7 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
         writer.writeLine("use crate::generated::*;");
     }
 
-    function writeSerializableStruct(struct: StructDefinition) {
+    function writeSerializableStruct(struct: AstStructDefinition) {
         const implFields = struct.fields.filter(f => getIsForImpl(analysisResult, f.type));
         const structFields = struct.fields.filter(f => !getIsForImpl(analysisResult, f.type) && f.name !== "span");
 
@@ -54,7 +54,7 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
         });
     }
 
-    function writeFromImpl(struct: StructDefinition) {
+    function writeFromImpl(struct: AstStructDefinition) {
         const implFields = struct.fields.filter(f => getIsForImpl(analysisResult, f.type));
         const structFields = struct.fields.filter(f => !getIsForImpl(analysisResult, f.type) && f.name !== "span");
 

@@ -1,6 +1,6 @@
-import { AnalysisResult, EnumDefinition, StructDefinition, TypeDefinition } from "../analyze/analysis_types.ts";
-import { createWriter } from "../utils/createWriter.ts";
-import { writeHeader } from "../utils/generationUtils.ts";
+import { AnalysisResult, DocableDefinition, EnumDefinition, PlainEnumDefinition, TypeDefinition } from "../analyze/analysis_types.ts";
+import { createWriter } from "../utils/create_writer.ts";
+import { writeHeader } from "../utils/generation_utils.ts";
 
 export function generateTypeScriptTypes(analysisResult: AnalysisResult): string {
     const writer = createWriter();
@@ -8,9 +8,39 @@ export function generateTypeScriptTypes(analysisResult: AnalysisResult): string 
 
     writer.writeLine(`import { BigIntValue, JsWord, Node, Span } from "./types.ts";`);
 
-    for (const struct of analysisResult.structs) {
+    for (const enumDef of analysisResult.astEnums) {
         writer.blankLine();
-        writeJsDocs(struct.docs);
+        writeJsDocs(enumDef);
+        writer.write(`export type ${enumDef.name} =`);
+        for (const variant of enumDef.variants) {
+            const tupleArg = variant.tupleArg;
+            if (tupleArg.kind !== "Reference") {
+                throw new Error("Expected reference type.");
+            }
+            writer.newLine().indent().write(`| `);
+            writer.write(tupleArg.name);
+        }
+        writer.write(";");
+    }
+
+    for (const enumDef of analysisResult.plainEnums) {
+        writer.blankLine();
+        writePlainEnum(enumDef);
+    }
+
+    for (const enumDef of analysisResult.tokenEnums) {
+        const isPlain = enumDef.variants.every(v => v.kind === "Plain");
+        if (isPlain) {
+            writer.blankLine();
+            writePlainEnum(enumDef);
+        } else {
+            // todo... this
+        }
+    }
+
+    for (const struct of analysisResult.astStructs) {
+        writer.blankLine();
+        writeJsDocs(struct);
         writer.write(`export class ${struct.name} extends Node`).block(() => {
             writer.writeLine(`kind!: "${struct.name}";`);
             if (struct.parents.length > 0) {
@@ -30,7 +60,7 @@ export function generateTypeScriptTypes(analysisResult: AnalysisResult): string 
                 writer.write(";").newLine();
             }
             for (const field of struct.fields) {
-                writeJsDocs(field.docs);
+                writeJsDocs(field);
                 writer.write(field.name).write("!: ");
                 writeType(field.type);
                 writer.write(";").newLine();
@@ -38,36 +68,22 @@ export function generateTypeScriptTypes(analysisResult: AnalysisResult): string 
         });
     }
 
-    for (const enumDef of analysisResult.enums) {
-        writer.blankLine();
-        writeJsDocs(enumDef.docs);
-        if (enumDef.isPlain) {
-            writer.write(`export enum ${enumDef.name}`).block(() => {
-                for (const variant of enumDef.variants) {
-                    writeJsDocs(variant.docs);
-                    writer.writeLine(`${variant.name},`);
-                }
-            });
-        } else {
-            writer.write(`export type ${enumDef.name} =`);
-            for (const variant of enumDef.variants) {
-                const tupleArg = variant.tuple_arg!;
-                if (tupleArg.kind !== "reference") {
-                    throw new Error("Expected reference type.");
-                }
-                writer.newLine().indent().write(`| `);
-                writer.write(tupleArg.name);
-            }
-            writer.write(";");
-        }
-    }
-
     writer.newLine();
     return writer.toString();
 
+    function writePlainEnum(enumDef: EnumDefinition | PlainEnumDefinition) {
+        writeJsDocs(enumDef);
+        writer.write(`export enum ${enumDef.name}`).block(() => {
+            for (const variant of enumDef.variants) {
+                writeJsDocs(variant);
+                writer.writeLine(`${variant.name},`);
+            }
+        });
+    }
+
     function writeType(type: TypeDefinition) {
         switch (type.kind) {
-            case "primitive":
+            case "Primitive":
                 if (type.text === "bool") {
                     writer.write("boolean");
                 } else if (type.text === "f64") {
@@ -76,25 +92,25 @@ export function generateTypeScriptTypes(analysisResult: AnalysisResult): string 
                     writer.write(type.text);
                 }
                 break;
-            case "reference":
+            case "Reference":
                 if (type.name === "Option") {
-                    if (type.generic_args.length !== 1) {
+                    if (type.genericArgs.length !== 1) {
                         throw new Error("Expected 1 type argument.");
                     }
-                    writeType(type.generic_args[0]);
+                    writeType(type.genericArgs[0]);
                     writer.write(" | undefined");
                 } else if (type.name === "Vec") {
-                    if (type.generic_args.length !== 1) {
+                    if (type.genericArgs.length !== 1) {
                         throw new Error("Expected 1 type argument.");
                     }
                     writer.write("Array<");
-                    writeType(type.generic_args[0]);
+                    writeType(type.genericArgs[0]);
                     writer.write(">");
                 } else {
                     writer.write(type.name);
-                    if (type.generic_args.length > 0) {
+                    if (type.genericArgs.length > 0) {
                         writer.write("<");
-                        for (const [i, arg] of type.generic_args.entries()) {
+                        for (const [i, arg] of type.genericArgs.entries()) {
                             writer.conditionalWrite(i > 0, ", ");
                             writeType(arg);
                         }
@@ -105,12 +121,12 @@ export function generateTypeScriptTypes(analysisResult: AnalysisResult): string 
         }
     }
 
-    function writeJsDocs(docs: string | undefined) {
-        if (docs == null) {
+    function writeJsDocs(node: DocableDefinition) {
+        if (node.docs == null) {
             return;
         }
         writer.writeLine("/**");
-        for (const line of docs.split(/\r?\n/)) {
+        for (const line of node.docs.split(/\r?\n/)) {
             writer.writeLine(` * ${line}`);
         }
         writer.writeLine(" */");
@@ -143,7 +159,7 @@ export function generateTypeScriptSetup(analysisResult: AnalysisResult): string 
 
     writer.write("function getNodeClass(node: any)").block(() => {
         writer.write("switch (node.kind)").block(() => {
-            for (const struct of analysisResult.structs) {
+            for (const struct of analysisResult.astStructs) {
                 writer.writeLine(`case "${struct.name}":`).indent(() => {
                     writer.writeLine(`return types.${struct.name};`);
                 });

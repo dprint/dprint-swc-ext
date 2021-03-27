@@ -28,9 +28,20 @@ export interface EnumInner {
     variants: string[];
 }
 
-export interface EnumVariantInner {
-    variant_kind: "tuple" | "struct" | "plain";
-    variant_inner: TypeInner[] | undefined;
+export type EnumVariantInner = PlainEnumVariantInner | TupleEnumVariantInner | StructEnumVariantInner;
+
+export interface PlainEnumVariantInner {
+    variant_kind: "plain";
+}
+
+export interface TupleEnumVariantInner {
+    variant_kind: "tuple";
+    variant_inner: TypeInner[];
+}
+
+export interface StructEnumVariantInner {
+    variant_kind: "struct";
+    variant_inner: string[];
 }
 
 export interface Generics {

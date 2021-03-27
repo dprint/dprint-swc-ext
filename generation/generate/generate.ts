@@ -1,7 +1,7 @@
-import { AnalysisResult, EnumDefinition, EnumVariantDefinition, StructDefinition, TypeDefinition } from "../analyze/analysis_types.ts";
-import { createWriter } from "../utils/createWriter.ts";
-import { getIsForImpl, getIsReferenceType, writeHeader, writeType } from "../utils/generationUtils.ts";
-import { nameToSnakeCase } from "../utils/stringUtils.ts";
+import { AnalysisResult, AstEnumDefinition, AstEnumVariantDefinition, AstStructDefinition, TypeDefinition } from "../analyze/analysis_types.ts";
+import { createWriter } from "../utils/create_writer.ts";
+import { getIsForImpl, getIsReferenceType, writeHeader, writeType } from "../utils/generation_utils.ts";
+import { nameToSnakeCase } from "../utils/string_utils.ts";
 
 export function generate(analysisResult: AnalysisResult): string {
     const writer = createWriter();
@@ -12,12 +12,12 @@ export function generate(analysisResult: AnalysisResult): string {
     writePublicFunctions();
     writeNode();
 
-    for (const enumDef of analysisResult.enums.filter(e => !e.isPlain)) {
+    for (const enumDef of analysisResult.astEnums) {
         writer.blankLine();
         writeEnum(enumDef);
     }
 
-    for (const struct of analysisResult.structs) {
+    for (const struct of analysisResult.astStructs) {
         writer.blankLine();
         handleStruct(struct);
     }
@@ -31,7 +31,7 @@ export function generate(analysisResult: AnalysisResult): string {
         writer.writeLine("use bumpalo::Bump;");
         writer.writeLine("use swc_common::{Span, Spanned};");
         writer.write("pub use swc_ecmascript::ast::{self as swc_ast, ");
-        writer.write(analysisResult.enums.filter(e => e.isPlain).map(e => e.name).join(", "));
+        writer.write(analysisResult.plainEnums.map(e => e.name).join(", "));
         writer.write("};").newLine();
         writer.writeLine("use crate::comments::*;");
         writer.writeLine("use crate::tokens::*;");
@@ -101,7 +101,7 @@ export function generate(analysisResult: AnalysisResult): string {
     function writeNode() {
         writer.writeLine("#[derive(Clone, Copy)]");
         writer.write("pub enum Node<'a>").block(() => {
-            for (const struct of analysisResult.structs) {
+            for (const struct of analysisResult.astStructs) {
                 writer.writeLine(`${struct.name}(&'a ${struct.name}<'a>),`);
             }
         }).blankLine();
@@ -145,7 +145,7 @@ export function generate(analysisResult: AnalysisResult): string {
 
         writer.writeLine("#[derive(Clone, PartialEq, Debug, Copy)]");
         writer.write("pub enum NodeKind").block(() => {
-            for (const struct of analysisResult.structs) {
+            for (const struct of analysisResult.astStructs) {
                 writer.writeLine(`${struct.name},`);
             }
         }).blankLine();
@@ -153,7 +153,7 @@ export function generate(analysisResult: AnalysisResult): string {
         writer.write("impl std::fmt::Display for NodeKind").block(() => {
             writer.write("fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result").block(() => {
                 writer.write(`write!(f, "{}", match self `).inlineBlock(() => {
-                    for (const struct of analysisResult.structs) {
+                    for (const struct of analysisResult.astStructs) {
                         writer.writeLine(`NodeKind::${struct.name} => "${struct.name}",`);
                     }
                 }).write(")");
@@ -164,7 +164,7 @@ export function generate(analysisResult: AnalysisResult): string {
             methodName: string,
             returnType: string,
             hasLifetime = false,
-            customMatchWrite?: (fullName: string, struct: StructDefinition) => void,
+            customMatchWrite?: (fullName: string, struct: AstStructDefinition) => void,
         ) {
             writer.write(`fn ${methodName}`);
             if (hasLifetime) {
@@ -176,7 +176,7 @@ export function generate(analysisResult: AnalysisResult): string {
             }
             writer.write(`self) -> ${returnType}`).block(() => {
                 writer.write("match self").block(() => {
-                    for (const struct of analysisResult.structs) {
+                    for (const struct of analysisResult.astStructs) {
                         const fullName = `Node::${struct.name}`;
                         if (customMatchWrite != null) {
                             customMatchWrite(fullName, struct);
@@ -191,7 +191,7 @@ export function generate(analysisResult: AnalysisResult): string {
         }
     }
 
-    function writeEnum(enumDef: EnumDefinition) {
+    function writeEnum(enumDef: AstEnumDefinition) {
         writeEnum();
         writer.blankLine();
         writeEnumFunctions();
@@ -206,9 +206,9 @@ export function generate(analysisResult: AnalysisResult): string {
                     writer.newLineIfLastNot();
                     writeDocs(variant.docs);
                     writer.write(`${variant.name}`);
-                    if (variant.tuple_arg != null) {
+                    if (variant.tupleArg != null) {
                         writer.write("(");
-                        writeType(writer, analysisResult, variant.tuple_arg, true);
+                        writeType(writer, analysisResult, variant.tupleArg, true);
                         writer.write(")");
                     }
                     writer.write(",");
@@ -247,9 +247,9 @@ export function generate(analysisResult: AnalysisResult): string {
                 implementTraitMethod("into_node", "Node<'a>", false);
                 writer.blankLine();
                 implementTraitMethod("kind", "NodeKind", false, (fullName, variant) => {
-                    if (variant.tuple_arg != null && isSwcStructType(variant.tuple_arg)) {
-                        const variantType = variant.tuple_arg;
-                        if (variantType.kind !== "reference") {
+                    if (variant.tupleArg != null && isSwcStructType(variant.tupleArg)) {
+                        const variantType = variant.tupleArg;
+                        if (variantType.kind !== "Reference") {
                             throw new Error("Unhandled.");
                         }
                         writer.write(`${fullName}(_) => NodeKind::${variantType.name}`);
@@ -266,7 +266,7 @@ export function generate(analysisResult: AnalysisResult): string {
                         for (const variant of enumDef.variants) {
                             const fullName = `${enumDef.name}::${variant.name}`;
                             writer.write(`${fullName}(node) => `);
-                            if (isSwcStructType(variant.tuple_arg)) {
+                            if (isSwcStructType(variant.tupleArg)) {
                                 writer.write(`(*node).into(),`);
                             } else {
                                 writer.write(`node.into(),`);
@@ -294,7 +294,7 @@ export function generate(analysisResult: AnalysisResult): string {
                 methodName: string,
                 returnType: string,
                 hasSelfLifetime = false,
-                customMatchWrite?: (fullName: string, variant: EnumVariantDefinition) => void,
+                customMatchWrite?: (fullName: string, variant: AstEnumVariantDefinition) => void,
             ) {
                 writer.write(`fn ${methodName}`);
                 if (hasSelfLifetime) {
@@ -330,7 +330,7 @@ export function generate(analysisResult: AnalysisResult): string {
                     for (const variant of enumDef.variants) {
                         const fullName = `${enumDef.name}::${variant.name}`;
                         writer.write(`swc_ast::${fullName}(value) => ${fullName}(`);
-                        writeGetViewTypeExpression(variant.tuple_arg!, false, "value");
+                        writeGetViewTypeExpression(variant.tupleArg!, false, "value");
                         writer.write("),");
                         writer.newLine();
                     }
@@ -339,7 +339,7 @@ export function generate(analysisResult: AnalysisResult): string {
         }
     }
 
-    function handleStruct(struct: StructDefinition) {
+    function handleStruct(struct: AstStructDefinition) {
         const implFields = struct.fields.filter(f => getIsForImpl(analysisResult, f.type));
         const structFields = struct.fields.filter(f => !getIsForImpl(analysisResult, f.type) && f.name !== "span");
 
@@ -394,7 +394,7 @@ export function generate(analysisResult: AnalysisResult): string {
                             if (isReferenceType) {
                                 writer.write("&");
                             }
-                            writer.write(`self.inner.${field.inner_name}`).newLine();
+                            writer.write(`self.inner.${field.innerName}`).newLine();
                         });
                     }
                 });
@@ -472,20 +472,20 @@ export function generate(analysisResult: AnalysisResult): string {
             });
 
             function writeAppendChild(type: TypeDefinition, name: string, inOption: boolean, inVec: boolean) {
-                if (type.kind === "primitive") {
+                if (type.kind === "Primitive") {
                     throw new Error("Should not have analyzed a primitive type here.");
                 }
                 if (type.name === "Option") {
                     writer.write(`if let Some(child) = ${name}`);
-                    if (isSwcNodeEnumType(type.generic_args[0]) || isVecType(type.generic_args[0])) {
+                    if (isSwcNodeEnumType(type.genericArgs[0]) || isVecType(type.genericArgs[0])) {
                         writer.write(".as_ref()");
                     }
                     writer.block(() => {
-                        writeAppendChild(type.generic_args[0], "child", true, inVec);
+                        writeAppendChild(type.genericArgs[0], "child", true, inVec);
                     });
                 } else if (type.name === "Vec") {
                     writer.write(`for child in ${name}.iter()`).block(() => {
-                        writeAppendChild(type.generic_args[0], "child", false, true);
+                        writeAppendChild(type.genericArgs[0], "child", false, true);
                     });
                     return `${name}.len()`;
                 } else {
@@ -525,12 +525,12 @@ export function generate(analysisResult: AnalysisResult): string {
                 }
 
                 function getTypeCapacityExpr(type: TypeDefinition, name: string): string {
-                    if (type.kind === "primitive") {
+                    if (type.kind === "Primitive") {
                         throw new Error("Should not have analyzed a primitive type here.");
                     }
 
                     if (type.name === "Option") {
-                        return `match &${name} { Some(_value) => ${getTypeCapacityExpr(type.generic_args[0], "_value")}, None => 0, }`;
+                        return `match &${name} { Some(_value) => ${getTypeCapacityExpr(type.genericArgs[0], "_value")}, None => 0, }`;
                     } else if (type.name === "Vec") {
                         return `${name}.len()`;
                     } else {
@@ -648,15 +648,15 @@ export function generate(analysisResult: AnalysisResult): string {
     }
 
     function writeGetViewTypeExpression(type: TypeDefinition, shouldCloneParent: boolean, name: string) {
-        if (type.kind === "primitive") {
+        if (type.kind === "Primitive") {
             throw new Error("Primitive types not handled here.");
         }
 
         if (type.name === "Option") {
             writer.write(`match ${name} `).inlineBlock(() => {
                 writer.write("Some(value) => Some(");
-                writeGetViewTypeExpression(type.generic_args[0], shouldCloneParent, "value");
-                if (isVecType(type.generic_args[0])) {
+                writeGetViewTypeExpression(type.genericArgs[0], shouldCloneParent, "value");
+                if (isVecType(type.genericArgs[0])) {
                     writer.write(".collect()");
                 }
                 writer.write("),").newLine();
@@ -664,7 +664,7 @@ export function generate(analysisResult: AnalysisResult): string {
             });
         } else if (type.name === "Vec") {
             writer.write(`${name.replace(/^&/, "")}.iter().map(|value| `);
-            writeGetViewTypeExpression(type.generic_args[0], true, "value");
+            writeGetViewTypeExpression(type.genericArgs[0], true, "value");
             writer.write(")");
         } else {
             writer.write(`${getViewForFunctionName(type.name)}(${name}, parent`);
@@ -676,19 +676,19 @@ export function generate(analysisResult: AnalysisResult): string {
     }
 
     function isSwcNodeEnumType(type: TypeDefinition | undefined): boolean {
-        return type != null && type.kind === "reference" && analysisResult.enums.some(e => !e.isPlain && e.name === type.name);
+        return type != null && type.kind === "Reference" && analysisResult.astEnums.some(e => e.name === type.name);
     }
 
     function isSwcStructType(type: TypeDefinition | undefined): boolean {
-        return type != null && type.kind === "reference" && analysisResult.structs.some(s => s.name === type.name);
+        return type != null && type.kind === "Reference" && analysisResult.astStructs.some(s => s.name === type.name);
     }
 
     function isVecType(type: TypeDefinition | undefined): boolean {
-        return type != null && type.kind === "reference" && type.name === "Vec";
+        return type != null && type.kind === "Reference" && type.name === "Vec";
     }
 
     function isOptionType(type: TypeDefinition | undefined): boolean {
-        return type != null && type.kind === "reference" && type.name === "Option";
+        return type != null && type.kind === "Reference" && type.name === "Option";
     }
 
     function writeDocs(docs: string | undefined) {
