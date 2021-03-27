@@ -206,14 +206,9 @@ export function generate(analysisResult: AnalysisResult): string {
                     writer.newLineIfLastNot();
                     writeDocs(variant.docs);
                     writer.write(`${variant.name}`);
-                    if (variant.tuple_args != null) {
+                    if (variant.tuple_arg != null) {
                         writer.write("(");
-                        for (const [i, arg] of variant.tuple_args.entries()) {
-                            if (i > 0) {
-                                writer.write(", ");
-                            }
-                            writeType(writer, analysisResult, arg, true);
-                        }
+                        writeType(writer, analysisResult, variant.tuple_arg, true);
                         writer.write(")");
                     }
                     writer.write(",");
@@ -252,8 +247,8 @@ export function generate(analysisResult: AnalysisResult): string {
                 implementTraitMethod("into_node", "Node<'a>", false);
                 writer.blankLine();
                 implementTraitMethod("kind", "NodeKind", false, (fullName, variant) => {
-                    if (variant.tuple_args?.length === 1 && isSwcStructType(variant.tuple_args[0])) {
-                        const variantType = variant.tuple_args[0];
+                    if (variant.tuple_arg != null && isSwcStructType(variant.tuple_arg)) {
+                        const variantType = variant.tuple_arg;
                         if (variantType.kind !== "reference") {
                             throw new Error("Unhandled.");
                         }
@@ -271,7 +266,7 @@ export function generate(analysisResult: AnalysisResult): string {
                         for (const variant of enumDef.variants) {
                             const fullName = `${enumDef.name}::${variant.name}`;
                             writer.write(`${fullName}(node) => `);
-                            if (isSwcStructType(variant.tuple_args?.[0])) {
+                            if (isSwcStructType(variant.tuple_arg)) {
                                 writer.write(`(*node).into(),`);
                             } else {
                                 writer.write(`node.into(),`);
@@ -335,10 +330,7 @@ export function generate(analysisResult: AnalysisResult): string {
                     for (const variant of enumDef.variants) {
                         const fullName = `${enumDef.name}::${variant.name}`;
                         writer.write(`swc_ast::${fullName}(value) => ${fullName}(`);
-                        if (variant.tuple_args?.length !== 1) {
-                            throw new Error("Unhandled scenario where the variant's tuple args were not equal to 1.");
-                        }
-                        writeGetViewTypeExpression(variant.tuple_args[0], false, "value");
+                        writeGetViewTypeExpression(variant.tuple_arg!, false, "value");
                         writer.write("),");
                         writer.newLine();
                     }

@@ -111,7 +111,7 @@ export function analyze(): AnalysisResult {
         return {
             name: item.name,
             docs: item.docs,
-            isPlain: variants.every(v => v.tuple_args == null),
+            isPlain: variants.every(v => v.tuple_arg == null),
             variants,
         };
 
@@ -121,17 +121,20 @@ export function analyze(): AnalysisResult {
                 yield {
                     name: item.name,
                     docs: item.docs,
-                    tuple_args: getTupleArgs(item),
+                    tuple_arg: getTupleArg(item),
                 };
             }
 
-            function getTupleArgs(item: Item) {
+            function getTupleArg(item: Item) {
                 const inner = item.inner as EnumVariantInner;
                 switch (inner.variant_kind) {
                     case "plain":
                         return undefined;
                     case "tuple":
-                        return inner.variant_inner!.map(inner => getTypeDefinition(inner));
+                        if (inner.variant_inner!.length !== 1) {
+                            throw new Error("Unhandled scenario where the tuple did not have one variant.");
+                        }
+                        return getTypeDefinition(inner.variant_inner![0]);
                 }
             }
         }
@@ -225,10 +228,8 @@ function fillStructParents({ structs, enums }: AnalysisResult) {
                     const childEnum = enums.find(s => s.name === type.name);
                     if (childEnum != null) {
                         for (const variant of childEnum.variants) {
-                            if (variant.tuple_args != null) {
-                                for (const typeDef of variant.tuple_args) {
-                                    analyzeType(typeDef);
-                                }
+                            if (variant.tuple_arg != null) {
+                                analyzeType(variant.tuple_arg);
                             }
                         }
                     }

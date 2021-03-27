@@ -1,4 +1,4 @@
-import { AnalysisResult, StructDefinition, TypeDefinition } from "../analyze/analysis_types.ts";
+import { AnalysisResult, EnumDefinition, StructDefinition, TypeDefinition } from "../analyze/analysis_types.ts";
 import { createWriter } from "../utils/createWriter.ts";
 import { writeHeader } from "../utils/generationUtils.ts";
 
@@ -7,7 +7,6 @@ export function generateTypeScriptTypes(analysisResult: AnalysisResult): string 
     writeHeader(writer);
 
     writer.writeLine(`import { BigIntValue, JsWord, Node, Span } from "./types.ts";`);
-    writer.blankLine();
 
     for (const struct of analysisResult.structs) {
         writer.blankLine();
@@ -16,13 +15,17 @@ export function generateTypeScriptTypes(analysisResult: AnalysisResult): string 
             writer.writeLine(`kind!: "${struct.name}";`);
             if (struct.parents.length > 0) {
                 writer.write("parent!: ");
-                // todo: analyze enums (type aliases) and use them here
-                for (const [i, parent] of struct.parents.entries()) {
-                    if (i > 0) {
-                        writer.newLine();
-                        writer.indent().write("| ");
+                // settled on this number arbitrarily... it's too noisy to write them all
+                if (struct.parents.length <= 4) {
+                    for (const [i, parent] of struct.parents.entries()) {
+                        if (i > 0) {
+                            writer.newLine();
+                            writer.indent().write("| ");
+                        }
+                        writer.write(parent.name);
                     }
-                    writer.write(parent.name);
+                } else {
+                    writer.write("Node");
                 }
                 writer.write(";").newLine();
             }
@@ -43,28 +46,23 @@ export function generateTypeScriptTypes(analysisResult: AnalysisResult): string 
                 for (const variant of enumDef.variants) {
                     writeJsDocs(variant.docs);
                     writer.writeLine(`${variant.name},`);
-                    if (variant.tuple_args != null && variant.tuple_args.length > 0) {
-                        throw new Error("Unexpected scenario where plain enum had variant with tuple args.");
-                    }
                 }
             });
         } else {
             writer.write(`export type ${enumDef.name} =`);
             for (const variant of enumDef.variants) {
-                if (variant.tuple_args?.length !== 1) {
-                    throw new Error("Expected 1 tuple arg.");
-                }
-                const firstTupleArg = variant.tuple_args[0];
-                if (firstTupleArg.kind !== "reference") {
+                const tupleArg = variant.tuple_arg!;
+                if (tupleArg.kind !== "reference") {
                     throw new Error("Expected reference type.");
                 }
                 writer.newLine().indent().write(`| `);
-                writer.write(firstTupleArg.name);
+                writer.write(tupleArg.name);
             }
             writer.write(";");
         }
     }
 
+    writer.newLine();
     return writer.toString();
 
     function writeType(type: TypeDefinition) {
@@ -154,7 +152,7 @@ export function generateTypeScriptSetup(analysisResult: AnalysisResult): string 
                 writer.writeLine(`throw new Error("Unknown node kind: " + node.kind);`);
             });
         });
-    });
+    }).newLine();
 
     return writer.toString();
 }

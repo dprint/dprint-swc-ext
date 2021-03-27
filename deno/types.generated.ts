@@ -2,95 +2,18 @@
 // Run `./scripts/generate.sh` from the root directory to regenerate it.
 import { BigIntValue, JsWord, Node, Span } from "./types.ts";
 
-
 /**
  * Array literal.
  */
 export class ArrayLit extends Node {
   kind!: "ArrayLit";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   elems!: Array<ExprOrSpread | undefined>;
 }
 
 export class ArrayPat extends Node {
   kind!: "ArrayPat";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | CatchClause
-    | ForInStmt
-    | ForOfStmt
-    | KeyValuePatProp
-    | Param
-    | RestPat
-    | SetterProp
-    | TsCallSignatureDecl
-    | TsConstructSignatureDecl
-    | TsConstructorType
-    | TsFnType
-    | TsIndexSignature
-    | TsMethodSignature
-    | TsPropertySignature
-    | TsTupleElement
-    | VarDeclarator;
+  parent!: Node;
   elems!: Array<Pat | undefined>;
   /**
    * Only in an ambient context
@@ -101,64 +24,7 @@ export class ArrayPat extends Node {
 
 export class ArrowExpr extends Node {
   kind!: "ArrowExpr";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   params!: Array<Pat>;
   body!: BlockStmtOrExpr;
   is_async!: boolean;
@@ -169,64 +35,7 @@ export class ArrowExpr extends Node {
 
 export class AssignExpr extends Node {
   kind!: "AssignExpr";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   op!: AssignOp;
   left!: PatOrExpr;
   right!: Expr;
@@ -234,20 +43,7 @@ export class AssignExpr extends Node {
 
 export class AssignPat extends Node {
   kind!: "AssignPat";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | CatchClause
-    | ForInStmt
-    | ForOfStmt
-    | KeyValuePatProp
-    | Param
-    | RestPat
-    | SetterProp
-    | TsParamProp
-    | TsTupleElement
-    | VarDeclarator;
+  parent!: Node;
   left!: Pat;
   right!: Expr;
   type_ann!: TsTypeAnn | undefined;
@@ -272,196 +68,19 @@ export class AssignProp extends Node {
 
 export class AwaitExpr extends Node {
   kind!: "AwaitExpr";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   arg!: Expr;
 }
 
 export class BigInt extends Node {
   kind!: "BigInt";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassMethod
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Constructor
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | GetterProp
-    | IfStmt
-    | JSXAttr
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | MethodProp
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsLitType
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   value!: BigIntValue;
 }
 
 export class BinExpr extends Node {
   kind!: "BinExpr";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   op!: BinaryOp;
   left!: Expr;
   right!: Expr;
@@ -472,27 +91,7 @@ export class BinExpr extends Node {
  */
 export class BindingIdent extends Node {
   kind!: "BindingIdent";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | CatchClause
-    | ForInStmt
-    | ForOfStmt
-    | KeyValuePatProp
-    | Param
-    | RestPat
-    | SetterProp
-    | TsCallSignatureDecl
-    | TsConstructSignatureDecl
-    | TsConstructorType
-    | TsFnType
-    | TsIndexSignature
-    | TsMethodSignature
-    | TsParamProp
-    | TsPropertySignature
-    | TsTupleElement
-    | VarDeclarator;
+  parent!: Node;
   id!: Ident;
   type_ann!: TsTypeAnn | undefined;
 }
@@ -502,172 +101,25 @@ export class BindingIdent extends Node {
  */
 export class BlockStmt extends Node {
   kind!: "BlockStmt";
-  parent!: ArrowExpr
-    | BlockStmt
-    | CatchClause
-    | Constructor
-    | DoWhileStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | Function
-    | GetterProp
-    | IfStmt
-    | LabeledStmt
-    | Module
-    | Script
-    | SetterProp
-    | SwitchCase
-    | TryStmt
-    | TsModuleBlock
-    | WhileStmt
-    | WithStmt;
+  parent!: Node;
   stmts!: Array<Stmt>;
 }
 
 export class Bool extends Node {
   kind!: "Bool";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXAttr
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsLitType
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   value!: boolean;
 }
 
 export class BreakStmt extends Node {
   kind!: "BreakStmt";
-  parent!: BlockStmt
-    | DoWhileStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | LabeledStmt
-    | Module
-    | Script
-    | SwitchCase
-    | TsModuleBlock
-    | WhileStmt
-    | WithStmt;
+  parent!: Node;
   label!: Ident | undefined;
 }
 
 export class CallExpr extends Node {
   kind!: "CallExpr";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   callee!: ExprOrSuper;
   args!: Array<ExprOrSpread>;
   type_args!: TsTypeParamInstantiation | undefined;
@@ -704,20 +156,7 @@ export class Class extends Node {
 
 export class ClassDecl extends Node {
   kind!: "ClassDecl";
-  parent!: BlockStmt
-    | DoWhileStmt
-    | ExportDecl
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | LabeledStmt
-    | Module
-    | Script
-    | SwitchCase
-    | TsModuleBlock
-    | WhileStmt
-    | WithStmt;
+  parent!: Node;
   ident!: Ident;
   declare!: boolean;
   class!: Class;
@@ -728,65 +167,7 @@ export class ClassDecl extends Node {
  */
 export class ClassExpr extends Node {
   kind!: "ClassExpr";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultDecl
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   ident!: Ident | undefined;
   class!: Class;
 }
@@ -834,76 +215,13 @@ export class ClassProp extends Node {
 
 export class ComputedPropName extends Node {
   kind!: "ComputedPropName";
-  parent!: ClassMethod
-    | Constructor
-    | GetterProp
-    | KeyValuePatProp
-    | KeyValueProp
-    | MethodProp
-    | SetterProp;
+  parent!: Node;
   expr!: Expr;
 }
 
 export class CondExpr extends Node {
   kind!: "CondExpr";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   test!: Expr;
   cons!: Expr;
   alt!: Expr;
@@ -921,85 +239,31 @@ export class Constructor extends Node {
 
 export class ContinueStmt extends Node {
   kind!: "ContinueStmt";
-  parent!: BlockStmt
-    | DoWhileStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | LabeledStmt
-    | Module
-    | Script
-    | SwitchCase
-    | TsModuleBlock
-    | WhileStmt
-    | WithStmt;
+  parent!: Node;
   label!: Ident | undefined;
 }
 
 export class DebuggerStmt extends Node {
   kind!: "DebuggerStmt";
-  parent!: BlockStmt
-    | DoWhileStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | LabeledStmt
-    | Module
-    | Script
-    | SwitchCase
-    | TsModuleBlock
-    | WhileStmt
-    | WithStmt;
+  parent!: Node;
 }
 
 export class Decorator extends Node {
   kind!: "Decorator";
-  parent!: Class
-    | ClassProp
-    | Function
-    | Param
-    | PrivateProp
-    | TsParamProp;
+  parent!: Node;
   expr!: Expr;
 }
 
 export class DoWhileStmt extends Node {
   kind!: "DoWhileStmt";
-  parent!: BlockStmt
-    | DoWhileStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | LabeledStmt
-    | Module
-    | Script
-    | SwitchCase
-    | TsModuleBlock
-    | WhileStmt
-    | WithStmt;
+  parent!: Node;
   test!: Expr;
   body!: Stmt;
 }
 
 export class EmptyStmt extends Node {
   kind!: "EmptyStmt";
-  parent!: BlockStmt
-    | Class
-    | DoWhileStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | LabeledStmt
-    | Module
-    | Script
-    | SwitchCase
-    | TsModuleBlock
-    | WhileStmt
-    | WithStmt;
+  parent!: Node;
 }
 
 /**
@@ -1073,38 +337,13 @@ export class ExprOrSpread extends Node {
 
 export class ExprStmt extends Node {
   kind!: "ExprStmt";
-  parent!: BlockStmt
-    | DoWhileStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | LabeledStmt
-    | Module
-    | Script
-    | SwitchCase
-    | TsModuleBlock
-    | WhileStmt
-    | WithStmt;
+  parent!: Node;
   expr!: Expr;
 }
 
 export class FnDecl extends Node {
   kind!: "FnDecl";
-  parent!: BlockStmt
-    | DoWhileStmt
-    | ExportDecl
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | LabeledStmt
-    | Module
-    | Script
-    | SwitchCase
-    | TsModuleBlock
-    | WhileStmt
-    | WithStmt;
+  parent!: Node;
   ident!: Ident;
   declare!: boolean;
   function!: Function;
@@ -1115,84 +354,14 @@ export class FnDecl extends Node {
  */
 export class FnExpr extends Node {
   kind!: "FnExpr";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultDecl
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   ident!: Ident | undefined;
   function!: Function;
 }
 
 export class ForInStmt extends Node {
   kind!: "ForInStmt";
-  parent!: BlockStmt
-    | DoWhileStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | LabeledStmt
-    | Module
-    | Script
-    | SwitchCase
-    | TsModuleBlock
-    | WhileStmt
-    | WithStmt;
+  parent!: Node;
   left!: VarDeclOrPat;
   right!: Expr;
   body!: Stmt;
@@ -1200,19 +369,7 @@ export class ForInStmt extends Node {
 
 export class ForOfStmt extends Node {
   kind!: "ForOfStmt";
-  parent!: BlockStmt
-    | DoWhileStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | LabeledStmt
-    | Module
-    | Script
-    | SwitchCase
-    | TsModuleBlock
-    | WhileStmt
-    | WithStmt;
+  parent!: Node;
   /**
    * Span of the await token.
    * 
@@ -1228,19 +385,7 @@ export class ForOfStmt extends Node {
 
 export class ForStmt extends Node {
   kind!: "ForStmt";
-  parent!: BlockStmt
-    | DoWhileStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | LabeledStmt
-    | Module
-    | Script
-    | SwitchCase
-    | TsModuleBlock
-    | WhileStmt
-    | WithStmt;
+  parent!: Node;
   init!: VarDeclOrExpr | undefined;
   test!: Expr | undefined;
   update!: Expr | undefined;
@@ -1252,11 +397,7 @@ export class ForStmt extends Node {
  */
 export class Function extends Node {
   kind!: "Function";
-  parent!: ClassMethod
-    | FnDecl
-    | FnExpr
-    | MethodProp
-    | PrivateMethod;
+  parent!: Node;
   params!: Array<Param>;
   decorators!: Array<Decorator>;
   body!: BlockStmt | undefined;
@@ -1285,104 +426,7 @@ export class GetterProp extends Node {
  */
 export class Ident extends Node {
   kind!: "Ident";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | BindingIdent
-    | BreakStmt
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassDecl
-    | ClassExpr
-    | ClassMethod
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Constructor
-    | ContinueStmt
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExportDefaultSpecifier
-    | ExportNamedSpecifier
-    | ExportNamespaceSpecifier
-    | ExprOrSpread
-    | ExprStmt
-    | FnDecl
-    | FnExpr
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | GetterProp
-    | IfStmt
-    | ImportDefaultSpecifier
-    | ImportNamedSpecifier
-    | ImportStarAsSpecifier
-    | JSXAttr
-    | JSXClosingElement
-    | JSXExprContainer
-    | JSXMemberExpr
-    | JSXNamespacedName
-    | JSXOpeningElement
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | LabeledStmt
-    | MemberExpr
-    | MetaPropExpr
-    | MethodProp
-    | NewExpr
-    | ObjectLit
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateName
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumDecl
-    | TsEnumMember
-    | TsExportAssignment
-    | TsExprWithTypeArgs
-    | TsImportEqualsDecl
-    | TsImportType
-    | TsInterfaceDecl
-    | TsMethodSignature
-    | TsModuleDecl
-    | TsNamespaceDecl
-    | TsNamespaceExportDecl
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsQualifiedName
-    | TsTupleElement
-    | TsTypeAliasDecl
-    | TsTypeAssertion
-    | TsTypeParam
-    | TsTypePredicate
-    | TsTypeQuery
-    | TsTypeRef
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   sym!: JsWord;
   /**
    * TypeScript only. Used in case of an optional parameter.
@@ -1392,19 +436,7 @@ export class Ident extends Node {
 
 export class IfStmt extends Node {
   kind!: "IfStmt";
-  parent!: BlockStmt
-    | DoWhileStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | LabeledStmt
-    | Module
-    | Script
-    | SwitchCase
-    | TsModuleBlock
-    | WhileStmt
-    | WithStmt;
+  parent!: Node;
   test!: Expr;
   cons!: Stmt;
   alt!: Stmt | undefined;
@@ -1455,64 +487,7 @@ export class ImportStarAsSpecifier extends Node {
  */
 export class Invalid extends Node {
   kind!: "Invalid";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
 }
 
 export class JSXAttr extends Node {
@@ -1538,67 +513,7 @@ export class JSXClosingFragment extends Node {
 
 export class JSXElement extends Node {
   kind!: "JSXElement";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXAttr
-    | JSXElement
-    | JSXExprContainer
-    | JSXFragment
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   opening!: JSXOpeningElement;
   children!: Array<JSXElementChild>;
   closing!: JSXClosingElement | undefined;
@@ -1606,64 +521,7 @@ export class JSXElement extends Node {
 
 export class JSXEmptyExpr extends Node {
   kind!: "JSXEmptyExpr";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
 }
 
 export class JSXExprContainer extends Node {
@@ -1676,67 +534,7 @@ export class JSXExprContainer extends Node {
 
 export class JSXFragment extends Node {
   kind!: "JSXFragment";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXAttr
-    | JSXElement
-    | JSXExprContainer
-    | JSXFragment
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   opening!: JSXOpeningFragment;
   children!: Array<JSXElementChild>;
   closing!: JSXClosingFragment;
@@ -1744,67 +542,7 @@ export class JSXFragment extends Node {
 
 export class JSXMemberExpr extends Node {
   kind!: "JSXMemberExpr";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXClosingElement
-    | JSXExprContainer
-    | JSXMemberExpr
-    | JSXOpeningElement
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   obj!: JSXObject;
   prop!: Ident;
 }
@@ -1814,67 +552,7 @@ export class JSXMemberExpr extends Node {
  */
 export class JSXNamespacedName extends Node {
   kind!: "JSXNamespacedName";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXAttr
-    | JSXClosingElement
-    | JSXExprContainer
-    | JSXOpeningElement
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   ns!: Ident;
   name!: Ident;
 }
@@ -1906,67 +584,7 @@ export class JSXSpreadChild extends Node {
 
 export class JSXText extends Node {
   kind!: "JSXText";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXAttr
-    | JSXElement
-    | JSXExprContainer
-    | JSXFragment
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   value!: JsWord;
   raw!: JsWord;
 }
@@ -1990,83 +608,14 @@ export class KeyValueProp extends Node {
 
 export class LabeledStmt extends Node {
   kind!: "LabeledStmt";
-  parent!: BlockStmt
-    | DoWhileStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | LabeledStmt
-    | Module
-    | Script
-    | SwitchCase
-    | TsModuleBlock
-    | WhileStmt
-    | WithStmt;
+  parent!: Node;
   label!: Ident;
   body!: Stmt;
 }
 
 export class MemberExpr extends Node {
   kind!: "MemberExpr";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   obj!: ExprOrSuper;
   prop!: Expr;
   computed!: boolean;
@@ -2074,64 +623,7 @@ export class MemberExpr extends Node {
 
 export class MetaPropExpr extends Node {
   kind!: "MetaPropExpr";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   meta!: Ident;
   prop!: Ident;
 }
@@ -2165,64 +657,7 @@ export class NamedExport extends Node {
 
 export class NewExpr extends Node {
   kind!: "NewExpr";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   callee!: Expr;
   args!: Array<ExprOrSpread> | undefined;
   type_args!: TsTypeParamInstantiation | undefined;
@@ -2230,133 +665,12 @@ export class NewExpr extends Node {
 
 export class Null extends Node {
   kind!: "Null";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXAttr
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
 }
 
 export class Number extends Node {
   kind!: "Number";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassMethod
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Constructor
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | GetterProp
-    | IfStmt
-    | JSXAttr
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | MethodProp
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsLitType
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   /**
    * **Note**: This should not be `NaN`. Use [crate::Ident] to represent NaN.
    * 
@@ -2370,92 +684,13 @@ export class Number extends Node {
  */
 export class ObjectLit extends Node {
   kind!: "ObjectLit";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportAll
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | ImportDecl
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NamedExport
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   props!: Array<PropOrSpread>;
 }
 
 export class ObjectPat extends Node {
   kind!: "ObjectPat";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | CatchClause
-    | ForInStmt
-    | ForOfStmt
-    | KeyValuePatProp
-    | Param
-    | RestPat
-    | SetterProp
-    | TsCallSignatureDecl
-    | TsConstructSignatureDecl
-    | TsConstructorType
-    | TsFnType
-    | TsIndexSignature
-    | TsMethodSignature
-    | TsPropertySignature
-    | TsTupleElement
-    | VarDeclarator;
+  parent!: Node;
   props!: Array<ObjectPatProp>;
   /**
    * Only in an ambient context
@@ -2466,64 +701,7 @@ export class ObjectPat extends Node {
 
 export class OptChainExpr extends Node {
   kind!: "OptChainExpr";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   question_dot_token!: Span;
   expr!: Expr;
 }
@@ -2538,64 +716,7 @@ export class Param extends Node {
 
 export class ParenExpr extends Node {
   kind!: "ParenExpr";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   expr!: Expr;
 }
 
@@ -2619,65 +740,7 @@ export class PrivateMethod extends Node {
 
 export class PrivateName extends Node {
   kind!: "PrivateName";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateMethod
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   id!: Ident;
 }
 
@@ -2705,65 +768,7 @@ export class PrivateProp extends Node {
 
 export class Regex extends Node {
   kind!: "Regex";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXAttr
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   exp!: JsWord;
   flags!: JsWord;
 }
@@ -2773,27 +778,7 @@ export class Regex extends Node {
  */
 export class RestPat extends Node {
   kind!: "RestPat";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | CatchClause
-    | ForInStmt
-    | ForOfStmt
-    | KeyValuePatProp
-    | ObjectPat
-    | Param
-    | RestPat
-    | SetterProp
-    | TsCallSignatureDecl
-    | TsConstructSignatureDecl
-    | TsConstructorType
-    | TsFnType
-    | TsIndexSignature
-    | TsMethodSignature
-    | TsPropertySignature
-    | TsTupleElement
-    | VarDeclarator;
+  parent!: Node;
   dot3_token!: Span;
   arg!: Pat;
   type_ann!: TsTypeAnn | undefined;
@@ -2801,19 +786,7 @@ export class RestPat extends Node {
 
 export class ReturnStmt extends Node {
   kind!: "ReturnStmt";
-  parent!: BlockStmt
-    | DoWhileStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | LabeledStmt
-    | Module
-    | Script
-    | SwitchCase
-    | TsModuleBlock
-    | WhileStmt
-    | WithStmt;
+  parent!: Node;
   arg!: Expr | undefined;
 }
 
@@ -2825,64 +798,7 @@ export class Script extends Node {
 
 export class SeqExpr extends Node {
   kind!: "SeqExpr";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   exprs!: Array<Expr>;
 }
 
@@ -2904,77 +820,7 @@ export class SpreadElement extends Node {
 
 export class Str extends Node {
   kind!: "Str";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassMethod
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Constructor
-    | Decorator
-    | DoWhileStmt
-    | ExportAll
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | GetterProp
-    | IfStmt
-    | ImportDecl
-    | JSXAttr
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | MethodProp
-    | NamedExport
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TplElement
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsExternalModuleRef
-    | TsImportType
-    | TsLitType
-    | TsMethodSignature
-    | TsModuleDecl
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   value!: JsWord;
   /**
    * This includes line escape.
@@ -3001,83 +847,14 @@ export class SwitchCase extends Node {
 
 export class SwitchStmt extends Node {
   kind!: "SwitchStmt";
-  parent!: BlockStmt
-    | DoWhileStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | LabeledStmt
-    | Module
-    | Script
-    | SwitchCase
-    | TsModuleBlock
-    | WhileStmt
-    | WithStmt;
+  parent!: Node;
   discriminant!: Expr;
   cases!: Array<SwitchCase>;
 }
 
 export class TaggedTpl extends Node {
   kind!: "TaggedTpl";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   tag!: Expr;
   exprs!: Array<Expr>;
   quasis!: Array<TplElement>;
@@ -3086,144 +863,18 @@ export class TaggedTpl extends Node {
 
 export class ThisExpr extends Node {
   kind!: "ThisExpr";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
 }
 
 export class ThrowStmt extends Node {
   kind!: "ThrowStmt";
-  parent!: BlockStmt
-    | DoWhileStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | LabeledStmt
-    | Module
-    | Script
-    | SwitchCase
-    | TsModuleBlock
-    | WhileStmt
-    | WithStmt;
+  parent!: Node;
   arg!: Expr;
 }
 
 export class Tpl extends Node {
   kind!: "Tpl";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   exprs!: Array<Expr>;
   quasis!: Array<TplElement>;
 }
@@ -3240,19 +891,7 @@ export class TplElement extends Node {
 
 export class TryStmt extends Node {
   kind!: "TryStmt";
-  parent!: BlockStmt
-    | DoWhileStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | LabeledStmt
-    | Module
-    | Script
-    | SwitchCase
-    | TsModuleBlock
-    | WhileStmt
-    | WithStmt;
+  parent!: Node;
   block!: BlockStmt;
   handler!: CatchClause | undefined;
   finalizer!: BlockStmt | undefined;
@@ -3260,87 +899,13 @@ export class TryStmt extends Node {
 
 export class TsArrayType extends Node {
   kind!: "TsArrayType";
-  parent!: TsArrayType
-    | TsAsExpr
-    | TsConditionalType
-    | TsIndexedAccessType
-    | TsIntersectionType
-    | TsMappedType
-    | TsOptionalType
-    | TsParenthesizedType
-    | TsRestType
-    | TsTplLitType
-    | TsTupleElement
-    | TsTypeAliasDecl
-    | TsTypeAnn
-    | TsTypeAssertion
-    | TsTypeOperator
-    | TsTypeParam
-    | TsTypeParamInstantiation
-    | TsUnionType;
+  parent!: Node;
   elem_type!: TsType;
 }
 
 export class TsAsExpr extends Node {
   kind!: "TsAsExpr";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   expr!: Expr;
   type_ann!: TsType;
 }
@@ -3356,24 +921,7 @@ export class TsCallSignatureDecl extends Node {
 
 export class TsConditionalType extends Node {
   kind!: "TsConditionalType";
-  parent!: TsArrayType
-    | TsAsExpr
-    | TsConditionalType
-    | TsIndexedAccessType
-    | TsIntersectionType
-    | TsMappedType
-    | TsOptionalType
-    | TsParenthesizedType
-    | TsRestType
-    | TsTplLitType
-    | TsTupleElement
-    | TsTypeAliasDecl
-    | TsTypeAnn
-    | TsTypeAssertion
-    | TsTypeOperator
-    | TsTypeParam
-    | TsTypeParamInstantiation
-    | TsUnionType;
+  parent!: Node;
   check_type!: TsType;
   extends_type!: TsType;
   true_type!: TsType;
@@ -3382,64 +930,7 @@ export class TsConditionalType extends Node {
 
 export class TsConstAssertion extends Node {
   kind!: "TsConstAssertion";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   expr!: Expr;
 }
 
@@ -3454,24 +945,7 @@ export class TsConstructSignatureDecl extends Node {
 
 export class TsConstructorType extends Node {
   kind!: "TsConstructorType";
-  parent!: TsArrayType
-    | TsAsExpr
-    | TsConditionalType
-    | TsIndexedAccessType
-    | TsIntersectionType
-    | TsMappedType
-    | TsOptionalType
-    | TsParenthesizedType
-    | TsRestType
-    | TsTplLitType
-    | TsTupleElement
-    | TsTypeAliasDecl
-    | TsTypeAnn
-    | TsTypeAssertion
-    | TsTypeOperator
-    | TsTypeParam
-    | TsTypeParamInstantiation
-    | TsUnionType;
+  parent!: Node;
   params!: Array<TsFnParam>;
   type_params!: TsTypeParamDecl | undefined;
   type_ann!: TsTypeAnn;
@@ -3480,20 +954,7 @@ export class TsConstructorType extends Node {
 
 export class TsEnumDecl extends Node {
   kind!: "TsEnumDecl";
-  parent!: BlockStmt
-    | DoWhileStmt
-    | ExportDecl
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | LabeledStmt
-    | Module
-    | Script
-    | SwitchCase
-    | TsModuleBlock
-    | WhileStmt
-    | WithStmt;
+  parent!: Node;
   declare!: boolean;
   is_const!: boolean;
   id!: Ident;
@@ -3535,24 +996,7 @@ export class TsExternalModuleRef extends Node {
 
 export class TsFnType extends Node {
   kind!: "TsFnType";
-  parent!: TsArrayType
-    | TsAsExpr
-    | TsConditionalType
-    | TsIndexedAccessType
-    | TsIntersectionType
-    | TsMappedType
-    | TsOptionalType
-    | TsParenthesizedType
-    | TsRestType
-    | TsTplLitType
-    | TsTupleElement
-    | TsTypeAliasDecl
-    | TsTypeAnn
-    | TsTypeAssertion
-    | TsTypeOperator
-    | TsTypeParam
-    | TsTypeParamInstantiation
-    | TsUnionType;
+  parent!: Node;
   params!: Array<TsFnParam>;
   type_params!: TsTypeParamDecl | undefined;
   type_ann!: TsTypeAnn;
@@ -3570,25 +1014,7 @@ export class TsImportEqualsDecl extends Node {
 
 export class TsImportType extends Node {
   kind!: "TsImportType";
-  parent!: TsArrayType
-    | TsAsExpr
-    | TsConditionalType
-    | TsIndexedAccessType
-    | TsIntersectionType
-    | TsMappedType
-    | TsOptionalType
-    | TsParenthesizedType
-    | TsRestType
-    | TsTplLitType
-    | TsTupleElement
-    | TsTypeAliasDecl
-    | TsTypeAnn
-    | TsTypeAssertion
-    | TsTypeOperator
-    | TsTypeParam
-    | TsTypeParamInstantiation
-    | TsTypeQuery
-    | TsUnionType;
+  parent!: Node;
   arg!: Str;
   qualifier!: TsEntityName | undefined;
   type_args!: TsTypeParamInstantiation | undefined;
@@ -3606,24 +1032,7 @@ export class TsIndexSignature extends Node {
 
 export class TsIndexedAccessType extends Node {
   kind!: "TsIndexedAccessType";
-  parent!: TsArrayType
-    | TsAsExpr
-    | TsConditionalType
-    | TsIndexedAccessType
-    | TsIntersectionType
-    | TsMappedType
-    | TsOptionalType
-    | TsParenthesizedType
-    | TsRestType
-    | TsTplLitType
-    | TsTupleElement
-    | TsTypeAliasDecl
-    | TsTypeAnn
-    | TsTypeAssertion
-    | TsTypeOperator
-    | TsTypeParam
-    | TsTypeParamInstantiation
-    | TsUnionType;
+  parent!: Node;
   readonly!: boolean;
   obj_type!: TsType;
   index_type!: TsType;
@@ -3631,24 +1040,7 @@ export class TsIndexedAccessType extends Node {
 
 export class TsInferType extends Node {
   kind!: "TsInferType";
-  parent!: TsArrayType
-    | TsAsExpr
-    | TsConditionalType
-    | TsIndexedAccessType
-    | TsIntersectionType
-    | TsMappedType
-    | TsOptionalType
-    | TsParenthesizedType
-    | TsRestType
-    | TsTplLitType
-    | TsTupleElement
-    | TsTypeAliasDecl
-    | TsTypeAnn
-    | TsTypeAssertion
-    | TsTypeOperator
-    | TsTypeParam
-    | TsTypeParamInstantiation
-    | TsUnionType;
+  parent!: Node;
   type_param!: TsTypeParam;
 }
 
@@ -3660,21 +1052,7 @@ export class TsInterfaceBody extends Node {
 
 export class TsInterfaceDecl extends Node {
   kind!: "TsInterfaceDecl";
-  parent!: BlockStmt
-    | DoWhileStmt
-    | ExportDecl
-    | ExportDefaultDecl
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | LabeledStmt
-    | Module
-    | Script
-    | SwitchCase
-    | TsModuleBlock
-    | WhileStmt
-    | WithStmt;
+  parent!: Node;
   id!: Ident;
   declare!: boolean;
   type_params!: TsTypeParamDecl | undefined;
@@ -3684,93 +1062,25 @@ export class TsInterfaceDecl extends Node {
 
 export class TsIntersectionType extends Node {
   kind!: "TsIntersectionType";
-  parent!: TsArrayType
-    | TsAsExpr
-    | TsConditionalType
-    | TsIndexedAccessType
-    | TsIntersectionType
-    | TsMappedType
-    | TsOptionalType
-    | TsParenthesizedType
-    | TsRestType
-    | TsTplLitType
-    | TsTupleElement
-    | TsTypeAliasDecl
-    | TsTypeAnn
-    | TsTypeAssertion
-    | TsTypeOperator
-    | TsTypeParam
-    | TsTypeParamInstantiation
-    | TsUnionType;
+  parent!: Node;
   types!: Array<TsType>;
 }
 
 export class TsKeywordType extends Node {
   kind!: "TsKeywordType";
-  parent!: TsArrayType
-    | TsAsExpr
-    | TsConditionalType
-    | TsIndexedAccessType
-    | TsIntersectionType
-    | TsMappedType
-    | TsOptionalType
-    | TsParenthesizedType
-    | TsRestType
-    | TsTplLitType
-    | TsTupleElement
-    | TsTypeAliasDecl
-    | TsTypeAnn
-    | TsTypeAssertion
-    | TsTypeOperator
-    | TsTypeParam
-    | TsTypeParamInstantiation
-    | TsUnionType;
+  parent!: Node;
   keyword_kind!: TsKeywordTypeKind;
 }
 
 export class TsLitType extends Node {
   kind!: "TsLitType";
-  parent!: TsArrayType
-    | TsAsExpr
-    | TsConditionalType
-    | TsIndexedAccessType
-    | TsIntersectionType
-    | TsMappedType
-    | TsOptionalType
-    | TsParenthesizedType
-    | TsRestType
-    | TsTplLitType
-    | TsTupleElement
-    | TsTypeAliasDecl
-    | TsTypeAnn
-    | TsTypeAssertion
-    | TsTypeOperator
-    | TsTypeParam
-    | TsTypeParamInstantiation
-    | TsUnionType;
+  parent!: Node;
   lit!: TsLit;
 }
 
 export class TsMappedType extends Node {
   kind!: "TsMappedType";
-  parent!: TsArrayType
-    | TsAsExpr
-    | TsConditionalType
-    | TsIndexedAccessType
-    | TsIntersectionType
-    | TsMappedType
-    | TsOptionalType
-    | TsParenthesizedType
-    | TsRestType
-    | TsTplLitType
-    | TsTupleElement
-    | TsTypeAliasDecl
-    | TsTypeAnn
-    | TsTypeAssertion
-    | TsTypeOperator
-    | TsTypeParam
-    | TsTypeParamInstantiation
-    | TsUnionType;
+  parent!: Node;
   readonly!: TruePlusMinus | undefined;
   type_param!: TsTypeParam;
   name_type!: TsType | undefined;
@@ -3800,20 +1110,7 @@ export class TsModuleBlock extends Node {
 
 export class TsModuleDecl extends Node {
   kind!: "TsModuleDecl";
-  parent!: BlockStmt
-    | DoWhileStmt
-    | ExportDecl
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | LabeledStmt
-    | Module
-    | Script
-    | SwitchCase
-    | TsModuleBlock
-    | WhileStmt
-    | WithStmt;
+  parent!: Node;
   declare!: boolean;
   /**
    * In TypeScript, this is only available through`node.flags`.
@@ -3845,87 +1142,13 @@ export class TsNamespaceExportDecl extends Node {
 
 export class TsNonNullExpr extends Node {
   kind!: "TsNonNullExpr";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   expr!: Expr;
 }
 
 export class TsOptionalType extends Node {
   kind!: "TsOptionalType";
-  parent!: TsArrayType
-    | TsAsExpr
-    | TsConditionalType
-    | TsIndexedAccessType
-    | TsIntersectionType
-    | TsMappedType
-    | TsOptionalType
-    | TsParenthesizedType
-    | TsRestType
-    | TsTplLitType
-    | TsTupleElement
-    | TsTypeAliasDecl
-    | TsTypeAnn
-    | TsTypeAssertion
-    | TsTypeOperator
-    | TsTypeParam
-    | TsTypeParamInstantiation
-    | TsUnionType;
+  parent!: Node;
   type_ann!: TsType;
 }
 
@@ -3943,24 +1166,7 @@ export class TsParamProp extends Node {
 
 export class TsParenthesizedType extends Node {
   kind!: "TsParenthesizedType";
-  parent!: TsArrayType
-    | TsAsExpr
-    | TsConditionalType
-    | TsIndexedAccessType
-    | TsIntersectionType
-    | TsMappedType
-    | TsOptionalType
-    | TsParenthesizedType
-    | TsRestType
-    | TsTplLitType
-    | TsTupleElement
-    | TsTypeAliasDecl
-    | TsTypeAnn
-    | TsTypeAssertion
-    | TsTypeOperator
-    | TsTypeParam
-    | TsTypeParamInstantiation
-    | TsUnionType;
+  parent!: Node;
   type_ann!: TsType;
 }
 
@@ -3980,60 +1186,20 @@ export class TsPropertySignature extends Node {
 
 export class TsQualifiedName extends Node {
   kind!: "TsQualifiedName";
-  parent!: TsExprWithTypeArgs
-    | TsImportEqualsDecl
-    | TsImportType
-    | TsQualifiedName
-    | TsTypeQuery
-    | TsTypeRef;
+  parent!: Node;
   left!: TsEntityName;
   right!: Ident;
 }
 
 export class TsRestType extends Node {
   kind!: "TsRestType";
-  parent!: TsArrayType
-    | TsAsExpr
-    | TsConditionalType
-    | TsIndexedAccessType
-    | TsIntersectionType
-    | TsMappedType
-    | TsOptionalType
-    | TsParenthesizedType
-    | TsRestType
-    | TsTplLitType
-    | TsTupleElement
-    | TsTypeAliasDecl
-    | TsTypeAnn
-    | TsTypeAssertion
-    | TsTypeOperator
-    | TsTypeParam
-    | TsTypeParamInstantiation
-    | TsUnionType;
+  parent!: Node;
   type_ann!: TsType;
 }
 
 export class TsThisType extends Node {
   kind!: "TsThisType";
-  parent!: TsArrayType
-    | TsAsExpr
-    | TsConditionalType
-    | TsIndexedAccessType
-    | TsIntersectionType
-    | TsMappedType
-    | TsOptionalType
-    | TsParenthesizedType
-    | TsRestType
-    | TsTplLitType
-    | TsTupleElement
-    | TsTypeAliasDecl
-    | TsTypeAnn
-    | TsTypeAssertion
-    | TsTypeOperator
-    | TsTypeParam
-    | TsTypeParamInstantiation
-    | TsTypePredicate
-    | TsUnionType;
+  parent!: Node;
 }
 
 export class TsTplLitType extends Node {
@@ -4055,43 +1221,13 @@ export class TsTupleElement extends Node {
 
 export class TsTupleType extends Node {
   kind!: "TsTupleType";
-  parent!: TsArrayType
-    | TsAsExpr
-    | TsConditionalType
-    | TsIndexedAccessType
-    | TsIntersectionType
-    | TsMappedType
-    | TsOptionalType
-    | TsParenthesizedType
-    | TsRestType
-    | TsTplLitType
-    | TsTupleElement
-    | TsTypeAliasDecl
-    | TsTypeAnn
-    | TsTypeAssertion
-    | TsTypeOperator
-    | TsTypeParam
-    | TsTypeParamInstantiation
-    | TsUnionType;
+  parent!: Node;
   elem_types!: Array<TsTupleElement>;
 }
 
 export class TsTypeAliasDecl extends Node {
   kind!: "TsTypeAliasDecl";
-  parent!: BlockStmt
-    | DoWhileStmt
-    | ExportDecl
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | LabeledStmt
-    | Module
-    | Script
-    | SwitchCase
-    | TsModuleBlock
-    | WhileStmt
-    | WithStmt;
+  parent!: Node;
   declare!: boolean;
   id!: Ident;
   type_params!: TsTypeParamDecl | undefined;
@@ -4100,134 +1236,26 @@ export class TsTypeAliasDecl extends Node {
 
 export class TsTypeAnn extends Node {
   kind!: "TsTypeAnn";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignPat
-    | BindingIdent
-    | ClassProp
-    | Function
-    | GetterProp
-    | ObjectPat
-    | PrivateProp
-    | RestPat
-    | TsCallSignatureDecl
-    | TsConstructSignatureDecl
-    | TsConstructorType
-    | TsFnType
-    | TsIndexSignature
-    | TsMethodSignature
-    | TsPropertySignature
-    | TsTypePredicate;
+  parent!: Node;
   type_ann!: TsType;
 }
 
 export class TsTypeAssertion extends Node {
   kind!: "TsTypeAssertion";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   expr!: Expr;
   type_ann!: TsType;
 }
 
 export class TsTypeLit extends Node {
   kind!: "TsTypeLit";
-  parent!: TsArrayType
-    | TsAsExpr
-    | TsConditionalType
-    | TsIndexedAccessType
-    | TsIntersectionType
-    | TsMappedType
-    | TsOptionalType
-    | TsParenthesizedType
-    | TsRestType
-    | TsTplLitType
-    | TsTupleElement
-    | TsTypeAliasDecl
-    | TsTypeAnn
-    | TsTypeAssertion
-    | TsTypeOperator
-    | TsTypeParam
-    | TsTypeParamInstantiation
-    | TsUnionType;
+  parent!: Node;
   members!: Array<TsTypeElement>;
 }
 
 export class TsTypeOperator extends Node {
   kind!: "TsTypeOperator";
-  parent!: TsArrayType
-    | TsAsExpr
-    | TsConditionalType
-    | TsIndexedAccessType
-    | TsIntersectionType
-    | TsMappedType
-    | TsOptionalType
-    | TsParenthesizedType
-    | TsRestType
-    | TsTplLitType
-    | TsTupleElement
-    | TsTypeAliasDecl
-    | TsTypeAnn
-    | TsTypeAssertion
-    | TsTypeOperator
-    | TsTypeParam
-    | TsTypeParamInstantiation
-    | TsUnionType;
+  parent!: Node;
   op!: TsTypeOperatorOp;
   type_ann!: TsType;
 }
@@ -4244,53 +1272,19 @@ export class TsTypeParam extends Node {
 
 export class TsTypeParamDecl extends Node {
   kind!: "TsTypeParamDecl";
-  parent!: ArrowExpr
-    | Class
-    | Function
-    | TsCallSignatureDecl
-    | TsConstructSignatureDecl
-    | TsConstructorType
-    | TsFnType
-    | TsInterfaceDecl
-    | TsMethodSignature
-    | TsPropertySignature
-    | TsTypeAliasDecl;
+  parent!: Node;
   params!: Array<TsTypeParam>;
 }
 
 export class TsTypeParamInstantiation extends Node {
   kind!: "TsTypeParamInstantiation";
-  parent!: CallExpr
-    | Class
-    | JSXOpeningElement
-    | NewExpr
-    | TaggedTpl
-    | TsExprWithTypeArgs
-    | TsImportType
-    | TsTypeRef;
+  parent!: Node;
   params!: Array<TsType>;
 }
 
 export class TsTypePredicate extends Node {
   kind!: "TsTypePredicate";
-  parent!: TsArrayType
-    | TsAsExpr
-    | TsConditionalType
-    | TsIndexedAccessType
-    | TsIntersectionType
-    | TsMappedType
-    | TsOptionalType
-    | TsParenthesizedType
-    | TsRestType
-    | TsTplLitType
-    | TsTupleElement
-    | TsTypeAliasDecl
-    | TsTypeAnn
-    | TsTypeAssertion
-    | TsTypeOperator
-    | TsTypeParam
-    | TsTypeParamInstantiation
-    | TsUnionType;
+  parent!: Node;
   asserts!: boolean;
   param_name!: TsThisTypeOrIdent;
   type_ann!: TsTypeAnn | undefined;
@@ -4301,198 +1295,33 @@ export class TsTypePredicate extends Node {
  */
 export class TsTypeQuery extends Node {
   kind!: "TsTypeQuery";
-  parent!: TsArrayType
-    | TsAsExpr
-    | TsConditionalType
-    | TsIndexedAccessType
-    | TsIntersectionType
-    | TsMappedType
-    | TsOptionalType
-    | TsParenthesizedType
-    | TsRestType
-    | TsTplLitType
-    | TsTupleElement
-    | TsTypeAliasDecl
-    | TsTypeAnn
-    | TsTypeAssertion
-    | TsTypeOperator
-    | TsTypeParam
-    | TsTypeParamInstantiation
-    | TsUnionType;
+  parent!: Node;
   expr_name!: TsTypeQueryExpr;
 }
 
 export class TsTypeRef extends Node {
   kind!: "TsTypeRef";
-  parent!: TsArrayType
-    | TsAsExpr
-    | TsConditionalType
-    | TsIndexedAccessType
-    | TsIntersectionType
-    | TsMappedType
-    | TsOptionalType
-    | TsParenthesizedType
-    | TsRestType
-    | TsTplLitType
-    | TsTupleElement
-    | TsTypeAliasDecl
-    | TsTypeAnn
-    | TsTypeAssertion
-    | TsTypeOperator
-    | TsTypeParam
-    | TsTypeParamInstantiation
-    | TsUnionType;
+  parent!: Node;
   type_name!: TsEntityName;
   type_params!: TsTypeParamInstantiation | undefined;
 }
 
 export class TsUnionType extends Node {
   kind!: "TsUnionType";
-  parent!: TsArrayType
-    | TsAsExpr
-    | TsConditionalType
-    | TsIndexedAccessType
-    | TsIntersectionType
-    | TsMappedType
-    | TsOptionalType
-    | TsParenthesizedType
-    | TsRestType
-    | TsTplLitType
-    | TsTupleElement
-    | TsTypeAliasDecl
-    | TsTypeAnn
-    | TsTypeAssertion
-    | TsTypeOperator
-    | TsTypeParam
-    | TsTypeParamInstantiation
-    | TsUnionType;
+  parent!: Node;
   types!: Array<TsType>;
 }
 
 export class UnaryExpr extends Node {
   kind!: "UnaryExpr";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   op!: UnaryOp;
   arg!: Expr;
 }
 
 export class UpdateExpr extends Node {
   kind!: "UpdateExpr";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   op!: UpdateOp;
   prefix!: boolean;
   arg!: Expr;
@@ -4500,20 +1329,7 @@ export class UpdateExpr extends Node {
 
 export class VarDecl extends Node {
   kind!: "VarDecl";
-  parent!: BlockStmt
-    | DoWhileStmt
-    | ExportDecl
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | LabeledStmt
-    | Module
-    | Script
-    | SwitchCase
-    | TsModuleBlock
-    | WhileStmt
-    | WithStmt;
+  parent!: Node;
   decl_kind!: VarDeclKind;
   declare!: boolean;
   decls!: Array<VarDeclarator>;
@@ -4535,102 +1351,21 @@ export class VarDeclarator extends Node {
 
 export class WhileStmt extends Node {
   kind!: "WhileStmt";
-  parent!: BlockStmt
-    | DoWhileStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | LabeledStmt
-    | Module
-    | Script
-    | SwitchCase
-    | TsModuleBlock
-    | WhileStmt
-    | WithStmt;
+  parent!: Node;
   test!: Expr;
   body!: Stmt;
 }
 
 export class WithStmt extends Node {
   kind!: "WithStmt";
-  parent!: BlockStmt
-    | DoWhileStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | LabeledStmt
-    | Module
-    | Script
-    | SwitchCase
-    | TsModuleBlock
-    | WhileStmt
-    | WithStmt;
+  parent!: Node;
   obj!: Expr;
   body!: Stmt;
 }
 
 export class YieldExpr extends Node {
   kind!: "YieldExpr";
-  parent!: ArrayPat
-    | ArrowExpr
-    | AssignExpr
-    | AssignPat
-    | AssignPatProp
-    | AssignProp
-    | AwaitExpr
-    | BinExpr
-    | CallExpr
-    | CatchClause
-    | Class
-    | ClassProp
-    | ComputedPropName
-    | CondExpr
-    | Decorator
-    | DoWhileStmt
-    | ExportDefaultExpr
-    | ExprOrSpread
-    | ExprStmt
-    | ForInStmt
-    | ForOfStmt
-    | ForStmt
-    | IfStmt
-    | JSXExprContainer
-    | JSXSpreadChild
-    | KeyValuePatProp
-    | KeyValueProp
-    | MemberExpr
-    | NewExpr
-    | OptChainExpr
-    | Param
-    | ParenExpr
-    | PrivateProp
-    | RestPat
-    | ReturnStmt
-    | SeqExpr
-    | SetterProp
-    | SpreadElement
-    | SwitchCase
-    | SwitchStmt
-    | TaggedTpl
-    | ThrowStmt
-    | Tpl
-    | TsAsExpr
-    | TsConstAssertion
-    | TsEnumMember
-    | TsExportAssignment
-    | TsMethodSignature
-    | TsNonNullExpr
-    | TsPropertySignature
-    | TsTupleElement
-    | TsTypeAssertion
-    | UnaryExpr
-    | UpdateExpr
-    | VarDeclarator
-    | WhileStmt
-    | WithStmt
-    | YieldExpr;
+  parent!: Node;
   arg!: Expr | undefined;
   delegate!: boolean;
 }

@@ -22,7 +22,7 @@ export interface EnumDefinition extends NamedDefinition {
 
 export interface EnumVariantDefinition extends NamedDefinition {
     docs: string | undefined;
-    tuple_args: TypeDefinition[] | undefined;
+    tuple_arg: TypeDefinition | undefined;
 }
 
 export interface StructFieldDefinition extends NamedDefinition {
