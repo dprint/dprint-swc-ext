@@ -1,22 +1,27 @@
 {
   "kind": 71,
-  "span": {"start":6,"end":19,"ctxt":0},
+  "start": 6,
+  "end": 19,
   "body": [
     {
       "kind": 155,
-      "span": {"start":6,"end":19,"ctxt":0},
+      "start": 6,
+      "end": 19,
       "declKind": "let",
       "declare": false,
       "decls": [
         {
           "kind": 156,
-          "span": {"start":10,"end":18,"ctxt":0},
+          "start": 10,
+          "end": 18,
           "name": {
             "kind": 10,
-            "span": {"start":10,"end":13,"ctxt":0},
+            "start": 10,
+            "end": 13,
             "id": {
               "kind": 45,
-              "span": {"start":10,"end":13,"ctxt":0},
+              "start": 10,
+              "end": 13,
               "sym": "foo",
               "optional": false
             },
@@ -24,7 +29,8 @@
           },
           "init": {
             "kind": 75,
-            "span": {"start":16,"end":18,"ctxt":0},
+            "start": 16,
+            "end": 18,
             "value": 42.0
           },
           "definite": false

@@ -1,35 +1,43 @@
 {
   "kind": 71,
-  "span": {"start":0,"end":68,"ctxt":0},
+  "start": 0,
+  "end": 68,
   "body": [
     {
       "kind": 38,
-      "span": {"start":0,"end":68,"ctxt":0},
+      "start": 0,
+      "end": 68,
       "ident": {
         "kind": 45,
-        "span": {"start":9,"end":12,"ctxt":0},
+        "start": 9,
+        "end": 12,
         "sym": "foo",
         "optional": false
       },
       "declare": false,
       "function": {
         "kind": 43,
-        "span": {"start":0,"end":68,"ctxt":0},
+        "start": 0,
+        "end": 68,
         "params": [
           {
             "kind": 79,
-            "span": {"start":13,"end":33,"ctxt":0},
+            "start": 13,
+            "end": 33,
             "decorators": [],
             "pat": {
               "kind": 77,
-              "span": {"start":13,"end":33,"ctxt":0},
+              "start": 13,
+              "end": 33,
               "props": [
                 {
                   "kind": 5,
-                  "span": {"start":15,"end":16,"ctxt":0},
+                  "start": 15,
+                  "end": 16,
                   "key": {
                     "kind": 45,
-                    "span": {"start":15,"end":16,"ctxt":0},
+                    "start": 15,
+                    "end": 16,
                     "sym": "a",
                     "optional": false
                   },
@@ -39,18 +47,22 @@
               "optional": false,
               "typeAnn": {
                 "kind": 142,
-                "span": {"start":18,"end":33,"ctxt":0},
+                "start": 18,
+                "end": 33,
                 "typeAnn": {
                   "kind": 144,
-                  "span": {"start":20,"end":33,"ctxt":0},
+                  "start": 20,
+                  "end": 33,
                   "members": [
                     {
                       "kind": 134,
-                      "span": {"start":22,"end":31,"ctxt":0},
+                      "start": 22,
+                      "end": 31,
                       "readonly": false,
                       "key": {
                         "kind": 45,
-                        "span": {"start":22,"end":23,"ctxt":0},
+                        "start": 22,
+                        "end": 23,
                         "sym": "a",
                         "optional": false
                       },
@@ -60,10 +72,12 @@
                       "params": [],
                       "typeAnn": {
                         "kind": 142,
-                        "span": {"start":23,"end":31,"ctxt":0},
+                        "start": 23,
+                        "end": 31,
                         "typeAnn": {
                           "kind": 122,
-                          "span": {"start":25,"end":31,"ctxt":0},
+                          "start": 25,
+                          "end": 31,
                           "keywordKind": "number"
                         }
                       },
@@ -78,34 +92,41 @@
         "decorators": [],
         "body": {
           "kind": 11,
-          "span": {"start":44,"end":68,"ctxt":0},
+          "start": 44,
+          "end": 68,
           "stmts": [
             {
               "kind": 86,
-              "span": {"start":46,"end":66,"ctxt":0},
+              "start": 46,
+              "end": 66,
               "arg": {
                 "kind": 9,
-                "span": {"start":53,"end":65,"ctxt":0},
+                "start": 53,
+                "end": 65,
                 "op": "===",
                 "left": {
                   "kind": 9,
-                  "span": {"start":53,"end":59,"ctxt":0},
+                  "start": 53,
+                  "end": 59,
                   "op": "%",
                   "left": {
                     "kind": 45,
-                    "span": {"start":53,"end":54,"ctxt":0},
+                    "start": 53,
+                    "end": 54,
                     "sym": "a",
                     "optional": false
                   },
                   "right": {
                     "kind": 8,
-                    "span": {"start":57,"end":59,"ctxt":0},
+                    "start": 57,
+                    "end": 59,
                     "value": [1,[2]]
                   }
                 },
                 "right": {
                   "kind": 75,
-                  "span": {"start":64,"end":65,"ctxt":0},
+                  "start": 64,
+                  "end": 65,
                   "value": 0.0
                 }
               }
@@ -117,10 +138,12 @@
         "typeParams": null,
         "returnType": {
           "kind": 142,
-          "span": {"start":34,"end":43,"ctxt":0},
+          "start": 34,
+          "end": 43,
           "typeAnn": {
             "kind": 122,
-            "span": {"start":36,"end":43,"ctxt":0},
+            "start": 36,
+            "end": 43,
             "keywordKind": "boolean"
           }
         }

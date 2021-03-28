@@ -9,20 +9,40 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
     writeHeader(writer);
     writeUseDeclarations();
 
-    for (const [i, struct] of analysisResult.astStructs.entries()) {
-        writer.blankLine();
-        writeAstStructFunction(struct, i);
-    }
-
-    for (const enumDef of analysisResult.astEnums) {
-        writer.blankLine();
-        writeAstEnumFunction(enumDef);
-    }
+    writer.blankLine();
+    writer.write("pub struct FileSerializer<'a, TWrite: Write, TJsonFormatter: JsonFormatter>").block(() => {
+        writer.writeLine("w: &'a mut TWrite,");
+        writer.writeLine("f: &'a mut TJsonFormatter,");
+        writer.writeLine("multi_byte_chars: Vec<MultiByteChar>,");
+    });
 
     writer.blankLine();
-    writeTokenSerialization();
-    writer.blankLine();
-    writeCommentSerialization();
+    writer.write("impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite, TJsonFormatter>").block(() => {
+        writer.write("pub fn new(w: &'a mut TWrite, f: &'a mut TJsonFormatter, file_text: &str) -> Self").block(() => {
+            writer.write("FileSerializer").block(() => {
+                writer.writeLine("w,");
+                writer.writeLine("f,");
+                writer.writeLine("multi_byte_chars: get_multi_byte_chars(file_text),");
+            });
+        });
+
+        for (const [i, struct] of analysisResult.astStructs.entries()) {
+            writer.blankLine();
+            writeAstStructMethod(struct, i);
+        }
+
+        for (const enumDef of analysisResult.astEnums) {
+            writer.blankLine();
+            writeAstEnumMethod(enumDef);
+        }
+
+        writer.blankLine();
+        writeTokenSerialization();
+        writer.blankLine();
+        writeCommentSerialization();
+        writer.blankLine();
+        writeSpanSerialization();
+    });
 
     writer.newLineIfLastNot();
 
@@ -31,21 +51,21 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
     function writeUseDeclarations() {
         writer.writeLine("use std::io::{Error, Write};");
         writer.writeLine("use serde_json::ser::{Formatter as JsonFormatter, to_string as to_json_string};");
-        writer.writeLine("use swc_common::{Spanned, comments::{Comment, CommentKind, SingleThreadedCommentsMapInner}};");
+        writer.writeLine("use swc_common::{Span, Spanned, comments::{Comment, CommentKind, SingleThreadedCommentsMapInner}};");
         writer.writeLine("use swc_ecmascript::parser::token::{BinOpToken, Keyword, Token, TokenAndSpan, Word};");
         writer.writeLine("use swc_ecmascript::ast::*;");
+        writer.writeLine("use super::*;");
     }
 
-    function writeAstStructFunction(struct: AstStructDefinition, index: number) {
+    function writeAstStructMethod(struct: AstStructDefinition, index: number) {
         writer.write(
             `pub fn serialize_${nameToSnakeCase(struct.name)}(`
-                + `w: &mut impl Write, f: &mut impl JsonFormatter, node: &${struct.name}) -> Result<(), Error>`,
+                + `&mut self, node: &${struct.name}) -> Result<(), Error>`,
         ).block(() => {
             writeObject(() => {
                 writeObjectStrKey("kind", true);
-                writeObjectValue(() => writer.writeLine(`f.write_u32(w, ${index})?;`));
-                writeObjectStrKey("span", false);
-                writeObjectValue(() => writer.writeLine(`write!(w, "{}", to_json_string(&node.span())?)?;`));
+                writeObjectValue(() => writer.writeLine(`self.f.write_u32(self.w, ${index})?;`));
+                writer.writeLine("self.serialize_span_props(&node.span(), false)?;");
 
                 for (const field of struct.fields.filter(f => f.name !== "span")) {
                     writeObjectStrKey(snakeToCamelCase(field.name), false);
@@ -56,14 +76,14 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
         });
     }
 
-    function writeAstEnumFunction(enumDef: AstEnumDefinition) {
+    function writeAstEnumMethod(enumDef: AstEnumDefinition) {
         writer.write(
             `pub fn serialize_${nameToSnakeCase(enumDef.name)}(`
-                + `w: &mut impl Write, f: &mut impl JsonFormatter, node: &${enumDef.name}) -> Result<(), Error>`,
+                + `&mut self, node: &${enumDef.name}) -> Result<(), Error>`,
         ).block(() => {
             writer.write("match node").block(() => {
                 for (const variant of enumDef.variants) {
-                    writer.writeLine(`${enumDef.name}::${variant.name}(node) => serialize_${nameToSnakeCase(variant.tupleArg.name)}(w, f, node)?,`);
+                    writer.writeLine(`${enumDef.name}::${variant.name}(node) => self.serialize_${nameToSnakeCase(variant.tupleArg.name)}(node)?,`);
                 }
             });
             writer.writeLine("Ok(())");
@@ -87,7 +107,7 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
 
         function writeEnumSerializationFunction(enumName: string) {
             const tokenEnum = analysisResult.tokenEnums.find(e => e.name === enumName)!;
-            writer.write(`fn serialize_${nameToSnakeCase(enumName)}(w: &mut impl Write, f: &mut impl JsonFormatter, value: &${enumName}) -> Result<(), Error>`)
+            writer.write(`fn serialize_${nameToSnakeCase(enumName)}(&mut self, value: &${enumName}) -> Result<(), Error>`)
                 .block(() => {
                     writeEnumSerialization("value", tokenEnum);
                     writer.writeLine("Ok(())");
@@ -96,12 +116,12 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
     }
 
     function writeSerializeTokenAndSpansFunction() {
-        writer.write(`pub fn serialize_token_and_spans(w: &mut impl Write, f: &mut impl JsonFormatter, tokens: &Vec<TokenAndSpan>) -> Result<(), Error>`).block(
+        writer.write(`pub fn serialize_token_and_spans(&mut self, tokens: &Vec<TokenAndSpan>) -> Result<(), Error>`).block(
             () => {
                 writeArray(() => {
                     writer.write("for (i, token_and_span) in tokens.iter().enumerate()").block(() => {
                         writeArrayValue(() => {
-                            writer.writeLine("serialize_token_and_span(w, f, &token_and_span)?;");
+                            writer.writeLine("self.serialize_token_and_span(&token_and_span)?;");
                         }, `i == 0`);
                     });
                 });
@@ -111,18 +131,17 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
     }
 
     function writeSerializeTokenAndSpanFunction() {
-        writer.write(`pub fn serialize_token_and_span(w: &mut impl Write, f: &mut impl JsonFormatter, token_and_span: &TokenAndSpan) -> Result<(), Error>`)
+        writer.write(`pub fn serialize_token_and_span(&mut self, token_and_span: &TokenAndSpan) -> Result<(), Error>`)
             .block(() => {
                 writeObject(() => {
                     // span
-                    writeObjectStrKey("span", true);
-                    writeObjectValue(() => writer.writeLine(`write!(w, "{}", to_json_string(&token_and_span.span)?)?;`));
+                    writer.writeLine(`self.serialize_span_props(&token_and_span.span, true)?;`);
                     // had_line_break
                     writeObjectStrKey("hadLineBreak", false);
-                    writeObjectValue(() => writer.writeLine(`f.write_bool(w, token_and_span.had_line_break)?;`));
+                    writeObjectValue(() => writer.writeLine(`self.f.write_bool(self.w, token_and_span.had_line_break)?;`));
                     // token
                     writeObjectStrKey("token", false);
-                    writeObjectValue(() => writer.writeLine(`serialize_token(w, f, &token_and_span.token)?;`));
+                    writeObjectValue(() => writer.writeLine(`self.serialize_token(&token_and_span.token)?;`));
                 });
                 writer.writeLine("Ok(())");
             });
@@ -133,7 +152,7 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
             for (const [i, variant] of tokenEnum.variants.entries()) {
                 switch (variant.kind) {
                     case "Plain":
-                        writer.writeLine(`${tokenEnum.name}::${variant.name} => f.write_u32(w, ${i})?,`);
+                        writer.writeLine(`${tokenEnum.name}::${variant.name} => self.f.write_u32(self.w, ${i})?,`);
                         break;
                     case "Tuple":
                         writer.write(`${tokenEnum.name}::${variant.name}(`);
@@ -151,7 +170,7 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
                                 // kind method
                                 writeObjectStrKey("kind", true);
                                 writeObjectValue(() => {
-                                    writer.writeLine(`f.write_u32(w, ${i})?;`);
+                                    writer.writeLine(`self.f.write_u32(self.w, ${i})?;`);
                                 });
                                 if (variant.tupleArgs.length === 1) {
                                     writeObjectStrKey("inner", false);
@@ -181,7 +200,7 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
                                 // kind method
                                 writeObjectStrKey("kind", true);
                                 writeObjectValue(() => {
-                                    writer.writeLine(`f.write_u32(w, ${i})?;`);
+                                    writer.writeLine(`self.f.write_u32(self.w, ${i})?;`);
                                 });
                                 for (const field of variant.fields) {
                                     writeObjectStrKey(snakeToCamelCase(field.name), false);
@@ -204,17 +223,17 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
         const customNames = new Set(["BinOpToken", "Word", "Keyword", "Token"]);
 
         if (type.kind === "Reference" && customNames.has(type.name)) {
-            writer.writeLine(`serialize_${nameToSnakeCase(type.name)}(w, f, ${name})?;`);
+            writer.writeLine(`self.serialize_${nameToSnakeCase(type.name)}(${name})?;`);
         } else if (type.kind === "Reference" && isSwcAstType(analysisResult, type)) {
-            writer.writeLine(`serialize_${nameToSnakeCase(type.name)}(w, f, ${name})?;`);
+            writer.writeLine(`self.serialize_${nameToSnakeCase(type.name)}(${name})?;`);
         } else if (type.kind === "Reference" && isSwcNodeEnumType(analysisResult, type)) {
-            writer.writeLine(`serialize_${nameToSnakeCase(type.name)}(w, f, ${name})?;`);
+            writer.writeLine(`self.serialize_${nameToSnakeCase(type.name)}(${name})?;`);
         } else if (type.kind === "Reference" && isOptionType(type)) {
             writer.write(`match ${name} `).inlineBlock(() => {
                 writer.write(`Some(value) => `).block(() => {
                     writeTypeValueSerialization("value", type.genericArgs[0]);
                 });
-                writer.writeLine(`None => f.write_null(w)?,`);
+                writer.writeLine(`None => self.f.write_null(self.w)?,`);
             });
         } else if (type.kind === "Reference" && isVecType(type)) {
             writeArray(() => {
@@ -224,8 +243,10 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
                     }, "i == 0");
                 });
             });
+        } else if (type.kind === "Reference" && type.name === "Span") {
+            writer.writeLine(`self.serialize_span(${name})?;`);
         } else {
-            writer.writeLine(`write!(w, "{}", to_json_string(${name})?)?;`);
+            writer.writeLine(`write!(self.w, "{}", to_json_string(${name})?)?;`);
         }
     }
 
@@ -240,7 +261,7 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
 
     function writeCommentsSerializationFunction() {
         writer.write(
-            `pub fn serialize_comments(w: &mut impl Write, f: &mut impl JsonFormatter, `
+            `pub fn serialize_comments(&mut self, `
                 + `leading: &SingleThreadedCommentsMapInner, trailing: &SingleThreadedCommentsMapInner`
                 + `) -> Result<(), Error>`,
         ).block(() => {
@@ -265,11 +286,11 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
                 writer.write(`for (i, (key, value)) in ${name}.iter().enumerate()`).block(() => {
                     writeObjectKey(() => {
                         writeString(() => {
-                            writer.writeLine(`f.write_string_fragment(w, &key.0.to_string())?;`);
+                            writer.writeLine(`self.f.write_string_fragment(self.w, &key.0.to_string())?;`);
                         });
                     }, "i == 0");
                     writeObjectValue(() => {
-                        writer.writeLine("serialize_comment_vec(w, f, value)?;");
+                        writer.writeLine("self.serialize_comment_vec(value)?;");
                     });
                 });
             });
@@ -277,11 +298,11 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
     }
 
     function writeCommentVecSerializationFunction() {
-        writer.write(`pub fn serialize_comment_vec(w: &mut impl Write, f: &mut impl JsonFormatter, comments: &Vec<Comment>) -> Result<(), Error>`).block(() => {
+        writer.write(`pub fn serialize_comment_vec(&mut self, comments: &Vec<Comment>) -> Result<(), Error>`).block(() => {
             writeArray(() => {
                 writer.write(`for (i, comment) in comments.iter().enumerate()`).block(() => {
                     writeArrayValue(() => {
-                        writer.writeLine("serialize_comment(w, f, comment)?;");
+                        writer.writeLine("self.serialize_comment(comment)?;");
                     }, "i == 0");
                 });
             });
@@ -291,22 +312,21 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
 
     function writeCommentSerializationFunction() {
         // not worth downloading swc_common to analyze this, so hardcode it
-        writer.write(`pub fn serialize_comment(w: &mut impl Write, f: &mut impl JsonFormatter, comment: &Comment) -> Result<(), Error>`).block(() => {
+        writer.write(`pub fn serialize_comment(&mut self, comment: &Comment) -> Result<(), Error>`).block(() => {
             writeObject(() => {
                 // span
-                writeObjectStrKey("span", true);
-                writeObjectValue(() => writer.writeLine(`write!(w, "{}", to_json_string(&comment.span)?)?;`));
+                writer.writeLine("self.serialize_span_props(&comment.span, true)?;");
                 // text
                 writeObjectStrKey("text", false);
                 writeObjectValue(() =>
                     writeString(() => {
-                        writer.writeLine("f.write_string_fragment(w, &comment.text)?;");
+                        writer.writeLine("self.f.write_string_fragment(self.w, &comment.text)?;");
                     })
                 );
                 // kind
                 writeObjectStrKey("kind", false);
                 writeObjectValue(() => {
-                    writer.write("f.write_u32(w, ");
+                    writer.write("self.f.write_u32(self.w, ");
                     writer.write("match comment.kind ").inlineBlock(() => {
                         writer.writeLine("CommentKind::Line => 0,");
                         writer.writeLine("CommentKind::Block => 1,");
@@ -317,47 +337,70 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
         });
     }
 
+    function writeSpanSerialization() {
+        writer.write(`fn serialize_span(&mut self, span: &Span) -> Result<(), Error>`).block(() => {
+            writeObject(() => {
+                writer.writeLine("self.serialize_span_props(span, true)?;");
+            });
+            writer.writeLine("Ok(())");
+        });
+
+        writer.blankLine();
+        writer.write(`fn serialize_span_props(&mut self, span: &Span, is_first_prop: bool) -> Result<(), Error>`).block(() => {
+            writeObjectStrKey("start", "is_first_prop");
+            writeObjectValue(() => {
+                writer.writeLine("self.f.write_u32(self.w, byte_pos_to_char_pos(&self.multi_byte_chars, span.lo()))?;");
+            });
+            writeObjectStrKey("end", false);
+            writeObjectValue(() => {
+                // todo: performance improvement here where it figures out lo and hi char position at the same time
+                writer.writeLine("self.f.write_u32(self.w, byte_pos_to_char_pos(&self.multi_byte_chars, span.hi()))?;");
+            });
+            writer.writeLine("Ok(())");
+        });
+    }
+
     function writeArray(inner: () => void) {
-        writer.writeLine("f.begin_array(w)?;");
+        writer.writeLine("self.f.begin_array(self.w)?;");
         inner();
-        writer.writeLine("f.end_array(w)?;");
+        writer.writeLine("self.f.end_array(self.w)?;");
     }
 
     function writeArrayValue(inner: () => void, isFirst: boolean | string) {
-        writer.writeLine(`f.begin_array_value(w, ${isFirst})?;`);
+        writer.writeLine(`self.f.begin_array_value(self.w, ${isFirst})?;`);
         inner();
-        writer.writeLine("f.end_array_value(w)?;");
+        writer.writeLine("self.f.end_array_value(self.w)?;");
     }
 
     function writeObject(inner: () => void) {
-        writer.writeLine("f.begin_object(w)?;");
+        writer.writeLine("self.f.begin_object(self.w)?;");
         inner();
-        writer.writeLine("f.end_object(w)?;");
+        writer.writeLine("self.f.end_object(self.w)?;");
     }
 
-    function writeObjectStrKey(name: string, isFirst: boolean) {
+    function writeObjectStrKey(name: string, isFirst: boolean | string) {
         writeObjectKey(() => {
             writeString(() => {
-                writer.writeLine(`f.write_string_fragment(w, "${name}")?;`);
+                writer.writeLine(`self.f.write_string_fragment(self.w, "${name}")?;`);
             });
         }, isFirst);
     }
 
     function writeString(inner: () => void) {
-        writer.writeLine("f.begin_string(w)?;");
+        writer.writeLine("self.f.begin_string(self.w)?;");
         inner();
-        writer.writeLine("f.end_string(w)?;");
+        writer.writeLine("self.f.end_string(self.w)?;");
     }
 
     function writeObjectKey(inner: () => void, isFirst: boolean | string) {
-        writer.writeLine(`f.begin_object_key(w, ${isFirst})?;`);
+        writer.writeLine(`self.f.begin_object_key(self.w, ${isFirst})?;`);
         inner();
-        writer.writeLine("f.end_object_key(w)?;");
+        writer.writeLine("self.f.end_object_key(self.w)?;");
     }
 
     function writeObjectValue(inner: () => void) {
-        writer.writeLine("f.begin_object_value(w)?;");
+        writer.writeLine("self.f.begin_object_value(self.w)?;");
         inner();
-        writer.writeLine("f.end_object_value(w)?;");
+        writer.writeLine("self.f.end_object_value(self.w)?;");
     }
 }

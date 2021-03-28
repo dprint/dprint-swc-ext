@@ -1,17 +1,21 @@
-export class Node {
+import type { Token } from "./types.generated";
+
+export abstract class Node {
     kind!: string;
-    span: Span;
+    start: number;
+    end: number;
     parent?: Node;
 
     protected constructor() {
         throw new Error("A node cannot be constructed.");
     }
+
+    abstract getChildren(): Node[];
 }
 
 export interface Span {
-    lo: number;
-    hi: number;
-    ctx: number;
+    start: number;
+    end: number;
 }
 
 export interface BigIntValue {
@@ -24,11 +28,19 @@ export interface JsWord {
 
 export interface Comment {
     kind: CommentKind;
-    span: Span;
+    start: number;
+    end: number;
     text: string;
 }
 
 export enum CommentKind {
     Line,
     Block,
+}
+
+export interface TokenAndSpan {
+    start: number;
+    end: number;
+    hadLineBreak: boolean;
+    token: Token;
 }

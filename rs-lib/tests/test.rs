@@ -27,6 +27,7 @@ fn it_should_be_serialized_to_json() {
       "function foo({ a }: { a: number }): boolean { return a % 2n === 0; }",
       "./tests/expected/serialize_ts_function.json",
     ),
+    ("'🚀'", "./tests/expected/serialize_multi_byte.json"),
   ];
 
   for (code, expected_path) in tests.iter() {
