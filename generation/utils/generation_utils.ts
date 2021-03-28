@@ -72,3 +72,19 @@ export function getIsReferenceType(analysisResult: AnalysisResult, type: TypeDef
     }
     return true;
 }
+
+export function isSwcNodeEnumType(analysisResult: AnalysisResult, type: TypeDefinition | undefined): boolean {
+    return type != null && type.kind === "Reference" && analysisResult.astEnums.some(e => e.name === type.name);
+}
+
+export function isSwcAstType(analysisResult: AnalysisResult, type: TypeDefinition | undefined): boolean {
+    return type != null && type.kind === "Reference" && analysisResult.astStructs.some(s => s.name === type.name);
+}
+
+export function isVecType(type: TypeDefinition | undefined): boolean {
+    return type != null && type.kind === "Reference" && type.name === "Vec";
+}
+
+export function isOptionType(type: TypeDefinition | undefined): boolean {
+    return type != null && type.kind === "Reference" && type.name === "Option";
+}

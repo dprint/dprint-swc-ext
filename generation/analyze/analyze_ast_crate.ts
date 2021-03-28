@@ -154,7 +154,11 @@ export function analyzeAstCrate() {
                     throw new Error("Unhandled scenario where the tuple did not have one variant.");
                 }
 
-                return getTypeDefinition(crate, inner.variant_inner[0]);
+                const definition = getTypeDefinition(crate, inner.variant_inner[0]);
+                if (definition.kind !== "Reference") {
+                    throw new Error("Expected a reference type.");
+                }
+                return definition;
             }
         }
     }

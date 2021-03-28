@@ -4,9 +4,6 @@ use crate::tokens::*;
 use swc_common::{comments::SingleThreadedComments, BytePos, Span, Spanned};
 use swc_ecmascript::parser::token::TokenAndSpan;
 
-#[cfg(feature = "serialize")]
-use serde::Serialize;
-
 pub enum NodeOrToken<'a> {
   Node(Node<'a>),
   Token(&'a TokenAndSpan),
@@ -83,8 +80,6 @@ implement_root_node!(&Script<'a>);
 
 /// A Module or Script node.
 #[derive(Clone, Copy)]
-#[cfg_attr(feature = "serialize", derive(Serialize))]
-#[cfg_attr(feature = "serialize", serde(untagged))]
 pub enum Program<'a> {
   Module(&'a Module<'a>),
   Script(&'a Script<'a>),

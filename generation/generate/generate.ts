@@ -1,6 +1,15 @@
 import { AnalysisResult, AstEnumDefinition, AstEnumVariantDefinition, AstStructDefinition, TypeDefinition } from "../analyze/analysis_types.ts";
 import { createWriter } from "../utils/create_writer.ts";
-import { getIsForImpl, getIsReferenceType, writeHeader, writeType } from "../utils/generation_utils.ts";
+import {
+    getIsForImpl,
+    getIsReferenceType,
+    isOptionType,
+    isSwcAstType,
+    isSwcNodeEnumType,
+    isVecType,
+    writeHeader,
+    writeType,
+} from "../utils/generation_utils.ts";
 import { nameToSnakeCase } from "../utils/string_utils.ts";
 
 export function generate(analysisResult: AnalysisResult): string {
@@ -36,9 +45,6 @@ export function generate(analysisResult: AnalysisResult): string {
         writer.writeLine("use crate::comments::*;");
         writer.writeLine("use crate::tokens::*;");
         writer.writeLine("use crate::types::*;");
-        writer.blankLine();
-        writer.writeLine(`#[cfg(feature = "serialize")]`);
-        writer.writeLine("use serde::Serialize;");
         writer.blankLine();
     }
 
@@ -199,8 +205,6 @@ export function generate(analysisResult: AnalysisResult): string {
         function writeEnum() {
             writeDocs(enumDef.docs);
             writer.writeLine("#[derive(Copy, Clone)]");
-            writer.writeLine(`#[cfg_attr(feature = "serialize", derive(Serialize))]`);
-            writer.writeLine(`#[cfg_attr(feature = "serialize", serde(untagged))]`);
             writer.write(`pub enum ${enumDef.name}<'a>`).block(() => {
                 for (const variant of enumDef.variants) {
                     writer.newLineIfLastNot();
@@ -247,7 +251,7 @@ export function generate(analysisResult: AnalysisResult): string {
                 implementTraitMethod("into_node", "Node<'a>", false);
                 writer.blankLine();
                 implementTraitMethod("kind", "NodeKind", false, (fullName, variant) => {
-                    if (variant.tupleArg != null && isSwcStructType(variant.tupleArg)) {
+                    if (variant.tupleArg != null && isSwcAstType(analysisResult, variant.tupleArg)) {
                         const variantType = variant.tupleArg;
                         if (variantType.kind !== "Reference") {
                             throw new Error("Unhandled.");
@@ -266,7 +270,7 @@ export function generate(analysisResult: AnalysisResult): string {
                         for (const variant of enumDef.variants) {
                             const fullName = `${enumDef.name}::${variant.name}`;
                             writer.write(`${fullName}(node) => `);
-                            if (isSwcStructType(variant.tupleArg)) {
+                            if (isSwcAstType(analysisResult, variant.tupleArg)) {
                                 writer.write(`(*node).into(),`);
                             } else {
                                 writer.write(`node.into(),`);
@@ -350,8 +354,6 @@ export function generate(analysisResult: AnalysisResult): string {
         function writeStruct() {
             writeDocs(struct.docs);
             writer.writeLine("#[derive(Clone)]");
-            writer.writeLine(`#[cfg_attr(feature = "serialize", derive(Serialize))]`);
-            writer.writeLine(`#[cfg_attr(feature = "serialize", serde(into = "crate::generated_serialize::Serializable${struct.name}"))]`);
             writer.write(`pub struct ${struct.name}<'a>`).block(() => {
                 if (struct.parents.length > 0) {
                     if (struct.parents.length === 1) {
@@ -477,7 +479,7 @@ export function generate(analysisResult: AnalysisResult): string {
                 }
                 if (type.name === "Option") {
                     writer.write(`if let Some(child) = ${name}`);
-                    if (isSwcNodeEnumType(type.genericArgs[0]) || isVecType(type.genericArgs[0])) {
+                    if (isSwcNodeEnumType(analysisResult, type.genericArgs[0]) || isVecType(type.genericArgs[0])) {
                         writer.write(".as_ref()");
                     }
                     writer.block(() => {
@@ -491,14 +493,14 @@ export function generate(analysisResult: AnalysisResult): string {
                 } else {
                     writer.write(`children.push(`);
                     if (inVec) {
-                        if (isSwcStructType(type)) {
+                        if (isSwcAstType(analysisResult, type)) {
                             writer.write(`(*${name})`);
                         } else {
                             writer.write(name);
                         }
                     } else if (inOption) {
                         writer.write(name);
-                    } else if (isSwcNodeEnumType(type)) {
+                    } else if (isSwcNodeEnumType(analysisResult, type)) {
                         writer.write(`(&${name})`);
                     } else {
                         writer.write(name);
@@ -673,22 +675,6 @@ export function generate(analysisResult: AnalysisResult): string {
             }
             writer.write(`, bump)`);
         }
-    }
-
-    function isSwcNodeEnumType(type: TypeDefinition | undefined): boolean {
-        return type != null && type.kind === "Reference" && analysisResult.astEnums.some(e => e.name === type.name);
-    }
-
-    function isSwcStructType(type: TypeDefinition | undefined): boolean {
-        return type != null && type.kind === "Reference" && analysisResult.astStructs.some(s => s.name === type.name);
-    }
-
-    function isVecType(type: TypeDefinition | undefined): boolean {
-        return type != null && type.kind === "Reference" && type.name === "Vec";
-    }
-
-    function isOptionType(type: TypeDefinition | undefined): boolean {
-        return type != null && type.kind === "Reference" && type.name === "Option";
     }
 
     function writeDocs(docs: string | undefined) {

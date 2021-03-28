@@ -2,7 +2,9 @@ mod comments;
 #[allow(invalid_value)]
 mod generated;
 #[cfg(feature = "serialize")]
-mod generated_serialize;
+mod serialize;
+#[cfg(feature = "serialize")]
+mod serialize_generated;
 mod tokens;
 mod types;
 
@@ -12,7 +14,9 @@ pub use types::*;
 
 // temporary and for testing purposes...
 #[cfg(feature = "serialize")]
-pub use generated_serialize::{serialize_comments, serialize_token_and_spans};
+pub use serialize::serialize_program;
+#[cfg(feature = "serialize")]
+pub use serialize_generated::{serialize_comments, serialize_module, serialize_token_and_spans};
 
 // swc re-exports
 pub use swc_common::comments::{Comment, CommentKind};

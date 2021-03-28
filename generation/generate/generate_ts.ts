@@ -1,6 +1,6 @@
 import { AnalysisResult, DocableDefinition, EnumDefinition, PlainEnumDefinition, TypeDefinition } from "../analyze/analysis_types.ts";
 import { createWriter } from "../utils/create_writer.ts";
-import { writeHeader } from "../utils/generation_utils.ts";
+import { isOptionType, isVecType, writeHeader } from "../utils/generation_utils.ts";
 
 export function generateTypeScriptTypes(analysisResult: AnalysisResult): string {
     const writer = createWriter();
@@ -155,13 +155,13 @@ export function generateTypeScriptTypes(analysisResult: AnalysisResult): string 
                 }
                 break;
             case "Reference":
-                if (type.name === "Option") {
+                if (isOptionType(type)) {
                     if (type.genericArgs.length !== 1) {
                         throw new Error("Expected 1 type argument.");
                     }
                     writeType(type.genericArgs[0]);
                     writer.write(" | undefined");
-                } else if (type.name === "Vec") {
+                } else if (isVecType(type)) {
                     if (type.genericArgs.length !== 1) {
                         throw new Error("Expected 1 type argument.");
                     }

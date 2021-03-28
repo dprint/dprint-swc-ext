@@ -15,8 +15,7 @@
     "./swc",
     "./swc_ecma_ast.json",
     "**/*.generated.ts",
-    "./rs-lib/src/generated.rs",
-    "./rs-lib/src/generated_serialize.rs"
+    "./rs-lib/src/*generated.rs"
   ],
   "plugins": [
     "https://plugins.dprint.dev/typescript-0.42.0.wasm",

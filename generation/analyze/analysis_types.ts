@@ -23,7 +23,7 @@ export interface AstEnumDefinition extends NamedDefinition, DocableDefinition {
 }
 
 export interface AstEnumVariantDefinition extends NamedDefinition, DocableDefinition {
-    tupleArg: TypeDefinition;
+    tupleArg: TypeReferenceDefinition;
 }
 
 export interface StructFieldDefinition extends NamedDefinition, DocableDefinition {

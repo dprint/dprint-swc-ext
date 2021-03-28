@@ -1,7 +1,7 @@
-import { AnalysisResult, AstStructDefinition, EnumDefinition, TypeDefinition } from "../analyze/analysis_types.ts";
+import { AnalysisResult, AstEnumDefinition, AstStructDefinition, EnumDefinition, TypeDefinition } from "../analyze/analysis_types.ts";
 import { createWriter } from "../utils/create_writer.ts";
-import { getIsForImpl, writeHeader, writeType } from "../utils/generation_utils.ts";
-import { nameToSnakeCase, snakeCaseToCamel } from "../utils/string_utils.ts";
+import { isOptionType, isSwcAstType, isSwcNodeEnumType, isVecType, writeHeader } from "../utils/generation_utils.ts";
+import { nameToSnakeCase, snakeToCamelCase } from "../utils/string_utils.ts";
 
 export function generateSerialize(analysisResult: AnalysisResult): string {
     const writer = createWriter();
@@ -9,11 +9,14 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
     writeHeader(writer);
     writeUseDeclarations();
 
-    for (const struct of analysisResult.astStructs) {
+    for (const [i, struct] of analysisResult.astStructs.entries()) {
         writer.blankLine();
-        writeSerializableStruct(struct);
+        writeAstStructFunction(struct, i);
+    }
+
+    for (const enumDef of analysisResult.astEnums) {
         writer.blankLine();
-        writeFromImpl(struct);
+        writeAstEnumFunction(enumDef);
     }
 
     writer.blankLine();
@@ -26,63 +29,44 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
     return writer.toString();
 
     function writeUseDeclarations() {
-        writer.writeLine("use std::marker::PhantomData;");
         writer.writeLine("use std::io::{Error, Write};");
-        writer.writeLine("use serde::Serialize;");
         writer.writeLine("use serde_json::ser::{Formatter as JsonFormatter, to_string as to_json_string};");
-        writer.writeLine("use swc_common::{Span, Spanned, comments::{Comment, CommentKind, SingleThreadedCommentsMapInner}};");
+        writer.writeLine("use swc_common::{Spanned, comments::{Comment, CommentKind, SingleThreadedCommentsMapInner}};");
         writer.writeLine("use swc_ecmascript::parser::token::{BinOpToken, Keyword, Token, TokenAndSpan, Word};");
-        writer.writeLine("use crate::generated::*;");
+        writer.writeLine("use swc_ecmascript::ast::*;");
     }
 
-    function writeSerializableStruct(struct: AstStructDefinition) {
-        const implFields = struct.fields.filter(f => getIsForImpl(analysisResult, f.type));
-        const structFields = struct.fields.filter(f => !getIsForImpl(analysisResult, f.type) && f.name !== "span");
+    function writeAstStructFunction(struct: AstStructDefinition, index: number) {
+        writer.write(
+            `pub fn serialize_${nameToSnakeCase(struct.name)}(`
+                + `w: &mut impl Write, f: &mut impl JsonFormatter, node: &${struct.name}) -> Result<(), Error>`,
+        ).block(() => {
+            writeObject(() => {
+                writeObjectStrKey("kind", true);
+                writeObjectValue(() => writer.writeLine(`f.write_u32(w, ${index})?;`));
+                writeObjectStrKey("span", false);
+                writeObjectValue(() => writer.writeLine(`write!(w, "{}", to_json_string(&node.span())?)?;`));
 
-        writer.writeLine("#[derive(Serialize)]");
-        writer.writeLine(`#[serde(rename = "${struct.name}", rename_all = "camelCase", tag = "kind")]`);
-        writer.write(`pub struct Serializable${struct.name}<'a>`).block(() => {
-            writer.writeLine(`span: Span,`);
-
-            for (const field of implFields) {
-                writer.write(`${field.name}: `);
-                writeType(writer, analysisResult, field.type, false);
-                writer.write(",").newLine();
-            }
-
-            for (const field of structFields) {
-                writer.write(`${field.name}: `);
-                writeType(writer, analysisResult, field.type, true);
-                writer.write(",").newLine();
-            }
-
-            writer.newLine();
-            writer.writeLine("#[doc(hidden)]");
-            writer.writeLine("#[serde(skip)]");
-            writer.writeLine(`_phantom: PhantomData<&'a ()>,`);
+                for (const field of struct.fields.filter(f => f.name !== "span")) {
+                    writeObjectStrKey(snakeToCamelCase(field.name), false);
+                    writeObjectValue(() => writeTypeValueSerialization(`&node.${field.innerName}`, field.type));
+                }
+            });
+            writer.writeLine("Ok(())");
         });
     }
 
-    function writeFromImpl(struct: AstStructDefinition) {
-        const implFields = struct.fields.filter(f => getIsForImpl(analysisResult, f.type));
-        const structFields = struct.fields.filter(f => !getIsForImpl(analysisResult, f.type) && f.name !== "span");
-
-        writer.write(`impl<'a> From<${struct.name}<'a>> for Serializable${struct.name}<'a>`).block(() => {
-            writer.write(`fn from(orig: ${struct.name}<'a>) -> Self`).block(() => {
-                writer.write("Self").block(() => {
-                    writer.writeLine(`span: orig.span(),`);
-
-                    for (const field of implFields) {
-                        writer.writeLine(`${field.name}: orig.${field.name}().clone(),`);
-                    }
-
-                    for (const field of structFields) {
-                        writer.writeLine(`${field.name}: orig.${field.name},`);
-                    }
-
-                    writer.writeLine(`_phantom: PhantomData,`);
-                });
+    function writeAstEnumFunction(enumDef: AstEnumDefinition) {
+        writer.write(
+            `pub fn serialize_${nameToSnakeCase(enumDef.name)}(`
+                + `w: &mut impl Write, f: &mut impl JsonFormatter, node: &${enumDef.name}) -> Result<(), Error>`,
+        ).block(() => {
+            writer.write("match node").block(() => {
+                for (const variant of enumDef.variants) {
+                    writer.writeLine(`${enumDef.name}::${variant.name}(node) => serialize_${nameToSnakeCase(variant.tupleArg.name)}(w, f, node)?,`);
+                }
             });
+            writer.writeLine("Ok(())");
         });
     }
 
@@ -195,7 +179,7 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
                                     writer.writeLine(`f.write_u32(w, ${i})?;`);
                                 });
                                 for (const field of variant.fields) {
-                                    writeObjectStrKey(snakeCaseToCamel(field.name), false);
+                                    writeObjectStrKey(snakeToCamelCase(field.name), false);
                                     writeObjectValue(() => {
                                         writeTypeValueSerialization(`&${field.name}`, field.type);
                                     });
@@ -213,18 +197,41 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
 
     function writeTypeValueSerialization(name: string, type: TypeDefinition) {
         const customNames = new Set(["BinOpToken", "Word", "Keyword", "Token"]);
+
         if (type.kind === "Reference" && customNames.has(type.name)) {
             writer.writeLine(`serialize_${nameToSnakeCase(type.name)}(w, f, ${name})?;`);
         } else if (type.kind === "Reference" && type.name === "Error") {
             writer.writeLine(`panic!("Serializing an AST containing an Error is not currently supported.");`);
+        } else if (type.kind === "Reference" && isSwcAstType(analysisResult, type)) {
+            writer.writeLine(`serialize_${nameToSnakeCase(type.name)}(w, f, ${name})?;`);
+        } else if (type.kind === "Reference" && isSwcNodeEnumType(analysisResult, type)) {
+            writer.writeLine(`serialize_${nameToSnakeCase(type.name)}(w, f, ${name})?;`);
+        } else if (type.kind === "Reference" && isOptionType(type)) {
+            writer.write(`match ${name} `).inlineBlock(() => {
+                writer.write(`Some(value) => `).block(() => {
+                    writeTypeValueSerialization("value", type.genericArgs[0]);
+                });
+                writer.writeLine(`None => f.write_null(w)?,`);
+            });
+        } else if (type.kind === "Reference" && isVecType(type)) {
+            writeArray(() => {
+                writer.write(`for (i, item) in ${name.replace(/^&/, "")}.iter().enumerate() `).inlineBlock(() => {
+                    writeArrayValue(() => {
+                        writeTypeValueSerialization("item", type.genericArgs[0]);
+                    }, "i == 0");
+                });
+            });
         } else {
             writer.writeLine(`write!(w, "{}", to_json_string(${name})?)?;`);
         }
     }
 
     function writeCommentSerialization() {
+        writer.blankLine();
         writeCommentsSerializationFunction();
+        writer.blankLine();
         writeCommentVecSerializationFunction();
+        writer.blankLine();
         writeCommentSerializationFunction();
     }
 
@@ -290,7 +297,7 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
                 writeObjectStrKey("text", false);
                 writeObjectValue(() =>
                     writeString(() => {
-                        writer.writeLine("f.write_string_fragment(w, &comment.text);");
+                        writer.writeLine("f.write_string_fragment(w, &comment.text)?;");
                     })
                 );
                 // kind

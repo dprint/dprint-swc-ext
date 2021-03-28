@@ -16,7 +16,7 @@ export function nameToSnakeCase(name: string) {
     return snakeCaseName;
 }
 
-export function snakeCaseToCamel(name: string) {
+export function snakeToCamelCase(name: string) {
     const parts = name.split("_");
     return parts[0] + parts.slice(1).map(name => name[0].toUpperCase() + name.slice(1)).join("");
 }
