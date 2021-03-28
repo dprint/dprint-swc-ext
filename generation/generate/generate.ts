@@ -1,16 +1,7 @@
 import { AnalysisResult, AstEnumDefinition, AstEnumVariantDefinition, AstStructDefinition, TypeDefinition } from "../analyze/analysis_types.ts";
 import { createWriter } from "../utils/create_writer.ts";
-import {
-    getIsForImpl,
-    getIsReferenceType,
-    isOptionType,
-    isSwcAstType,
-    isSwcNodeEnumType,
-    isVecType,
-    writeHeader,
-    writeType,
-} from "../utils/generation_utils.ts";
 import { nameToSnakeCase } from "../utils/string_utils.ts";
+import { getIsForImpl, getIsReferenceType, isOptionType, isSwcAstType, isSwcNodeEnumType, isVecType, writeHeader, writeType } from "./helpers.ts";
 
 export function generate(analysisResult: AnalysisResult): string {
     const writer = createWriter();
@@ -433,19 +424,7 @@ export function generate(analysisResult: AnalysisResult): string {
                     writer.newLine();
                 });
                 writer.blankLine();
-
-                writer.write("fn children(&self) -> Vec<Node<'a>>").block(() => {
-                    if (structFields.length === 0) {
-                        writer.write("Vec::with_capacity(0)");
-                    } else {
-                        writer.writeLine(`let mut children = Vec::with_capacity(${getStructChildrenCapacityExpr()});`);
-                        for (const field of structFields) {
-                            writeAppendChild(field.type, `self.${field.name}`, false, false);
-                        }
-                        writer.write("children");
-                    }
-                    writer.newLine();
-                });
+                writeChildrenMethod();
                 writer.blankLine();
 
                 writer.write("fn into_node(&self) -> Node<'a>").block(() => {
@@ -473,85 +452,98 @@ export function generate(analysisResult: AnalysisResult): string {
                 });
             });
 
-            function writeAppendChild(type: TypeDefinition, name: string, inOption: boolean, inVec: boolean) {
-                if (type.kind === "Primitive") {
-                    throw new Error("Should not have analyzed a primitive type here.");
-                }
-                if (type.name === "Option") {
-                    writer.write(`if let Some(child) = ${name}`);
-                    if (isSwcNodeEnumType(analysisResult, type.genericArgs[0]) || isVecType(type.genericArgs[0])) {
-                        writer.write(".as_ref()");
-                    }
-                    writer.block(() => {
-                        writeAppendChild(type.genericArgs[0], "child", true, inVec);
-                    });
-                } else if (type.name === "Vec") {
-                    writer.write(`for child in ${name}.iter()`).block(() => {
-                        writeAppendChild(type.genericArgs[0], "child", false, true);
-                    });
-                    return `${name}.len()`;
-                } else {
-                    writer.write(`children.push(`);
-                    if (inVec) {
-                        if (isSwcAstType(analysisResult, type)) {
-                            writer.write(`(*${name})`);
-                        } else {
-                            writer.write(name);
-                        }
-                    } else if (inOption) {
-                        writer.write(name);
-                    } else if (isSwcNodeEnumType(analysisResult, type)) {
-                        writer.write(`(&${name})`);
+            function writeChildrenMethod() {
+                writer.write("fn children(&self) -> Vec<Node<'a>>").block(() => {
+                    if (structFields.length === 0) {
+                        writer.write("Vec::with_capacity(0)");
                     } else {
-                        writer.write(name);
-                    }
-                    writer.write(`.into());`).newLine();
-                }
-            }
-
-            function getStructChildrenCapacityExpr() {
-                return generateExpr(analyze());
-
-                function analyze() {
-                    let plainCount = 0;
-                    const exprs: string[] = [];
-                    for (const field of structFields) {
-                        const expr = getTypeCapacityExpr(field.type, `self.${field.name}`);
-                        if (expr === "1") {
-                            plainCount++;
-                        } else {
-                            exprs.push(expr);
+                        writer.writeLine(`let mut children = Vec::with_capacity(${getStructChildrenCapacityExpr()});`);
+                        for (const field of structFields) {
+                            writeAppendChild(field.type, `self.${field.name}`, false, false);
                         }
+                        writer.write("children");
                     }
-                    return { plainCount, exprs };
-                }
+                });
 
-                function getTypeCapacityExpr(type: TypeDefinition, name: string): string {
+                function writeAppendChild(type: TypeDefinition, name: string, inOption: boolean, inVec: boolean) {
                     if (type.kind === "Primitive") {
                         throw new Error("Should not have analyzed a primitive type here.");
                     }
-
-                    if (type.name === "Option") {
-                        return `match &${name} { Some(_value) => ${getTypeCapacityExpr(type.genericArgs[0], "_value")}, None => 0, }`;
-                    } else if (type.name === "Vec") {
-                        return `${name}.len()`;
+                    if (isOptionType(type)) {
+                        writer.write(`if let Some(child) = ${name}`);
+                        if (isSwcNodeEnumType(analysisResult, type.genericArgs[0]) || isVecType(type.genericArgs[0])) {
+                            writer.write(".as_ref()");
+                        }
+                        writer.block(() => {
+                            writeAppendChild(type.genericArgs[0], "child", true, inVec);
+                        });
+                    } else if (isVecType(type)) {
+                        writer.write(`for child in ${name}.iter()`).block(() => {
+                            writeAppendChild(type.genericArgs[0], "child", false, true);
+                        });
                     } else {
-                        return "1";
+                        writer.write(`children.push(`);
+                        if (inVec) {
+                            if (isSwcAstType(analysisResult, type)) {
+                                writer.write(`(*${name})`);
+                            } else {
+                                writer.write(name);
+                            }
+                        } else if (inOption) {
+                            writer.write(name);
+                        } else if (isSwcNodeEnumType(analysisResult, type)) {
+                            writer.write(`(&${name})`);
+                        } else {
+                            writer.write(name);
+                        }
+                        writer.write(`.into());`).newLine();
                     }
                 }
 
-                function generateExpr({ plainCount, exprs }: { plainCount: number; exprs: string[] }) {
-                    let finalExpr = "";
-                    if (plainCount > 0) {
-                        finalExpr = plainCount.toString();
-                    }
-                    for (const expr of exprs) {
-                        if (finalExpr.length > 0) {
-                            finalExpr += " + ";
+                function getStructChildrenCapacityExpr() {
+                    return generateExpr(analyze());
+
+                    function analyze() {
+                        let plainCount = 0;
+                        const exprs: string[] = [];
+                        for (const field of structFields) {
+                            const expr = getTypeCapacityExpr(field.type, `self.${field.name}`);
+                            if (expr === "1") {
+                                plainCount++;
+                            } else {
+                                exprs.push(expr);
+                            }
                         }
-                        finalExpr += expr;
+                        return { plainCount, exprs };
                     }
-                    return finalExpr;
+
+                    function getTypeCapacityExpr(type: TypeDefinition, name: string): string {
+                        if (type.kind === "Primitive") {
+                            throw new Error("Should not have analyzed a primitive type here.");
+                        }
+
+                        if (type.name === "Option") {
+                            return `match &${name} { Some(_value) => ${getTypeCapacityExpr(type.genericArgs[0], "_value")}, None => 0, }`;
+                        } else if (type.name === "Vec") {
+                            return `${name}.len()`;
+                        } else {
+                            return "1";
+                        }
+                    }
+
+                    function generateExpr({ plainCount, exprs }: { plainCount: number; exprs: string[] }) {
+                        let finalExpr = "";
+                        if (plainCount > 0) {
+                            finalExpr = plainCount.toString();
+                        }
+                        for (const expr of exprs) {
+                            if (finalExpr.length > 0) {
+                                finalExpr += " + ";
+                            }
+                            finalExpr += expr;
+                        }
+                        return finalExpr;
+                    }
                 }
             }
         }

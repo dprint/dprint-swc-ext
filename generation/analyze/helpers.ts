@@ -1,4 +1,4 @@
-import { TypeDefinition } from "./analysis_types.ts";
+import { NamedDefinition, TypeDefinition } from "./analysis_types.ts";
 import { Crate, EnumInner, Item, ItemSummary, ResolvedPathTypeInner, TypeInner } from "./doc_types.ts";
 
 export function* getEnumVariants(crate: Crate, item: Item) {
@@ -71,4 +71,8 @@ export function getTypeDefinition(crate: Crate, type: TypeInner): TypeDefinition
             return true;
         }
     }
+}
+
+export function sortNamedDefinitions(items: NamedDefinition[]) {
+    items.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
 }

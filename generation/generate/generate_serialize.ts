@@ -1,7 +1,7 @@
 import { AnalysisResult, AstEnumDefinition, AstStructDefinition, EnumDefinition, TypeDefinition } from "../analyze/analysis_types.ts";
 import { createWriter } from "../utils/create_writer.ts";
-import { isOptionType, isSwcAstType, isSwcNodeEnumType, isVecType, writeHeader } from "../utils/generation_utils.ts";
 import { nameToSnakeCase, snakeToCamelCase } from "../utils/string_utils.ts";
+import { isOptionType, isSwcAstType, isSwcNodeEnumType, isVecType, writeHeader } from "./helpers.ts";
 
 export function generateSerialize(analysisResult: AnalysisResult): string {
     const writer = createWriter();

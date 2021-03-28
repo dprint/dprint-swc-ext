@@ -490,6 +490,55 @@ export enum VarDeclKind {
   Const,
 }
 
+export enum BinOpToken {
+  /** `==` */
+  EqEq,
+  /** `!=` */
+  NotEq,
+  /** `===` */
+  EqEqEq,
+  /** `!==` */
+  NotEqEq,
+  /** `<` */
+  Lt,
+  /** `<=` */
+  LtEq,
+  /** `>` */
+  Gt,
+  /** `>=` */
+  GtEq,
+  /** `<<` */
+  LShift,
+  /** `>>` */
+  RShift,
+  /** `>>>` */
+  ZeroFillRShift,
+  /** `+` */
+  Add,
+  /** `-` */
+  Sub,
+  /** `*` */
+  Mul,
+  /** `/` */
+  Div,
+  /** `%` */
+  Mod,
+  /** `|` */
+  BitOr,
+  /** `^` */
+  BitXor,
+  /** `&` */
+  BitAnd,
+  /** `**` */
+  Exp,
+  /** `||` */
+  LogicalOr,
+  /** `&&` */
+  LogicalAnd,
+  /** `??` */
+  NullishCoalescing,
+}
+
 /** Keywords */
 export enum Keyword {
   /** Spec says this might be identifier. */
@@ -701,55 +750,6 @@ export interface TokenError {
   inner: Error;
 }
 
-export enum BinOpToken {
-  /** `==` */
-  EqEq,
-  /** `!=` */
-  NotEq,
-  /** `===` */
-  EqEqEq,
-  /** `!==` */
-  NotEqEq,
-  /** `<` */
-  Lt,
-  /** `<=` */
-  LtEq,
-  /** `>` */
-  Gt,
-  /** `>=` */
-  GtEq,
-  /** `<<` */
-  LShift,
-  /** `>>` */
-  RShift,
-  /** `>>>` */
-  ZeroFillRShift,
-  /** `+` */
-  Add,
-  /** `-` */
-  Sub,
-  /** `*` */
-  Mul,
-  /** `/` */
-  Div,
-  /** `%` */
-  Mod,
-  /** `|` */
-  BitOr,
-  /** `^` */
-  BitXor,
-  /** `&` */
-  BitAnd,
-  /** `**` */
-  Exp,
-  /** `||` */
-  LogicalOr,
-  /** `&&` */
-  LogicalAnd,
-  /** `??` */
-  NullishCoalescing,
-}
-
 export type Word =
   | WordKeyword
   | WordKind.Null
@@ -943,6 +943,17 @@ export class ArrayLit extends Node {
   kind!: NodeKind.ArrayLit;
   parent!: Node;
   elems!: Array<ExprOrSpread | undefined>;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.elems.length);
+    let i = 0;
+    for (const child of this.elems) {
+      if (child != null) {
+        children[i++] = child;
+      }
+    }
+    return children;
+  }
 }
 
 export class ArrayPat extends Node {
@@ -952,6 +963,20 @@ export class ArrayPat extends Node {
   /** Only in an ambient context */
   optional!: boolean;
   type_ann!: TsTypeAnn | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.elems.length + (this.type_ann == null ? 0 : 1));
+    let i = 0;
+    for (const child of this.elems) {
+      if (child != null) {
+        children[i++] = child;
+      }
+    }
+    if (this.type_ann != null) {
+      children[i++] = this.type_ann;
+    }
+    return children;
+  }
 }
 
 export class ArrowExpr extends Node {
@@ -963,6 +988,22 @@ export class ArrowExpr extends Node {
   is_generator!: boolean;
   type_params!: TsTypeParamDecl | undefined;
   return_type!: TsTypeAnn | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + this.params.length + (this.type_params == null ? 0 : 1) + (this.return_type == null ? 0 : 1));
+    let i = 0;
+    for (const child of this.params) {
+      children[i++] = child;
+    }
+    children[i++] = this.body;
+    if (this.type_params != null) {
+      children[i++] = this.type_params;
+    }
+    if (this.return_type != null) {
+      children[i++] = this.return_type;
+    }
+    return children;
+  }
 }
 
 export class AssignExpr extends Node {
@@ -971,6 +1012,14 @@ export class AssignExpr extends Node {
   op!: AssignOp;
   left!: PatOrExpr;
   right!: Expr;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.left;
+    children[i++] = this.right;
+    return children;
+  }
 }
 
 export class AssignPat extends Node {
@@ -979,6 +1028,17 @@ export class AssignPat extends Node {
   left!: Pat;
   right!: Expr;
   type_ann!: TsTypeAnn | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2 + (this.type_ann == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.left;
+    children[i++] = this.right;
+    if (this.type_ann != null) {
+      children[i++] = this.type_ann;
+    }
+    return children;
+  }
 }
 
 /** `{key}` or `{key = value}` */
@@ -987,6 +1047,16 @@ export class AssignPatProp extends Node {
   parent!: ObjectPat;
   key!: Ident;
   value!: Expr | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.value == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.key;
+    if (this.value != null) {
+      children[i++] = this.value;
+    }
+    return children;
+  }
 }
 
 export class AssignProp extends Node {
@@ -994,18 +1064,37 @@ export class AssignProp extends Node {
   parent!: ObjectLit;
   key!: Ident;
   value!: Expr;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.key;
+    children[i++] = this.value;
+    return children;
+  }
 }
 
 export class AwaitExpr extends Node {
   kind!: NodeKind.AwaitExpr;
   parent!: Node;
   arg!: Expr;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.arg;
+    return children;
+  }
 }
 
 export class BigInt extends Node {
   kind!: NodeKind.BigInt;
   parent!: Node;
   value!: BigIntValue;
+
+  getChildren(): Node[] {
+    return new Array(0);
+  }
 }
 
 export class BinExpr extends Node {
@@ -1014,6 +1103,14 @@ export class BinExpr extends Node {
   op!: BinaryOp;
   left!: Expr;
   right!: Expr;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.left;
+    children[i++] = this.right;
+    return children;
+  }
 }
 
 /** Identifer used as a pattern. */
@@ -1022,6 +1119,16 @@ export class BindingIdent extends Node {
   parent!: Node;
   id!: Ident;
   type_ann!: TsTypeAnn | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.type_ann == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.id;
+    if (this.type_ann != null) {
+      children[i++] = this.type_ann;
+    }
+    return children;
+  }
 }
 
 /** Use when only block statements are allowed. */
@@ -1029,18 +1136,40 @@ export class BlockStmt extends Node {
   kind!: NodeKind.BlockStmt;
   parent!: Node;
   stmts!: Array<Stmt>;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.stmts.length);
+    let i = 0;
+    for (const child of this.stmts) {
+      children[i++] = child;
+    }
+    return children;
+  }
 }
 
 export class Bool extends Node {
   kind!: NodeKind.Bool;
   parent!: Node;
   value!: boolean;
+
+  getChildren(): Node[] {
+    return new Array(0);
+  }
 }
 
 export class BreakStmt extends Node {
   kind!: NodeKind.BreakStmt;
   parent!: Node;
   label!: Ident | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array((this.label == null ? 0 : 1));
+    let i = 0;
+    if (this.label != null) {
+      children[i++] = this.label;
+    }
+    return children;
+  }
 }
 
 export class CallExpr extends Node {
@@ -1049,6 +1178,19 @@ export class CallExpr extends Node {
   callee!: ExprOrSuper;
   args!: Array<ExprOrSpread>;
   type_args!: TsTypeParamInstantiation | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + this.args.length + (this.type_args == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.callee;
+    for (const child of this.args) {
+      children[i++] = child;
+    }
+    if (this.type_args != null) {
+      children[i++] = this.type_args;
+    }
+    return children;
+  }
 }
 
 export class CatchClause extends Node {
@@ -1062,6 +1204,16 @@ export class CatchClause extends Node {
    */
   param!: Pat | undefined;
   body!: BlockStmt;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.param == null ? 0 : 1));
+    let i = 0;
+    if (this.param != null) {
+      children[i++] = this.param;
+    }
+    children[i++] = this.body;
+    return children;
+  }
 }
 
 export class Class extends Node {
@@ -1076,6 +1228,30 @@ export class Class extends Node {
   super_type_params!: TsTypeParamInstantiation | undefined;
   /** Typescript extension. */
   implements!: Array<TsExprWithTypeArgs>;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.decorators.length + this.body.length + (this.super_class == null ? 0 : 1) + (this.type_params == null ? 0 : 1) + (this.super_type_params == null ? 0 : 1) + this.implements.length);
+    let i = 0;
+    for (const child of this.decorators) {
+      children[i++] = child;
+    }
+    for (const child of this.body) {
+      children[i++] = child;
+    }
+    if (this.super_class != null) {
+      children[i++] = this.super_class;
+    }
+    if (this.type_params != null) {
+      children[i++] = this.type_params;
+    }
+    if (this.super_type_params != null) {
+      children[i++] = this.super_type_params;
+    }
+    for (const child of this.implements) {
+      children[i++] = child;
+    }
+    return children;
+  }
 }
 
 export class ClassDecl extends Node {
@@ -1084,6 +1260,14 @@ export class ClassDecl extends Node {
   ident!: Ident;
   declare!: boolean;
   class!: Class;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.ident;
+    children[i++] = this.class;
+    return children;
+  }
 }
 
 /** Class expression. */
@@ -1092,6 +1276,16 @@ export class ClassExpr extends Node {
   parent!: Node;
   ident!: Ident | undefined;
   class!: Class;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.ident == null ? 0 : 1));
+    let i = 0;
+    if (this.ident != null) {
+      children[i++] = this.ident;
+    }
+    children[i++] = this.class;
+    return children;
+  }
 }
 
 export class ClassMethod extends Node {
@@ -1106,6 +1300,14 @@ export class ClassMethod extends Node {
   /** Typescript extension. */
   is_abstract!: boolean;
   is_optional!: boolean;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.key;
+    children[i++] = this.function;
+    return children;
+  }
 }
 
 export class ClassProp extends Node {
@@ -1125,12 +1327,35 @@ export class ClassProp extends Node {
   readonly!: boolean;
   declare!: boolean;
   definite!: boolean;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.value == null ? 0 : 1) + (this.type_ann == null ? 0 : 1) + this.decorators.length);
+    let i = 0;
+    children[i++] = this.key;
+    if (this.value != null) {
+      children[i++] = this.value;
+    }
+    if (this.type_ann != null) {
+      children[i++] = this.type_ann;
+    }
+    for (const child of this.decorators) {
+      children[i++] = child;
+    }
+    return children;
+  }
 }
 
 export class ComputedPropName extends Node {
   kind!: NodeKind.ComputedPropName;
   parent!: Node;
   expr!: Expr;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.expr;
+    return children;
+  }
 }
 
 export class CondExpr extends Node {
@@ -1139,6 +1364,15 @@ export class CondExpr extends Node {
   test!: Expr;
   cons!: Expr;
   alt!: Expr;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(3);
+    let i = 0;
+    children[i++] = this.test;
+    children[i++] = this.cons;
+    children[i++] = this.alt;
+    return children;
+  }
 }
 
 export class Constructor extends Node {
@@ -1149,23 +1383,56 @@ export class Constructor extends Node {
   body!: BlockStmt | undefined;
   accessibility!: Accessibility | undefined;
   is_optional!: boolean;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + this.params.length + (this.body == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.key;
+    for (const child of this.params) {
+      children[i++] = child;
+    }
+    if (this.body != null) {
+      children[i++] = this.body;
+    }
+    return children;
+  }
 }
 
 export class ContinueStmt extends Node {
   kind!: NodeKind.ContinueStmt;
   parent!: Node;
   label!: Ident | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array((this.label == null ? 0 : 1));
+    let i = 0;
+    if (this.label != null) {
+      children[i++] = this.label;
+    }
+    return children;
+  }
 }
 
 export class DebuggerStmt extends Node {
   kind!: NodeKind.DebuggerStmt;
   parent!: Node;
+
+  getChildren(): Node[] {
+    return new Array(0);
+  }
 }
 
 export class Decorator extends Node {
   kind!: NodeKind.Decorator;
   parent!: Node;
   expr!: Expr;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.expr;
+    return children;
+  }
 }
 
 export class DoWhileStmt extends Node {
@@ -1173,11 +1440,23 @@ export class DoWhileStmt extends Node {
   parent!: Node;
   test!: Expr;
   body!: Stmt;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.test;
+    children[i++] = this.body;
+    return children;
+  }
 }
 
 export class EmptyStmt extends Node {
   kind!: NodeKind.EmptyStmt;
   parent!: Node;
+
+  getChildren(): Node[] {
+    return new Array(0);
+  }
 }
 
 /** `export * from 'mod'` */
@@ -1187,6 +1466,16 @@ export class ExportAll extends Node {
     | TsModuleBlock;
   src!: Str;
   asserts!: ObjectLit | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.asserts == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.src;
+    if (this.asserts != null) {
+      children[i++] = this.asserts;
+    }
+    return children;
+  }
 }
 
 export class ExportDecl extends Node {
@@ -1194,6 +1483,13 @@ export class ExportDecl extends Node {
   parent!: Module
     | TsModuleBlock;
   decl!: Decl;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.decl;
+    return children;
+  }
 }
 
 export class ExportDefaultDecl extends Node {
@@ -1201,6 +1497,13 @@ export class ExportDefaultDecl extends Node {
   parent!: Module
     | TsModuleBlock;
   decl!: DefaultDecl;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.decl;
+    return children;
+  }
 }
 
 export class ExportDefaultExpr extends Node {
@@ -1208,12 +1511,26 @@ export class ExportDefaultExpr extends Node {
   parent!: Module
     | TsModuleBlock;
   expr!: Expr;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.expr;
+    return children;
+  }
 }
 
 export class ExportDefaultSpecifier extends Node {
   kind!: NodeKind.ExportDefaultSpecifier;
   parent!: NamedExport;
   exported!: Ident;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.exported;
+    return children;
+  }
 }
 
 export class ExportNamedSpecifier extends Node {
@@ -1223,6 +1540,16 @@ export class ExportNamedSpecifier extends Node {
   orig!: Ident;
   /** `Some(bar)` in `export { foo as bar }` */
   exported!: Ident | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.exported == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.orig;
+    if (this.exported != null) {
+      children[i++] = this.exported;
+    }
+    return children;
+  }
 }
 
 /** `export * as foo from 'src';` */
@@ -1230,6 +1557,13 @@ export class ExportNamespaceSpecifier extends Node {
   kind!: NodeKind.ExportNamespaceSpecifier;
   parent!: NamedExport;
   name!: Ident;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.name;
+    return children;
+  }
 }
 
 export class ExprOrSpread extends Node {
@@ -1239,12 +1573,26 @@ export class ExprOrSpread extends Node {
     | NewExpr;
   spread!: Span | undefined;
   expr!: Expr;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.expr;
+    return children;
+  }
 }
 
 export class ExprStmt extends Node {
   kind!: NodeKind.ExprStmt;
   parent!: Node;
   expr!: Expr;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.expr;
+    return children;
+  }
 }
 
 export class FnDecl extends Node {
@@ -1253,6 +1601,14 @@ export class FnDecl extends Node {
   ident!: Ident;
   declare!: boolean;
   function!: Function;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.ident;
+    children[i++] = this.function;
+    return children;
+  }
 }
 
 /** Function expression. */
@@ -1261,6 +1617,16 @@ export class FnExpr extends Node {
   parent!: Node;
   ident!: Ident | undefined;
   function!: Function;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.ident == null ? 0 : 1));
+    let i = 0;
+    if (this.ident != null) {
+      children[i++] = this.ident;
+    }
+    children[i++] = this.function;
+    return children;
+  }
 }
 
 export class ForInStmt extends Node {
@@ -1269,6 +1635,15 @@ export class ForInStmt extends Node {
   left!: VarDeclOrPat;
   right!: Expr;
   body!: Stmt;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(3);
+    let i = 0;
+    children[i++] = this.left;
+    children[i++] = this.right;
+    children[i++] = this.body;
+    return children;
+  }
 }
 
 export class ForOfStmt extends Node {
@@ -1285,6 +1660,15 @@ export class ForOfStmt extends Node {
   left!: VarDeclOrPat;
   right!: Expr;
   body!: Stmt;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(3);
+    let i = 0;
+    children[i++] = this.left;
+    children[i++] = this.right;
+    children[i++] = this.body;
+    return children;
+  }
 }
 
 export class ForStmt extends Node {
@@ -1294,6 +1678,22 @@ export class ForStmt extends Node {
   test!: Expr | undefined;
   update!: Expr | undefined;
   body!: Stmt;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.init == null ? 0 : 1) + (this.test == null ? 0 : 1) + (this.update == null ? 0 : 1));
+    let i = 0;
+    if (this.init != null) {
+      children[i++] = this.init;
+    }
+    if (this.test != null) {
+      children[i++] = this.test;
+    }
+    if (this.update != null) {
+      children[i++] = this.update;
+    }
+    children[i++] = this.body;
+    return children;
+  }
 }
 
 /** Common parts of function and method. */
@@ -1309,6 +1709,27 @@ export class Function extends Node {
   is_async!: boolean;
   type_params!: TsTypeParamDecl | undefined;
   return_type!: TsTypeAnn | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.params.length + this.decorators.length + (this.body == null ? 0 : 1) + (this.type_params == null ? 0 : 1) + (this.return_type == null ? 0 : 1));
+    let i = 0;
+    for (const child of this.params) {
+      children[i++] = child;
+    }
+    for (const child of this.decorators) {
+      children[i++] = child;
+    }
+    if (this.body != null) {
+      children[i++] = this.body;
+    }
+    if (this.type_params != null) {
+      children[i++] = this.type_params;
+    }
+    if (this.return_type != null) {
+      children[i++] = this.return_type;
+    }
+    return children;
+  }
 }
 
 export class GetterProp extends Node {
@@ -1317,6 +1738,19 @@ export class GetterProp extends Node {
   key!: PropName;
   type_ann!: TsTypeAnn | undefined;
   body!: BlockStmt | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.type_ann == null ? 0 : 1) + (this.body == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.key;
+    if (this.type_ann != null) {
+      children[i++] = this.type_ann;
+    }
+    if (this.body != null) {
+      children[i++] = this.body;
+    }
+    return children;
+  }
 }
 
 /** Ident with span. */
@@ -1326,6 +1760,10 @@ export class Ident extends Node {
   sym!: JsWord;
   /** TypeScript only. Used in case of an optional parameter. */
   optional!: boolean;
+
+  getChildren(): Node[] {
+    return new Array(0);
+  }
 }
 
 export class IfStmt extends Node {
@@ -1334,6 +1772,17 @@ export class IfStmt extends Node {
   test!: Expr;
   cons!: Stmt;
   alt!: Stmt | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2 + (this.alt == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.test;
+    children[i++] = this.cons;
+    if (this.alt != null) {
+      children[i++] = this.alt;
+    }
+    return children;
+  }
 }
 
 export class ImportDecl extends Node {
@@ -1344,6 +1793,19 @@ export class ImportDecl extends Node {
   src!: Str;
   type_only!: boolean;
   asserts!: ObjectLit | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + this.specifiers.length + (this.asserts == null ? 0 : 1));
+    let i = 0;
+    for (const child of this.specifiers) {
+      children[i++] = child;
+    }
+    children[i++] = this.src;
+    if (this.asserts != null) {
+      children[i++] = this.asserts;
+    }
+    return children;
+  }
 }
 
 /** e.g. `import foo from 'mod.js'` */
@@ -1351,6 +1813,13 @@ export class ImportDefaultSpecifier extends Node {
   kind!: NodeKind.ImportDefaultSpecifier;
   parent!: ImportDecl;
   local!: Ident;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.local;
+    return children;
+  }
 }
 
 /**
@@ -1363,6 +1832,16 @@ export class ImportNamedSpecifier extends Node {
   parent!: ImportDecl;
   local!: Ident;
   imported!: Ident | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.imported == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.local;
+    if (this.imported != null) {
+      children[i++] = this.imported;
+    }
+    return children;
+  }
 }
 
 /** e.g. `import * as foo from 'mod.js'`. */
@@ -1370,12 +1849,23 @@ export class ImportStarAsSpecifier extends Node {
   kind!: NodeKind.ImportStarAsSpecifier;
   parent!: ImportDecl;
   local!: Ident;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.local;
+    return children;
+  }
 }
 
 /** Represents a invalid node. */
 export class Invalid extends Node {
   kind!: NodeKind.Invalid;
   parent!: Node;
+
+  getChildren(): Node[] {
+    return new Array(0);
+  }
 }
 
 export class JSXAttr extends Node {
@@ -1384,17 +1874,38 @@ export class JSXAttr extends Node {
   name!: JSXAttrName;
   /** Babel uses Expr instead of JSXAttrValue */
   value!: JSXAttrValue | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.value == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.name;
+    if (this.value != null) {
+      children[i++] = this.value;
+    }
+    return children;
+  }
 }
 
 export class JSXClosingElement extends Node {
   kind!: NodeKind.JSXClosingElement;
   parent!: JSXElement;
   name!: JSXElementName;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.name;
+    return children;
+  }
 }
 
 export class JSXClosingFragment extends Node {
   kind!: NodeKind.JSXClosingFragment;
   parent!: JSXFragment;
+
+  getChildren(): Node[] {
+    return new Array(0);
+  }
 }
 
 export class JSXElement extends Node {
@@ -1403,11 +1914,28 @@ export class JSXElement extends Node {
   opening!: JSXOpeningElement;
   children!: Array<JSXElementChild>;
   closing!: JSXClosingElement | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + this.children.length + (this.closing == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.opening;
+    for (const child of this.children) {
+      children[i++] = child;
+    }
+    if (this.closing != null) {
+      children[i++] = this.closing;
+    }
+    return children;
+  }
 }
 
 export class JSXEmptyExpr extends Node {
   kind!: NodeKind.JSXEmptyExpr;
   parent!: Node;
+
+  getChildren(): Node[] {
+    return new Array(0);
+  }
 }
 
 export class JSXExprContainer extends Node {
@@ -1416,6 +1944,13 @@ export class JSXExprContainer extends Node {
     | JSXElement
     | JSXFragment;
   expr!: JSXExpr;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.expr;
+    return children;
+  }
 }
 
 export class JSXFragment extends Node {
@@ -1424,6 +1959,17 @@ export class JSXFragment extends Node {
   opening!: JSXOpeningFragment;
   children!: Array<JSXElementChild>;
   closing!: JSXClosingFragment;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2 + this.children.length);
+    let i = 0;
+    children[i++] = this.opening;
+    for (const child of this.children) {
+      children[i++] = child;
+    }
+    children[i++] = this.closing;
+    return children;
+  }
 }
 
 export class JSXMemberExpr extends Node {
@@ -1431,6 +1977,14 @@ export class JSXMemberExpr extends Node {
   parent!: Node;
   obj!: JSXObject;
   prop!: Ident;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.obj;
+    children[i++] = this.prop;
+    return children;
+  }
 }
 
 /** XML-based namespace syntax: */
@@ -1439,6 +1993,14 @@ export class JSXNamespacedName extends Node {
   parent!: Node;
   ns!: Ident;
   name!: Ident;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.ns;
+    children[i++] = this.name;
+    return children;
+  }
 }
 
 export class JSXOpeningElement extends Node {
@@ -1452,11 +2014,28 @@ export class JSXOpeningElement extends Node {
    * misleading
    */
   type_args!: TsTypeParamInstantiation | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + this.attrs.length + (this.type_args == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.name;
+    for (const child of this.attrs) {
+      children[i++] = child;
+    }
+    if (this.type_args != null) {
+      children[i++] = this.type_args;
+    }
+    return children;
+  }
 }
 
 export class JSXOpeningFragment extends Node {
   kind!: NodeKind.JSXOpeningFragment;
   parent!: JSXFragment;
+
+  getChildren(): Node[] {
+    return new Array(0);
+  }
 }
 
 export class JSXSpreadChild extends Node {
@@ -1464,6 +2043,13 @@ export class JSXSpreadChild extends Node {
   parent!: JSXElement
     | JSXFragment;
   expr!: Expr;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.expr;
+    return children;
+  }
 }
 
 export class JSXText extends Node {
@@ -1471,6 +2057,10 @@ export class JSXText extends Node {
   parent!: Node;
   value!: JsWord;
   raw!: JsWord;
+
+  getChildren(): Node[] {
+    return new Array(0);
+  }
 }
 
 /** `{key: value}` */
@@ -1479,6 +2069,14 @@ export class KeyValuePatProp extends Node {
   parent!: ObjectPat;
   key!: PropName;
   value!: Pat;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.key;
+    children[i++] = this.value;
+    return children;
+  }
 }
 
 export class KeyValueProp extends Node {
@@ -1486,6 +2084,14 @@ export class KeyValueProp extends Node {
   parent!: ObjectLit;
   key!: PropName;
   value!: Expr;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.key;
+    children[i++] = this.value;
+    return children;
+  }
 }
 
 export class LabeledStmt extends Node {
@@ -1493,6 +2099,14 @@ export class LabeledStmt extends Node {
   parent!: Node;
   label!: Ident;
   body!: Stmt;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.label;
+    children[i++] = this.body;
+    return children;
+  }
 }
 
 export class MemberExpr extends Node {
@@ -1501,6 +2115,14 @@ export class MemberExpr extends Node {
   obj!: ExprOrSuper;
   prop!: Expr;
   computed!: boolean;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.obj;
+    children[i++] = this.prop;
+    return children;
+  }
 }
 
 export class MetaPropExpr extends Node {
@@ -1508,6 +2130,14 @@ export class MetaPropExpr extends Node {
   parent!: Node;
   meta!: Ident;
   prop!: Ident;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.meta;
+    children[i++] = this.prop;
+    return children;
+  }
 }
 
 export class MethodProp extends Node {
@@ -1515,12 +2145,29 @@ export class MethodProp extends Node {
   parent!: ObjectLit;
   key!: PropName;
   function!: Function;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.key;
+    children[i++] = this.function;
+    return children;
+  }
 }
 
 export class Module extends Node {
   kind!: NodeKind.Module;
   body!: Array<ModuleItem>;
   shebang!: JsWord | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.body.length);
+    let i = 0;
+    for (const child of this.body) {
+      children[i++] = child;
+    }
+    return children;
+  }
 }
 
 /**
@@ -1535,6 +2182,21 @@ export class NamedExport extends Node {
   src!: Str | undefined;
   type_only!: boolean;
   asserts!: ObjectLit | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.specifiers.length + (this.src == null ? 0 : 1) + (this.asserts == null ? 0 : 1));
+    let i = 0;
+    for (const child of this.specifiers) {
+      children[i++] = child;
+    }
+    if (this.src != null) {
+      children[i++] = this.src;
+    }
+    if (this.asserts != null) {
+      children[i++] = this.asserts;
+    }
+    return children;
+  }
 }
 
 export class NewExpr extends Node {
@@ -1543,11 +2205,30 @@ export class NewExpr extends Node {
   callee!: Expr;
   args!: Array<ExprOrSpread> | undefined;
   type_args!: TsTypeParamInstantiation | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.args == null ? 0 : this.args.length) + (this.type_args == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.callee;
+    if (this.args != null) {
+      for (const child of this.args) {
+        children[i++] = child;
+      }
+    }
+    if (this.type_args != null) {
+      children[i++] = this.type_args;
+    }
+    return children;
+  }
 }
 
 export class Null extends Node {
   kind!: NodeKind.Null;
   parent!: Node;
+
+  getChildren(): Node[] {
+    return new Array(0);
+  }
 }
 
 export class Number extends Node {
@@ -1559,6 +2240,10 @@ export class Number extends Node {
    * If you store `NaN` in this field, a hash map will behave strangely.
    */
   value!: number;
+
+  getChildren(): Node[] {
+    return new Array(0);
+  }
 }
 
 /** Object literal. */
@@ -1566,6 +2251,15 @@ export class ObjectLit extends Node {
   kind!: NodeKind.ObjectLit;
   parent!: Node;
   props!: Array<PropOrSpread>;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.props.length);
+    let i = 0;
+    for (const child of this.props) {
+      children[i++] = child;
+    }
+    return children;
+  }
 }
 
 export class ObjectPat extends Node {
@@ -1575,6 +2269,18 @@ export class ObjectPat extends Node {
   /** Only in an ambient context */
   optional!: boolean;
   type_ann!: TsTypeAnn | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.props.length + (this.type_ann == null ? 0 : 1));
+    let i = 0;
+    for (const child of this.props) {
+      children[i++] = child;
+    }
+    if (this.type_ann != null) {
+      children[i++] = this.type_ann;
+    }
+    return children;
+  }
 }
 
 export class OptChainExpr extends Node {
@@ -1582,6 +2288,13 @@ export class OptChainExpr extends Node {
   parent!: Node;
   question_dot_token!: Span;
   expr!: Expr;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.expr;
+    return children;
+  }
 }
 
 export class Param extends Node {
@@ -1590,12 +2303,29 @@ export class Param extends Node {
     | Function;
   decorators!: Array<Decorator>;
   pat!: Pat;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + this.decorators.length);
+    let i = 0;
+    for (const child of this.decorators) {
+      children[i++] = child;
+    }
+    children[i++] = this.pat;
+    return children;
+  }
 }
 
 export class ParenExpr extends Node {
   kind!: NodeKind.ParenExpr;
   parent!: Node;
   expr!: Expr;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.expr;
+    return children;
+  }
 }
 
 export class PrivateMethod extends Node {
@@ -1610,12 +2340,27 @@ export class PrivateMethod extends Node {
   /** Typescript extension. */
   is_abstract!: boolean;
   is_optional!: boolean;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.key;
+    children[i++] = this.function;
+    return children;
+  }
 }
 
 export class PrivateName extends Node {
   kind!: NodeKind.PrivateName;
   parent!: Node;
   id!: Ident;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.id;
+    return children;
+  }
 }
 
 export class PrivateProp extends Node {
@@ -1634,6 +2379,22 @@ export class PrivateProp extends Node {
   is_optional!: boolean;
   readonly!: boolean;
   definite!: boolean;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.value == null ? 0 : 1) + (this.type_ann == null ? 0 : 1) + this.decorators.length);
+    let i = 0;
+    children[i++] = this.key;
+    if (this.value != null) {
+      children[i++] = this.value;
+    }
+    if (this.type_ann != null) {
+      children[i++] = this.type_ann;
+    }
+    for (const child of this.decorators) {
+      children[i++] = child;
+    }
+    return children;
+  }
 }
 
 export class Regex extends Node {
@@ -1641,6 +2402,10 @@ export class Regex extends Node {
   parent!: Node;
   exp!: JsWord;
   flags!: JsWord;
+
+  getChildren(): Node[] {
+    return new Array(0);
+  }
 }
 
 /** EsTree `RestElement` */
@@ -1650,24 +2415,61 @@ export class RestPat extends Node {
   dot3_token!: Span;
   arg!: Pat;
   type_ann!: TsTypeAnn | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.type_ann == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.arg;
+    if (this.type_ann != null) {
+      children[i++] = this.type_ann;
+    }
+    return children;
+  }
 }
 
 export class ReturnStmt extends Node {
   kind!: NodeKind.ReturnStmt;
   parent!: Node;
   arg!: Expr | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array((this.arg == null ? 0 : 1));
+    let i = 0;
+    if (this.arg != null) {
+      children[i++] = this.arg;
+    }
+    return children;
+  }
 }
 
 export class Script extends Node {
   kind!: NodeKind.Script;
   body!: Array<Stmt>;
   shebang!: JsWord | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.body.length);
+    let i = 0;
+    for (const child of this.body) {
+      children[i++] = child;
+    }
+    return children;
+  }
 }
 
 export class SeqExpr extends Node {
   kind!: NodeKind.SeqExpr;
   parent!: Node;
   exprs!: Array<Expr>;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.exprs.length);
+    let i = 0;
+    for (const child of this.exprs) {
+      children[i++] = child;
+    }
+    return children;
+  }
 }
 
 export class SetterProp extends Node {
@@ -1676,6 +2478,17 @@ export class SetterProp extends Node {
   key!: PropName;
   param!: Pat;
   body!: BlockStmt | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2 + (this.body == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.key;
+    children[i++] = this.param;
+    if (this.body != null) {
+      children[i++] = this.body;
+    }
+    return children;
+  }
 }
 
 export class SpreadElement extends Node {
@@ -1684,6 +2497,13 @@ export class SpreadElement extends Node {
     | ObjectLit;
   dot3_token!: Span;
   expr!: Expr;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.expr;
+    return children;
+  }
 }
 
 export class Str extends Node {
@@ -1693,12 +2513,20 @@ export class Str extends Node {
   /** This includes line escape. */
   has_escape!: boolean;
   str_kind!: StrKind;
+
+  getChildren(): Node[] {
+    return new Array(0);
+  }
 }
 
 export class Super extends Node {
   kind!: NodeKind.Super;
   parent!: CallExpr
     | MemberExpr;
+
+  getChildren(): Node[] {
+    return new Array(0);
+  }
 }
 
 export class SwitchCase extends Node {
@@ -1707,6 +2535,18 @@ export class SwitchCase extends Node {
   /** None for `default:` */
   test!: Expr | undefined;
   cons!: Array<Stmt>;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array((this.test == null ? 0 : 1) + this.cons.length);
+    let i = 0;
+    if (this.test != null) {
+      children[i++] = this.test;
+    }
+    for (const child of this.cons) {
+      children[i++] = child;
+    }
+    return children;
+  }
 }
 
 export class SwitchStmt extends Node {
@@ -1714,6 +2554,16 @@ export class SwitchStmt extends Node {
   parent!: Node;
   discriminant!: Expr;
   cases!: Array<SwitchCase>;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + this.cases.length);
+    let i = 0;
+    children[i++] = this.discriminant;
+    for (const child of this.cases) {
+      children[i++] = child;
+    }
+    return children;
+  }
 }
 
 export class TaggedTpl extends Node {
@@ -1723,17 +2573,44 @@ export class TaggedTpl extends Node {
   exprs!: Array<Expr>;
   quasis!: Array<TplElement>;
   type_params!: TsTypeParamInstantiation | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + this.exprs.length + this.quasis.length + (this.type_params == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.tag;
+    for (const child of this.exprs) {
+      children[i++] = child;
+    }
+    for (const child of this.quasis) {
+      children[i++] = child;
+    }
+    if (this.type_params != null) {
+      children[i++] = this.type_params;
+    }
+    return children;
+  }
 }
 
 export class ThisExpr extends Node {
   kind!: NodeKind.ThisExpr;
   parent!: Node;
+
+  getChildren(): Node[] {
+    return new Array(0);
+  }
 }
 
 export class ThrowStmt extends Node {
   kind!: NodeKind.ThrowStmt;
   parent!: Node;
   arg!: Expr;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.arg;
+    return children;
+  }
 }
 
 export class Tpl extends Node {
@@ -1741,6 +2618,18 @@ export class Tpl extends Node {
   parent!: Node;
   exprs!: Array<Expr>;
   quasis!: Array<TplElement>;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.exprs.length + this.quasis.length);
+    let i = 0;
+    for (const child of this.exprs) {
+      children[i++] = child;
+    }
+    for (const child of this.quasis) {
+      children[i++] = child;
+    }
+    return children;
+  }
 }
 
 export class TplElement extends Node {
@@ -1751,6 +2640,16 @@ export class TplElement extends Node {
   tail!: boolean;
   cooked!: Str | undefined;
   raw!: Str;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.cooked == null ? 0 : 1));
+    let i = 0;
+    if (this.cooked != null) {
+      children[i++] = this.cooked;
+    }
+    children[i++] = this.raw;
+    return children;
+  }
 }
 
 export class TryStmt extends Node {
@@ -1759,12 +2658,32 @@ export class TryStmt extends Node {
   block!: BlockStmt;
   handler!: CatchClause | undefined;
   finalizer!: BlockStmt | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.handler == null ? 0 : 1) + (this.finalizer == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.block;
+    if (this.handler != null) {
+      children[i++] = this.handler;
+    }
+    if (this.finalizer != null) {
+      children[i++] = this.finalizer;
+    }
+    return children;
+  }
 }
 
 export class TsArrayType extends Node {
   kind!: NodeKind.TsArrayType;
   parent!: Node;
   elem_type!: TsType;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.elem_type;
+    return children;
+  }
 }
 
 export class TsAsExpr extends Node {
@@ -1772,6 +2691,14 @@ export class TsAsExpr extends Node {
   parent!: Node;
   expr!: Expr;
   type_ann!: TsType;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.expr;
+    children[i++] = this.type_ann;
+    return children;
+  }
 }
 
 export class TsCallSignatureDecl extends Node {
@@ -1781,6 +2708,21 @@ export class TsCallSignatureDecl extends Node {
   params!: Array<TsFnParam>;
   type_ann!: TsTypeAnn | undefined;
   type_params!: TsTypeParamDecl | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.params.length + (this.type_ann == null ? 0 : 1) + (this.type_params == null ? 0 : 1));
+    let i = 0;
+    for (const child of this.params) {
+      children[i++] = child;
+    }
+    if (this.type_ann != null) {
+      children[i++] = this.type_ann;
+    }
+    if (this.type_params != null) {
+      children[i++] = this.type_params;
+    }
+    return children;
+  }
 }
 
 export class TsConditionalType extends Node {
@@ -1790,12 +2732,29 @@ export class TsConditionalType extends Node {
   extends_type!: TsType;
   true_type!: TsType;
   false_type!: TsType;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(4);
+    let i = 0;
+    children[i++] = this.check_type;
+    children[i++] = this.extends_type;
+    children[i++] = this.true_type;
+    children[i++] = this.false_type;
+    return children;
+  }
 }
 
 export class TsConstAssertion extends Node {
   kind!: NodeKind.TsConstAssertion;
   parent!: Node;
   expr!: Expr;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.expr;
+    return children;
+  }
 }
 
 export class TsConstructSignatureDecl extends Node {
@@ -1805,6 +2764,21 @@ export class TsConstructSignatureDecl extends Node {
   params!: Array<TsFnParam>;
   type_ann!: TsTypeAnn | undefined;
   type_params!: TsTypeParamDecl | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.params.length + (this.type_ann == null ? 0 : 1) + (this.type_params == null ? 0 : 1));
+    let i = 0;
+    for (const child of this.params) {
+      children[i++] = child;
+    }
+    if (this.type_ann != null) {
+      children[i++] = this.type_ann;
+    }
+    if (this.type_params != null) {
+      children[i++] = this.type_params;
+    }
+    return children;
+  }
 }
 
 export class TsConstructorType extends Node {
@@ -1814,6 +2788,19 @@ export class TsConstructorType extends Node {
   type_params!: TsTypeParamDecl | undefined;
   type_ann!: TsTypeAnn;
   is_abstract!: boolean;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + this.params.length + (this.type_params == null ? 0 : 1));
+    let i = 0;
+    for (const child of this.params) {
+      children[i++] = child;
+    }
+    if (this.type_params != null) {
+      children[i++] = this.type_params;
+    }
+    children[i++] = this.type_ann;
+    return children;
+  }
 }
 
 export class TsEnumDecl extends Node {
@@ -1823,6 +2810,16 @@ export class TsEnumDecl extends Node {
   is_const!: boolean;
   id!: Ident;
   members!: Array<TsEnumMember>;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + this.members.length);
+    let i = 0;
+    children[i++] = this.id;
+    for (const child of this.members) {
+      children[i++] = child;
+    }
+    return children;
+  }
 }
 
 export class TsEnumMember extends Node {
@@ -1830,6 +2827,16 @@ export class TsEnumMember extends Node {
   parent!: TsEnumDecl;
   id!: TsEnumMemberId;
   init!: Expr | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.init == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.id;
+    if (this.init != null) {
+      children[i++] = this.init;
+    }
+    return children;
+  }
 }
 
 /**
@@ -1842,6 +2849,13 @@ export class TsExportAssignment extends Node {
   parent!: Module
     | TsModuleBlock;
   expr!: Expr;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.expr;
+    return children;
+  }
 }
 
 export class TsExprWithTypeArgs extends Node {
@@ -1850,12 +2864,29 @@ export class TsExprWithTypeArgs extends Node {
     | TsInterfaceDecl;
   expr!: TsEntityName;
   type_args!: TsTypeParamInstantiation | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.type_args == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.expr;
+    if (this.type_args != null) {
+      children[i++] = this.type_args;
+    }
+    return children;
+  }
 }
 
 export class TsExternalModuleRef extends Node {
   kind!: NodeKind.TsExternalModuleRef;
   parent!: TsImportEqualsDecl;
   expr!: Str;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.expr;
+    return children;
+  }
 }
 
 export class TsFnType extends Node {
@@ -1864,6 +2895,19 @@ export class TsFnType extends Node {
   params!: Array<TsFnParam>;
   type_params!: TsTypeParamDecl | undefined;
   type_ann!: TsTypeAnn;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + this.params.length + (this.type_params == null ? 0 : 1));
+    let i = 0;
+    for (const child of this.params) {
+      children[i++] = child;
+    }
+    if (this.type_params != null) {
+      children[i++] = this.type_params;
+    }
+    children[i++] = this.type_ann;
+    return children;
+  }
 }
 
 export class TsImportEqualsDecl extends Node {
@@ -1874,6 +2918,14 @@ export class TsImportEqualsDecl extends Node {
   is_export!: boolean;
   id!: Ident;
   module_ref!: TsModuleRef;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.id;
+    children[i++] = this.module_ref;
+    return children;
+  }
 }
 
 export class TsImportType extends Node {
@@ -1882,6 +2934,19 @@ export class TsImportType extends Node {
   arg!: Str;
   qualifier!: TsEntityName | undefined;
   type_args!: TsTypeParamInstantiation | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.qualifier == null ? 0 : 1) + (this.type_args == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.arg;
+    if (this.qualifier != null) {
+      children[i++] = this.qualifier;
+    }
+    if (this.type_args != null) {
+      children[i++] = this.type_args;
+    }
+    return children;
+  }
 }
 
 export class TsIndexSignature extends Node {
@@ -1892,6 +2957,18 @@ export class TsIndexSignature extends Node {
   params!: Array<TsFnParam>;
   type_ann!: TsTypeAnn | undefined;
   readonly!: boolean;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.params.length + (this.type_ann == null ? 0 : 1));
+    let i = 0;
+    for (const child of this.params) {
+      children[i++] = child;
+    }
+    if (this.type_ann != null) {
+      children[i++] = this.type_ann;
+    }
+    return children;
+  }
 }
 
 export class TsIndexedAccessType extends Node {
@@ -1900,18 +2977,42 @@ export class TsIndexedAccessType extends Node {
   readonly!: boolean;
   obj_type!: TsType;
   index_type!: TsType;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.obj_type;
+    children[i++] = this.index_type;
+    return children;
+  }
 }
 
 export class TsInferType extends Node {
   kind!: NodeKind.TsInferType;
   parent!: Node;
   type_param!: TsTypeParam;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.type_param;
+    return children;
+  }
 }
 
 export class TsInterfaceBody extends Node {
   kind!: NodeKind.TsInterfaceBody;
   parent!: TsInterfaceDecl;
   body!: Array<TsTypeElement>;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.body.length);
+    let i = 0;
+    for (const child of this.body) {
+      children[i++] = child;
+    }
+    return children;
+  }
 }
 
 export class TsInterfaceDecl extends Node {
@@ -1922,24 +3023,58 @@ export class TsInterfaceDecl extends Node {
   type_params!: TsTypeParamDecl | undefined;
   extends!: Array<TsExprWithTypeArgs>;
   body!: TsInterfaceBody;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2 + (this.type_params == null ? 0 : 1) + this.extends.length);
+    let i = 0;
+    children[i++] = this.id;
+    if (this.type_params != null) {
+      children[i++] = this.type_params;
+    }
+    for (const child of this.extends) {
+      children[i++] = child;
+    }
+    children[i++] = this.body;
+    return children;
+  }
 }
 
 export class TsIntersectionType extends Node {
   kind!: NodeKind.TsIntersectionType;
   parent!: Node;
   types!: Array<TsType>;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.types.length);
+    let i = 0;
+    for (const child of this.types) {
+      children[i++] = child;
+    }
+    return children;
+  }
 }
 
 export class TsKeywordType extends Node {
   kind!: NodeKind.TsKeywordType;
   parent!: Node;
   keyword_kind!: TsKeywordTypeKind;
+
+  getChildren(): Node[] {
+    return new Array(0);
+  }
 }
 
 export class TsLitType extends Node {
   kind!: NodeKind.TsLitType;
   parent!: Node;
   lit!: TsLit;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.lit;
+    return children;
+  }
 }
 
 export class TsMappedType extends Node {
@@ -1950,6 +3085,19 @@ export class TsMappedType extends Node {
   name_type!: TsType | undefined;
   optional!: TruePlusMinus | undefined;
   type_ann!: TsType | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.name_type == null ? 0 : 1) + (this.type_ann == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.type_param;
+    if (this.name_type != null) {
+      children[i++] = this.name_type;
+    }
+    if (this.type_ann != null) {
+      children[i++] = this.type_ann;
+    }
+    return children;
+  }
 }
 
 export class TsMethodSignature extends Node {
@@ -1963,6 +3111,22 @@ export class TsMethodSignature extends Node {
   params!: Array<TsFnParam>;
   type_ann!: TsTypeAnn | undefined;
   type_params!: TsTypeParamDecl | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + this.params.length + (this.type_ann == null ? 0 : 1) + (this.type_params == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.key;
+    for (const child of this.params) {
+      children[i++] = child;
+    }
+    if (this.type_ann != null) {
+      children[i++] = this.type_ann;
+    }
+    if (this.type_params != null) {
+      children[i++] = this.type_params;
+    }
+    return children;
+  }
 }
 
 export class TsModuleBlock extends Node {
@@ -1970,6 +3134,15 @@ export class TsModuleBlock extends Node {
   parent!: TsModuleDecl
     | TsNamespaceDecl;
   body!: Array<ModuleItem>;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.body.length);
+    let i = 0;
+    for (const child of this.body) {
+      children[i++] = child;
+    }
+    return children;
+  }
 }
 
 export class TsModuleDecl extends Node {
@@ -1980,6 +3153,16 @@ export class TsModuleDecl extends Node {
   global!: boolean;
   id!: TsModuleName;
   body!: TsNamespaceBody | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.body == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.id;
+    if (this.body != null) {
+      children[i++] = this.body;
+    }
+    return children;
+  }
 }
 
 export class TsNamespaceDecl extends Node {
@@ -1991,6 +3174,14 @@ export class TsNamespaceDecl extends Node {
   global!: boolean;
   id!: Ident;
   body!: TsNamespaceBody;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.id;
+    children[i++] = this.body;
+    return children;
+  }
 }
 
 export class TsNamespaceExportDecl extends Node {
@@ -1998,18 +3189,39 @@ export class TsNamespaceExportDecl extends Node {
   parent!: Module
     | TsModuleBlock;
   id!: Ident;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.id;
+    return children;
+  }
 }
 
 export class TsNonNullExpr extends Node {
   kind!: NodeKind.TsNonNullExpr;
   parent!: Node;
   expr!: Expr;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.expr;
+    return children;
+  }
 }
 
 export class TsOptionalType extends Node {
   kind!: NodeKind.TsOptionalType;
   parent!: Node;
   type_ann!: TsType;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.type_ann;
+    return children;
+  }
 }
 
 export class TsParamProp extends Node {
@@ -2020,12 +3232,29 @@ export class TsParamProp extends Node {
   accessibility!: Accessibility | undefined;
   readonly!: boolean;
   param!: TsParamPropParam;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + this.decorators.length);
+    let i = 0;
+    for (const child of this.decorators) {
+      children[i++] = child;
+    }
+    children[i++] = this.param;
+    return children;
+  }
 }
 
 export class TsParenthesizedType extends Node {
   kind!: NodeKind.TsParenthesizedType;
   parent!: Node;
   type_ann!: TsType;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.type_ann;
+    return children;
+  }
 }
 
 export class TsPropertySignature extends Node {
@@ -2040,6 +3269,25 @@ export class TsPropertySignature extends Node {
   params!: Array<TsFnParam>;
   type_ann!: TsTypeAnn | undefined;
   type_params!: TsTypeParamDecl | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.init == null ? 0 : 1) + this.params.length + (this.type_ann == null ? 0 : 1) + (this.type_params == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.key;
+    if (this.init != null) {
+      children[i++] = this.init;
+    }
+    for (const child of this.params) {
+      children[i++] = child;
+    }
+    if (this.type_ann != null) {
+      children[i++] = this.type_ann;
+    }
+    if (this.type_params != null) {
+      children[i++] = this.type_params;
+    }
+    return children;
+  }
 }
 
 export class TsQualifiedName extends Node {
@@ -2047,17 +3295,36 @@ export class TsQualifiedName extends Node {
   parent!: Node;
   left!: TsEntityName;
   right!: Ident;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.left;
+    children[i++] = this.right;
+    return children;
+  }
 }
 
 export class TsRestType extends Node {
   kind!: NodeKind.TsRestType;
   parent!: Node;
   type_ann!: TsType;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.type_ann;
+    return children;
+  }
 }
 
 export class TsThisType extends Node {
   kind!: NodeKind.TsThisType;
   parent!: Node;
+
+  getChildren(): Node[] {
+    return new Array(0);
+  }
 }
 
 export class TsTplLitType extends Node {
@@ -2065,6 +3332,18 @@ export class TsTplLitType extends Node {
   parent!: TsLitType;
   types!: Array<TsType>;
   quasis!: Array<TplElement>;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.types.length + this.quasis.length);
+    let i = 0;
+    for (const child of this.types) {
+      children[i++] = child;
+    }
+    for (const child of this.quasis) {
+      children[i++] = child;
+    }
+    return children;
+  }
 }
 
 export class TsTupleElement extends Node {
@@ -2073,12 +3352,31 @@ export class TsTupleElement extends Node {
   /** `Ident` or `RestPat { arg: Ident }` */
   label!: Pat | undefined;
   ty!: TsType;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.label == null ? 0 : 1));
+    let i = 0;
+    if (this.label != null) {
+      children[i++] = this.label;
+    }
+    children[i++] = this.ty;
+    return children;
+  }
 }
 
 export class TsTupleType extends Node {
   kind!: NodeKind.TsTupleType;
   parent!: Node;
   elem_types!: Array<TsTupleElement>;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.elem_types.length);
+    let i = 0;
+    for (const child of this.elem_types) {
+      children[i++] = child;
+    }
+    return children;
+  }
 }
 
 export class TsTypeAliasDecl extends Node {
@@ -2088,12 +3386,30 @@ export class TsTypeAliasDecl extends Node {
   id!: Ident;
   type_params!: TsTypeParamDecl | undefined;
   type_ann!: TsType;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2 + (this.type_params == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.id;
+    if (this.type_params != null) {
+      children[i++] = this.type_params;
+    }
+    children[i++] = this.type_ann;
+    return children;
+  }
 }
 
 export class TsTypeAnn extends Node {
   kind!: NodeKind.TsTypeAnn;
   parent!: Node;
   type_ann!: TsType;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.type_ann;
+    return children;
+  }
 }
 
 export class TsTypeAssertion extends Node {
@@ -2101,12 +3417,29 @@ export class TsTypeAssertion extends Node {
   parent!: Node;
   expr!: Expr;
   type_ann!: TsType;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.expr;
+    children[i++] = this.type_ann;
+    return children;
+  }
 }
 
 export class TsTypeLit extends Node {
   kind!: NodeKind.TsTypeLit;
   parent!: Node;
   members!: Array<TsTypeElement>;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.members.length);
+    let i = 0;
+    for (const child of this.members) {
+      children[i++] = child;
+    }
+    return children;
+  }
 }
 
 export class TsTypeOperator extends Node {
@@ -2114,6 +3447,13 @@ export class TsTypeOperator extends Node {
   parent!: Node;
   op!: TsTypeOperatorOp;
   type_ann!: TsType;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.type_ann;
+    return children;
+  }
 }
 
 export class TsTypeParam extends Node {
@@ -2124,18 +3464,49 @@ export class TsTypeParam extends Node {
   name!: Ident;
   constraint!: TsType | undefined;
   default!: TsType | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.constraint == null ? 0 : 1) + (this.default == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.name;
+    if (this.constraint != null) {
+      children[i++] = this.constraint;
+    }
+    if (this.default != null) {
+      children[i++] = this.default;
+    }
+    return children;
+  }
 }
 
 export class TsTypeParamDecl extends Node {
   kind!: NodeKind.TsTypeParamDecl;
   parent!: Node;
   params!: Array<TsTypeParam>;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.params.length);
+    let i = 0;
+    for (const child of this.params) {
+      children[i++] = child;
+    }
+    return children;
+  }
 }
 
 export class TsTypeParamInstantiation extends Node {
   kind!: NodeKind.TsTypeParamInstantiation;
   parent!: Node;
   params!: Array<TsType>;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.params.length);
+    let i = 0;
+    for (const child of this.params) {
+      children[i++] = child;
+    }
+    return children;
+  }
 }
 
 export class TsTypePredicate extends Node {
@@ -2144,6 +3515,16 @@ export class TsTypePredicate extends Node {
   asserts!: boolean;
   param_name!: TsThisTypeOrIdent;
   type_ann!: TsTypeAnn | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.type_ann == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.param_name;
+    if (this.type_ann != null) {
+      children[i++] = this.type_ann;
+    }
+    return children;
+  }
 }
 
 /** `typeof` operator */
@@ -2151,6 +3532,13 @@ export class TsTypeQuery extends Node {
   kind!: NodeKind.TsTypeQuery;
   parent!: Node;
   expr_name!: TsTypeQueryExpr;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.expr_name;
+    return children;
+  }
 }
 
 export class TsTypeRef extends Node {
@@ -2158,12 +3546,31 @@ export class TsTypeRef extends Node {
   parent!: Node;
   type_name!: TsEntityName;
   type_params!: TsTypeParamInstantiation | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.type_params == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.type_name;
+    if (this.type_params != null) {
+      children[i++] = this.type_params;
+    }
+    return children;
+  }
 }
 
 export class TsUnionType extends Node {
   kind!: NodeKind.TsUnionType;
   parent!: Node;
   types!: Array<TsType>;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.types.length);
+    let i = 0;
+    for (const child of this.types) {
+      children[i++] = child;
+    }
+    return children;
+  }
 }
 
 export class UnaryExpr extends Node {
@@ -2171,6 +3578,13 @@ export class UnaryExpr extends Node {
   parent!: Node;
   op!: UnaryOp;
   arg!: Expr;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.arg;
+    return children;
+  }
 }
 
 export class UpdateExpr extends Node {
@@ -2179,6 +3593,13 @@ export class UpdateExpr extends Node {
   op!: UpdateOp;
   prefix!: boolean;
   arg!: Expr;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1);
+    let i = 0;
+    children[i++] = this.arg;
+    return children;
+  }
 }
 
 export class VarDecl extends Node {
@@ -2187,6 +3608,15 @@ export class VarDecl extends Node {
   decl_kind!: VarDeclKind;
   declare!: boolean;
   decls!: Array<VarDeclarator>;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.decls.length);
+    let i = 0;
+    for (const child of this.decls) {
+      children[i++] = child;
+    }
+    return children;
+  }
 }
 
 export class VarDeclarator extends Node {
@@ -2197,6 +3627,16 @@ export class VarDeclarator extends Node {
   init!: Expr | undefined;
   /** Typescript only */
   definite!: boolean;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.init == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.name;
+    if (this.init != null) {
+      children[i++] = this.init;
+    }
+    return children;
+  }
 }
 
 export class WhileStmt extends Node {
@@ -2204,6 +3644,14 @@ export class WhileStmt extends Node {
   parent!: Node;
   test!: Expr;
   body!: Stmt;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.test;
+    children[i++] = this.body;
+    return children;
+  }
 }
 
 export class WithStmt extends Node {
@@ -2211,6 +3659,14 @@ export class WithStmt extends Node {
   parent!: Node;
   obj!: Expr;
   body!: Stmt;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.obj;
+    children[i++] = this.body;
+    return children;
+  }
 }
 
 export class YieldExpr extends Node {
@@ -2218,4 +3674,13 @@ export class YieldExpr extends Node {
   parent!: Node;
   arg!: Expr | undefined;
   delegate!: boolean;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array((this.arg == null ? 0 : 1));
+    let i = 0;
+    if (this.arg != null) {
+      children[i++] = this.arg;
+    }
+    return children;
+  }
 }

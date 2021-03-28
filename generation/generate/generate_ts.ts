@@ -1,6 +1,6 @@
-import { AnalysisResult, DocableDefinition, EnumDefinition, PlainEnumDefinition, TypeDefinition } from "../analyze/analysis_types.ts";
+import { AnalysisResult, AstStructDefinition, DocableDefinition, EnumDefinition, PlainEnumDefinition, TypeDefinition } from "../analyze/analysis_types.ts";
 import { createWriter } from "../utils/create_writer.ts";
-import { isOptionType, isVecType, writeHeader } from "../utils/generation_utils.ts";
+import { getIsForImpl, isOptionType, isSwcAstType, isSwcNodeEnumType, isVecType, writeHeader } from "./helpers.ts";
 
 export function generateTypeScriptTypes(analysisResult: AnalysisResult): string {
     const writer = createWriter();
@@ -47,6 +47,15 @@ export function generateTypeScriptTypes(analysisResult: AnalysisResult): string 
 
     for (const struct of analysisResult.astStructs) {
         writer.blankLine();
+        writeAstStruct(struct);
+    }
+
+    writer.newLine();
+
+    return writer.toString();
+
+    function writeAstStruct(struct: AstStructDefinition) {
+        const structFields = struct.fields.filter(f => !getIsForImpl(analysisResult, f.type) && f.name !== "span");
         writeJsDocs(struct);
         writer.write(`export class ${struct.name} extends Node`).block(() => {
             writer.writeLine(`kind!: NodeKind.${struct.name};`);
@@ -72,11 +81,91 @@ export function generateTypeScriptTypes(analysisResult: AnalysisResult): string 
                 writeType(field.type);
                 writer.write(";").newLine();
             }
-        });
-    }
 
-    writer.newLine();
-    return writer.toString();
+            writer.blankLine();
+            writeGetChildrenMethod();
+        });
+
+        function writeGetChildrenMethod() {
+            writer.write("getChildren(): Node[]").block(() => {
+                if (structFields.length === 0) {
+                    writer.writeLine("return new Array(0);");
+                } else {
+                    writer.writeLine(`const children: Node[] = new Array(${getStructChildrenCapacityExpr()});`);
+                    writer.writeLine(`let i = 0;`);
+                    for (const field of structFields) {
+                        writeAppendChild(field.type, `this.${field.name}`);
+                    }
+                    writer.writeLine("return children;");
+                }
+            });
+
+            function writeAppendChild(type: TypeDefinition, name: string) {
+                if (type.kind === "Primitive") {
+                    throw new Error("Should not have analyzed a primitive type here.");
+                }
+                if (isOptionType(type)) {
+                    writer.write(`if (${name} != null)`).block(() => {
+                        writeAppendChild(type.genericArgs[0], name);
+                    });
+                } else if (isVecType(type)) {
+                    writer.write(`for (const child of ${name})`).block(() => {
+                        writeAppendChild(type.genericArgs[0], "child");
+                    });
+                } else {
+                    writer.write(`children[i++] = `);
+                    writer.write(name);
+                    writer.write(";").newLine();
+                }
+            }
+
+            function getStructChildrenCapacityExpr() {
+                return generateExpr(analyze());
+
+                function analyze() {
+                    let plainCount = 0;
+                    const exprs: string[] = [];
+                    for (const field of structFields) {
+                        const expr = getTypeCapacityExpr(field.type, `this.${field.name}`);
+                        if (expr === "1") {
+                            plainCount++;
+                        } else {
+                            exprs.push(expr);
+                        }
+                    }
+                    return { plainCount, exprs };
+                }
+
+                function getTypeCapacityExpr(type: TypeDefinition, name: string): string {
+                    if (type.kind === "Primitive") {
+                        throw new Error("Should not have analyzed a primitive type here.");
+                    }
+
+                    if (type.name === "Option") {
+                        return `(${name} == null ? 0 : ${getTypeCapacityExpr(type.genericArgs[0], name)})`;
+                    } else if (type.name === "Vec") {
+                        return `${name}.length`;
+                    } else {
+                        return "1";
+                    }
+                }
+
+                function generateExpr({ plainCount, exprs }: { plainCount: number; exprs: string[] }) {
+                    let finalExpr = "";
+                    if (plainCount > 0) {
+                        finalExpr = plainCount.toString();
+                    }
+                    for (const expr of exprs) {
+                        if (finalExpr.length > 0) {
+                            finalExpr += " + ";
+                        }
+                        finalExpr += expr;
+                    }
+                    return finalExpr;
+                }
+            }
+        }
+    }
 
     function writePlainEnum(enumDef: EnumDefinition | PlainEnumDefinition) {
         writeJsDocs(enumDef);

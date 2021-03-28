@@ -3,23 +3,21 @@ import type {
     AstEnumVariantDefinition,
     AstStructDefinition,
     AstStructFieldDefinition,
-    NamedDefinition,
     PlainEnumDefinition,
     PlainEnumVariantDefinition,
     TypeDefinition,
 } from "./analysis_types.ts";
 import type { Crate, EnumInner, EnumVariantInner, Item, StructInner, TupleEnumVariantInner, TypeInner } from "./doc_types.ts";
-import { getEnumVariants, getTypeDefinition } from "./helpers.ts";
+import { getEnumVariants, getTypeDefinition, sortNamedDefinitions } from "./helpers.ts";
 
 export function analyzeAstCrate() {
     const crate: Crate = JSON.parse(Deno.readTextFileSync("swc_ecma_ast.json"));
     const astStructs = Array.from(getAstStructs());
     const { astEnums, plainEnums } = getEnums();
-    const compareFn = (a: NamedDefinition, b: NamedDefinition) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
 
-    astStructs.sort(compareFn);
-    astEnums.sort(compareFn);
-    plainEnums.sort(compareFn);
+    sortNamedDefinitions(astStructs);
+    sortNamedDefinitions(astEnums);
+    sortNamedDefinitions(plainEnums);
 
     fillStructParents(astStructs, astEnums);
 

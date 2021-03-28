@@ -1,11 +1,15 @@
 import type { EnumDefinition, EnumVariantDefinition } from "./analysis_types.ts";
 import type { Crate, EnumVariantInner, Item, TypeInner } from "./doc_types.ts";
-import { getEnumVariants, getTypeDefinition } from "./helpers.ts";
+import { getEnumVariants, getTypeDefinition, sortNamedDefinitions } from "./helpers.ts";
 
 export function analyzeParserCrate() {
     const crate: Crate = JSON.parse(Deno.readTextFileSync("swc_ecma_parser.json"));
+    const tokenEnums = Array.from(getEnums());
+
+    sortNamedDefinitions(tokenEnums);
+
     return {
-        tokenEnums: Array.from(getEnums()),
+        tokenEnums,
     };
 
     function* getEnums() {
