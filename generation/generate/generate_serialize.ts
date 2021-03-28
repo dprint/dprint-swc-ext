@@ -137,6 +137,11 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
                         break;
                     case "Tuple":
                         writer.write(`${tokenEnum.name}::${variant.name}(`);
+                        if (tokenEnum.name === "Token" && variant.name === "Error") {
+                            writer.write("_) => ");
+                            writer.write(`panic!("Serializing an AST containing an Error is not currently supported."),`);
+                            break;
+                        }
                         for (const [i, _] of variant.tupleArgs.entries()) {
                             writer.conditionalWrite(i > 0, ", ");
                             writer.write(`item${i}`);
@@ -200,8 +205,6 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
 
         if (type.kind === "Reference" && customNames.has(type.name)) {
             writer.writeLine(`serialize_${nameToSnakeCase(type.name)}(w, f, ${name})?;`);
-        } else if (type.kind === "Reference" && type.name === "Error") {
-            writer.writeLine(`panic!("Serializing an AST containing an Error is not currently supported.");`);
         } else if (type.kind === "Reference" && isSwcAstType(analysisResult, type)) {
             writer.writeLine(`serialize_${nameToSnakeCase(type.name)}(w, f, ${name})?;`);
         } else if (type.kind === "Reference" && isSwcNodeEnumType(analysisResult, type)) {

@@ -2,7 +2,7 @@
 // Run `./scripts/generate.sh` from the root directory to regenerate it.
 use std::io::{Error, Write};
 use serde_json::ser::{Formatter as JsonFormatter, to_string as to_json_string};
-use swc_common::{Span, Spanned, comments::{Comment, CommentKind, SingleThreadedCommentsMapInner}};
+use swc_common::{Spanned, comments::{Comment, CommentKind, SingleThreadedCommentsMapInner}};
 use swc_ecmascript::parser::token::{BinOpToken, Keyword, Token, TokenAndSpan, Word};
 use swc_ecmascript::ast::*;
 
@@ -8138,26 +8138,7 @@ fn serialize_token(w: &mut impl Write, f: &mut impl JsonFormatter, value: &Token
       f.end_object_value(w)?;
       f.end_object(w)?;
     }
-    Token::Error(item0) => {
-      f.begin_object(w)?;
-      f.begin_object_key(w, true)?;
-      f.begin_string(w)?;
-      f.write_string_fragment(w, "kind")?;
-      f.end_string(w)?;
-      f.end_object_key(w)?;
-      f.begin_object_value(w)?;
-      f.write_u32(w, 35)?;
-      f.end_object_value(w)?;
-      f.begin_object_key(w, false)?;
-      f.begin_string(w)?;
-      f.write_string_fragment(w, "inner")?;
-      f.end_string(w)?;
-      f.end_object_key(w)?;
-      f.begin_object_value(w)?;
-      panic!("Serializing an AST containing an Error is not currently supported.");
-      f.end_object_value(w)?;
-      f.end_object(w)?;
-    }
+    Token::Error(_) => panic!("Serializing an AST containing an Error is not currently supported."),
   }
   Ok(())
 }
