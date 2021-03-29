@@ -13,7 +13,7 @@ function visitNode(node: any, parent: any) {
 
   for (const key of Object.keys(node)) {
     const obj = node[key];
-    if (typeof obj === "object" && typeof obj.kind === "string") {
+    if (obj != null && typeof obj === "object" && typeof obj.kind === "string") {
       visitNode(obj, node);
     }
   }
@@ -21,325 +21,325 @@ function visitNode(node: any, parent: any) {
 
 function getNodeClass(node: any) {
   switch (node.kind) {
-    case "ArrayLit":
+    case types.NodeKind.ArrayLit:
       return types.ArrayLit;
-    case "ArrayPat":
+    case types.NodeKind.ArrayPat:
       return types.ArrayPat;
-    case "ArrowExpr":
+    case types.NodeKind.ArrowExpr:
       return types.ArrowExpr;
-    case "AssignExpr":
+    case types.NodeKind.AssignExpr:
       return types.AssignExpr;
-    case "AssignPat":
+    case types.NodeKind.AssignPat:
       return types.AssignPat;
-    case "AssignPatProp":
+    case types.NodeKind.AssignPatProp:
       return types.AssignPatProp;
-    case "AssignProp":
+    case types.NodeKind.AssignProp:
       return types.AssignProp;
-    case "AwaitExpr":
+    case types.NodeKind.AwaitExpr:
       return types.AwaitExpr;
-    case "BigInt":
+    case types.NodeKind.BigInt:
       return types.BigInt;
-    case "BinExpr":
+    case types.NodeKind.BinExpr:
       return types.BinExpr;
-    case "BindingIdent":
+    case types.NodeKind.BindingIdent:
       return types.BindingIdent;
-    case "BlockStmt":
+    case types.NodeKind.BlockStmt:
       return types.BlockStmt;
-    case "Bool":
+    case types.NodeKind.Bool:
       return types.Bool;
-    case "BreakStmt":
+    case types.NodeKind.BreakStmt:
       return types.BreakStmt;
-    case "CallExpr":
+    case types.NodeKind.CallExpr:
       return types.CallExpr;
-    case "CatchClause":
+    case types.NodeKind.CatchClause:
       return types.CatchClause;
-    case "Class":
+    case types.NodeKind.Class:
       return types.Class;
-    case "ClassDecl":
+    case types.NodeKind.ClassDecl:
       return types.ClassDecl;
-    case "ClassExpr":
+    case types.NodeKind.ClassExpr:
       return types.ClassExpr;
-    case "ClassMethod":
+    case types.NodeKind.ClassMethod:
       return types.ClassMethod;
-    case "ClassProp":
+    case types.NodeKind.ClassProp:
       return types.ClassProp;
-    case "ComputedPropName":
+    case types.NodeKind.ComputedPropName:
       return types.ComputedPropName;
-    case "CondExpr":
+    case types.NodeKind.CondExpr:
       return types.CondExpr;
-    case "Constructor":
+    case types.NodeKind.Constructor:
       return types.Constructor;
-    case "ContinueStmt":
+    case types.NodeKind.ContinueStmt:
       return types.ContinueStmt;
-    case "DebuggerStmt":
+    case types.NodeKind.DebuggerStmt:
       return types.DebuggerStmt;
-    case "Decorator":
+    case types.NodeKind.Decorator:
       return types.Decorator;
-    case "DoWhileStmt":
+    case types.NodeKind.DoWhileStmt:
       return types.DoWhileStmt;
-    case "EmptyStmt":
+    case types.NodeKind.EmptyStmt:
       return types.EmptyStmt;
-    case "ExportAll":
+    case types.NodeKind.ExportAll:
       return types.ExportAll;
-    case "ExportDecl":
+    case types.NodeKind.ExportDecl:
       return types.ExportDecl;
-    case "ExportDefaultDecl":
+    case types.NodeKind.ExportDefaultDecl:
       return types.ExportDefaultDecl;
-    case "ExportDefaultExpr":
+    case types.NodeKind.ExportDefaultExpr:
       return types.ExportDefaultExpr;
-    case "ExportDefaultSpecifier":
+    case types.NodeKind.ExportDefaultSpecifier:
       return types.ExportDefaultSpecifier;
-    case "ExportNamedSpecifier":
+    case types.NodeKind.ExportNamedSpecifier:
       return types.ExportNamedSpecifier;
-    case "ExportNamespaceSpecifier":
+    case types.NodeKind.ExportNamespaceSpecifier:
       return types.ExportNamespaceSpecifier;
-    case "ExprOrSpread":
+    case types.NodeKind.ExprOrSpread:
       return types.ExprOrSpread;
-    case "ExprStmt":
+    case types.NodeKind.ExprStmt:
       return types.ExprStmt;
-    case "FnDecl":
+    case types.NodeKind.FnDecl:
       return types.FnDecl;
-    case "FnExpr":
+    case types.NodeKind.FnExpr:
       return types.FnExpr;
-    case "ForInStmt":
+    case types.NodeKind.ForInStmt:
       return types.ForInStmt;
-    case "ForOfStmt":
+    case types.NodeKind.ForOfStmt:
       return types.ForOfStmt;
-    case "ForStmt":
+    case types.NodeKind.ForStmt:
       return types.ForStmt;
-    case "Function":
+    case types.NodeKind.Function:
       return types.Function;
-    case "GetterProp":
+    case types.NodeKind.GetterProp:
       return types.GetterProp;
-    case "Ident":
+    case types.NodeKind.Ident:
       return types.Ident;
-    case "IfStmt":
+    case types.NodeKind.IfStmt:
       return types.IfStmt;
-    case "ImportDecl":
+    case types.NodeKind.ImportDecl:
       return types.ImportDecl;
-    case "ImportDefaultSpecifier":
+    case types.NodeKind.ImportDefaultSpecifier:
       return types.ImportDefaultSpecifier;
-    case "ImportNamedSpecifier":
+    case types.NodeKind.ImportNamedSpecifier:
       return types.ImportNamedSpecifier;
-    case "ImportStarAsSpecifier":
+    case types.NodeKind.ImportStarAsSpecifier:
       return types.ImportStarAsSpecifier;
-    case "Invalid":
+    case types.NodeKind.Invalid:
       return types.Invalid;
-    case "JSXAttr":
+    case types.NodeKind.JSXAttr:
       return types.JSXAttr;
-    case "JSXClosingElement":
+    case types.NodeKind.JSXClosingElement:
       return types.JSXClosingElement;
-    case "JSXClosingFragment":
+    case types.NodeKind.JSXClosingFragment:
       return types.JSXClosingFragment;
-    case "JSXElement":
+    case types.NodeKind.JSXElement:
       return types.JSXElement;
-    case "JSXEmptyExpr":
+    case types.NodeKind.JSXEmptyExpr:
       return types.JSXEmptyExpr;
-    case "JSXExprContainer":
+    case types.NodeKind.JSXExprContainer:
       return types.JSXExprContainer;
-    case "JSXFragment":
+    case types.NodeKind.JSXFragment:
       return types.JSXFragment;
-    case "JSXMemberExpr":
+    case types.NodeKind.JSXMemberExpr:
       return types.JSXMemberExpr;
-    case "JSXNamespacedName":
+    case types.NodeKind.JSXNamespacedName:
       return types.JSXNamespacedName;
-    case "JSXOpeningElement":
+    case types.NodeKind.JSXOpeningElement:
       return types.JSXOpeningElement;
-    case "JSXOpeningFragment":
+    case types.NodeKind.JSXOpeningFragment:
       return types.JSXOpeningFragment;
-    case "JSXSpreadChild":
+    case types.NodeKind.JSXSpreadChild:
       return types.JSXSpreadChild;
-    case "JSXText":
+    case types.NodeKind.JSXText:
       return types.JSXText;
-    case "KeyValuePatProp":
+    case types.NodeKind.KeyValuePatProp:
       return types.KeyValuePatProp;
-    case "KeyValueProp":
+    case types.NodeKind.KeyValueProp:
       return types.KeyValueProp;
-    case "LabeledStmt":
+    case types.NodeKind.LabeledStmt:
       return types.LabeledStmt;
-    case "MemberExpr":
+    case types.NodeKind.MemberExpr:
       return types.MemberExpr;
-    case "MetaPropExpr":
+    case types.NodeKind.MetaPropExpr:
       return types.MetaPropExpr;
-    case "MethodProp":
+    case types.NodeKind.MethodProp:
       return types.MethodProp;
-    case "Module":
+    case types.NodeKind.Module:
       return types.Module;
-    case "NamedExport":
+    case types.NodeKind.NamedExport:
       return types.NamedExport;
-    case "NewExpr":
+    case types.NodeKind.NewExpr:
       return types.NewExpr;
-    case "Null":
+    case types.NodeKind.Null:
       return types.Null;
-    case "Number":
+    case types.NodeKind.Number:
       return types.Number;
-    case "ObjectLit":
+    case types.NodeKind.ObjectLit:
       return types.ObjectLit;
-    case "ObjectPat":
+    case types.NodeKind.ObjectPat:
       return types.ObjectPat;
-    case "OptChainExpr":
+    case types.NodeKind.OptChainExpr:
       return types.OptChainExpr;
-    case "Param":
+    case types.NodeKind.Param:
       return types.Param;
-    case "ParenExpr":
+    case types.NodeKind.ParenExpr:
       return types.ParenExpr;
-    case "PrivateMethod":
+    case types.NodeKind.PrivateMethod:
       return types.PrivateMethod;
-    case "PrivateName":
+    case types.NodeKind.PrivateName:
       return types.PrivateName;
-    case "PrivateProp":
+    case types.NodeKind.PrivateProp:
       return types.PrivateProp;
-    case "Regex":
+    case types.NodeKind.Regex:
       return types.Regex;
-    case "RestPat":
+    case types.NodeKind.RestPat:
       return types.RestPat;
-    case "ReturnStmt":
+    case types.NodeKind.ReturnStmt:
       return types.ReturnStmt;
-    case "Script":
+    case types.NodeKind.Script:
       return types.Script;
-    case "SeqExpr":
+    case types.NodeKind.SeqExpr:
       return types.SeqExpr;
-    case "SetterProp":
+    case types.NodeKind.SetterProp:
       return types.SetterProp;
-    case "SpreadElement":
+    case types.NodeKind.SpreadElement:
       return types.SpreadElement;
-    case "Str":
+    case types.NodeKind.Str:
       return types.Str;
-    case "Super":
+    case types.NodeKind.Super:
       return types.Super;
-    case "SwitchCase":
+    case types.NodeKind.SwitchCase:
       return types.SwitchCase;
-    case "SwitchStmt":
+    case types.NodeKind.SwitchStmt:
       return types.SwitchStmt;
-    case "TaggedTpl":
+    case types.NodeKind.TaggedTpl:
       return types.TaggedTpl;
-    case "ThisExpr":
+    case types.NodeKind.ThisExpr:
       return types.ThisExpr;
-    case "ThrowStmt":
+    case types.NodeKind.ThrowStmt:
       return types.ThrowStmt;
-    case "Tpl":
+    case types.NodeKind.Tpl:
       return types.Tpl;
-    case "TplElement":
+    case types.NodeKind.TplElement:
       return types.TplElement;
-    case "TryStmt":
+    case types.NodeKind.TryStmt:
       return types.TryStmt;
-    case "TsArrayType":
+    case types.NodeKind.TsArrayType:
       return types.TsArrayType;
-    case "TsAsExpr":
+    case types.NodeKind.TsAsExpr:
       return types.TsAsExpr;
-    case "TsCallSignatureDecl":
+    case types.NodeKind.TsCallSignatureDecl:
       return types.TsCallSignatureDecl;
-    case "TsConditionalType":
+    case types.NodeKind.TsConditionalType:
       return types.TsConditionalType;
-    case "TsConstAssertion":
+    case types.NodeKind.TsConstAssertion:
       return types.TsConstAssertion;
-    case "TsConstructSignatureDecl":
+    case types.NodeKind.TsConstructSignatureDecl:
       return types.TsConstructSignatureDecl;
-    case "TsConstructorType":
+    case types.NodeKind.TsConstructorType:
       return types.TsConstructorType;
-    case "TsEnumDecl":
+    case types.NodeKind.TsEnumDecl:
       return types.TsEnumDecl;
-    case "TsEnumMember":
+    case types.NodeKind.TsEnumMember:
       return types.TsEnumMember;
-    case "TsExportAssignment":
+    case types.NodeKind.TsExportAssignment:
       return types.TsExportAssignment;
-    case "TsExprWithTypeArgs":
+    case types.NodeKind.TsExprWithTypeArgs:
       return types.TsExprWithTypeArgs;
-    case "TsExternalModuleRef":
+    case types.NodeKind.TsExternalModuleRef:
       return types.TsExternalModuleRef;
-    case "TsFnType":
+    case types.NodeKind.TsFnType:
       return types.TsFnType;
-    case "TsImportEqualsDecl":
+    case types.NodeKind.TsImportEqualsDecl:
       return types.TsImportEqualsDecl;
-    case "TsImportType":
+    case types.NodeKind.TsImportType:
       return types.TsImportType;
-    case "TsIndexSignature":
+    case types.NodeKind.TsIndexSignature:
       return types.TsIndexSignature;
-    case "TsIndexedAccessType":
+    case types.NodeKind.TsIndexedAccessType:
       return types.TsIndexedAccessType;
-    case "TsInferType":
+    case types.NodeKind.TsInferType:
       return types.TsInferType;
-    case "TsInterfaceBody":
+    case types.NodeKind.TsInterfaceBody:
       return types.TsInterfaceBody;
-    case "TsInterfaceDecl":
+    case types.NodeKind.TsInterfaceDecl:
       return types.TsInterfaceDecl;
-    case "TsIntersectionType":
+    case types.NodeKind.TsIntersectionType:
       return types.TsIntersectionType;
-    case "TsKeywordType":
+    case types.NodeKind.TsKeywordType:
       return types.TsKeywordType;
-    case "TsLitType":
+    case types.NodeKind.TsLitType:
       return types.TsLitType;
-    case "TsMappedType":
+    case types.NodeKind.TsMappedType:
       return types.TsMappedType;
-    case "TsMethodSignature":
+    case types.NodeKind.TsMethodSignature:
       return types.TsMethodSignature;
-    case "TsModuleBlock":
+    case types.NodeKind.TsModuleBlock:
       return types.TsModuleBlock;
-    case "TsModuleDecl":
+    case types.NodeKind.TsModuleDecl:
       return types.TsModuleDecl;
-    case "TsNamespaceDecl":
+    case types.NodeKind.TsNamespaceDecl:
       return types.TsNamespaceDecl;
-    case "TsNamespaceExportDecl":
+    case types.NodeKind.TsNamespaceExportDecl:
       return types.TsNamespaceExportDecl;
-    case "TsNonNullExpr":
+    case types.NodeKind.TsNonNullExpr:
       return types.TsNonNullExpr;
-    case "TsOptionalType":
+    case types.NodeKind.TsOptionalType:
       return types.TsOptionalType;
-    case "TsParamProp":
+    case types.NodeKind.TsParamProp:
       return types.TsParamProp;
-    case "TsParenthesizedType":
+    case types.NodeKind.TsParenthesizedType:
       return types.TsParenthesizedType;
-    case "TsPropertySignature":
+    case types.NodeKind.TsPropertySignature:
       return types.TsPropertySignature;
-    case "TsQualifiedName":
+    case types.NodeKind.TsQualifiedName:
       return types.TsQualifiedName;
-    case "TsRestType":
+    case types.NodeKind.TsRestType:
       return types.TsRestType;
-    case "TsThisType":
+    case types.NodeKind.TsThisType:
       return types.TsThisType;
-    case "TsTplLitType":
+    case types.NodeKind.TsTplLitType:
       return types.TsTplLitType;
-    case "TsTupleElement":
+    case types.NodeKind.TsTupleElement:
       return types.TsTupleElement;
-    case "TsTupleType":
+    case types.NodeKind.TsTupleType:
       return types.TsTupleType;
-    case "TsTypeAliasDecl":
+    case types.NodeKind.TsTypeAliasDecl:
       return types.TsTypeAliasDecl;
-    case "TsTypeAnn":
+    case types.NodeKind.TsTypeAnn:
       return types.TsTypeAnn;
-    case "TsTypeAssertion":
+    case types.NodeKind.TsTypeAssertion:
       return types.TsTypeAssertion;
-    case "TsTypeLit":
+    case types.NodeKind.TsTypeLit:
       return types.TsTypeLit;
-    case "TsTypeOperator":
+    case types.NodeKind.TsTypeOperator:
       return types.TsTypeOperator;
-    case "TsTypeParam":
+    case types.NodeKind.TsTypeParam:
       return types.TsTypeParam;
-    case "TsTypeParamDecl":
+    case types.NodeKind.TsTypeParamDecl:
       return types.TsTypeParamDecl;
-    case "TsTypeParamInstantiation":
+    case types.NodeKind.TsTypeParamInstantiation:
       return types.TsTypeParamInstantiation;
-    case "TsTypePredicate":
+    case types.NodeKind.TsTypePredicate:
       return types.TsTypePredicate;
-    case "TsTypeQuery":
+    case types.NodeKind.TsTypeQuery:
       return types.TsTypeQuery;
-    case "TsTypeRef":
+    case types.NodeKind.TsTypeRef:
       return types.TsTypeRef;
-    case "TsUnionType":
+    case types.NodeKind.TsUnionType:
       return types.TsUnionType;
-    case "UnaryExpr":
+    case types.NodeKind.UnaryExpr:
       return types.UnaryExpr;
-    case "UpdateExpr":
+    case types.NodeKind.UpdateExpr:
       return types.UpdateExpr;
-    case "VarDecl":
+    case types.NodeKind.VarDecl:
       return types.VarDecl;
-    case "VarDeclarator":
+    case types.NodeKind.VarDeclarator:
       return types.VarDeclarator;
-    case "WhileStmt":
+    case types.NodeKind.WhileStmt:
       return types.WhileStmt;
-    case "WithStmt":
+    case types.NodeKind.WithStmt:
       return types.WithStmt;
-    case "YieldExpr":
+    case types.NodeKind.YieldExpr:
       return types.YieldExpr;
     default:
       throw new Error("Unknown node kind: " + node.kind);

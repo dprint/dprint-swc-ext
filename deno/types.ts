@@ -1,7 +1,7 @@
-import type { Token } from "./types.generated";
+import type { Node, NodeKind, Token } from "./types.generated.ts";
 
-export abstract class Node {
-    kind!: string;
+export abstract class BaseNode {
+    kind!: NodeKind;
     start: number;
     end: number;
     parent?: Node;
@@ -19,10 +19,6 @@ export interface Span {
 }
 
 export interface BigIntValue {
-    // todo
-}
-
-export interface JsWord {
     // todo
 }
 

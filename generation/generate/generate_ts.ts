@@ -1,12 +1,12 @@
 import { AnalysisResult, AstStructDefinition, DocableDefinition, EnumDefinition, PlainEnumDefinition, TypeDefinition } from "../analyze/analysis_types.ts";
 import { createWriter } from "../utils/create_writer.ts";
-import { getIsForImpl, isOptionType, isSwcAstType, isSwcNodeEnumType, isVecType, writeHeader } from "./helpers.ts";
+import { getIsForImpl, isOptionType, isVecType, writeHeader } from "./helpers.ts";
 
 export function generateTypeScriptTypes(analysisResult: AnalysisResult): string {
     const writer = createWriter();
     writeHeader(writer);
 
-    writer.writeLine(`import { BigIntValue, JsWord, Node, Span } from "./types.ts";`);
+    writer.writeLine(`import { BigIntValue, BaseNode, Span } from "./types.ts";`);
 
     for (const enumDef of analysisResult.astEnums) {
         writer.blankLine();
@@ -38,12 +38,22 @@ export function generateTypeScriptTypes(analysisResult: AnalysisResult): string 
         }
     }
 
+    // NodeKind enum
     writer.blankLine();
     writer.write(`export enum NodeKind`).block(() => {
         for (const struct of analysisResult.astStructs) {
             writer.writeLine(`${struct.name},`);
         }
     });
+
+    // Node type
+    writer.blankLine();
+    writer.write(`export type Node =`);
+    for (const struct of analysisResult.astStructs) {
+        writer.newLine();
+        writer.write(`| ${struct.name}`);
+    }
+    writer.write(";").newLine();
 
     for (const struct of analysisResult.astStructs) {
         writer.blankLine();
@@ -57,7 +67,7 @@ export function generateTypeScriptTypes(analysisResult: AnalysisResult): string 
     function writeAstStruct(struct: AstStructDefinition) {
         const structFields = struct.fields.filter(f => !getIsForImpl(analysisResult, f.type) && f.name !== "span");
         writeJsDocs(struct);
-        writer.write(`export class ${struct.name} extends Node`).block(() => {
+        writer.write(`export class ${struct.name} extends BaseNode`).block(() => {
             writer.writeLine(`kind!: NodeKind.${struct.name};`);
             if (struct.parents.length > 0) {
                 writer.write("parent!: ");
@@ -259,6 +269,8 @@ export function generateTypeScriptTypes(analysisResult: AnalysisResult): string 
                     writer.write(">");
                 } else if (type.name === "AssignOpToken") {
                     writer.write("AssignOp");
+                } else if (type.name === "JsWord") {
+                    writer.write("string");
                 } else {
                     writer.write(type.name);
                     if (type.genericArgs.length > 0) {
@@ -309,7 +321,7 @@ export function generateTypeScriptSetup(analysisResult: AnalysisResult): string 
         writer.blankLine();
         writer.write("for (const key of Object.keys(node))").block(() => {
             writer.writeLine("const obj = node[key];");
-            writer.write(`if (typeof obj === "object" && typeof obj.kind === "string")`).block(() => {
+            writer.write(`if (obj != null && typeof obj === "object" && typeof obj.kind === "string")`).block(() => {
                 writer.writeLine("visitNode(obj, node);");
             });
         });
@@ -318,7 +330,7 @@ export function generateTypeScriptSetup(analysisResult: AnalysisResult): string 
     writer.write("function getNodeClass(node: any)").block(() => {
         writer.write("switch (node.kind)").block(() => {
             for (const struct of analysisResult.astStructs) {
-                writer.writeLine(`case "${struct.name}":`).indent(() => {
+                writer.writeLine(`case types.NodeKind.${struct.name}:`).indent(() => {
                     writer.writeLine(`return types.${struct.name};`);
                 });
             }

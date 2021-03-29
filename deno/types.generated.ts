@@ -1,6 +1,6 @@
 // This code is code generated.
 // Run `./scripts/generate.sh` from the root directory to regenerate it.
-import { BigIntValue, JsWord, Node, Span } from "./types.ts";
+import { BigIntValue, BaseNode, Span } from "./types.ts";
 
 export type BlockStmtOrExpr =
   | BlockStmt
@@ -691,8 +691,8 @@ export interface TokenWord {
 
 export interface TokenTemplate {
   kind: TokenKind.Template;
-  raw: JsWord;
-  cooked: JsWord | undefined;
+  raw: string;
+  cooked: string | undefined;
   has_escape: boolean;
 }
 
@@ -709,14 +709,14 @@ export interface TokenAssignOp {
 /** String literal. Span of this token contains quote. */
 export interface TokenStr {
   kind: TokenKind.Str;
-  value: JsWord;
+  value: string;
   has_escape: boolean;
 }
 
 /** Regexp literal. */
 export interface TokenRegex {
   kind: TokenKind.Regex;
-  inner: [JsWord, JsWord];
+  inner: [string, string];
 }
 
 /** TODO: Make Num as enum and separate decimal, binary, ..etc */
@@ -732,17 +732,17 @@ export interface TokenBigInt {
 
 export interface TokenJSXName {
   kind: TokenKind.JSXName;
-  name: JsWord;
+  name: string;
 }
 
 export interface TokenJSXText {
   kind: TokenKind.JSXText;
-  raw: JsWord;
+  raw: string;
 }
 
 export interface TokenShebang {
   kind: TokenKind.Shebang;
-  inner: JsWord;
+  inner: string;
 }
 
 export interface TokenError {
@@ -772,7 +772,7 @@ export interface WordKeyword {
 
 export interface WordIdent {
   kind: WordKind.Ident;
-  inner: JsWord;
+  inner: string;
 }
 
 export enum NodeKind {
@@ -938,8 +938,170 @@ export enum NodeKind {
   YieldExpr,
 }
 
+export type Node =
+| ArrayLit
+| ArrayPat
+| ArrowExpr
+| AssignExpr
+| AssignPat
+| AssignPatProp
+| AssignProp
+| AwaitExpr
+| BigInt
+| BinExpr
+| BindingIdent
+| BlockStmt
+| Bool
+| BreakStmt
+| CallExpr
+| CatchClause
+| Class
+| ClassDecl
+| ClassExpr
+| ClassMethod
+| ClassProp
+| ComputedPropName
+| CondExpr
+| Constructor
+| ContinueStmt
+| DebuggerStmt
+| Decorator
+| DoWhileStmt
+| EmptyStmt
+| ExportAll
+| ExportDecl
+| ExportDefaultDecl
+| ExportDefaultExpr
+| ExportDefaultSpecifier
+| ExportNamedSpecifier
+| ExportNamespaceSpecifier
+| ExprOrSpread
+| ExprStmt
+| FnDecl
+| FnExpr
+| ForInStmt
+| ForOfStmt
+| ForStmt
+| Function
+| GetterProp
+| Ident
+| IfStmt
+| ImportDecl
+| ImportDefaultSpecifier
+| ImportNamedSpecifier
+| ImportStarAsSpecifier
+| Invalid
+| JSXAttr
+| JSXClosingElement
+| JSXClosingFragment
+| JSXElement
+| JSXEmptyExpr
+| JSXExprContainer
+| JSXFragment
+| JSXMemberExpr
+| JSXNamespacedName
+| JSXOpeningElement
+| JSXOpeningFragment
+| JSXSpreadChild
+| JSXText
+| KeyValuePatProp
+| KeyValueProp
+| LabeledStmt
+| MemberExpr
+| MetaPropExpr
+| MethodProp
+| Module
+| NamedExport
+| NewExpr
+| Null
+| Number
+| ObjectLit
+| ObjectPat
+| OptChainExpr
+| Param
+| ParenExpr
+| PrivateMethod
+| PrivateName
+| PrivateProp
+| Regex
+| RestPat
+| ReturnStmt
+| Script
+| SeqExpr
+| SetterProp
+| SpreadElement
+| Str
+| Super
+| SwitchCase
+| SwitchStmt
+| TaggedTpl
+| ThisExpr
+| ThrowStmt
+| Tpl
+| TplElement
+| TryStmt
+| TsArrayType
+| TsAsExpr
+| TsCallSignatureDecl
+| TsConditionalType
+| TsConstAssertion
+| TsConstructSignatureDecl
+| TsConstructorType
+| TsEnumDecl
+| TsEnumMember
+| TsExportAssignment
+| TsExprWithTypeArgs
+| TsExternalModuleRef
+| TsFnType
+| TsImportEqualsDecl
+| TsImportType
+| TsIndexSignature
+| TsIndexedAccessType
+| TsInferType
+| TsInterfaceBody
+| TsInterfaceDecl
+| TsIntersectionType
+| TsKeywordType
+| TsLitType
+| TsMappedType
+| TsMethodSignature
+| TsModuleBlock
+| TsModuleDecl
+| TsNamespaceDecl
+| TsNamespaceExportDecl
+| TsNonNullExpr
+| TsOptionalType
+| TsParamProp
+| TsParenthesizedType
+| TsPropertySignature
+| TsQualifiedName
+| TsRestType
+| TsThisType
+| TsTplLitType
+| TsTupleElement
+| TsTupleType
+| TsTypeAliasDecl
+| TsTypeAnn
+| TsTypeAssertion
+| TsTypeLit
+| TsTypeOperator
+| TsTypeParam
+| TsTypeParamDecl
+| TsTypeParamInstantiation
+| TsTypePredicate
+| TsTypeQuery
+| TsTypeRef
+| TsUnionType
+| UnaryExpr
+| UpdateExpr
+| VarDecl
+| VarDeclarator
+| WhileStmt
+| WithStmt
+| YieldExpr;
+
 /** Array literal. */
-export class ArrayLit extends Node {
+export class ArrayLit extends BaseNode {
   kind!: NodeKind.ArrayLit;
   parent!: Node;
   elems!: Array<ExprOrSpread | undefined>;
@@ -956,7 +1118,7 @@ export class ArrayLit extends Node {
   }
 }
 
-export class ArrayPat extends Node {
+export class ArrayPat extends BaseNode {
   kind!: NodeKind.ArrayPat;
   parent!: Node;
   elems!: Array<Pat | undefined>;
@@ -979,7 +1141,7 @@ export class ArrayPat extends Node {
   }
 }
 
-export class ArrowExpr extends Node {
+export class ArrowExpr extends BaseNode {
   kind!: NodeKind.ArrowExpr;
   parent!: Node;
   params!: Array<Pat>;
@@ -1006,7 +1168,7 @@ export class ArrowExpr extends Node {
   }
 }
 
-export class AssignExpr extends Node {
+export class AssignExpr extends BaseNode {
   kind!: NodeKind.AssignExpr;
   parent!: Node;
   op!: AssignOp;
@@ -1022,7 +1184,7 @@ export class AssignExpr extends Node {
   }
 }
 
-export class AssignPat extends Node {
+export class AssignPat extends BaseNode {
   kind!: NodeKind.AssignPat;
   parent!: Node;
   left!: Pat;
@@ -1042,7 +1204,7 @@ export class AssignPat extends Node {
 }
 
 /** `{key}` or `{key = value}` */
-export class AssignPatProp extends Node {
+export class AssignPatProp extends BaseNode {
   kind!: NodeKind.AssignPatProp;
   parent!: ObjectPat;
   key!: Ident;
@@ -1059,7 +1221,7 @@ export class AssignPatProp extends Node {
   }
 }
 
-export class AssignProp extends Node {
+export class AssignProp extends BaseNode {
   kind!: NodeKind.AssignProp;
   parent!: ObjectLit;
   key!: Ident;
@@ -1074,7 +1236,7 @@ export class AssignProp extends Node {
   }
 }
 
-export class AwaitExpr extends Node {
+export class AwaitExpr extends BaseNode {
   kind!: NodeKind.AwaitExpr;
   parent!: Node;
   arg!: Expr;
@@ -1087,7 +1249,7 @@ export class AwaitExpr extends Node {
   }
 }
 
-export class BigInt extends Node {
+export class BigInt extends BaseNode {
   kind!: NodeKind.BigInt;
   parent!: Node;
   value!: BigIntValue;
@@ -1097,7 +1259,7 @@ export class BigInt extends Node {
   }
 }
 
-export class BinExpr extends Node {
+export class BinExpr extends BaseNode {
   kind!: NodeKind.BinExpr;
   parent!: Node;
   op!: BinaryOp;
@@ -1114,7 +1276,7 @@ export class BinExpr extends Node {
 }
 
 /** Identifer used as a pattern. */
-export class BindingIdent extends Node {
+export class BindingIdent extends BaseNode {
   kind!: NodeKind.BindingIdent;
   parent!: Node;
   id!: Ident;
@@ -1132,7 +1294,7 @@ export class BindingIdent extends Node {
 }
 
 /** Use when only block statements are allowed. */
-export class BlockStmt extends Node {
+export class BlockStmt extends BaseNode {
   kind!: NodeKind.BlockStmt;
   parent!: Node;
   stmts!: Array<Stmt>;
@@ -1147,7 +1309,7 @@ export class BlockStmt extends Node {
   }
 }
 
-export class Bool extends Node {
+export class Bool extends BaseNode {
   kind!: NodeKind.Bool;
   parent!: Node;
   value!: boolean;
@@ -1157,7 +1319,7 @@ export class Bool extends Node {
   }
 }
 
-export class BreakStmt extends Node {
+export class BreakStmt extends BaseNode {
   kind!: NodeKind.BreakStmt;
   parent!: Node;
   label!: Ident | undefined;
@@ -1172,7 +1334,7 @@ export class BreakStmt extends Node {
   }
 }
 
-export class CallExpr extends Node {
+export class CallExpr extends BaseNode {
   kind!: NodeKind.CallExpr;
   parent!: Node;
   callee!: ExprOrSuper;
@@ -1193,7 +1355,7 @@ export class CallExpr extends Node {
   }
 }
 
-export class CatchClause extends Node {
+export class CatchClause extends BaseNode {
   kind!: NodeKind.CatchClause;
   parent!: TryStmt;
   /**
@@ -1216,7 +1378,7 @@ export class CatchClause extends Node {
   }
 }
 
-export class Class extends Node {
+export class Class extends BaseNode {
   kind!: NodeKind.Class;
   parent!: ClassDecl
     | ClassExpr;
@@ -1254,7 +1416,7 @@ export class Class extends Node {
   }
 }
 
-export class ClassDecl extends Node {
+export class ClassDecl extends BaseNode {
   kind!: NodeKind.ClassDecl;
   parent!: Node;
   ident!: Ident;
@@ -1271,7 +1433,7 @@ export class ClassDecl extends Node {
 }
 
 /** Class expression. */
-export class ClassExpr extends Node {
+export class ClassExpr extends BaseNode {
   kind!: NodeKind.ClassExpr;
   parent!: Node;
   ident!: Ident | undefined;
@@ -1288,7 +1450,7 @@ export class ClassExpr extends Node {
   }
 }
 
-export class ClassMethod extends Node {
+export class ClassMethod extends BaseNode {
   kind!: NodeKind.ClassMethod;
   parent!: Class;
   key!: PropName;
@@ -1310,7 +1472,7 @@ export class ClassMethod extends Node {
   }
 }
 
-export class ClassProp extends Node {
+export class ClassProp extends BaseNode {
   kind!: NodeKind.ClassProp;
   parent!: Class;
   key!: Expr;
@@ -1345,7 +1507,7 @@ export class ClassProp extends Node {
   }
 }
 
-export class ComputedPropName extends Node {
+export class ComputedPropName extends BaseNode {
   kind!: NodeKind.ComputedPropName;
   parent!: Node;
   expr!: Expr;
@@ -1358,7 +1520,7 @@ export class ComputedPropName extends Node {
   }
 }
 
-export class CondExpr extends Node {
+export class CondExpr extends BaseNode {
   kind!: NodeKind.CondExpr;
   parent!: Node;
   test!: Expr;
@@ -1375,7 +1537,7 @@ export class CondExpr extends Node {
   }
 }
 
-export class Constructor extends Node {
+export class Constructor extends BaseNode {
   kind!: NodeKind.Constructor;
   parent!: Class;
   key!: PropName;
@@ -1398,7 +1560,7 @@ export class Constructor extends Node {
   }
 }
 
-export class ContinueStmt extends Node {
+export class ContinueStmt extends BaseNode {
   kind!: NodeKind.ContinueStmt;
   parent!: Node;
   label!: Ident | undefined;
@@ -1413,7 +1575,7 @@ export class ContinueStmt extends Node {
   }
 }
 
-export class DebuggerStmt extends Node {
+export class DebuggerStmt extends BaseNode {
   kind!: NodeKind.DebuggerStmt;
   parent!: Node;
 
@@ -1422,7 +1584,7 @@ export class DebuggerStmt extends Node {
   }
 }
 
-export class Decorator extends Node {
+export class Decorator extends BaseNode {
   kind!: NodeKind.Decorator;
   parent!: Node;
   expr!: Expr;
@@ -1435,7 +1597,7 @@ export class Decorator extends Node {
   }
 }
 
-export class DoWhileStmt extends Node {
+export class DoWhileStmt extends BaseNode {
   kind!: NodeKind.DoWhileStmt;
   parent!: Node;
   test!: Expr;
@@ -1450,7 +1612,7 @@ export class DoWhileStmt extends Node {
   }
 }
 
-export class EmptyStmt extends Node {
+export class EmptyStmt extends BaseNode {
   kind!: NodeKind.EmptyStmt;
   parent!: Node;
 
@@ -1460,7 +1622,7 @@ export class EmptyStmt extends Node {
 }
 
 /** `export * from 'mod'` */
-export class ExportAll extends Node {
+export class ExportAll extends BaseNode {
   kind!: NodeKind.ExportAll;
   parent!: Module
     | TsModuleBlock;
@@ -1478,7 +1640,7 @@ export class ExportAll extends Node {
   }
 }
 
-export class ExportDecl extends Node {
+export class ExportDecl extends BaseNode {
   kind!: NodeKind.ExportDecl;
   parent!: Module
     | TsModuleBlock;
@@ -1492,7 +1654,7 @@ export class ExportDecl extends Node {
   }
 }
 
-export class ExportDefaultDecl extends Node {
+export class ExportDefaultDecl extends BaseNode {
   kind!: NodeKind.ExportDefaultDecl;
   parent!: Module
     | TsModuleBlock;
@@ -1506,7 +1668,7 @@ export class ExportDefaultDecl extends Node {
   }
 }
 
-export class ExportDefaultExpr extends Node {
+export class ExportDefaultExpr extends BaseNode {
   kind!: NodeKind.ExportDefaultExpr;
   parent!: Module
     | TsModuleBlock;
@@ -1520,7 +1682,7 @@ export class ExportDefaultExpr extends Node {
   }
 }
 
-export class ExportDefaultSpecifier extends Node {
+export class ExportDefaultSpecifier extends BaseNode {
   kind!: NodeKind.ExportDefaultSpecifier;
   parent!: NamedExport;
   exported!: Ident;
@@ -1533,7 +1695,7 @@ export class ExportDefaultSpecifier extends Node {
   }
 }
 
-export class ExportNamedSpecifier extends Node {
+export class ExportNamedSpecifier extends BaseNode {
   kind!: NodeKind.ExportNamedSpecifier;
   parent!: NamedExport;
   /** `foo` in `export { foo as bar }` */
@@ -1553,7 +1715,7 @@ export class ExportNamedSpecifier extends Node {
 }
 
 /** `export * as foo from 'src';` */
-export class ExportNamespaceSpecifier extends Node {
+export class ExportNamespaceSpecifier extends BaseNode {
   kind!: NodeKind.ExportNamespaceSpecifier;
   parent!: NamedExport;
   name!: Ident;
@@ -1566,7 +1728,7 @@ export class ExportNamespaceSpecifier extends Node {
   }
 }
 
-export class ExprOrSpread extends Node {
+export class ExprOrSpread extends BaseNode {
   kind!: NodeKind.ExprOrSpread;
   parent!: ArrayLit
     | CallExpr
@@ -1582,7 +1744,7 @@ export class ExprOrSpread extends Node {
   }
 }
 
-export class ExprStmt extends Node {
+export class ExprStmt extends BaseNode {
   kind!: NodeKind.ExprStmt;
   parent!: Node;
   expr!: Expr;
@@ -1595,7 +1757,7 @@ export class ExprStmt extends Node {
   }
 }
 
-export class FnDecl extends Node {
+export class FnDecl extends BaseNode {
   kind!: NodeKind.FnDecl;
   parent!: Node;
   ident!: Ident;
@@ -1612,7 +1774,7 @@ export class FnDecl extends Node {
 }
 
 /** Function expression. */
-export class FnExpr extends Node {
+export class FnExpr extends BaseNode {
   kind!: NodeKind.FnExpr;
   parent!: Node;
   ident!: Ident | undefined;
@@ -1629,7 +1791,7 @@ export class FnExpr extends Node {
   }
 }
 
-export class ForInStmt extends Node {
+export class ForInStmt extends BaseNode {
   kind!: NodeKind.ForInStmt;
   parent!: Node;
   left!: VarDeclOrPat;
@@ -1646,7 +1808,7 @@ export class ForInStmt extends Node {
   }
 }
 
-export class ForOfStmt extends Node {
+export class ForOfStmt extends BaseNode {
   kind!: NodeKind.ForOfStmt;
   parent!: Node;
   /**
@@ -1671,7 +1833,7 @@ export class ForOfStmt extends Node {
   }
 }
 
-export class ForStmt extends Node {
+export class ForStmt extends BaseNode {
   kind!: NodeKind.ForStmt;
   parent!: Node;
   init!: VarDeclOrExpr | undefined;
@@ -1697,7 +1859,7 @@ export class ForStmt extends Node {
 }
 
 /** Common parts of function and method. */
-export class Function extends Node {
+export class Function extends BaseNode {
   kind!: NodeKind.Function;
   parent!: Node;
   params!: Array<Param>;
@@ -1732,7 +1894,7 @@ export class Function extends Node {
   }
 }
 
-export class GetterProp extends Node {
+export class GetterProp extends BaseNode {
   kind!: NodeKind.GetterProp;
   parent!: ObjectLit;
   key!: PropName;
@@ -1754,10 +1916,10 @@ export class GetterProp extends Node {
 }
 
 /** Ident with span. */
-export class Ident extends Node {
+export class Ident extends BaseNode {
   kind!: NodeKind.Ident;
   parent!: Node;
-  sym!: JsWord;
+  sym!: string;
   /** TypeScript only. Used in case of an optional parameter. */
   optional!: boolean;
 
@@ -1766,7 +1928,7 @@ export class Ident extends Node {
   }
 }
 
-export class IfStmt extends Node {
+export class IfStmt extends BaseNode {
   kind!: NodeKind.IfStmt;
   parent!: Node;
   test!: Expr;
@@ -1785,7 +1947,7 @@ export class IfStmt extends Node {
   }
 }
 
-export class ImportDecl extends Node {
+export class ImportDecl extends BaseNode {
   kind!: NodeKind.ImportDecl;
   parent!: Module
     | TsModuleBlock;
@@ -1809,7 +1971,7 @@ export class ImportDecl extends Node {
 }
 
 /** e.g. `import foo from 'mod.js'` */
-export class ImportDefaultSpecifier extends Node {
+export class ImportDefaultSpecifier extends BaseNode {
   kind!: NodeKind.ImportDefaultSpecifier;
   parent!: ImportDecl;
   local!: Ident;
@@ -1827,7 +1989,7 @@ export class ImportDefaultSpecifier extends Node {
  * e.g. local = bar, imported = Some(foo) for `import { foo as bar } from
  * 'mod.js'`
  */
-export class ImportNamedSpecifier extends Node {
+export class ImportNamedSpecifier extends BaseNode {
   kind!: NodeKind.ImportNamedSpecifier;
   parent!: ImportDecl;
   local!: Ident;
@@ -1845,7 +2007,7 @@ export class ImportNamedSpecifier extends Node {
 }
 
 /** e.g. `import * as foo from 'mod.js'`. */
-export class ImportStarAsSpecifier extends Node {
+export class ImportStarAsSpecifier extends BaseNode {
   kind!: NodeKind.ImportStarAsSpecifier;
   parent!: ImportDecl;
   local!: Ident;
@@ -1859,7 +2021,7 @@ export class ImportStarAsSpecifier extends Node {
 }
 
 /** Represents a invalid node. */
-export class Invalid extends Node {
+export class Invalid extends BaseNode {
   kind!: NodeKind.Invalid;
   parent!: Node;
 
@@ -1868,7 +2030,7 @@ export class Invalid extends Node {
   }
 }
 
-export class JSXAttr extends Node {
+export class JSXAttr extends BaseNode {
   kind!: NodeKind.JSXAttr;
   parent!: JSXOpeningElement;
   name!: JSXAttrName;
@@ -1886,7 +2048,7 @@ export class JSXAttr extends Node {
   }
 }
 
-export class JSXClosingElement extends Node {
+export class JSXClosingElement extends BaseNode {
   kind!: NodeKind.JSXClosingElement;
   parent!: JSXElement;
   name!: JSXElementName;
@@ -1899,7 +2061,7 @@ export class JSXClosingElement extends Node {
   }
 }
 
-export class JSXClosingFragment extends Node {
+export class JSXClosingFragment extends BaseNode {
   kind!: NodeKind.JSXClosingFragment;
   parent!: JSXFragment;
 
@@ -1908,7 +2070,7 @@ export class JSXClosingFragment extends Node {
   }
 }
 
-export class JSXElement extends Node {
+export class JSXElement extends BaseNode {
   kind!: NodeKind.JSXElement;
   parent!: Node;
   opening!: JSXOpeningElement;
@@ -1929,7 +2091,7 @@ export class JSXElement extends Node {
   }
 }
 
-export class JSXEmptyExpr extends Node {
+export class JSXEmptyExpr extends BaseNode {
   kind!: NodeKind.JSXEmptyExpr;
   parent!: Node;
 
@@ -1938,7 +2100,7 @@ export class JSXEmptyExpr extends Node {
   }
 }
 
-export class JSXExprContainer extends Node {
+export class JSXExprContainer extends BaseNode {
   kind!: NodeKind.JSXExprContainer;
   parent!: JSXAttr
     | JSXElement
@@ -1953,7 +2115,7 @@ export class JSXExprContainer extends Node {
   }
 }
 
-export class JSXFragment extends Node {
+export class JSXFragment extends BaseNode {
   kind!: NodeKind.JSXFragment;
   parent!: Node;
   opening!: JSXOpeningFragment;
@@ -1972,7 +2134,7 @@ export class JSXFragment extends Node {
   }
 }
 
-export class JSXMemberExpr extends Node {
+export class JSXMemberExpr extends BaseNode {
   kind!: NodeKind.JSXMemberExpr;
   parent!: Node;
   obj!: JSXObject;
@@ -1988,7 +2150,7 @@ export class JSXMemberExpr extends Node {
 }
 
 /** XML-based namespace syntax: */
-export class JSXNamespacedName extends Node {
+export class JSXNamespacedName extends BaseNode {
   kind!: NodeKind.JSXNamespacedName;
   parent!: Node;
   ns!: Ident;
@@ -2003,7 +2165,7 @@ export class JSXNamespacedName extends Node {
   }
 }
 
-export class JSXOpeningElement extends Node {
+export class JSXOpeningElement extends BaseNode {
   kind!: NodeKind.JSXOpeningElement;
   parent!: JSXElement;
   name!: JSXElementName;
@@ -2029,7 +2191,7 @@ export class JSXOpeningElement extends Node {
   }
 }
 
-export class JSXOpeningFragment extends Node {
+export class JSXOpeningFragment extends BaseNode {
   kind!: NodeKind.JSXOpeningFragment;
   parent!: JSXFragment;
 
@@ -2038,7 +2200,7 @@ export class JSXOpeningFragment extends Node {
   }
 }
 
-export class JSXSpreadChild extends Node {
+export class JSXSpreadChild extends BaseNode {
   kind!: NodeKind.JSXSpreadChild;
   parent!: JSXElement
     | JSXFragment;
@@ -2052,11 +2214,11 @@ export class JSXSpreadChild extends Node {
   }
 }
 
-export class JSXText extends Node {
+export class JSXText extends BaseNode {
   kind!: NodeKind.JSXText;
   parent!: Node;
-  value!: JsWord;
-  raw!: JsWord;
+  value!: string;
+  raw!: string;
 
   getChildren(): Node[] {
     return new Array(0);
@@ -2064,7 +2226,7 @@ export class JSXText extends Node {
 }
 
 /** `{key: value}` */
-export class KeyValuePatProp extends Node {
+export class KeyValuePatProp extends BaseNode {
   kind!: NodeKind.KeyValuePatProp;
   parent!: ObjectPat;
   key!: PropName;
@@ -2079,7 +2241,7 @@ export class KeyValuePatProp extends Node {
   }
 }
 
-export class KeyValueProp extends Node {
+export class KeyValueProp extends BaseNode {
   kind!: NodeKind.KeyValueProp;
   parent!: ObjectLit;
   key!: PropName;
@@ -2094,7 +2256,7 @@ export class KeyValueProp extends Node {
   }
 }
 
-export class LabeledStmt extends Node {
+export class LabeledStmt extends BaseNode {
   kind!: NodeKind.LabeledStmt;
   parent!: Node;
   label!: Ident;
@@ -2109,7 +2271,7 @@ export class LabeledStmt extends Node {
   }
 }
 
-export class MemberExpr extends Node {
+export class MemberExpr extends BaseNode {
   kind!: NodeKind.MemberExpr;
   parent!: Node;
   obj!: ExprOrSuper;
@@ -2125,7 +2287,7 @@ export class MemberExpr extends Node {
   }
 }
 
-export class MetaPropExpr extends Node {
+export class MetaPropExpr extends BaseNode {
   kind!: NodeKind.MetaPropExpr;
   parent!: Node;
   meta!: Ident;
@@ -2140,7 +2302,7 @@ export class MetaPropExpr extends Node {
   }
 }
 
-export class MethodProp extends Node {
+export class MethodProp extends BaseNode {
   kind!: NodeKind.MethodProp;
   parent!: ObjectLit;
   key!: PropName;
@@ -2155,10 +2317,10 @@ export class MethodProp extends Node {
   }
 }
 
-export class Module extends Node {
+export class Module extends BaseNode {
   kind!: NodeKind.Module;
   body!: Array<ModuleItem>;
-  shebang!: JsWord | undefined;
+  shebang!: string | undefined;
 
   getChildren(): Node[] {
     const children: Node[] = new Array(this.body.length);
@@ -2174,7 +2336,7 @@ export class Module extends Node {
  * `export { foo } from 'mod'`
  * `export { foo as bar } from 'mod'`
  */
-export class NamedExport extends Node {
+export class NamedExport extends BaseNode {
   kind!: NodeKind.NamedExport;
   parent!: Module
     | TsModuleBlock;
@@ -2199,7 +2361,7 @@ export class NamedExport extends Node {
   }
 }
 
-export class NewExpr extends Node {
+export class NewExpr extends BaseNode {
   kind!: NodeKind.NewExpr;
   parent!: Node;
   callee!: Expr;
@@ -2222,7 +2384,7 @@ export class NewExpr extends Node {
   }
 }
 
-export class Null extends Node {
+export class Null extends BaseNode {
   kind!: NodeKind.Null;
   parent!: Node;
 
@@ -2231,7 +2393,7 @@ export class Null extends Node {
   }
 }
 
-export class Number extends Node {
+export class Number extends BaseNode {
   kind!: NodeKind.Number;
   parent!: Node;
   /**
@@ -2247,7 +2409,7 @@ export class Number extends Node {
 }
 
 /** Object literal. */
-export class ObjectLit extends Node {
+export class ObjectLit extends BaseNode {
   kind!: NodeKind.ObjectLit;
   parent!: Node;
   props!: Array<PropOrSpread>;
@@ -2262,7 +2424,7 @@ export class ObjectLit extends Node {
   }
 }
 
-export class ObjectPat extends Node {
+export class ObjectPat extends BaseNode {
   kind!: NodeKind.ObjectPat;
   parent!: Node;
   props!: Array<ObjectPatProp>;
@@ -2283,7 +2445,7 @@ export class ObjectPat extends Node {
   }
 }
 
-export class OptChainExpr extends Node {
+export class OptChainExpr extends BaseNode {
   kind!: NodeKind.OptChainExpr;
   parent!: Node;
   question_dot_token!: Span;
@@ -2297,7 +2459,7 @@ export class OptChainExpr extends Node {
   }
 }
 
-export class Param extends Node {
+export class Param extends BaseNode {
   kind!: NodeKind.Param;
   parent!: Constructor
     | Function;
@@ -2315,7 +2477,7 @@ export class Param extends Node {
   }
 }
 
-export class ParenExpr extends Node {
+export class ParenExpr extends BaseNode {
   kind!: NodeKind.ParenExpr;
   parent!: Node;
   expr!: Expr;
@@ -2328,7 +2490,7 @@ export class ParenExpr extends Node {
   }
 }
 
-export class PrivateMethod extends Node {
+export class PrivateMethod extends BaseNode {
   kind!: NodeKind.PrivateMethod;
   parent!: Class;
   key!: PrivateName;
@@ -2350,7 +2512,7 @@ export class PrivateMethod extends Node {
   }
 }
 
-export class PrivateName extends Node {
+export class PrivateName extends BaseNode {
   kind!: NodeKind.PrivateName;
   parent!: Node;
   id!: Ident;
@@ -2363,7 +2525,7 @@ export class PrivateName extends Node {
   }
 }
 
-export class PrivateProp extends Node {
+export class PrivateProp extends BaseNode {
   kind!: NodeKind.PrivateProp;
   parent!: Class;
   key!: PrivateName;
@@ -2397,11 +2559,11 @@ export class PrivateProp extends Node {
   }
 }
 
-export class Regex extends Node {
+export class Regex extends BaseNode {
   kind!: NodeKind.Regex;
   parent!: Node;
-  exp!: JsWord;
-  flags!: JsWord;
+  exp!: string;
+  flags!: string;
 
   getChildren(): Node[] {
     return new Array(0);
@@ -2409,7 +2571,7 @@ export class Regex extends Node {
 }
 
 /** EsTree `RestElement` */
-export class RestPat extends Node {
+export class RestPat extends BaseNode {
   kind!: NodeKind.RestPat;
   parent!: Node;
   dot3_token!: Span;
@@ -2427,7 +2589,7 @@ export class RestPat extends Node {
   }
 }
 
-export class ReturnStmt extends Node {
+export class ReturnStmt extends BaseNode {
   kind!: NodeKind.ReturnStmt;
   parent!: Node;
   arg!: Expr | undefined;
@@ -2442,10 +2604,10 @@ export class ReturnStmt extends Node {
   }
 }
 
-export class Script extends Node {
+export class Script extends BaseNode {
   kind!: NodeKind.Script;
   body!: Array<Stmt>;
-  shebang!: JsWord | undefined;
+  shebang!: string | undefined;
 
   getChildren(): Node[] {
     const children: Node[] = new Array(this.body.length);
@@ -2457,7 +2619,7 @@ export class Script extends Node {
   }
 }
 
-export class SeqExpr extends Node {
+export class SeqExpr extends BaseNode {
   kind!: NodeKind.SeqExpr;
   parent!: Node;
   exprs!: Array<Expr>;
@@ -2472,7 +2634,7 @@ export class SeqExpr extends Node {
   }
 }
 
-export class SetterProp extends Node {
+export class SetterProp extends BaseNode {
   kind!: NodeKind.SetterProp;
   parent!: ObjectLit;
   key!: PropName;
@@ -2491,7 +2653,7 @@ export class SetterProp extends Node {
   }
 }
 
-export class SpreadElement extends Node {
+export class SpreadElement extends BaseNode {
   kind!: NodeKind.SpreadElement;
   parent!: JSXOpeningElement
     | ObjectLit;
@@ -2506,10 +2668,10 @@ export class SpreadElement extends Node {
   }
 }
 
-export class Str extends Node {
+export class Str extends BaseNode {
   kind!: NodeKind.Str;
   parent!: Node;
-  value!: JsWord;
+  value!: string;
   /** This includes line escape. */
   has_escape!: boolean;
   str_kind!: StrKind;
@@ -2519,7 +2681,7 @@ export class Str extends Node {
   }
 }
 
-export class Super extends Node {
+export class Super extends BaseNode {
   kind!: NodeKind.Super;
   parent!: CallExpr
     | MemberExpr;
@@ -2529,7 +2691,7 @@ export class Super extends Node {
   }
 }
 
-export class SwitchCase extends Node {
+export class SwitchCase extends BaseNode {
   kind!: NodeKind.SwitchCase;
   parent!: SwitchStmt;
   /** None for `default:` */
@@ -2549,7 +2711,7 @@ export class SwitchCase extends Node {
   }
 }
 
-export class SwitchStmt extends Node {
+export class SwitchStmt extends BaseNode {
   kind!: NodeKind.SwitchStmt;
   parent!: Node;
   discriminant!: Expr;
@@ -2566,7 +2728,7 @@ export class SwitchStmt extends Node {
   }
 }
 
-export class TaggedTpl extends Node {
+export class TaggedTpl extends BaseNode {
   kind!: NodeKind.TaggedTpl;
   parent!: Node;
   tag!: Expr;
@@ -2591,7 +2753,7 @@ export class TaggedTpl extends Node {
   }
 }
 
-export class ThisExpr extends Node {
+export class ThisExpr extends BaseNode {
   kind!: NodeKind.ThisExpr;
   parent!: Node;
 
@@ -2600,7 +2762,7 @@ export class ThisExpr extends Node {
   }
 }
 
-export class ThrowStmt extends Node {
+export class ThrowStmt extends BaseNode {
   kind!: NodeKind.ThrowStmt;
   parent!: Node;
   arg!: Expr;
@@ -2613,7 +2775,7 @@ export class ThrowStmt extends Node {
   }
 }
 
-export class Tpl extends Node {
+export class Tpl extends BaseNode {
   kind!: NodeKind.Tpl;
   parent!: Node;
   exprs!: Array<Expr>;
@@ -2632,7 +2794,7 @@ export class Tpl extends Node {
   }
 }
 
-export class TplElement extends Node {
+export class TplElement extends BaseNode {
   kind!: NodeKind.TplElement;
   parent!: TaggedTpl
     | Tpl
@@ -2652,7 +2814,7 @@ export class TplElement extends Node {
   }
 }
 
-export class TryStmt extends Node {
+export class TryStmt extends BaseNode {
   kind!: NodeKind.TryStmt;
   parent!: Node;
   block!: BlockStmt;
@@ -2673,7 +2835,7 @@ export class TryStmt extends Node {
   }
 }
 
-export class TsArrayType extends Node {
+export class TsArrayType extends BaseNode {
   kind!: NodeKind.TsArrayType;
   parent!: Node;
   elem_type!: TsType;
@@ -2686,7 +2848,7 @@ export class TsArrayType extends Node {
   }
 }
 
-export class TsAsExpr extends Node {
+export class TsAsExpr extends BaseNode {
   kind!: NodeKind.TsAsExpr;
   parent!: Node;
   expr!: Expr;
@@ -2701,7 +2863,7 @@ export class TsAsExpr extends Node {
   }
 }
 
-export class TsCallSignatureDecl extends Node {
+export class TsCallSignatureDecl extends BaseNode {
   kind!: NodeKind.TsCallSignatureDecl;
   parent!: TsInterfaceBody
     | TsTypeLit;
@@ -2725,7 +2887,7 @@ export class TsCallSignatureDecl extends Node {
   }
 }
 
-export class TsConditionalType extends Node {
+export class TsConditionalType extends BaseNode {
   kind!: NodeKind.TsConditionalType;
   parent!: Node;
   check_type!: TsType;
@@ -2744,7 +2906,7 @@ export class TsConditionalType extends Node {
   }
 }
 
-export class TsConstAssertion extends Node {
+export class TsConstAssertion extends BaseNode {
   kind!: NodeKind.TsConstAssertion;
   parent!: Node;
   expr!: Expr;
@@ -2757,7 +2919,7 @@ export class TsConstAssertion extends Node {
   }
 }
 
-export class TsConstructSignatureDecl extends Node {
+export class TsConstructSignatureDecl extends BaseNode {
   kind!: NodeKind.TsConstructSignatureDecl;
   parent!: TsInterfaceBody
     | TsTypeLit;
@@ -2781,7 +2943,7 @@ export class TsConstructSignatureDecl extends Node {
   }
 }
 
-export class TsConstructorType extends Node {
+export class TsConstructorType extends BaseNode {
   kind!: NodeKind.TsConstructorType;
   parent!: Node;
   params!: Array<TsFnParam>;
@@ -2803,7 +2965,7 @@ export class TsConstructorType extends Node {
   }
 }
 
-export class TsEnumDecl extends Node {
+export class TsEnumDecl extends BaseNode {
   kind!: NodeKind.TsEnumDecl;
   parent!: Node;
   declare!: boolean;
@@ -2822,7 +2984,7 @@ export class TsEnumDecl extends Node {
   }
 }
 
-export class TsEnumMember extends Node {
+export class TsEnumMember extends BaseNode {
   kind!: NodeKind.TsEnumMember;
   parent!: TsEnumDecl;
   id!: TsEnumMemberId;
@@ -2844,7 +3006,7 @@ export class TsEnumMember extends Node {
  * `export =`. But for @babel/parser, `export default` is an ExportDefaultDecl,
  * so a TsExportAssignment is always `export =`.
  */
-export class TsExportAssignment extends Node {
+export class TsExportAssignment extends BaseNode {
   kind!: NodeKind.TsExportAssignment;
   parent!: Module
     | TsModuleBlock;
@@ -2858,7 +3020,7 @@ export class TsExportAssignment extends Node {
   }
 }
 
-export class TsExprWithTypeArgs extends Node {
+export class TsExprWithTypeArgs extends BaseNode {
   kind!: NodeKind.TsExprWithTypeArgs;
   parent!: Class
     | TsInterfaceDecl;
@@ -2876,7 +3038,7 @@ export class TsExprWithTypeArgs extends Node {
   }
 }
 
-export class TsExternalModuleRef extends Node {
+export class TsExternalModuleRef extends BaseNode {
   kind!: NodeKind.TsExternalModuleRef;
   parent!: TsImportEqualsDecl;
   expr!: Str;
@@ -2889,7 +3051,7 @@ export class TsExternalModuleRef extends Node {
   }
 }
 
-export class TsFnType extends Node {
+export class TsFnType extends BaseNode {
   kind!: NodeKind.TsFnType;
   parent!: Node;
   params!: Array<TsFnParam>;
@@ -2910,7 +3072,7 @@ export class TsFnType extends Node {
   }
 }
 
-export class TsImportEqualsDecl extends Node {
+export class TsImportEqualsDecl extends BaseNode {
   kind!: NodeKind.TsImportEqualsDecl;
   parent!: Module
     | TsModuleBlock;
@@ -2928,7 +3090,7 @@ export class TsImportEqualsDecl extends Node {
   }
 }
 
-export class TsImportType extends Node {
+export class TsImportType extends BaseNode {
   kind!: NodeKind.TsImportType;
   parent!: Node;
   arg!: Str;
@@ -2949,7 +3111,7 @@ export class TsImportType extends Node {
   }
 }
 
-export class TsIndexSignature extends Node {
+export class TsIndexSignature extends BaseNode {
   kind!: NodeKind.TsIndexSignature;
   parent!: Class
     | TsInterfaceBody
@@ -2971,7 +3133,7 @@ export class TsIndexSignature extends Node {
   }
 }
 
-export class TsIndexedAccessType extends Node {
+export class TsIndexedAccessType extends BaseNode {
   kind!: NodeKind.TsIndexedAccessType;
   parent!: Node;
   readonly!: boolean;
@@ -2987,7 +3149,7 @@ export class TsIndexedAccessType extends Node {
   }
 }
 
-export class TsInferType extends Node {
+export class TsInferType extends BaseNode {
   kind!: NodeKind.TsInferType;
   parent!: Node;
   type_param!: TsTypeParam;
@@ -3000,7 +3162,7 @@ export class TsInferType extends Node {
   }
 }
 
-export class TsInterfaceBody extends Node {
+export class TsInterfaceBody extends BaseNode {
   kind!: NodeKind.TsInterfaceBody;
   parent!: TsInterfaceDecl;
   body!: Array<TsTypeElement>;
@@ -3015,7 +3177,7 @@ export class TsInterfaceBody extends Node {
   }
 }
 
-export class TsInterfaceDecl extends Node {
+export class TsInterfaceDecl extends BaseNode {
   kind!: NodeKind.TsInterfaceDecl;
   parent!: Node;
   id!: Ident;
@@ -3039,7 +3201,7 @@ export class TsInterfaceDecl extends Node {
   }
 }
 
-export class TsIntersectionType extends Node {
+export class TsIntersectionType extends BaseNode {
   kind!: NodeKind.TsIntersectionType;
   parent!: Node;
   types!: Array<TsType>;
@@ -3054,7 +3216,7 @@ export class TsIntersectionType extends Node {
   }
 }
 
-export class TsKeywordType extends Node {
+export class TsKeywordType extends BaseNode {
   kind!: NodeKind.TsKeywordType;
   parent!: Node;
   keyword_kind!: TsKeywordTypeKind;
@@ -3064,7 +3226,7 @@ export class TsKeywordType extends Node {
   }
 }
 
-export class TsLitType extends Node {
+export class TsLitType extends BaseNode {
   kind!: NodeKind.TsLitType;
   parent!: Node;
   lit!: TsLit;
@@ -3077,7 +3239,7 @@ export class TsLitType extends Node {
   }
 }
 
-export class TsMappedType extends Node {
+export class TsMappedType extends BaseNode {
   kind!: NodeKind.TsMappedType;
   parent!: Node;
   readonly!: TruePlusMinus | undefined;
@@ -3100,7 +3262,7 @@ export class TsMappedType extends Node {
   }
 }
 
-export class TsMethodSignature extends Node {
+export class TsMethodSignature extends BaseNode {
   kind!: NodeKind.TsMethodSignature;
   parent!: TsInterfaceBody
     | TsTypeLit;
@@ -3129,7 +3291,7 @@ export class TsMethodSignature extends Node {
   }
 }
 
-export class TsModuleBlock extends Node {
+export class TsModuleBlock extends BaseNode {
   kind!: NodeKind.TsModuleBlock;
   parent!: TsModuleDecl
     | TsNamespaceDecl;
@@ -3145,7 +3307,7 @@ export class TsModuleBlock extends Node {
   }
 }
 
-export class TsModuleDecl extends Node {
+export class TsModuleDecl extends BaseNode {
   kind!: NodeKind.TsModuleDecl;
   parent!: Node;
   declare!: boolean;
@@ -3165,7 +3327,7 @@ export class TsModuleDecl extends Node {
   }
 }
 
-export class TsNamespaceDecl extends Node {
+export class TsNamespaceDecl extends BaseNode {
   kind!: NodeKind.TsNamespaceDecl;
   parent!: TsModuleDecl
     | TsNamespaceDecl;
@@ -3184,7 +3346,7 @@ export class TsNamespaceDecl extends Node {
   }
 }
 
-export class TsNamespaceExportDecl extends Node {
+export class TsNamespaceExportDecl extends BaseNode {
   kind!: NodeKind.TsNamespaceExportDecl;
   parent!: Module
     | TsModuleBlock;
@@ -3198,7 +3360,7 @@ export class TsNamespaceExportDecl extends Node {
   }
 }
 
-export class TsNonNullExpr extends Node {
+export class TsNonNullExpr extends BaseNode {
   kind!: NodeKind.TsNonNullExpr;
   parent!: Node;
   expr!: Expr;
@@ -3211,7 +3373,7 @@ export class TsNonNullExpr extends Node {
   }
 }
 
-export class TsOptionalType extends Node {
+export class TsOptionalType extends BaseNode {
   kind!: NodeKind.TsOptionalType;
   parent!: Node;
   type_ann!: TsType;
@@ -3224,7 +3386,7 @@ export class TsOptionalType extends Node {
   }
 }
 
-export class TsParamProp extends Node {
+export class TsParamProp extends BaseNode {
   kind!: NodeKind.TsParamProp;
   parent!: Constructor;
   decorators!: Array<Decorator>;
@@ -3244,7 +3406,7 @@ export class TsParamProp extends Node {
   }
 }
 
-export class TsParenthesizedType extends Node {
+export class TsParenthesizedType extends BaseNode {
   kind!: NodeKind.TsParenthesizedType;
   parent!: Node;
   type_ann!: TsType;
@@ -3257,7 +3419,7 @@ export class TsParenthesizedType extends Node {
   }
 }
 
-export class TsPropertySignature extends Node {
+export class TsPropertySignature extends BaseNode {
   kind!: NodeKind.TsPropertySignature;
   parent!: TsInterfaceBody
     | TsTypeLit;
@@ -3290,7 +3452,7 @@ export class TsPropertySignature extends Node {
   }
 }
 
-export class TsQualifiedName extends Node {
+export class TsQualifiedName extends BaseNode {
   kind!: NodeKind.TsQualifiedName;
   parent!: Node;
   left!: TsEntityName;
@@ -3305,7 +3467,7 @@ export class TsQualifiedName extends Node {
   }
 }
 
-export class TsRestType extends Node {
+export class TsRestType extends BaseNode {
   kind!: NodeKind.TsRestType;
   parent!: Node;
   type_ann!: TsType;
@@ -3318,7 +3480,7 @@ export class TsRestType extends Node {
   }
 }
 
-export class TsThisType extends Node {
+export class TsThisType extends BaseNode {
   kind!: NodeKind.TsThisType;
   parent!: Node;
 
@@ -3327,7 +3489,7 @@ export class TsThisType extends Node {
   }
 }
 
-export class TsTplLitType extends Node {
+export class TsTplLitType extends BaseNode {
   kind!: NodeKind.TsTplLitType;
   parent!: TsLitType;
   types!: Array<TsType>;
@@ -3346,7 +3508,7 @@ export class TsTplLitType extends Node {
   }
 }
 
-export class TsTupleElement extends Node {
+export class TsTupleElement extends BaseNode {
   kind!: NodeKind.TsTupleElement;
   parent!: TsTupleType;
   /** `Ident` or `RestPat { arg: Ident }` */
@@ -3364,7 +3526,7 @@ export class TsTupleElement extends Node {
   }
 }
 
-export class TsTupleType extends Node {
+export class TsTupleType extends BaseNode {
   kind!: NodeKind.TsTupleType;
   parent!: Node;
   elem_types!: Array<TsTupleElement>;
@@ -3379,7 +3541,7 @@ export class TsTupleType extends Node {
   }
 }
 
-export class TsTypeAliasDecl extends Node {
+export class TsTypeAliasDecl extends BaseNode {
   kind!: NodeKind.TsTypeAliasDecl;
   parent!: Node;
   declare!: boolean;
@@ -3399,7 +3561,7 @@ export class TsTypeAliasDecl extends Node {
   }
 }
 
-export class TsTypeAnn extends Node {
+export class TsTypeAnn extends BaseNode {
   kind!: NodeKind.TsTypeAnn;
   parent!: Node;
   type_ann!: TsType;
@@ -3412,7 +3574,7 @@ export class TsTypeAnn extends Node {
   }
 }
 
-export class TsTypeAssertion extends Node {
+export class TsTypeAssertion extends BaseNode {
   kind!: NodeKind.TsTypeAssertion;
   parent!: Node;
   expr!: Expr;
@@ -3427,7 +3589,7 @@ export class TsTypeAssertion extends Node {
   }
 }
 
-export class TsTypeLit extends Node {
+export class TsTypeLit extends BaseNode {
   kind!: NodeKind.TsTypeLit;
   parent!: Node;
   members!: Array<TsTypeElement>;
@@ -3442,7 +3604,7 @@ export class TsTypeLit extends Node {
   }
 }
 
-export class TsTypeOperator extends Node {
+export class TsTypeOperator extends BaseNode {
   kind!: NodeKind.TsTypeOperator;
   parent!: Node;
   op!: TsTypeOperatorOp;
@@ -3456,7 +3618,7 @@ export class TsTypeOperator extends Node {
   }
 }
 
-export class TsTypeParam extends Node {
+export class TsTypeParam extends BaseNode {
   kind!: NodeKind.TsTypeParam;
   parent!: TsInferType
     | TsMappedType
@@ -3479,7 +3641,7 @@ export class TsTypeParam extends Node {
   }
 }
 
-export class TsTypeParamDecl extends Node {
+export class TsTypeParamDecl extends BaseNode {
   kind!: NodeKind.TsTypeParamDecl;
   parent!: Node;
   params!: Array<TsTypeParam>;
@@ -3494,7 +3656,7 @@ export class TsTypeParamDecl extends Node {
   }
 }
 
-export class TsTypeParamInstantiation extends Node {
+export class TsTypeParamInstantiation extends BaseNode {
   kind!: NodeKind.TsTypeParamInstantiation;
   parent!: Node;
   params!: Array<TsType>;
@@ -3509,7 +3671,7 @@ export class TsTypeParamInstantiation extends Node {
   }
 }
 
-export class TsTypePredicate extends Node {
+export class TsTypePredicate extends BaseNode {
   kind!: NodeKind.TsTypePredicate;
   parent!: Node;
   asserts!: boolean;
@@ -3528,7 +3690,7 @@ export class TsTypePredicate extends Node {
 }
 
 /** `typeof` operator */
-export class TsTypeQuery extends Node {
+export class TsTypeQuery extends BaseNode {
   kind!: NodeKind.TsTypeQuery;
   parent!: Node;
   expr_name!: TsTypeQueryExpr;
@@ -3541,7 +3703,7 @@ export class TsTypeQuery extends Node {
   }
 }
 
-export class TsTypeRef extends Node {
+export class TsTypeRef extends BaseNode {
   kind!: NodeKind.TsTypeRef;
   parent!: Node;
   type_name!: TsEntityName;
@@ -3558,7 +3720,7 @@ export class TsTypeRef extends Node {
   }
 }
 
-export class TsUnionType extends Node {
+export class TsUnionType extends BaseNode {
   kind!: NodeKind.TsUnionType;
   parent!: Node;
   types!: Array<TsType>;
@@ -3573,7 +3735,7 @@ export class TsUnionType extends Node {
   }
 }
 
-export class UnaryExpr extends Node {
+export class UnaryExpr extends BaseNode {
   kind!: NodeKind.UnaryExpr;
   parent!: Node;
   op!: UnaryOp;
@@ -3587,7 +3749,7 @@ export class UnaryExpr extends Node {
   }
 }
 
-export class UpdateExpr extends Node {
+export class UpdateExpr extends BaseNode {
   kind!: NodeKind.UpdateExpr;
   parent!: Node;
   op!: UpdateOp;
@@ -3602,7 +3764,7 @@ export class UpdateExpr extends Node {
   }
 }
 
-export class VarDecl extends Node {
+export class VarDecl extends BaseNode {
   kind!: NodeKind.VarDecl;
   parent!: Node;
   decl_kind!: VarDeclKind;
@@ -3619,7 +3781,7 @@ export class VarDecl extends Node {
   }
 }
 
-export class VarDeclarator extends Node {
+export class VarDeclarator extends BaseNode {
   kind!: NodeKind.VarDeclarator;
   parent!: VarDecl;
   name!: Pat;
@@ -3639,7 +3801,7 @@ export class VarDeclarator extends Node {
   }
 }
 
-export class WhileStmt extends Node {
+export class WhileStmt extends BaseNode {
   kind!: NodeKind.WhileStmt;
   parent!: Node;
   test!: Expr;
@@ -3654,7 +3816,7 @@ export class WhileStmt extends Node {
   }
 }
 
-export class WithStmt extends Node {
+export class WithStmt extends BaseNode {
   kind!: NodeKind.WithStmt;
   parent!: Node;
   obj!: Expr;
@@ -3669,7 +3831,7 @@ export class WithStmt extends Node {
   }
 }
 
-export class YieldExpr extends Node {
+export class YieldExpr extends BaseNode {
   kind!: NodeKind.YieldExpr;
   parent!: Node;
   arg!: Expr | undefined;
