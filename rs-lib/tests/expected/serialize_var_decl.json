@@ -24,8 +24,7 @@
               "end": 13,
               "sym": "foo",
               "optional": false
-            },
-            "typeAnn": null
+            }
           },
           "init": {
             "kind": 75,
@@ -37,6 +36,5 @@
         }
       ]
     }
-  ],
-  "shebang": null
+  ]
 }

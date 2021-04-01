@@ -242,7 +242,7 @@ export function generateTypeScriptTypes(analysisResult: AnalysisResult): string 
         }
     }
 
-    function writeType(type: TypeDefinition) {
+    function writeType(type: TypeDefinition, isInArray = false) {
         switch (type.kind) {
             case "Primitive":
                 if (type.text === "bool") {
@@ -259,13 +259,18 @@ export function generateTypeScriptTypes(analysisResult: AnalysisResult): string 
                         throw new Error("Expected 1 type argument.");
                     }
                     writeType(type.genericArgs[0]);
-                    writer.write(" | undefined");
+                    if (isInArray) {
+                        // arrays are serialized with empty values being `null` instead of `undefined`
+                        writer.write(" | null");
+                    } else {
+                        writer.write(" | undefined");
+                    }
                 } else if (isVecType(type)) {
                     if (type.genericArgs.length !== 1) {
                         throw new Error("Expected 1 type argument.");
                     }
                     writer.write("Array<");
-                    writeType(type.genericArgs[0]);
+                    writeType(type.genericArgs[0], true);
                     writer.write(">");
                 } else if (type.name === "AssignOpToken") {
                     writer.write("AssignOp");

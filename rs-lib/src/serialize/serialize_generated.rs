@@ -33,6 +33,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 0)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.elems;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "elems")?;
@@ -40,7 +41,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.elems.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       match item {
         Some(value) => {
@@ -67,6 +68,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 1)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.elems;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "elems")?;
@@ -74,7 +76,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.elems.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       match item {
         Some(value) => {
@@ -86,27 +88,28 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.optional;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "optional")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.optional)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeAnn")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.type_ann {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeAnn")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_ann(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -122,6 +125,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 2)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.params;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "params")?;
@@ -129,63 +133,65 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.params.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_pat(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.body;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "body")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_block_stmt_or_expr(&node.body)?;
+    self.serialize_block_stmt_or_expr(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.is_async;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "isAsync")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.is_async)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.is_generator;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "isGenerator")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.is_generator)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeParams")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.type_params {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeParams")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_param_decl(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
-    }
-    self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "returnType")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
-    match &node.return_type {
+      None => {}
+    }match &node.return_type {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "returnType")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_ann(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -201,29 +207,32 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 3)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.op;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "op")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.op)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.left;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "left")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_pat_or_expr(&node.left)?;
+    self.serialize_pat_or_expr(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.right;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "right")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.right)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -240,35 +249,37 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 4)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.left;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "left")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_pat(&node.left)?;
+    self.serialize_pat(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.right;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "right")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.right)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeAnn")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.type_ann {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeAnn")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_ann(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -284,27 +295,28 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 5)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.key;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "key")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.key)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "value")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.value {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "value")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_expr(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -320,21 +332,23 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 6)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.key;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "key")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.key)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.value;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "value")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.value)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -351,13 +365,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 7)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.arg;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "arg")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.arg)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -374,13 +389,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 8)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.value;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "value")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.value)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -397,29 +413,32 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 9)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.op;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "op")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.op)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.left;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "left")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.left)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.right;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "right")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.right)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -436,27 +455,28 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 10)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.id;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "id")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.id)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeAnn")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.type_ann {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeAnn")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_ann(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -472,6 +492,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 11)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.stmts;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "stmts")?;
@@ -479,7 +500,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.stmts.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_stmt(item)?;
       self.f.end_array_value(self.w)?;
@@ -501,13 +522,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 12)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.value;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "value")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.value)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -524,19 +546,19 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 13)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "label")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.label {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "label")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ident(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -552,14 +574,16 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 14)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.callee;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "callee")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr_or_super(&node.callee)?;
+    self.serialize_expr_or_super(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.args;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "args")?;
@@ -567,26 +591,26 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.args.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_expr_or_spread(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeArgs")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.type_args {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeArgs")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_param_instantiation(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -602,26 +626,27 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 15)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "param")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.param {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "param")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_pat(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.body;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "body")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_block_stmt(&node.body)?;
+    self.serialize_block_stmt(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -638,6 +663,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 16)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.decorators;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "decorators")?;
@@ -645,13 +671,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.decorators.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_decorator(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.body;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "body")?;
@@ -659,60 +686,61 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.body.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_class_member(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "superClass")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.super_class {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "superClass")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_expr(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.is_abstract;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "isAbstract")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.is_abstract)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeParams")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.type_params {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeParams")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_param_decl(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
-    }
-    self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "superTypeParams")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
-    match &node.super_type_params {
+      None => {}
+    }match &node.super_type_params {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "superTypeParams")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_param_instantiation(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.implements;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "implements")?;
@@ -720,7 +748,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.implements.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_ts_expr_with_type_args(item)?;
       self.f.end_array_value(self.w)?;
@@ -742,29 +770,32 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 17)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.ident;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "ident")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.ident)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.declare;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "declare")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.declare)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.class;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "class")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_class(&node.class)?;
+    self.serialize_class(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -781,26 +812,27 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 18)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "ident")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.ident {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "ident")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ident(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.class;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "class")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_class(&node.class)?;
+    self.serialize_class(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -817,66 +849,72 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 19)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.key;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "key")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_prop_name(&node.key)?;
+    self.serialize_prop_name(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.function;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "function")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_function(&node.function)?;
+    self.serialize_function(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.kind;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "methodKind")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.kind)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.is_static;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "isStatic")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.is_static)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "accessibility")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.accessibility {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "accessibility")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         write!(self.w, "{}", to_json_string(value)?)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.is_abstract;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "isAbstract")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.is_abstract)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.is_optional;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "isOptional")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.is_optional)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -893,48 +931,50 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 20)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.key;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "key")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.key)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "value")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.value {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "value")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_expr(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
-    }
-    self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeAnn")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
-    match &node.type_ann {
+      None => {}
+    }match &node.type_ann {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeAnn")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_ann(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.is_static;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "isStatic")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.is_static)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.decorators;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "decorators")?;
@@ -942,73 +982,79 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.decorators.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_decorator(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.computed;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "computed")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.computed)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "accessibility")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.accessibility {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "accessibility")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         write!(self.w, "{}", to_json_string(value)?)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.is_abstract;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "isAbstract")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.is_abstract)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.is_optional;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "isOptional")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.is_optional)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.readonly;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "readonly")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.readonly)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.declare;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "declare")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.declare)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.definite;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "definite")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.definite)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -1025,13 +1071,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 21)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.expr;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "expr")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.expr)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -1048,29 +1095,32 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 22)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.test;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "test")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.test)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.cons;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "cons")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.cons)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.alt;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "alt")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.alt)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -1087,14 +1137,16 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 23)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.key;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "key")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_prop_name(&node.key)?;
+    self.serialize_prop_name(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.params;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "params")?;
@@ -1102,46 +1154,46 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.params.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_param_or_ts_param_prop(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "body")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.body {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "body")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_block_stmt(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
-    }
-    self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "accessibility")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
-    match &node.accessibility {
+      None => {}
+    }match &node.accessibility {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "accessibility")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         write!(self.w, "{}", to_json_string(value)?)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.is_optional;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "isOptional")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.is_optional)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -1158,19 +1210,19 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 24)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "label")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.label {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "label")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ident(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -1201,13 +1253,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 26)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.expr;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "expr")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.expr)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -1224,21 +1277,23 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 27)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.test;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "test")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.test)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.body;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "body")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_stmt(&node.body)?;
+    self.serialize_stmt(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -1270,27 +1325,28 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 29)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.src;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "src")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_str(&node.src)?;
+    self.serialize_str(value)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "asserts")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.asserts {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "asserts")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_object_lit(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -1306,13 +1362,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 30)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.decl;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "decl")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_decl(&node.decl)?;
+    self.serialize_decl(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -1329,13 +1386,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 31)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.decl;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "decl")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_default_decl(&node.decl)?;
+    self.serialize_default_decl(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -1352,13 +1410,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 32)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.expr;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "expr")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.expr)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -1375,13 +1434,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 33)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.exported;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "exported")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.exported)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -1398,27 +1458,28 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 34)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.orig;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "orig")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.orig)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "exported")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.exported {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "exported")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ident(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -1434,13 +1495,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 35)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.name;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "name")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.name)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -1457,26 +1519,27 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 36)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "spread")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.spread {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "spread")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_span(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.expr;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "expr")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.expr)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -1493,13 +1556,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 37)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.expr;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "expr")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.expr)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -1516,29 +1580,32 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 38)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.ident;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "ident")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.ident)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.declare;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "declare")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.declare)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.function;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "function")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_function(&node.function)?;
+    self.serialize_function(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -1555,26 +1622,27 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 39)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "ident")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.ident {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "ident")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ident(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.function;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "function")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_function(&node.function)?;
+    self.serialize_function(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -1591,29 +1659,32 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 40)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.left;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "left")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_var_decl_or_pat(&node.left)?;
+    self.serialize_var_decl_or_pat(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.right;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "right")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.right)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.body;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "body")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_stmt(&node.body)?;
+    self.serialize_stmt(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -1630,42 +1701,45 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 41)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "awaitToken")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.await_token {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "awaitToken")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_span(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.left;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "left")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_var_decl_or_pat(&node.left)?;
+    self.serialize_var_decl_or_pat(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.right;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "right")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.right)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.body;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "body")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_stmt(&node.body)?;
+    self.serialize_stmt(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -1682,52 +1756,51 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 42)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "init")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.init {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "init")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_var_decl_or_expr(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
-    }
-    self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "test")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
-    match &node.test {
+      None => {}
+    }match &node.test {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "test")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_expr(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
-    }
-    self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "update")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
-    match &node.update {
+      None => {}
+    }match &node.update {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "update")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_expr(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.body;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "body")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_stmt(&node.body)?;
+    self.serialize_stmt(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -1744,6 +1817,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 43)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.params;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "params")?;
@@ -1751,13 +1825,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.params.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_param(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.decorators;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "decorators")?;
@@ -1765,68 +1840,69 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.decorators.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_decorator(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "body")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.body {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "body")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_block_stmt(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.is_generator;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "isGenerator")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.is_generator)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.is_async;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "isAsync")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.is_async)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeParams")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.type_params {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeParams")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_param_decl(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
-    }
-    self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "returnType")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
-    match &node.return_type {
+      None => {}
+    }match &node.return_type {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "returnType")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_ann(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -1842,40 +1918,40 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 44)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.key;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "key")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_prop_name(&node.key)?;
+    self.serialize_prop_name(value)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeAnn")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.type_ann {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeAnn")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_ann(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
-    }
-    self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "body")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
-    match &node.body {
+      None => {}
+    }match &node.body {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "body")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_block_stmt(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -1891,21 +1967,23 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 45)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.sym;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "sym")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.sym)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.optional;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "optional")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.optional)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -1922,35 +2000,37 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 46)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.test;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "test")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.test)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.cons;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "cons")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_stmt(&node.cons)?;
+    self.serialize_stmt(value)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "alt")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.alt {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "alt")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_stmt(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -1966,6 +2046,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 47)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.specifiers;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "specifiers")?;
@@ -1973,42 +2054,44 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.specifiers.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_import_specifier(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.src;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "src")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_str(&node.src)?;
+    self.serialize_str(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.type_only;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "typeOnly")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.type_only)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "asserts")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.asserts {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "asserts")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_object_lit(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -2024,13 +2107,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 48)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.local;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "local")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.local)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -2047,27 +2131,28 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 49)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.local;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "local")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.local)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "imported")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.imported {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "imported")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ident(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -2083,13 +2168,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 50)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.local;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "local")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.local)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -2121,27 +2207,28 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 52)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.name;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "name")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_jsxattr_name(&node.name)?;
+    self.serialize_jsxattr_name(value)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "value")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.value {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "value")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_jsxattr_value(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -2157,13 +2244,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 53)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.name;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "name")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_jsxelement_name(&node.name)?;
+    self.serialize_jsxelement_name(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -2195,14 +2283,16 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 55)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.opening;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "opening")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_jsxopening_element(&node.opening)?;
+    self.serialize_jsxopening_element(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.children;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "children")?;
@@ -2210,26 +2300,26 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.children.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_jsxelement_child(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "closing")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.closing {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "closing")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_jsxclosing_element(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -2260,13 +2350,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 57)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.expr;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "expr")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_jsxexpr(&node.expr)?;
+    self.serialize_jsxexpr(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -2283,14 +2374,16 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 58)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.opening;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "opening")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_jsxopening_fragment(&node.opening)?;
+    self.serialize_jsxopening_fragment(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.children;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "children")?;
@@ -2298,20 +2391,21 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.children.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_jsxelement_child(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.closing;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "closing")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_jsxclosing_fragment(&node.closing)?;
+    self.serialize_jsxclosing_fragment(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -2328,21 +2422,23 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 59)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.obj;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "obj")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_jsxobject(&node.obj)?;
+    self.serialize_jsxobject(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.prop;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "prop")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.prop)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -2359,21 +2455,23 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 60)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.ns;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "ns")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.ns)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.name;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "name")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.name)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -2390,14 +2488,16 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 61)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.name;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "name")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_jsxelement_name(&node.name)?;
+    self.serialize_jsxelement_name(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.attrs;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "attrs")?;
@@ -2405,34 +2505,35 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.attrs.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_jsxattr_or_spread(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.self_closing;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "selfClosing")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.self_closing)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeArgs")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.type_args {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeArgs")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_param_instantiation(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -2463,13 +2564,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 63)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.expr;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "expr")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.expr)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -2486,21 +2588,23 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 64)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.value;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "value")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.value)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.raw;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "raw")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.raw)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -2517,21 +2621,23 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 65)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.key;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "key")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_prop_name(&node.key)?;
+    self.serialize_prop_name(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.value;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "value")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_pat(&node.value)?;
+    self.serialize_pat(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -2548,21 +2654,23 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 66)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.key;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "key")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_prop_name(&node.key)?;
+    self.serialize_prop_name(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.value;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "value")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.value)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -2579,21 +2687,23 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 67)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.label;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "label")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.label)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.body;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "body")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_stmt(&node.body)?;
+    self.serialize_stmt(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -2610,29 +2720,32 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 68)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.obj;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "obj")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr_or_super(&node.obj)?;
+    self.serialize_expr_or_super(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.prop;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "prop")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.prop)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.computed;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "computed")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.computed)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -2649,21 +2762,23 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 69)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.meta;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "meta")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.meta)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.prop;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "prop")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.prop)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -2680,21 +2795,23 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 70)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.key;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "key")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_prop_name(&node.key)?;
+    self.serialize_prop_name(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.function;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "function")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_function(&node.function)?;
+    self.serialize_function(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -2711,6 +2828,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 71)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.body;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "body")?;
@@ -2718,26 +2836,26 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.body.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_module_item(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "shebang")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.shebang {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "shebang")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         write!(self.w, "{}", to_json_string(value)?)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -2753,6 +2871,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 72)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.specifiers;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "specifiers")?;
@@ -2760,47 +2879,48 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.specifiers.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_export_specifier(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "src")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.src {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "src")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_str(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.type_only;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "typeOnly")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.type_only)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "asserts")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.asserts {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "asserts")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_object_lit(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -2816,22 +2936,23 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 73)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.callee;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "callee")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.callee)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "args")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.args {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "args")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.f.begin_array(self.w)?;
         for (i, item) in value.iter().enumerate() {
           self.f.begin_array_value(self.w, i == 0)?;
@@ -2839,23 +2960,22 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
           self.f.end_array_value(self.w)?;
         }
         self.f.end_array(self.w)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
-    }
-    self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeArgs")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
-    match &node.type_args {
+      None => {}
+    }match &node.type_args {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeArgs")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_param_instantiation(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -2886,13 +3006,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 75)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.value;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "value")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.value)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -2909,6 +3030,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 76)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.props;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "props")?;
@@ -2916,7 +3038,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.props.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_prop_or_spread(item)?;
       self.f.end_array_value(self.w)?;
@@ -2938,6 +3060,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 77)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.props;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "props")?;
@@ -2945,34 +3068,35 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.props.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_object_pat_prop(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.optional;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "optional")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.optional)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeAnn")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.type_ann {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeAnn")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_ann(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -2988,21 +3112,23 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 78)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.question_dot_token;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "questionDotToken")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_span(&node.question_dot_token)?;
+    self.serialize_span(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.expr;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "expr")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.expr)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -3019,6 +3145,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 79)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.decorators;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "decorators")?;
@@ -3026,20 +3153,21 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.decorators.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_decorator(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.pat;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "pat")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_pat(&node.pat)?;
+    self.serialize_pat(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -3056,13 +3184,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 80)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.expr;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "expr")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.expr)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -3079,66 +3208,72 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 81)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.key;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "key")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_private_name(&node.key)?;
+    self.serialize_private_name(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.function;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "function")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_function(&node.function)?;
+    self.serialize_function(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.kind;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "methodKind")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.kind)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.is_static;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "isStatic")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.is_static)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "accessibility")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.accessibility {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "accessibility")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         write!(self.w, "{}", to_json_string(value)?)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.is_abstract;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "isAbstract")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.is_abstract)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.is_optional;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "isOptional")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.is_optional)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -3155,13 +3290,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 82)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.id;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "id")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.id)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -3178,48 +3314,50 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 83)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.key;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "key")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_private_name(&node.key)?;
+    self.serialize_private_name(value)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "value")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.value {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "value")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_expr(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
-    }
-    self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeAnn")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
-    match &node.type_ann {
+      None => {}
+    }match &node.type_ann {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeAnn")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_ann(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.is_static;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "isStatic")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.is_static)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.decorators;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "decorators")?;
@@ -3227,65 +3365,70 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.decorators.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_decorator(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.computed;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "computed")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.computed)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "accessibility")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.accessibility {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "accessibility")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         write!(self.w, "{}", to_json_string(value)?)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.is_abstract;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "isAbstract")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.is_abstract)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.is_optional;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "isOptional")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.is_optional)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.readonly;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "readonly")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.readonly)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.definite;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "definite")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.definite)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -3302,21 +3445,23 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 84)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.exp;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "exp")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.exp)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.flags;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "flags")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.flags)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -3333,35 +3478,37 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 85)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.dot3_token;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "dot3Token")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_span(&node.dot3_token)?;
+    self.serialize_span(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.arg;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "arg")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_pat(&node.arg)?;
+    self.serialize_pat(value)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeAnn")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.type_ann {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeAnn")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_ann(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -3377,19 +3524,19 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 86)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "arg")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.arg {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "arg")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_expr(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -3405,6 +3552,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 87)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.body;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "body")?;
@@ -3412,26 +3560,26 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.body.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_stmt(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "shebang")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.shebang {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "shebang")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         write!(self.w, "{}", to_json_string(value)?)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -3447,6 +3595,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 88)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.exprs;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "exprs")?;
@@ -3454,7 +3603,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.exprs.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_expr(item)?;
       self.f.end_array_value(self.w)?;
@@ -3476,35 +3625,37 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 89)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.key;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "key")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_prop_name(&node.key)?;
+    self.serialize_prop_name(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.param;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "param")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_pat(&node.param)?;
+    self.serialize_pat(value)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "body")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.body {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "body")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_block_stmt(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -3520,21 +3671,23 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 90)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.dot3_token;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "dot3Token")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_span(&node.dot3_token)?;
+    self.serialize_span(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.expr;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "expr")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.expr)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -3551,29 +3704,32 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 91)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.value;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "value")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.value)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.has_escape;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "hasEscape")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.has_escape)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.kind;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "strKind")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.kind)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -3605,19 +3761,20 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 93)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "test")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.test {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "test")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_expr(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.cons;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "cons")?;
@@ -3625,7 +3782,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.cons.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_stmt(item)?;
       self.f.end_array_value(self.w)?;
@@ -3647,14 +3804,16 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 94)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.discriminant;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "discriminant")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.discriminant)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.cases;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "cases")?;
@@ -3662,7 +3821,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.cases.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_switch_case(item)?;
       self.f.end_array_value(self.w)?;
@@ -3684,14 +3843,16 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 95)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.tag;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "tag")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.tag)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.exprs;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "exprs")?;
@@ -3699,13 +3860,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.exprs.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_expr(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.quasis;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "quasis")?;
@@ -3713,26 +3875,26 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.quasis.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_tpl_element(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeParams")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.type_params {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeParams")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_param_instantiation(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -3763,13 +3925,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 97)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.arg;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "arg")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.arg)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -3786,6 +3949,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 98)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.exprs;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "exprs")?;
@@ -3793,13 +3957,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.exprs.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_expr(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.quasis;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "quasis")?;
@@ -3807,7 +3972,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.quasis.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_tpl_element(item)?;
       self.f.end_array_value(self.w)?;
@@ -3829,34 +3994,36 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 99)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.tail;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "tail")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.tail)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "cooked")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.cooked {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "cooked")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_str(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.raw;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "raw")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_str(&node.raw)?;
+    self.serialize_str(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -3873,40 +4040,40 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 100)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.block;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "block")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_block_stmt(&node.block)?;
+    self.serialize_block_stmt(value)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "handler")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.handler {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "handler")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_catch_clause(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
-    }
-    self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "finalizer")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
-    match &node.finalizer {
+      None => {}
+    }match &node.finalizer {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "finalizer")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_block_stmt(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -3922,13 +4089,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 101)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.elem_type;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "elemType")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_type(&node.elem_type)?;
+    self.serialize_ts_type(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -3945,21 +4113,23 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 102)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.expr;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "expr")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.expr)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.type_ann;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "typeAnn")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_type(&node.type_ann)?;
+    self.serialize_ts_type(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -3976,6 +4146,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 103)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.params;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "params")?;
@@ -3983,39 +4154,38 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.params.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_ts_fn_param(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeAnn")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.type_ann {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeAnn")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_ann(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
-    }
-    self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeParams")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
-    match &node.type_params {
+      None => {}
+    }match &node.type_params {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeParams")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_param_decl(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -4031,37 +4201,41 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 104)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.check_type;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "checkType")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_type(&node.check_type)?;
+    self.serialize_ts_type(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.extends_type;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "extendsType")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_type(&node.extends_type)?;
+    self.serialize_ts_type(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.true_type;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "trueType")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_type(&node.true_type)?;
+    self.serialize_ts_type(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.false_type;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "falseType")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_type(&node.false_type)?;
+    self.serialize_ts_type(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -4078,13 +4252,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 105)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.expr;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "expr")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.expr)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -4101,6 +4276,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 106)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.params;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "params")?;
@@ -4108,39 +4284,38 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.params.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_ts_fn_param(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeAnn")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.type_ann {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeAnn")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_ann(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
-    }
-    self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeParams")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
-    match &node.type_params {
+      None => {}
+    }match &node.type_params {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeParams")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_param_decl(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -4156,6 +4331,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 107)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.params;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "params")?;
@@ -4163,41 +4339,43 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.params.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_ts_fn_param(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeParams")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.type_params {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeParams")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_param_decl(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.type_ann;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "typeAnn")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_type_ann(&node.type_ann)?;
+    self.serialize_ts_type_ann(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.is_abstract;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "isAbstract")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.is_abstract)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -4214,30 +4392,34 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 108)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.declare;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "declare")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.declare)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.is_const;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "isConst")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.is_const)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.id;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "id")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.id)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.members;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "members")?;
@@ -4245,7 +4427,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.members.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_ts_enum_member(item)?;
       self.f.end_array_value(self.w)?;
@@ -4267,27 +4449,28 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 109)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.id;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "id")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_enum_member_id(&node.id)?;
+    self.serialize_ts_enum_member_id(value)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "init")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.init {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "init")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_expr(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -4303,13 +4486,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 110)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.expr;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "expr")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.expr)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -4326,27 +4510,28 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 111)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.expr;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "expr")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_entity_name(&node.expr)?;
+    self.serialize_ts_entity_name(value)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeArgs")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.type_args {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeArgs")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_param_instantiation(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -4362,13 +4547,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 112)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.expr;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "expr")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_str(&node.expr)?;
+    self.serialize_str(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -4385,6 +4571,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 113)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.params;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "params")?;
@@ -4392,33 +4579,34 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.params.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_ts_fn_param(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeParams")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.type_params {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeParams")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_param_decl(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.type_ann;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "typeAnn")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_type_ann(&node.type_ann)?;
+    self.serialize_ts_type_ann(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -4435,37 +4623,41 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 114)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.declare;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "declare")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.declare)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.is_export;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "isExport")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.is_export)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.id;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "id")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.id)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.module_ref;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "moduleRef")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_module_ref(&node.module_ref)?;
+    self.serialize_ts_module_ref(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -4482,40 +4674,40 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 115)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.arg;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "arg")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_str(&node.arg)?;
+    self.serialize_str(value)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "qualifier")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.qualifier {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "qualifier")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_entity_name(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
-    }
-    self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeArgs")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
-    match &node.type_args {
+      None => {}
+    }match &node.type_args {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeArgs")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_param_instantiation(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -4531,6 +4723,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 116)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.params;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "params")?;
@@ -4538,33 +4731,34 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.params.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_ts_fn_param(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeAnn")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.type_ann {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeAnn")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_ann(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.readonly;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "readonly")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.readonly)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -4581,29 +4775,32 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 117)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.readonly;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "readonly")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.readonly)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.obj_type;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "objType")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_type(&node.obj_type)?;
+    self.serialize_ts_type(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.index_type;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "indexType")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_type(&node.index_type)?;
+    self.serialize_ts_type(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -4620,13 +4817,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 118)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.type_param;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "typeParam")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_type_param(&node.type_param)?;
+    self.serialize_ts_type_param(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -4643,6 +4841,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 119)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.body;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "body")?;
@@ -4650,7 +4849,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.body.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_ts_type_element(item)?;
       self.f.end_array_value(self.w)?;
@@ -4672,35 +4871,38 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 120)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.id;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "id")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.id)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.declare;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "declare")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.declare)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeParams")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.type_params {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeParams")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_param_decl(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.extends;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "extends")?;
@@ -4708,20 +4910,21 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.extends.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_ts_expr_with_type_args(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.body;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "body")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_interface_body(&node.body)?;
+    self.serialize_ts_interface_body(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -4738,6 +4941,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 121)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.types;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "types")?;
@@ -4745,7 +4949,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.types.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_ts_type(item)?;
       self.f.end_array_value(self.w)?;
@@ -4767,13 +4971,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 122)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.kind;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "keywordKind")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.kind)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -4790,13 +4995,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 123)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.lit;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "lit")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_lit(&node.lit)?;
+    self.serialize_ts_lit(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -4813,66 +5019,65 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 124)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "readonly")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.readonly {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "readonly")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         write!(self.w, "{}", to_json_string(value)?)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.type_param;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "typeParam")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_type_param(&node.type_param)?;
+    self.serialize_ts_type_param(value)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "nameType")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.name_type {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "nameType")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
-    }
-    self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "optional")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
-    match &node.optional {
+      None => {}
+    }match &node.optional {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "optional")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         write!(self.w, "{}", to_json_string(value)?)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
-    }
-    self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeAnn")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
-    match &node.type_ann {
+      None => {}
+    }match &node.type_ann {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeAnn")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -4888,38 +5093,43 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 125)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.readonly;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "readonly")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.readonly)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.key;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "key")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.key)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.computed;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "computed")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.computed)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.optional;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "optional")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.optional)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.params;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "params")?;
@@ -4927,39 +5137,38 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.params.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_ts_fn_param(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeAnn")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.type_ann {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeAnn")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_ann(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
-    }
-    self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeParams")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
-    match &node.type_params {
+      None => {}
+    }match &node.type_params {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeParams")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_param_decl(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -4975,6 +5184,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 126)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.body;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "body")?;
@@ -4982,7 +5192,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.body.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_module_item(item)?;
       self.f.end_array_value(self.w)?;
@@ -5004,43 +5214,46 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 127)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.declare;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "declare")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.declare)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.global;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "global")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.global)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.id;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "id")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_module_name(&node.id)?;
+    self.serialize_ts_module_name(value)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "body")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.body {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "body")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_namespace_body(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -5056,37 +5269,41 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 128)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.declare;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "declare")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.declare)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.global;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "global")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.global)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.id;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "id")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.id)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.body;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "body")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_namespace_body(&node.body)?;
+    self.serialize_ts_namespace_body(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -5103,13 +5320,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 129)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.id;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "id")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.id)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -5126,13 +5344,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 130)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.expr;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "expr")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.expr)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -5149,13 +5368,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 131)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.type_ann;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "typeAnn")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_type(&node.type_ann)?;
+    self.serialize_ts_type(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -5172,6 +5392,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 132)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.decorators;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "decorators")?;
@@ -5179,41 +5400,43 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.decorators.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_decorator(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "accessibility")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.accessibility {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "accessibility")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         write!(self.w, "{}", to_json_string(value)?)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.readonly;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "readonly")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.readonly)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.param;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "param")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_param_prop_param(&node.param)?;
+    self.serialize_ts_param_prop_param(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -5230,13 +5453,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 133)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.type_ann;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "typeAnn")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_type(&node.type_ann)?;
+    self.serialize_ts_type(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -5253,51 +5477,56 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 134)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.readonly;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "readonly")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.readonly)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.key;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "key")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.key)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.computed;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "computed")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.computed)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.optional;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "optional")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.optional)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "init")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.init {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "init")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_expr(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.params;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "params")?;
@@ -5305,39 +5534,38 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.params.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_ts_fn_param(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeAnn")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.type_ann {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeAnn")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_ann(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
-    }
-    self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeParams")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
-    match &node.type_params {
+      None => {}
+    }match &node.type_params {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeParams")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_param_decl(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -5353,21 +5581,23 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 135)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.left;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "left")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_entity_name(&node.left)?;
+    self.serialize_ts_entity_name(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.right;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "right")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.right)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -5384,13 +5614,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 136)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.type_ann;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "typeAnn")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_type(&node.type_ann)?;
+    self.serialize_ts_type(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -5422,6 +5653,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 138)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.types;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "types")?;
@@ -5429,13 +5661,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.types.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_ts_type(item)?;
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.quasis;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "quasis")?;
@@ -5443,7 +5676,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.quasis.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_tpl_element(item)?;
       self.f.end_array_value(self.w)?;
@@ -5465,26 +5698,27 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 139)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "label")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.label {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "label")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_pat(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.ty;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "ty")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_type(&node.ty)?;
+    self.serialize_ts_type(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -5501,6 +5735,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 140)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.elem_types;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "elemTypes")?;
@@ -5508,7 +5743,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.elem_types.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_ts_tuple_element(item)?;
       self.f.end_array_value(self.w)?;
@@ -5530,42 +5765,45 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 141)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.declare;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "declare")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.declare)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.id;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "id")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.id)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeParams")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.type_params {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeParams")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_param_decl(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.type_ann;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "typeAnn")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_type(&node.type_ann)?;
+    self.serialize_ts_type(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -5582,13 +5820,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 142)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.type_ann;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "typeAnn")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_type(&node.type_ann)?;
+    self.serialize_ts_type(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -5605,21 +5844,23 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 143)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.expr;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "expr")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.expr)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.type_ann;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "typeAnn")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_type(&node.type_ann)?;
+    self.serialize_ts_type(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -5636,6 +5877,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 144)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.members;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "members")?;
@@ -5643,7 +5885,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.members.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_ts_type_element(item)?;
       self.f.end_array_value(self.w)?;
@@ -5665,21 +5907,23 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 145)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.op;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "op")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.op)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.type_ann;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "typeAnn")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_type(&node.type_ann)?;
+    self.serialize_ts_type(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -5696,40 +5940,40 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 146)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.name;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "name")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(&node.name)?;
+    self.serialize_ident(value)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "constraint")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.constraint {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "constraint")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
-    }
-    self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "default")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
-    match &node.default {
+      None => {}
+    }match &node.default {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "default")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -5745,6 +5989,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 147)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.params;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "params")?;
@@ -5752,7 +5997,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.params.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_ts_type_param(item)?;
       self.f.end_array_value(self.w)?;
@@ -5774,6 +6019,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 148)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.params;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "params")?;
@@ -5781,7 +6027,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.params.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_ts_type(item)?;
       self.f.end_array_value(self.w)?;
@@ -5803,35 +6049,37 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 149)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.asserts;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "asserts")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.asserts)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.param_name;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "paramName")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_this_type_or_ident(&node.param_name)?;
+    self.serialize_ts_this_type_or_ident(value)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeAnn")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.type_ann {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeAnn")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_ann(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -5847,13 +6095,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 150)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.expr_name;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "exprName")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_type_query_expr(&node.expr_name)?;
+    self.serialize_ts_type_query_expr(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -5870,27 +6119,28 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 151)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.type_name;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "typeName")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ts_entity_name(&node.type_name)?;
+    self.serialize_ts_entity_name(value)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "typeParams")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.type_params {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "typeParams")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_ts_type_param_instantiation(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
   }
@@ -5906,6 +6156,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 152)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.types;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "types")?;
@@ -5913,7 +6164,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.types.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_ts_type(item)?;
       self.f.end_array_value(self.w)?;
@@ -5935,21 +6186,23 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 153)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.op;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "op")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.op)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.arg;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "arg")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.arg)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -5966,29 +6219,32 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 154)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.op;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "op")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.op)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.prefix;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "prefix")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.prefix)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.arg;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "arg")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.arg)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -6005,22 +6261,25 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 155)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.kind;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "declKind")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.kind)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.declare;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "declare")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.declare)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.decls;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "decls")?;
@@ -6028,7 +6287,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.begin_array(self.w)?;
-    for (i, item) in node.decls.iter().enumerate() {
+    for (i, item) in value.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
       self.serialize_var_declarator(item)?;
       self.f.end_array_value(self.w)?;
@@ -6050,34 +6309,36 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 156)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.name;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "name")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_pat(&node.name)?;
+    self.serialize_pat(value)?;
     self.f.end_object_value(self.w)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "init")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.init {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "init")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_expr(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.definite;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "definite")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.definite)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -6094,21 +6355,23 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 157)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.test;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "test")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.test)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.body;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "body")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_stmt(&node.body)?;
+    self.serialize_stmt(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -6125,21 +6388,23 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 158)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
+    let value = &node.obj;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "obj")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(&node.obj)?;
+    self.serialize_expr(value)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.body;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "body")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_stmt(&node.body)?;
+    self.serialize_stmt(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -6156,26 +6421,27 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.write_u32(self.w, 159)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "arg")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
     match &node.arg {
       Some(value) => {
+        self.f.begin_object_key(self.w, false)?;
+        self.f.begin_string(self.w)?;
+        self.f.write_string_fragment(self.w, "arg")?;
+        self.f.end_string(self.w)?;
+        self.f.end_object_key(self.w)?;
+        self.f.begin_object_value(self.w)?;
         self.serialize_expr(value)?;
+        self.f.end_object_value(self.w)?;
       }
-      None => self.f.write_null(self.w)?,
+      None => {}
     }
-    self.f.end_object_value(self.w)?;
+    let value = &node.delegate;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
     self.f.write_string_fragment(self.w, "delegate")?;
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(&node.delegate)?)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
@@ -6753,13 +7019,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
         self.f.begin_object_value(self.w)?;
         self.f.write_u32(self.w, 0)?;
         self.f.end_object_value(self.w)?;
+        let value = &item0;
         self.f.begin_object_key(self.w, false)?;
         self.f.begin_string(self.w)?;
         self.f.write_string_fragment(self.w, "inner")?;
         self.f.end_string(self.w)?;
         self.f.end_object_key(self.w)?;
         self.f.begin_object_value(self.w)?;
-        self.serialize_word(&item0)?;
+        self.serialize_word(value)?;
         self.f.end_object_value(self.w)?;
         self.f.end_object(self.w)?;
       }
@@ -6792,34 +7059,36 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
         self.f.begin_object_value(self.w)?;
         self.f.write_u32(self.w, 16)?;
         self.f.end_object_value(self.w)?;
+        let value = &raw;
         self.f.begin_object_key(self.w, false)?;
         self.f.begin_string(self.w)?;
         self.f.write_string_fragment(self.w, "raw")?;
         self.f.end_string(self.w)?;
         self.f.end_object_key(self.w)?;
         self.f.begin_object_value(self.w)?;
-        write!(self.w, "{}", to_json_string(&raw)?)?;
+        write!(self.w, "{}", to_json_string(value)?)?;
         self.f.end_object_value(self.w)?;
-        self.f.begin_object_key(self.w, false)?;
-        self.f.begin_string(self.w)?;
-        self.f.write_string_fragment(self.w, "cooked")?;
-        self.f.end_string(self.w)?;
-        self.f.end_object_key(self.w)?;
-        self.f.begin_object_value(self.w)?;
         match &cooked {
           Some(value) => {
+            self.f.begin_object_key(self.w, false)?;
+            self.f.begin_string(self.w)?;
+            self.f.write_string_fragment(self.w, "cooked")?;
+            self.f.end_string(self.w)?;
+            self.f.end_object_key(self.w)?;
+            self.f.begin_object_value(self.w)?;
             write!(self.w, "{}", to_json_string(value)?)?;
+            self.f.end_object_value(self.w)?;
           }
-          None => self.f.write_null(self.w)?,
+          None => {}
         }
-        self.f.end_object_value(self.w)?;
+        let value = &has_escape;
         self.f.begin_object_key(self.w, false)?;
         self.f.begin_string(self.w)?;
         self.f.write_string_fragment(self.w, "hasEscape")?;
         self.f.end_string(self.w)?;
         self.f.end_object_key(self.w)?;
         self.f.begin_object_value(self.w)?;
-        write!(self.w, "{}", to_json_string(&has_escape)?)?;
+        write!(self.w, "{}", to_json_string(value)?)?;
         self.f.end_object_value(self.w)?;
         self.f.end_object(self.w)?;
       }
@@ -6835,13 +7104,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
         self.f.begin_object_value(self.w)?;
         self.f.write_u32(self.w, 19)?;
         self.f.end_object_value(self.w)?;
+        let value = &item0;
         self.f.begin_object_key(self.w, false)?;
         self.f.begin_string(self.w)?;
         self.f.write_string_fragment(self.w, "inner")?;
         self.f.end_string(self.w)?;
         self.f.end_object_key(self.w)?;
         self.f.begin_object_value(self.w)?;
-        self.serialize_bin_op_token(&item0)?;
+        self.serialize_bin_op_token(value)?;
         self.f.end_object_value(self.w)?;
         self.f.end_object(self.w)?;
       }
@@ -6855,13 +7125,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
         self.f.begin_object_value(self.w)?;
         self.f.write_u32(self.w, 20)?;
         self.f.end_object_value(self.w)?;
+        let value = &item0;
         self.f.begin_object_key(self.w, false)?;
         self.f.begin_string(self.w)?;
         self.f.write_string_fragment(self.w, "inner")?;
         self.f.end_string(self.w)?;
         self.f.end_object_key(self.w)?;
         self.f.begin_object_value(self.w)?;
-        write!(self.w, "{}", to_json_string(&item0)?)?;
+        write!(self.w, "{}", to_json_string(value)?)?;
         self.f.end_object_value(self.w)?;
         self.f.end_object(self.w)?;
       }
@@ -6883,21 +7154,23 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
         self.f.begin_object_value(self.w)?;
         self.f.write_u32(self.w, 26)?;
         self.f.end_object_value(self.w)?;
+        let value = &value;
         self.f.begin_object_key(self.w, false)?;
         self.f.begin_string(self.w)?;
         self.f.write_string_fragment(self.w, "value")?;
         self.f.end_string(self.w)?;
         self.f.end_object_key(self.w)?;
         self.f.begin_object_value(self.w)?;
-        write!(self.w, "{}", to_json_string(&value)?)?;
+        write!(self.w, "{}", to_json_string(value)?)?;
         self.f.end_object_value(self.w)?;
+        let value = &has_escape;
         self.f.begin_object_key(self.w, false)?;
         self.f.begin_string(self.w)?;
         self.f.write_string_fragment(self.w, "hasEscape")?;
         self.f.end_string(self.w)?;
         self.f.end_object_key(self.w)?;
         self.f.begin_object_value(self.w)?;
-        write!(self.w, "{}", to_json_string(&has_escape)?)?;
+        write!(self.w, "{}", to_json_string(value)?)?;
         self.f.end_object_value(self.w)?;
         self.f.end_object(self.w)?;
       }
@@ -6931,13 +7204,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
         self.f.begin_object_value(self.w)?;
         self.f.write_u32(self.w, 28)?;
         self.f.end_object_value(self.w)?;
+        let value = &item0;
         self.f.begin_object_key(self.w, false)?;
         self.f.begin_string(self.w)?;
         self.f.write_string_fragment(self.w, "inner")?;
         self.f.end_string(self.w)?;
         self.f.end_object_key(self.w)?;
         self.f.begin_object_value(self.w)?;
-        write!(self.w, "{}", to_json_string(&item0)?)?;
+        write!(self.w, "{}", to_json_string(value)?)?;
         self.f.end_object_value(self.w)?;
         self.f.end_object(self.w)?;
       }
@@ -6951,13 +7225,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
         self.f.begin_object_value(self.w)?;
         self.f.write_u32(self.w, 29)?;
         self.f.end_object_value(self.w)?;
+        let value = &item0;
         self.f.begin_object_key(self.w, false)?;
         self.f.begin_string(self.w)?;
         self.f.write_string_fragment(self.w, "inner")?;
         self.f.end_string(self.w)?;
         self.f.end_object_key(self.w)?;
         self.f.begin_object_value(self.w)?;
-        write!(self.w, "{}", to_json_string(&item0)?)?;
+        write!(self.w, "{}", to_json_string(value)?)?;
         self.f.end_object_value(self.w)?;
         self.f.end_object(self.w)?;
       }
@@ -6973,13 +7248,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
         self.f.begin_object_value(self.w)?;
         self.f.write_u32(self.w, 30)?;
         self.f.end_object_value(self.w)?;
+        let value = &name;
         self.f.begin_object_key(self.w, false)?;
         self.f.begin_string(self.w)?;
         self.f.write_string_fragment(self.w, "name")?;
         self.f.end_string(self.w)?;
         self.f.end_object_key(self.w)?;
         self.f.begin_object_value(self.w)?;
-        write!(self.w, "{}", to_json_string(&name)?)?;
+        write!(self.w, "{}", to_json_string(value)?)?;
         self.f.end_object_value(self.w)?;
         self.f.end_object(self.w)?;
       }
@@ -6995,13 +7271,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
         self.f.begin_object_value(self.w)?;
         self.f.write_u32(self.w, 31)?;
         self.f.end_object_value(self.w)?;
+        let value = &raw;
         self.f.begin_object_key(self.w, false)?;
         self.f.begin_string(self.w)?;
         self.f.write_string_fragment(self.w, "raw")?;
         self.f.end_string(self.w)?;
         self.f.end_object_key(self.w)?;
         self.f.begin_object_value(self.w)?;
-        write!(self.w, "{}", to_json_string(&raw)?)?;
+        write!(self.w, "{}", to_json_string(value)?)?;
         self.f.end_object_value(self.w)?;
         self.f.end_object(self.w)?;
       }
@@ -7017,13 +7294,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
         self.f.begin_object_value(self.w)?;
         self.f.write_u32(self.w, 34)?;
         self.f.end_object_value(self.w)?;
+        let value = &item0;
         self.f.begin_object_key(self.w, false)?;
         self.f.begin_string(self.w)?;
         self.f.write_string_fragment(self.w, "inner")?;
         self.f.end_string(self.w)?;
         self.f.end_object_key(self.w)?;
         self.f.begin_object_value(self.w)?;
-        write!(self.w, "{}", to_json_string(&item0)?)?;
+        write!(self.w, "{}", to_json_string(value)?)?;
         self.f.end_object_value(self.w)?;
         self.f.end_object(self.w)?;
       }
@@ -7044,13 +7322,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
         self.f.begin_object_value(self.w)?;
         self.f.write_u32(self.w, 0)?;
         self.f.end_object_value(self.w)?;
+        let value = &item0;
         self.f.begin_object_key(self.w, false)?;
         self.f.begin_string(self.w)?;
         self.f.write_string_fragment(self.w, "inner")?;
         self.f.end_string(self.w)?;
         self.f.end_object_key(self.w)?;
         self.f.begin_object_value(self.w)?;
-        self.serialize_keyword(&item0)?;
+        self.serialize_keyword(value)?;
         self.f.end_object_value(self.w)?;
         self.f.end_object(self.w)?;
       }
@@ -7067,13 +7346,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
         self.f.begin_object_value(self.w)?;
         self.f.write_u32(self.w, 4)?;
         self.f.end_object_value(self.w)?;
+        let value = &item0;
         self.f.begin_object_key(self.w, false)?;
         self.f.begin_string(self.w)?;
         self.f.write_string_fragment(self.w, "inner")?;
         self.f.end_string(self.w)?;
         self.f.end_object_key(self.w)?;
         self.f.begin_object_value(self.w)?;
-        write!(self.w, "{}", to_json_string(&item0)?)?;
+        write!(self.w, "{}", to_json_string(value)?)?;
         self.f.end_object_value(self.w)?;
         self.f.end_object(self.w)?;
       }

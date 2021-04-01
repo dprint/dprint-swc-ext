@@ -68,8 +68,10 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
                 writer.writeLine("self.serialize_span_props(&node.span(), false)?;");
 
                 for (const field of struct.fields.filter(f => f.name !== "span")) {
-                    writeObjectStrKey(snakeToCamelCase(field.name), false);
-                    writeObjectValue(() => writeTypeValueSerialization(`&node.${field.innerName}`, field.type));
+                    writeSkipOptional(`&node.${field.innerName}`, field.type, () => {
+                        writeObjectStrKey(snakeToCamelCase(field.name), false);
+                        writeObjectValue(() => writeTypeValueSerialization("value", field.type, false));
+                    });
                 }
             });
             writer.writeLine("Ok(())");
@@ -173,15 +175,17 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
                                     writer.writeLine(`self.f.write_u32(self.w, ${i})?;`);
                                 });
                                 if (variant.tupleArgs.length === 1) {
-                                    writeObjectStrKey("inner", false);
-                                    writeObjectValue(() => {
-                                        writeTypeValueSerialization(`&item0`, variant.tupleArgs[0]);
+                                    writeSkipOptional(`&item0`, variant.tupleArgs[0], () => {
+                                        writeObjectStrKey("inner", false);
+                                        writeObjectValue(() => {
+                                            writeTypeValueSerialization("value", variant.tupleArgs[0], false);
+                                        });
                                     });
                                 } else if (variant.tupleArgs.length > 1) {
                                     writeArray(() => {
                                         for (const [i, tupleArg] of variant.tupleArgs.entries()) {
                                             writeArrayValue(() => {
-                                                writeTypeValueSerialization(`&item${i}`, tupleArg);
+                                                writeTypeValueSerialization(`&item${i}`, tupleArg, true);
                                             }, i === 0);
                                         }
                                     });
@@ -203,9 +207,11 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
                                     writer.writeLine(`self.f.write_u32(self.w, ${i})?;`);
                                 });
                                 for (const field of variant.fields) {
-                                    writeObjectStrKey(snakeToCamelCase(field.name), false);
-                                    writeObjectValue(() => {
-                                        writeTypeValueSerialization(`&${field.name}`, field.type);
+                                    writeSkipOptional(`&${field.name}`, field.type, () => {
+                                        writeObjectStrKey(snakeToCamelCase(field.name), false);
+                                        writeObjectValue(() => {
+                                            writeTypeValueSerialization("value", field.type, false);
+                                        });
                                     });
                                 }
                             });
@@ -219,7 +225,21 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
         });
     }
 
-    function writeTypeValueSerialization(name: string, type: TypeDefinition) {
+    function writeSkipOptional(name: string, type: TypeDefinition, inner: () => void) {
+        if (type.kind === "Reference" && isOptionType(type)) {
+            writer.write(`match ${name} `).inlineBlock(() => {
+                writer.write(`Some(value) =>`).block(() => {
+                    inner();
+                });
+                writer.writeLine("None => {}");
+            });
+        } else {
+            writer.writeLine(`let value = ${name};`);
+            inner();
+        }
+    }
+
+    function writeTypeValueSerialization(name: string, type: TypeDefinition, writeOptionalCheck: boolean) {
         const customNames = new Set(["BinOpToken", "Word", "Keyword", "Token"]);
 
         if (type.kind === "Reference" && customNames.has(type.name)) {
@@ -229,17 +249,21 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
         } else if (type.kind === "Reference" && isSwcNodeEnumType(analysisResult, type)) {
             writer.writeLine(`self.serialize_${nameToSnakeCase(type.name)}(${name})?;`);
         } else if (type.kind === "Reference" && isOptionType(type)) {
-            writer.write(`match ${name} `).inlineBlock(() => {
-                writer.write(`Some(value) => `).block(() => {
-                    writeTypeValueSerialization("value", type.genericArgs[0]);
+            if (writeOptionalCheck) {
+                writer.write(`match ${name} `).inlineBlock(() => {
+                    writer.write(`Some(value) => `).block(() => {
+                        writeTypeValueSerialization("value", type.genericArgs[0], true);
+                    });
+                    writer.writeLine(`None => self.f.write_null(self.w)?,`);
                 });
-                writer.writeLine(`None => self.f.write_null(self.w)?,`);
-            });
+            } else {
+                writeTypeValueSerialization(name, type.genericArgs[0], true);
+            }
         } else if (type.kind === "Reference" && isVecType(type)) {
             writeArray(() => {
                 writer.write(`for (i, item) in ${name.replace(/^&/, "")}.iter().enumerate() `).inlineBlock(() => {
                     writeArrayValue(() => {
-                        writeTypeValueSerialization("item", type.genericArgs[0]);
+                        writeTypeValueSerialization("item", type.genericArgs[0], true);
                     }, "i == 0");
                 });
             });

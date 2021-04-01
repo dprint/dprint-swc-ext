@@ -1104,7 +1104,7 @@ export type Node =
 export class ArrayLit extends BaseNode {
   kind!: NodeKind.ArrayLit;
   parent!: Node;
-  elems!: Array<ExprOrSpread | undefined>;
+  elems!: Array<ExprOrSpread | null>;
 
   getChildren(): Node[] {
     const children: Node[] = new Array(this.elems.length);
@@ -1121,7 +1121,7 @@ export class ArrayLit extends BaseNode {
 export class ArrayPat extends BaseNode {
   kind!: NodeKind.ArrayPat;
   parent!: Node;
-  elems!: Array<Pat | undefined>;
+  elems!: Array<Pat | null>;
   /** Only in an ambient context */
   optional!: boolean;
   type_ann!: TsTypeAnn | undefined;
