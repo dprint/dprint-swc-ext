@@ -173,6 +173,7 @@ pub enum Node<'a> {
   TsExprWithTypeArgs(&'a TsExprWithTypeArgs<'a>),
   TsExternalModuleRef(&'a TsExternalModuleRef<'a>),
   TsFnType(&'a TsFnType<'a>),
+  TsGetterSignature(&'a TsGetterSignature<'a>),
   TsImportEqualsDecl(&'a TsImportEqualsDecl<'a>),
   TsImportType(&'a TsImportType<'a>),
   TsIndexSignature(&'a TsIndexSignature<'a>),
@@ -196,6 +197,7 @@ pub enum Node<'a> {
   TsPropertySignature(&'a TsPropertySignature<'a>),
   TsQualifiedName(&'a TsQualifiedName<'a>),
   TsRestType(&'a TsRestType<'a>),
+  TsSetterSignature(&'a TsSetterSignature<'a>),
   TsThisType(&'a TsThisType<'a>),
   TsTplLitType(&'a TsTplLitType<'a>),
   TsTupleElement(&'a TsTupleElement<'a>),
@@ -356,6 +358,7 @@ impl<'a> Spanned for Node<'a> {
       Node::TsExprWithTypeArgs(node) => node.span(),
       Node::TsExternalModuleRef(node) => node.span(),
       Node::TsFnType(node) => node.span(),
+      Node::TsGetterSignature(node) => node.span(),
       Node::TsImportEqualsDecl(node) => node.span(),
       Node::TsImportType(node) => node.span(),
       Node::TsIndexSignature(node) => node.span(),
@@ -379,6 +382,7 @@ impl<'a> Spanned for Node<'a> {
       Node::TsPropertySignature(node) => node.span(),
       Node::TsQualifiedName(node) => node.span(),
       Node::TsRestType(node) => node.span(),
+      Node::TsSetterSignature(node) => node.span(),
       Node::TsThisType(node) => node.span(),
       Node::TsTplLitType(node) => node.span(),
       Node::TsTupleElement(node) => node.span(),
@@ -523,6 +527,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsExprWithTypeArgs(node) => node.parent(),
       Node::TsExternalModuleRef(node) => node.parent(),
       Node::TsFnType(node) => node.parent(),
+      Node::TsGetterSignature(node) => node.parent(),
       Node::TsImportEqualsDecl(node) => node.parent(),
       Node::TsImportType(node) => node.parent(),
       Node::TsIndexSignature(node) => node.parent(),
@@ -546,6 +551,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsPropertySignature(node) => node.parent(),
       Node::TsQualifiedName(node) => node.parent(),
       Node::TsRestType(node) => node.parent(),
+      Node::TsSetterSignature(node) => node.parent(),
       Node::TsThisType(node) => node.parent(),
       Node::TsTplLitType(node) => node.parent(),
       Node::TsTupleElement(node) => node.parent(),
@@ -688,6 +694,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsExprWithTypeArgs(node) => node.children(),
       Node::TsExternalModuleRef(node) => node.children(),
       Node::TsFnType(node) => node.children(),
+      Node::TsGetterSignature(node) => node.children(),
       Node::TsImportEqualsDecl(node) => node.children(),
       Node::TsImportType(node) => node.children(),
       Node::TsIndexSignature(node) => node.children(),
@@ -711,6 +718,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsPropertySignature(node) => node.children(),
       Node::TsQualifiedName(node) => node.children(),
       Node::TsRestType(node) => node.children(),
+      Node::TsSetterSignature(node) => node.children(),
       Node::TsThisType(node) => node.children(),
       Node::TsTplLitType(node) => node.children(),
       Node::TsTupleElement(node) => node.children(),
@@ -853,6 +861,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsExprWithTypeArgs(node) => node.into_node(),
       Node::TsExternalModuleRef(node) => node.into_node(),
       Node::TsFnType(node) => node.into_node(),
+      Node::TsGetterSignature(node) => node.into_node(),
       Node::TsImportEqualsDecl(node) => node.into_node(),
       Node::TsImportType(node) => node.into_node(),
       Node::TsIndexSignature(node) => node.into_node(),
@@ -876,6 +885,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsPropertySignature(node) => node.into_node(),
       Node::TsQualifiedName(node) => node.into_node(),
       Node::TsRestType(node) => node.into_node(),
+      Node::TsSetterSignature(node) => node.into_node(),
       Node::TsThisType(node) => node.into_node(),
       Node::TsTplLitType(node) => node.into_node(),
       Node::TsTupleElement(node) => node.into_node(),
@@ -1018,6 +1028,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsExprWithTypeArgs(_) => NodeKind::TsExprWithTypeArgs,
       Node::TsExternalModuleRef(_) => NodeKind::TsExternalModuleRef,
       Node::TsFnType(_) => NodeKind::TsFnType,
+      Node::TsGetterSignature(_) => NodeKind::TsGetterSignature,
       Node::TsImportEqualsDecl(_) => NodeKind::TsImportEqualsDecl,
       Node::TsImportType(_) => NodeKind::TsImportType,
       Node::TsIndexSignature(_) => NodeKind::TsIndexSignature,
@@ -1041,6 +1052,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsPropertySignature(_) => NodeKind::TsPropertySignature,
       Node::TsQualifiedName(_) => NodeKind::TsQualifiedName,
       Node::TsRestType(_) => NodeKind::TsRestType,
+      Node::TsSetterSignature(_) => NodeKind::TsSetterSignature,
       Node::TsThisType(_) => NodeKind::TsThisType,
       Node::TsTplLitType(_) => NodeKind::TsTplLitType,
       Node::TsTupleElement(_) => NodeKind::TsTupleElement,
@@ -1184,6 +1196,7 @@ pub enum NodeKind {
   TsExprWithTypeArgs,
   TsExternalModuleRef,
   TsFnType,
+  TsGetterSignature,
   TsImportEqualsDecl,
   TsImportType,
   TsIndexSignature,
@@ -1207,6 +1220,7 @@ pub enum NodeKind {
   TsPropertySignature,
   TsQualifiedName,
   TsRestType,
+  TsSetterSignature,
   TsThisType,
   TsTplLitType,
   TsTupleElement,
@@ -1349,6 +1363,7 @@ impl std::fmt::Display for NodeKind {
       NodeKind::TsExprWithTypeArgs => "TsExprWithTypeArgs",
       NodeKind::TsExternalModuleRef => "TsExternalModuleRef",
       NodeKind::TsFnType => "TsFnType",
+      NodeKind::TsGetterSignature => "TsGetterSignature",
       NodeKind::TsImportEqualsDecl => "TsImportEqualsDecl",
       NodeKind::TsImportType => "TsImportType",
       NodeKind::TsIndexSignature => "TsIndexSignature",
@@ -1372,6 +1387,7 @@ impl std::fmt::Display for NodeKind {
       NodeKind::TsPropertySignature => "TsPropertySignature",
       NodeKind::TsQualifiedName => "TsQualifiedName",
       NodeKind::TsRestType => "TsRestType",
+      NodeKind::TsSetterSignature => "TsSetterSignature",
       NodeKind::TsThisType => "TsThisType",
       NodeKind::TsTplLitType => "TsTplLitType",
       NodeKind::TsTupleElement => "TsTupleElement",
@@ -5772,6 +5788,8 @@ pub enum TsTypeElement<'a> {
   TsCallSignatureDecl(&'a TsCallSignatureDecl<'a>),
   TsConstructSignatureDecl(&'a TsConstructSignatureDecl<'a>),
   TsPropertySignature(&'a TsPropertySignature<'a>),
+  TsGetterSignature(&'a TsGetterSignature<'a>),
+  TsSetterSignature(&'a TsSetterSignature<'a>),
   TsMethodSignature(&'a TsMethodSignature<'a>),
   TsIndexSignature(&'a TsIndexSignature<'a>),
 }
@@ -5801,6 +5819,8 @@ impl<'a> Spanned for TsTypeElement<'a> {
       TsTypeElement::TsCallSignatureDecl(node) => node.span(),
       TsTypeElement::TsConstructSignatureDecl(node) => node.span(),
       TsTypeElement::TsPropertySignature(node) => node.span(),
+      TsTypeElement::TsGetterSignature(node) => node.span(),
+      TsTypeElement::TsSetterSignature(node) => node.span(),
       TsTypeElement::TsMethodSignature(node) => node.span(),
       TsTypeElement::TsIndexSignature(node) => node.span(),
     }
@@ -5813,6 +5833,8 @@ impl<'a> NodeTrait<'a> for TsTypeElement<'a> {
       TsTypeElement::TsCallSignatureDecl(node) => node.parent(),
       TsTypeElement::TsConstructSignatureDecl(node) => node.parent(),
       TsTypeElement::TsPropertySignature(node) => node.parent(),
+      TsTypeElement::TsGetterSignature(node) => node.parent(),
+      TsTypeElement::TsSetterSignature(node) => node.parent(),
       TsTypeElement::TsMethodSignature(node) => node.parent(),
       TsTypeElement::TsIndexSignature(node) => node.parent(),
     }
@@ -5823,6 +5845,8 @@ impl<'a> NodeTrait<'a> for TsTypeElement<'a> {
       TsTypeElement::TsCallSignatureDecl(node) => node.children(),
       TsTypeElement::TsConstructSignatureDecl(node) => node.children(),
       TsTypeElement::TsPropertySignature(node) => node.children(),
+      TsTypeElement::TsGetterSignature(node) => node.children(),
+      TsTypeElement::TsSetterSignature(node) => node.children(),
       TsTypeElement::TsMethodSignature(node) => node.children(),
       TsTypeElement::TsIndexSignature(node) => node.children(),
     }
@@ -5833,6 +5857,8 @@ impl<'a> NodeTrait<'a> for TsTypeElement<'a> {
       TsTypeElement::TsCallSignatureDecl(node) => node.into_node(),
       TsTypeElement::TsConstructSignatureDecl(node) => node.into_node(),
       TsTypeElement::TsPropertySignature(node) => node.into_node(),
+      TsTypeElement::TsGetterSignature(node) => node.into_node(),
+      TsTypeElement::TsSetterSignature(node) => node.into_node(),
       TsTypeElement::TsMethodSignature(node) => node.into_node(),
       TsTypeElement::TsIndexSignature(node) => node.into_node(),
     }
@@ -5843,6 +5869,8 @@ impl<'a> NodeTrait<'a> for TsTypeElement<'a> {
       TsTypeElement::TsCallSignatureDecl(_) => NodeKind::TsCallSignatureDecl,
       TsTypeElement::TsConstructSignatureDecl(_) => NodeKind::TsConstructSignatureDecl,
       TsTypeElement::TsPropertySignature(_) => NodeKind::TsPropertySignature,
+      TsTypeElement::TsGetterSignature(_) => NodeKind::TsGetterSignature,
+      TsTypeElement::TsSetterSignature(_) => NodeKind::TsSetterSignature,
       TsTypeElement::TsMethodSignature(_) => NodeKind::TsMethodSignature,
       TsTypeElement::TsIndexSignature(_) => NodeKind::TsIndexSignature,
     }
@@ -5855,6 +5883,8 @@ impl<'a> From<&TsTypeElement<'a>> for Node<'a> {
       TsTypeElement::TsCallSignatureDecl(node) => (*node).into(),
       TsTypeElement::TsConstructSignatureDecl(node) => (*node).into(),
       TsTypeElement::TsPropertySignature(node) => (*node).into(),
+      TsTypeElement::TsGetterSignature(node) => (*node).into(),
+      TsTypeElement::TsSetterSignature(node) => (*node).into(),
       TsTypeElement::TsMethodSignature(node) => (*node).into(),
       TsTypeElement::TsIndexSignature(node) => (*node).into(),
     }
@@ -5867,6 +5897,8 @@ impl<'a> From<TsTypeElement<'a>> for Node<'a> {
       TsTypeElement::TsCallSignatureDecl(node) => node.into(),
       TsTypeElement::TsConstructSignatureDecl(node) => node.into(),
       TsTypeElement::TsPropertySignature(node) => node.into(),
+      TsTypeElement::TsGetterSignature(node) => node.into(),
+      TsTypeElement::TsSetterSignature(node) => node.into(),
       TsTypeElement::TsMethodSignature(node) => node.into(),
       TsTypeElement::TsIndexSignature(node) => node.into(),
     }
@@ -5878,6 +5910,8 @@ fn get_view_for_ts_type_element<'a>(inner: &'a swc_ast::TsTypeElement, parent: N
     swc_ast::TsTypeElement::TsCallSignatureDecl(value) => TsTypeElement::TsCallSignatureDecl(get_view_for_ts_call_signature_decl(value, parent, bump)),
     swc_ast::TsTypeElement::TsConstructSignatureDecl(value) => TsTypeElement::TsConstructSignatureDecl(get_view_for_ts_construct_signature_decl(value, parent, bump)),
     swc_ast::TsTypeElement::TsPropertySignature(value) => TsTypeElement::TsPropertySignature(get_view_for_ts_property_signature(value, parent, bump)),
+    swc_ast::TsTypeElement::TsGetterSignature(value) => TsTypeElement::TsGetterSignature(get_view_for_ts_getter_signature(value, parent, bump)),
+    swc_ast::TsTypeElement::TsSetterSignature(value) => TsTypeElement::TsSetterSignature(get_view_for_ts_setter_signature(value, parent, bump)),
     swc_ast::TsTypeElement::TsMethodSignature(value) => TsTypeElement::TsMethodSignature(get_view_for_ts_method_signature(value, parent, bump)),
     swc_ast::TsTypeElement::TsIndexSignature(value) => TsTypeElement::TsIndexSignature(get_view_for_ts_index_signature(value, parent, bump)),
   }
@@ -13331,9 +13365,8 @@ pub struct TaggedTpl<'a> {
   pub parent: Node<'a>,
   pub inner: &'a swc_ast::TaggedTpl,
   pub tag: Expr<'a>,
-  pub exprs: Vec<Expr<'a>>,
-  pub quasis: Vec<&'a TplElement<'a>>,
   pub type_params: Option<&'a TsTypeParamInstantiation<'a>>,
+  pub tpl: &'a Tpl<'a>,
 }
 
 impl<'a> Spanned for TaggedTpl<'a> {
@@ -13355,17 +13388,12 @@ impl<'a> NodeTrait<'a> for TaggedTpl<'a> {
   }
 
   fn children(&self) -> Vec<Node<'a>> {
-    let mut children = Vec::with_capacity(1 + self.exprs.len() + self.quasis.len() + match &self.type_params { Some(_value) => 1, None => 0, });
+    let mut children = Vec::with_capacity(2 + match &self.type_params { Some(_value) => 1, None => 0, });
     children.push((&self.tag).into());
-    for child in self.exprs.iter() {
-      children.push(child.into());
-    }
-    for child in self.quasis.iter() {
-      children.push((*child).into());
-    }
     if let Some(child) = self.type_params {
       children.push(child.into());
     }
+    children.push(self.tpl.into());
     children
   }
 
@@ -13397,18 +13425,16 @@ fn get_view_for_tagged_tpl<'a>(inner: &'a swc_ast::TaggedTpl, parent: Node<'a>, 
     inner,
     parent,
     tag: unsafe { MaybeUninit::uninit().assume_init() },
-    exprs: Vec::with_capacity(inner.exprs.len()),
-    quasis: Vec::with_capacity(inner.quasis.len()),
     type_params: None,
+    tpl: unsafe { MaybeUninit::uninit().assume_init() },
   });
   let parent: Node<'a> = (&*node).into();
   node.tag = get_view_for_expr(&inner.tag, parent.clone(), bump);
-  node.exprs.extend(inner.exprs.iter().map(|value| get_view_for_expr(value, parent.clone(), bump)));
-  node.quasis.extend(inner.quasis.iter().map(|value| get_view_for_tpl_element(value, parent.clone(), bump)));
   node.type_params = match &inner.type_params {
-    Some(value) => Some(get_view_for_ts_type_param_instantiation(value, parent, bump)),
+    Some(value) => Some(get_view_for_ts_type_param_instantiation(value, parent.clone(), bump)),
     None => None,
   };
+  node.tpl = get_view_for_tpl(&inner.tpl, parent, bump);
   node
 }
 
@@ -14743,6 +14769,94 @@ fn get_view_for_ts_fn_type<'a>(inner: &'a swc_ast::TsFnType, parent: Node<'a>, b
     None => None,
   };
   node.type_ann = get_view_for_ts_type_ann(&inner.type_ann, parent, bump);
+  node
+}
+
+#[derive(Clone)]
+pub struct TsGetterSignature<'a> {
+  pub parent: Node<'a>,
+  pub inner: &'a swc_ast::TsGetterSignature,
+  pub key: Expr<'a>,
+  pub type_ann: Option<&'a TsTypeAnn<'a>>,
+}
+
+impl<'a> TsGetterSignature<'a> {
+  pub fn readonly(&self) -> bool {
+    self.inner.readonly
+  }
+
+  pub fn computed(&self) -> bool {
+    self.inner.computed
+  }
+
+  pub fn optional(&self) -> bool {
+    self.inner.optional
+  }
+}
+
+impl<'a> Spanned for TsGetterSignature<'a> {
+  fn span(&self) -> Span {
+    self.inner.span()
+  }
+}
+
+impl<'a> From<&TsGetterSignature<'a>> for Node<'a> {
+  fn from(node: &TsGetterSignature<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsGetterSignature<'a>, &'a TsGetterSignature<'a>>(node) };
+    Node::TsGetterSignature(node)
+  }
+}
+
+impl<'a> NodeTrait<'a> for TsGetterSignature<'a> {
+  fn parent(&self) -> Option<Node<'a>> {
+    Some(self.parent.clone())
+  }
+
+  fn children(&self) -> Vec<Node<'a>> {
+    let mut children = Vec::with_capacity(1 + match &self.type_ann { Some(_value) => 1, None => 0, });
+    children.push((&self.key).into());
+    if let Some(child) = self.type_ann {
+      children.push(child.into());
+    }
+    children
+  }
+
+  fn into_node(&self) -> Node<'a> {
+    self.into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsGetterSignature
+  }
+}
+
+impl<'a> CastableNode<'a> for TsGetterSignature<'a> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
+    if let Node::TsGetterSignature(node) = node {
+      Some(node)
+    } else {
+      None
+    }
+  }
+
+  fn kind() -> NodeKind {
+    NodeKind::TsGetterSignature
+  }
+}
+
+fn get_view_for_ts_getter_signature<'a>(inner: &'a swc_ast::TsGetterSignature, parent: Node<'a>, bump: &'a Bump) -> &'a TsGetterSignature<'a> {
+  let node = bump.alloc(TsGetterSignature {
+    inner,
+    parent,
+    key: unsafe { MaybeUninit::uninit().assume_init() },
+    type_ann: None,
+  });
+  let parent: Node<'a> = (&*node).into();
+  node.key = get_view_for_expr(&inner.key, parent.clone(), bump);
+  node.type_ann = match &inner.type_ann {
+    Some(value) => Some(get_view_for_ts_type_ann(value, parent, bump)),
+    None => None,
+  };
   node
 }
 
@@ -16497,6 +16611,89 @@ fn get_view_for_ts_rest_type<'a>(inner: &'a swc_ast::TsRestType, parent: Node<'a
   });
   let parent: Node<'a> = (&*node).into();
   node.type_ann = get_view_for_ts_type(&inner.type_ann, parent, bump);
+  node
+}
+
+#[derive(Clone)]
+pub struct TsSetterSignature<'a> {
+  pub parent: Node<'a>,
+  pub inner: &'a swc_ast::TsSetterSignature,
+  pub key: Expr<'a>,
+  pub param: TsFnParam<'a>,
+}
+
+impl<'a> TsSetterSignature<'a> {
+  pub fn readonly(&self) -> bool {
+    self.inner.readonly
+  }
+
+  pub fn computed(&self) -> bool {
+    self.inner.computed
+  }
+
+  pub fn optional(&self) -> bool {
+    self.inner.optional
+  }
+}
+
+impl<'a> Spanned for TsSetterSignature<'a> {
+  fn span(&self) -> Span {
+    self.inner.span()
+  }
+}
+
+impl<'a> From<&TsSetterSignature<'a>> for Node<'a> {
+  fn from(node: &TsSetterSignature<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsSetterSignature<'a>, &'a TsSetterSignature<'a>>(node) };
+    Node::TsSetterSignature(node)
+  }
+}
+
+impl<'a> NodeTrait<'a> for TsSetterSignature<'a> {
+  fn parent(&self) -> Option<Node<'a>> {
+    Some(self.parent.clone())
+  }
+
+  fn children(&self) -> Vec<Node<'a>> {
+    let mut children = Vec::with_capacity(2);
+    children.push((&self.key).into());
+    children.push((&self.param).into());
+    children
+  }
+
+  fn into_node(&self) -> Node<'a> {
+    self.into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsSetterSignature
+  }
+}
+
+impl<'a> CastableNode<'a> for TsSetterSignature<'a> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
+    if let Node::TsSetterSignature(node) = node {
+      Some(node)
+    } else {
+      None
+    }
+  }
+
+  fn kind() -> NodeKind {
+    NodeKind::TsSetterSignature
+  }
+}
+
+fn get_view_for_ts_setter_signature<'a>(inner: &'a swc_ast::TsSetterSignature, parent: Node<'a>, bump: &'a Bump) -> &'a TsSetterSignature<'a> {
+  let node = bump.alloc(TsSetterSignature {
+    inner,
+    parent,
+    key: unsafe { MaybeUninit::uninit().assume_init() },
+    param: unsafe { MaybeUninit::uninit().assume_init() },
+  });
+  let parent: Node<'a> = (&*node).into();
+  node.key = get_view_for_expr(&inner.key, parent.clone(), bump);
+  node.param = get_view_for_ts_fn_param(&inner.param, parent, bump);
   node
 }
 

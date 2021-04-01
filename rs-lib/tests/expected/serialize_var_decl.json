@@ -4,14 +4,14 @@
   "end": 19,
   "body": [
     {
-      "kind": 155,
+      "kind": 157,
       "start": 6,
       "end": 19,
       "declKind": "let",
       "declare": false,
       "decls": [
         {
-          "kind": 156,
+          "kind": 158,
           "start": 10,
           "end": 18,
           "name": {

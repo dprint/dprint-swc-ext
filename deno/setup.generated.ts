@@ -249,6 +249,8 @@ function getNodeClass(node: any) {
       return types.TsExternalModuleRef;
     case types.NodeKind.TsFnType:
       return types.TsFnType;
+    case types.NodeKind.TsGetterSignature:
+      return types.TsGetterSignature;
     case types.NodeKind.TsImportEqualsDecl:
       return types.TsImportEqualsDecl;
     case types.NodeKind.TsImportType:
@@ -295,6 +297,8 @@ function getNodeClass(node: any) {
       return types.TsQualifiedName;
     case types.NodeKind.TsRestType:
       return types.TsRestType;
+    case types.NodeKind.TsSetterSignature:
+      return types.TsSetterSignature;
     case types.NodeKind.TsThisType:
       return types.TsThisType;
     case types.NodeKind.TsTplLitType:

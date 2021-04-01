@@ -280,6 +280,8 @@ export type TsTypeElement =
   | TsCallSignatureDecl
   | TsConstructSignatureDecl
   | TsPropertySignature
+  | TsGetterSignature
+  | TsSetterSignature
   | TsMethodSignature
   | TsIndexSignature;
 
@@ -890,6 +892,7 @@ export enum NodeKind {
   TsExprWithTypeArgs,
   TsExternalModuleRef,
   TsFnType,
+  TsGetterSignature,
   TsImportEqualsDecl,
   TsImportType,
   TsIndexSignature,
@@ -913,6 +916,7 @@ export enum NodeKind {
   TsPropertySignature,
   TsQualifiedName,
   TsRestType,
+  TsSetterSignature,
   TsThisType,
   TsTplLitType,
   TsTupleElement,
@@ -1053,6 +1057,7 @@ export type Node =
 | TsExprWithTypeArgs
 | TsExternalModuleRef
 | TsFnType
+| TsGetterSignature
 | TsImportEqualsDecl
 | TsImportType
 | TsIndexSignature
@@ -1076,6 +1081,7 @@ export type Node =
 | TsPropertySignature
 | TsQualifiedName
 | TsRestType
+| TsSetterSignature
 | TsThisType
 | TsTplLitType
 | TsTupleElement
@@ -2732,23 +2738,17 @@ export class TaggedTpl extends BaseNode {
   kind!: NodeKind.TaggedTpl;
   parent!: Node;
   tag!: Expr;
-  exprs!: Array<Expr>;
-  quasis!: Array<TplElement>;
   type_params!: TsTypeParamInstantiation | undefined;
+  tpl!: Tpl;
 
   getChildren(): Node[] {
-    const children: Node[] = new Array(1 + this.exprs.length + this.quasis.length + (this.type_params == null ? 0 : 1));
+    const children: Node[] = new Array(2 + (this.type_params == null ? 0 : 1));
     let i = 0;
     children[i++] = this.tag;
-    for (const child of this.exprs) {
-      children[i++] = child;
-    }
-    for (const child of this.quasis) {
-      children[i++] = child;
-    }
     if (this.type_params != null) {
       children[i++] = this.type_params;
     }
+    children[i++] = this.tpl;
     return children;
   }
 }
@@ -2796,8 +2796,7 @@ export class Tpl extends BaseNode {
 
 export class TplElement extends BaseNode {
   kind!: NodeKind.TplElement;
-  parent!: TaggedTpl
-    | Tpl
+  parent!: Tpl
     | TsTplLitType;
   tail!: boolean;
   cooked!: Str | undefined;
@@ -3068,6 +3067,27 @@ export class TsFnType extends BaseNode {
       children[i++] = this.type_params;
     }
     children[i++] = this.type_ann;
+    return children;
+  }
+}
+
+export class TsGetterSignature extends BaseNode {
+  kind!: NodeKind.TsGetterSignature;
+  parent!: TsInterfaceBody
+    | TsTypeLit;
+  readonly!: boolean;
+  key!: Expr;
+  computed!: boolean;
+  optional!: boolean;
+  type_ann!: TsTypeAnn | undefined;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(1 + (this.type_ann == null ? 0 : 1));
+    let i = 0;
+    children[i++] = this.key;
+    if (this.type_ann != null) {
+      children[i++] = this.type_ann;
+    }
     return children;
   }
 }
@@ -3476,6 +3496,25 @@ export class TsRestType extends BaseNode {
     const children: Node[] = new Array(1);
     let i = 0;
     children[i++] = this.type_ann;
+    return children;
+  }
+}
+
+export class TsSetterSignature extends BaseNode {
+  kind!: NodeKind.TsSetterSignature;
+  parent!: TsInterfaceBody
+    | TsTypeLit;
+  readonly!: boolean;
+  key!: Expr;
+  computed!: boolean;
+  optional!: boolean;
+  param!: TsFnParam;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.key;
+    children[i++] = this.param;
     return children;
   }
 }
