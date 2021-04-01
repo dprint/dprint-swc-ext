@@ -1,0 +1,20 @@
+{
+  "kind": 71,
+  "start": 0,
+  "end": 3,
+  "body": [
+    {
+      "kind": 37,
+      "start": 0,
+      "end": 3,
+      "expr": {
+        "kind": 91,
+        "start": 0,
+        "end": 3,
+        "value": "🚀",
+        "hasEscape": false,
+        "strKind": {"type":"normal","containsQuote":true}
+      }
+    }
+  ]
+}

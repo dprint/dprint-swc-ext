@@ -8,7 +8,8 @@ const cmd = Deno.run({
 try {
     const output = JSON.parse(new TextDecoder().decode(await cmd.output()));
     const swc_ecma_ast = output.packages.find((pkg: any) => pkg.name === "swc_ecma_ast");
-    console.log(swc_ecma_ast.version);
+    const swc_ecma_parser = output.packages.find((pkg: any) => pkg.name === "swc_ecma_parser");
+    console.log(`${swc_ecma_ast.version}_${swc_ecma_parser.version}`);
 } finally {
     cmd.close();
 }

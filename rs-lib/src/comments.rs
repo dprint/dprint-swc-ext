@@ -6,8 +6,8 @@ use swc_common::{
 };
 
 pub struct CommentContainer<'a> {
-  leading: Ref<'a, SingleThreadedCommentsMapInner>,
-  trailing: Ref<'a, SingleThreadedCommentsMapInner>,
+  pub leading: Ref<'a, SingleThreadedCommentsMapInner>,
+  pub trailing: Ref<'a, SingleThreadedCommentsMapInner>,
   tokens: &'a TokenContainer<'a>,
   source_file: &'a swc_common::SourceFile,
 }

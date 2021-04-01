@@ -1,0 +1,50 @@
+[
+  {
+    "start": 6,
+    "end": 9,
+    "hadLineBreak": true,
+    "token": {
+      "kind": 0,
+      "inner": {
+        "kind": 0,
+        "inner": 18
+      }
+    }
+  },
+  {
+    "start": 10,
+    "end": 13,
+    "hadLineBreak": false,
+    "token": {
+      "kind": 0,
+      "inner": {
+        "kind": 4,
+        "inner": "foo"
+      }
+    }
+  },
+  {
+    "start": 14,
+    "end": 15,
+    "hadLineBreak": false,
+    "token": {
+      "kind": 20,
+      "inner": "="
+    }
+  },
+  {
+    "start": 16,
+    "end": 18,
+    "hadLineBreak": false,
+    "token": {
+      "kind": 28,
+      "inner": 42.0
+    }
+  },
+  {
+    "start": 18,
+    "end": 19,
+    "hadLineBreak": false,
+    "token": 13
+  }
+]

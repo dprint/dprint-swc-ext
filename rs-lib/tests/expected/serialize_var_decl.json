@@ -1,58 +1,38 @@
 {
-  "nodeKind": "Module",
-  "span": {
-    "start": 0,
-    "end": 13,
-    "ctxt": 0
-  },
-  "shebang": null,
+  "kind": 71,
+  "start": 6,
+  "end": 19,
   "body": [
     {
-      "nodeKind": "VarDecl",
-      "span": {
-        "start": 0,
-        "end": 13,
-        "ctxt": 0
-      },
-      "kind": "let",
+      "kind": 155,
+      "start": 6,
+      "end": 19,
+      "declKind": "let",
       "declare": false,
       "decls": [
         {
-          "nodeKind": "VarDeclarator",
-          "span": {
-            "start": 4,
-            "end": 12,
-            "ctxt": 0
-          },
-          "definite": false,
+          "kind": 156,
+          "start": 10,
+          "end": 18,
           "name": {
-            "nodeKind": "BindingIdent",
-            "span": {
-              "start": 4,
-              "end": 7,
-              "ctxt": 0
-            },
+            "kind": 10,
+            "start": 10,
+            "end": 13,
             "id": {
-              "nodeKind": "Ident",
-              "span": {
-                "start": 4,
-                "end": 7,
-                "ctxt": 0
-              },
+              "kind": 45,
+              "start": 10,
+              "end": 13,
               "sym": "foo",
               "optional": false
-            },
-            "typeAnn": null
+            }
           },
           "init": {
-            "nodeKind": "Number",
-            "span": {
-              "start": 10,
-              "end": 12,
-              "ctxt": 0
-            },
+            "kind": 75,
+            "start": 16,
+            "end": 18,
             "value": 42.0
-          }
+          },
+          "definite": false
         }
       ]
     }
