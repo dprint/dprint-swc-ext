@@ -18,9 +18,8 @@ export interface Span {
     end: number;
 }
 
-export interface BigIntValue {
-    // todo
-}
+// todo: I'm not sure what the type here actually is and I'm lazy. Please submit a PR if you know.
+export type BigIntValue = [number, [number]];
 
 export interface Comment {
     kind: CommentKind;
