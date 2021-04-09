@@ -7764,6 +7764,10 @@ impl<'a> ClassMethod<'a> {
   pub fn is_optional(&self) -> bool {
     self.inner.is_optional
   }
+
+  pub fn is_override(&self) -> bool {
+    self.inner.is_override
+  }
 }
 
 impl<'a> Spanned for ClassMethod<'a> {
@@ -7858,6 +7862,10 @@ impl<'a> ClassProp<'a> {
 
   pub fn is_optional(&self) -> bool {
     self.inner.is_optional
+  }
+
+  pub fn is_override(&self) -> bool {
+    self.inner.is_override
   }
 
   pub fn readonly(&self) -> bool {
@@ -12310,6 +12318,10 @@ impl<'a> PrivateMethod<'a> {
   pub fn is_optional(&self) -> bool {
     self.inner.is_optional
   }
+
+  pub fn is_override(&self) -> bool {
+    self.inner.is_override
+  }
 }
 
 impl<'a> Spanned for PrivateMethod<'a> {
@@ -12469,6 +12481,10 @@ impl<'a> PrivateProp<'a> {
 
   pub fn is_optional(&self) -> bool {
     self.inner.is_optional
+  }
+
+  pub fn is_override(&self) -> bool {
+    self.inner.is_override
   }
 
   pub fn readonly(&self) -> bool {
@@ -15033,6 +15049,10 @@ pub struct TsIndexSignature<'a> {
 impl<'a> TsIndexSignature<'a> {
   pub fn readonly(&self) -> bool {
     self.inner.readonly
+  }
+
+  pub fn is_static(&self) -> bool {
+    self.inner.is_static
   }
 }
 

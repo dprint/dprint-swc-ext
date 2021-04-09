@@ -1468,6 +1468,7 @@ export class ClassMethod extends BaseNode {
   /** Typescript extension. */
   is_abstract!: boolean;
   is_optional!: boolean;
+  is_override!: boolean;
 
   getChildren(): Node[] {
     const children: Node[] = new Array(2);
@@ -1492,6 +1493,7 @@ export class ClassProp extends BaseNode {
   /** Typescript extension. */
   is_abstract!: boolean;
   is_optional!: boolean;
+  is_override!: boolean;
   readonly!: boolean;
   declare!: boolean;
   definite!: boolean;
@@ -2508,6 +2510,7 @@ export class PrivateMethod extends BaseNode {
   /** Typescript extension. */
   is_abstract!: boolean;
   is_optional!: boolean;
+  is_override!: boolean;
 
   getChildren(): Node[] {
     const children: Node[] = new Array(2);
@@ -2545,6 +2548,7 @@ export class PrivateProp extends BaseNode {
   /** Typescript extension. */
   is_abstract!: boolean;
   is_optional!: boolean;
+  is_override!: boolean;
   readonly!: boolean;
   definite!: boolean;
 
@@ -3139,6 +3143,7 @@ export class TsIndexSignature extends BaseNode {
   params!: Array<TsFnParam>;
   type_ann!: TsTypeAnn | undefined;
   readonly!: boolean;
+  is_static!: boolean;
 
   getChildren(): Node[] {
     const children: Node[] = new Array(this.params.length + (this.type_ann == null ? 0 : 1));
