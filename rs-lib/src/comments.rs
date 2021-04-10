@@ -27,6 +27,14 @@ impl<'a> CommentContainer<'a> {
     }
   }
 
+  pub fn all_comments(&'a self) -> CommentsIterator<'a> {
+    let approx_cap = self.leading.len() + self.trailing.len();
+    let mut v = Vec::with_capacity(approx_cap);
+    v.extend(self.leading.values());
+    v.extend(self.trailing.values());
+    CommentsIterator::new(v)
+  }
+
   pub fn leading_comments(&'a self, lo: BytePos) -> CommentsIterator<'a> {
     let previous_token_hi = self.tokens.get_previous_token_hi(lo).unwrap_or(BytePos(0));
     let trailing = self.get_trailing(previous_token_hi);
