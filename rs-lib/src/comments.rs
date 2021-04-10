@@ -27,14 +27,14 @@ impl<'a> CommentContainer<'a> {
     }
   }
 
-  pub fn leading_comments(&self, lo: BytePos) -> CommentsIterator<'a> {
+  pub fn leading_comments(&'a self, lo: BytePos) -> CommentsIterator<'a> {
     let previous_token_hi = self.tokens.get_previous_token_hi(lo).unwrap_or(BytePos(0));
     let trailing = self.get_trailing(previous_token_hi);
     let leading = self.get_leading(lo);
     combine_comment_vecs(trailing, leading)
   }
 
-  pub fn trailing_comments(&self, hi: BytePos) -> CommentsIterator<'a> {
+  pub fn trailing_comments(&'a self, hi: BytePos) -> CommentsIterator<'a> {
     let next_token_lo = self
       .tokens
       .get_next_token_lo(hi)
@@ -44,20 +44,12 @@ impl<'a> CommentContainer<'a> {
     combine_comment_vecs(trailing, leading)
   }
 
-  fn get_leading(&self, lo: BytePos) -> Option<&'a Vec<Comment>> {
-    let leading = self.leading.get(&lo);
-    // todo: how to not do this?
-    let leading =
-      unsafe { std::mem::transmute::<Option<&Vec<Comment>>, Option<&'a Vec<Comment>>>(leading) };
-    leading
+  fn get_leading(&'a self, lo: BytePos) -> Option<&'a Vec<Comment>> {
+    self.leading.get(&lo)
   }
 
-  fn get_trailing(&self, hi: BytePos) -> Option<&'a Vec<Comment>> {
-    let trailing = self.trailing.get(&hi);
-    // todo: how to not do this?
-    let trailing =
-      unsafe { std::mem::transmute::<Option<&Vec<Comment>>, Option<&'a Vec<Comment>>>(trailing) };
-    trailing
+  fn get_trailing(&'a self, hi: BytePos) -> Option<&'a Vec<Comment>> {
+    self.trailing.get(&hi)
   }
 }
 
