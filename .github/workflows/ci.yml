@@ -38,11 +38,13 @@ jobs:
       run: |
         . $BVM_INSTALL_DIR/bin/bvm-init
         cargo install cargo-clone
-        rustup toolchain install nightly-2021-04-07
+        rustup toolchain install $NIGHTLY_VERSION
         chmod +x ./scripts/generate.sh
         ./scripts/generate.sh
         echo Checking for git changes...
         git diff --no-ext-diff --exit-code
+      env:
+        NIGHTLY_VERSION: nightly-2021-04-07
 
     - name: Build debug
       if: matrix.config.kind == 'test_debug'

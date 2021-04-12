@@ -13,13 +13,13 @@ then
     echo "Setting up swc_ecma_ast $SWC_AST_VERSION... provide --quick to just code generate"
     rm -rf swc_ecma_ast
     cargo clone --verbose --vers $SWC_AST_VERSION swc_ecma_ast
-    (cd swc_ecma_ast && cargo +nightly rustdoc --verbose -- --output-format json)
+    (cd swc_ecma_ast && cargo +$NIGHTLY_VERSION rustdoc --verbose -- --output-format json)
     cp swc_ecma_ast/target/doc/swc_ecma_ast.json swc_ecma_ast.json
 
     echo "Setting up swc_ecma_parser $SWC_PARSER_VERSION..."
     rm -rf swc_ecma_parser
     cargo clone --verbose --vers $SWC_PARSER_VERSION swc_ecma_parser
-    (cd swc_ecma_parser && cargo +nightly rustdoc --verbose -- --output-format json)
+    (cd swc_ecma_parser && cargo +$NIGHTLY_VERSION rustdoc --verbose -- --output-format json)
     cp swc_ecma_parser/target/doc/swc_ecma_parser.json swc_ecma_parser.json
 
     echo "Generating code..."
