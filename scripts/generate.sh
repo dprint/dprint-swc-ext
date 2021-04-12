@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eu
+
 # Analyze
 if [[ $* != *--quick* ]]
 then
