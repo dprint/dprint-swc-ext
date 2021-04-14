@@ -15,6 +15,33 @@ fn it_should_get_children() {
   });
 }
 
+#[test]
+fn it_should_get_all_comments() {
+  run_test(
+    r#"
+/// <reference path="foo" />
+const a = 42;
+
+/* 
+ * block comment
+ */
+let b = true;
+
+// line comment
+let c = "";
+
+function foo(name: /* inline comment */ string) {
+  console.log(`hello, ${name}`); // greeting!
+}
+
+// trailing comment
+"#,
+    |program| {
+      assert_eq!(program.comments().unwrap().all_comments().count(), 6);
+    },
+  );
+}
+
 #[cfg(feature = "serialize")]
 #[test]
 fn it_should_be_serialized_to_json() {
