@@ -1,73 +1,73 @@
 export interface AnalysisResult {
-    astStructs: AstStructDefinition[];
-    astEnums: AstEnumDefinition[];
-    plainEnums: PlainEnumDefinition[];
-    tokenEnums: EnumDefinition[];
+  astStructs: AstStructDefinition[];
+  astEnums: AstEnumDefinition[];
+  plainEnums: PlainEnumDefinition[];
+  tokenEnums: EnumDefinition[];
 }
 
 export interface NamedDefinition {
-    name: string;
+  name: string;
 }
 
 export interface DocableDefinition {
-    docs: string | undefined;
+  docs: string | undefined;
 }
 
 export interface AstStructDefinition extends NamedDefinition, DocableDefinition {
-    fields: AstStructFieldDefinition[];
-    parents: AstStructDefinition[];
+  fields: AstStructFieldDefinition[];
+  parents: AstStructDefinition[];
 }
 
 export interface AstEnumDefinition extends NamedDefinition, DocableDefinition {
-    variants: AstEnumVariantDefinition[];
+  variants: AstEnumVariantDefinition[];
 }
 
 export interface AstEnumVariantDefinition extends NamedDefinition, DocableDefinition {
-    tupleArg: TypeReferenceDefinition;
+  tupleArg: TypeReferenceDefinition;
 }
 
 export interface StructFieldDefinition extends NamedDefinition, DocableDefinition {
-    type: TypeDefinition;
+  type: TypeDefinition;
 }
 
 export interface AstStructFieldDefinition extends StructFieldDefinition {
-    innerName: string;
+  innerName: string;
 }
 
 /** Enum that is used like a value. */
 export interface PlainEnumDefinition extends NamedDefinition, DocableDefinition {
-    variants: PlainEnumVariantDefinition[];
+  variants: PlainEnumVariantDefinition[];
 }
 
 export interface EnumDefinition extends NamedDefinition, DocableDefinition {
-    variants: EnumVariantDefinition[];
+  variants: EnumVariantDefinition[];
 }
 
 export type EnumVariantDefinition = PlainEnumVariantDefinition | TupleEnumVariantDefinition | StructEnumVariantDefinition;
 
 export interface PlainEnumVariantDefinition extends NamedDefinition, DocableDefinition {
-    kind: "Plain";
+  kind: "Plain";
 }
 
 export interface TupleEnumVariantDefinition extends NamedDefinition, DocableDefinition {
-    kind: "Tuple";
-    tupleArgs: TypeDefinition[];
+  kind: "Tuple";
+  tupleArgs: TypeDefinition[];
 }
 
 export interface StructEnumVariantDefinition extends NamedDefinition, DocableDefinition {
-    kind: "Struct";
-    fields: StructFieldDefinition[];
+  kind: "Struct";
+  fields: StructFieldDefinition[];
 }
 
 export type TypeDefinition = PrimitiveTypeDefinition | TypeReferenceDefinition;
 
 export interface PrimitiveTypeDefinition {
-    kind: "Primitive";
-    text: string;
+  kind: "Primitive";
+  text: string;
 }
 
 export interface TypeReferenceDefinition extends NamedDefinition {
-    kind: "Reference";
-    path: string[];
-    genericArgs: TypeDefinition[];
+  kind: "Reference";
+  path: string[];
+  genericArgs: TypeDefinition[];
 }

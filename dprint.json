@@ -2,25 +2,26 @@
   "$schema": "https://dprint.dev/schemas/v0.json",
   "projectType": "openSource",
   "incremental": true,
+  "indentWidth": 2,
   "typescript": {
     "lineWidth": 160
-  },
-  "rustfmt": {
-    "indentWidth": 2
   },
   "includes": ["**/*.{ts,tsx,js,jsx,json,md,rs}"],
   "excludes": [
     "**/node_modules",
     "**/*-lock.json",
-    "./swc",
+    "./swc_ecma_ast",
+    "./swc_ecma_parser",
     "./swc_ecma_ast.json",
+    "./swc_ecma_parser.json",
     "**/*.generated.ts",
-    "./rs-lib/src/*generated.rs"
+    "./rs-lib/src/**/*generated.rs",
+    "**/target"
   ],
   "plugins": [
-    "https://plugins.dprint.dev/typescript-0.42.0.wasm",
-    "https://plugins.dprint.dev/json-0.9.0.wasm",
-    "https://plugins.dprint.dev/markdown-0.6.1.wasm",
+    "https://plugins.dprint.dev/typescript-0.44.1.wasm",
+    "https://plugins.dprint.dev/json-0.10.1.wasm",
+    "https://plugins.dprint.dev/markdown-0.7.0.wasm",
     "https://plugins.dprint.dev/rustfmt-0.3.0.wasm"
   ]
 }
