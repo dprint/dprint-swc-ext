@@ -16,6 +16,7 @@
     "./swc_ecma_parser.json",
     "**/*.generated.ts",
     "./rs-lib/src/**/*generated.rs",
+    "./rs-lib/tests/expected",
     "**/target"
   ],
   "plugins": [

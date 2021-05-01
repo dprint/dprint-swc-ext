@@ -13,7 +13,7 @@
         "end": 3,
         "value": "🚀",
         "hasEscape": false,
-        "strKind": { "type": "normal", "containsQuote": true }
+        "strKind": {"type":"normal","containsQuote":true}
       }
     }
   ]

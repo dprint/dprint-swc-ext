@@ -164,7 +164,7 @@ pub fn run_serialize_test(file_text: &str, expected_json_path: impl AsRef<Path>)
       let mut formatter = serde_json::ser::PrettyFormatter::new();
       let mut buffer = Vec::new();
       serialize_module(&mut buffer, &mut formatter, file_text, &module.inner).unwrap();
-      std::fs::write(&expected_json_path, &buffer).unwrap();
+      // std::fs::write(&expected_json_path, &buffer).unwrap();
       let expected = std::fs::read_to_string(expected_json_path.as_ref()).unwrap();
       pretty_assertions::assert_eq!(String::from_utf8(buffer).unwrap(), expected.trim());
     }
@@ -182,7 +182,7 @@ pub fn run_serialize_test(file_text: &str, expected_json_path: impl AsRef<Path>)
         module.tokens.unwrap().tokens,
       )
       .unwrap();
-      std::fs::write(&expected_json_path, &buffer).unwrap();
+      // std::fs::write(&expected_json_path, &buffer).unwrap();
       let expected = std::fs::read_to_string(&expected_json_path).unwrap();
       pretty_assertions::assert_eq!(String::from_utf8(buffer).unwrap(), expected.trim());
     }
@@ -202,7 +202,7 @@ pub fn run_serialize_test(file_text: &str, expected_json_path: impl AsRef<Path>)
         &comments_container.trailing,
       )
       .unwrap();
-      std::fs::write(&expected_json_path, &buffer).unwrap();
+      // std::fs::write(&expected_json_path, &buffer).unwrap();
       let expected = std::fs::read_to_string(&expected_json_path).unwrap();
       pretty_assertions::assert_eq!(String::from_utf8(buffer).unwrap(), expected.trim());
     }
