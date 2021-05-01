@@ -1,5 +1,4 @@
-use dprint_swc_ecma_ast_view::*;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use swc_common::{
   comments::SingleThreadedComments,
   errors::{DiagnosticBuilder, Emitter, Handler},
@@ -9,6 +8,9 @@ use swc_ecmascript::ast::{Module, Script};
 use swc_ecmascript::parser::{
   lexer::Lexer, token::TokenAndSpan, Capturing, JscTarget, Parser, StringInput, Syntax,
 };
+
+#[cfg(feature = "serialize")]
+use {dprint_swc_ecma_ast_view::*, std::path::PathBuf};
 
 pub fn run_test(file_text: &str, run_test: impl Fn(dprint_swc_ecma_ast_view::Program)) {
   let file_path = Path::new("test.ts");
