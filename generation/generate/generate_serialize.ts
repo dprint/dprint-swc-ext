@@ -118,7 +118,7 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
   }
 
   function writeSerializeTokenAndSpansFunction() {
-    writer.write(`pub fn serialize_token_and_spans(&mut self, tokens: &Vec<TokenAndSpan>) -> Result<(), Error>`).block(
+    writer.write(`pub fn serialize_token_and_spans(&mut self, tokens: &[TokenAndSpan]) -> Result<(), Error>`).block(
       () => {
         writeArray(() => {
           writer.write("for (i, token_and_span) in tokens.iter().enumerate()").block(() => {

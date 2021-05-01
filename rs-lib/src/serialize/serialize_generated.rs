@@ -7053,7 +7053,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     Ok(())
   }
 
-  pub fn serialize_token_and_spans(&mut self, tokens: &Vec<TokenAndSpan>) -> Result<(), Error> {
+  pub fn serialize_token_and_spans(&mut self, tokens: &[TokenAndSpan]) -> Result<(), Error> {
     self.f.begin_array(self.w)?;
     for (i, token_and_span) in tokens.iter().enumerate() {
       self.f.begin_array_value(self.w, i == 0)?;
