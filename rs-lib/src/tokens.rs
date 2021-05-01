@@ -3,14 +3,14 @@ use swc_common::BytePos;
 use swc_ecmascript::parser::token::TokenAndSpan;
 
 pub struct TokenContainer<'a> {
-  pub tokens: &'a Vec<TokenAndSpan>,
+  pub tokens: &'a [TokenAndSpan],
   // Uses an FnvHashMap because it has faster lookups for u32 keys than the default hasher.
   lo_to_index: FnvHashMap<BytePos, usize>,
   hi_to_index: FnvHashMap<BytePos, usize>,
 }
 
 impl<'a> TokenContainer<'a> {
-  pub fn new(tokens: &'a Vec<TokenAndSpan>) -> Self {
+  pub fn new(tokens: &'a [TokenAndSpan]) -> Self {
     TokenContainer {
       tokens,
       lo_to_index: tokens

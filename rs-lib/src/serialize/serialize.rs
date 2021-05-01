@@ -32,7 +32,7 @@ pub fn serialize_token_and_spans(
   w: &mut impl Write,
   f: &mut impl JsonFormatter,
   file_text: &str,
-  token_and_spans: &Vec<TokenAndSpan>,
+  token_and_spans: &[TokenAndSpan],
 ) -> Result<(), Error> {
   let mut serializer = FileSerializer::new(w, f, file_text);
   serializer.serialize_token_and_spans(token_and_spans)

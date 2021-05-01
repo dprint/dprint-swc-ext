@@ -536,7 +536,7 @@ pub trait CastableNode<'a> {
 pub struct ProgramInfo<'a> {
   pub program: &'a swc_ecmascript::ast::Program,
   pub source_file: Option<&'a swc_common::SourceFile>,
-  pub tokens: Option<&'a Vec<TokenAndSpan>>,
+  pub tokens: Option<&'a [TokenAndSpan]>,
   pub comments: Option<&'a SingleThreadedComments>,
 }
 
@@ -544,7 +544,7 @@ pub struct ProgramInfo<'a> {
 pub struct ModuleInfo<'a> {
   pub module: &'a swc_ecmascript::ast::Module,
   pub source_file: Option<&'a swc_common::SourceFile>,
-  pub tokens: Option<&'a Vec<TokenAndSpan>>,
+  pub tokens: Option<&'a [TokenAndSpan]>,
   pub comments: Option<&'a SingleThreadedComments>,
 }
 
@@ -552,7 +552,7 @@ pub struct ModuleInfo<'a> {
 pub struct ScriptInfo<'a> {
   pub script: &'a swc_ecmascript::ast::Script,
   pub source_file: Option<&'a swc_common::SourceFile>,
-  pub tokens: Option<&'a Vec<TokenAndSpan>>,
+  pub tokens: Option<&'a [TokenAndSpan]>,
   pub comments: Option<&'a SingleThreadedComments>,
 }
 
