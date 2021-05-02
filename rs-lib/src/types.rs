@@ -264,7 +264,12 @@ where
 pub trait NodeTrait<'a>: SpannedExt {
   fn parent(&self) -> Option<Node<'a>>;
   fn children(&self) -> Vec<Node<'a>>;
+
+  // TODO: according to the convention, the name should preferably be `as_node`
+  // https://rust-lang.github.io/api-guidelines/naming.html#ad-hoc-conversions-follow-as_-to_-into_-conventions-c-conv
+  #[allow(clippy::wrong_self_convention)]
   fn into_node(&self) -> Node<'a>;
+
   fn kind(&self) -> NodeKind;
 
   fn ancestors(&self) -> AncestorIterator<'a> {
@@ -518,7 +523,7 @@ fn get_column_at_pos(program: &dyn RootNode, pos: BytePos) -> usize {
   let pos = pos.0 as usize;
   let mut line_start = 0;
   for i in (0..pos).rev() {
-    if text_bytes[i] == '\n' as u8 {
+    if text_bytes[i] == b'\n' {
       line_start = i + 1;
       break;
     }

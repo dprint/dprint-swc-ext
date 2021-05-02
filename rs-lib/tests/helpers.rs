@@ -77,10 +77,12 @@ pub fn get_swc_module(
 
   let comments: SingleThreadedComments = Default::default();
   return {
-    let mut ts_config: swc_ecmascript::parser::TsConfig = Default::default();
-    ts_config.tsx = should_parse_as_jsx(file_path);
-    ts_config.dynamic_import = true;
-    ts_config.decorators = true;
+    let ts_config = swc_ecmascript::parser::TsConfig {
+      tsx: should_parse_as_jsx(file_path),
+      dynamic_import: true,
+      decorators: true,
+      ..Default::default()
+    };
     let lexer = Lexer::new(
       Syntax::Typescript(ts_config),
       JscTarget::Es2019,
@@ -127,10 +129,12 @@ pub fn get_swc_script(
 
   let comments: SingleThreadedComments = Default::default();
   return {
-    let mut ts_config: swc_ecmascript::parser::TsConfig = Default::default();
-    ts_config.tsx = should_parse_as_jsx(file_path);
-    ts_config.dynamic_import = true;
-    ts_config.decorators = true;
+    let ts_config = swc_ecmascript::parser::TsConfig {
+      tsx: should_parse_as_jsx(file_path),
+      dynamic_import: true,
+      decorators: true,
+      ..Default::default()
+    };
     let lexer = Lexer::new(
       Syntax::Typescript(ts_config),
       JscTarget::Es2019,
@@ -213,7 +217,7 @@ fn should_parse_as_jsx(file_path: &Path) -> bool {
   if let Some(extension) = get_lowercase_extension(file_path) {
     return extension == "tsx" || extension == "jsx" || extension == "js" || extension == "mjs";
   }
-  return true;
+  true
 }
 
 fn get_lowercase_extension(file_path: &Path) -> Option<String> {
