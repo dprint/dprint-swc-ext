@@ -1,10 +1,13 @@
 mod comments;
-#[allow(invalid_value)]
-mod generated;
-#[cfg(feature = "serialize")]
-mod serialize;
 mod tokens;
 mod types;
+
+#[allow(invalid_value, clippy::all)]
+#[rustfmt::skip]
+mod generated;
+
+#[cfg(feature = "serialize")]
+mod serialize;
 
 pub use comments::CommentsIterator;
 pub use generated::*;
