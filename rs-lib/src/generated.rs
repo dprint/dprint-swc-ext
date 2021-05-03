@@ -745,170 +745,170 @@ impl<'a> NodeTrait<'a> for Node<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      Node::ArrayLit(node) => node.into_node(),
-      Node::ArrayPat(node) => node.into_node(),
-      Node::ArrowExpr(node) => node.into_node(),
-      Node::AssignExpr(node) => node.into_node(),
-      Node::AssignPat(node) => node.into_node(),
-      Node::AssignPatProp(node) => node.into_node(),
-      Node::AssignProp(node) => node.into_node(),
-      Node::AwaitExpr(node) => node.into_node(),
-      Node::BigInt(node) => node.into_node(),
-      Node::BinExpr(node) => node.into_node(),
-      Node::BindingIdent(node) => node.into_node(),
-      Node::BlockStmt(node) => node.into_node(),
-      Node::Bool(node) => node.into_node(),
-      Node::BreakStmt(node) => node.into_node(),
-      Node::CallExpr(node) => node.into_node(),
-      Node::CatchClause(node) => node.into_node(),
-      Node::Class(node) => node.into_node(),
-      Node::ClassDecl(node) => node.into_node(),
-      Node::ClassExpr(node) => node.into_node(),
-      Node::ClassMethod(node) => node.into_node(),
-      Node::ClassProp(node) => node.into_node(),
-      Node::ComputedPropName(node) => node.into_node(),
-      Node::CondExpr(node) => node.into_node(),
-      Node::Constructor(node) => node.into_node(),
-      Node::ContinueStmt(node) => node.into_node(),
-      Node::DebuggerStmt(node) => node.into_node(),
-      Node::Decorator(node) => node.into_node(),
-      Node::DoWhileStmt(node) => node.into_node(),
-      Node::EmptyStmt(node) => node.into_node(),
-      Node::ExportAll(node) => node.into_node(),
-      Node::ExportDecl(node) => node.into_node(),
-      Node::ExportDefaultDecl(node) => node.into_node(),
-      Node::ExportDefaultExpr(node) => node.into_node(),
-      Node::ExportDefaultSpecifier(node) => node.into_node(),
-      Node::ExportNamedSpecifier(node) => node.into_node(),
-      Node::ExportNamespaceSpecifier(node) => node.into_node(),
-      Node::ExprOrSpread(node) => node.into_node(),
-      Node::ExprStmt(node) => node.into_node(),
-      Node::FnDecl(node) => node.into_node(),
-      Node::FnExpr(node) => node.into_node(),
-      Node::ForInStmt(node) => node.into_node(),
-      Node::ForOfStmt(node) => node.into_node(),
-      Node::ForStmt(node) => node.into_node(),
-      Node::Function(node) => node.into_node(),
-      Node::GetterProp(node) => node.into_node(),
-      Node::Ident(node) => node.into_node(),
-      Node::IfStmt(node) => node.into_node(),
-      Node::ImportDecl(node) => node.into_node(),
-      Node::ImportDefaultSpecifier(node) => node.into_node(),
-      Node::ImportNamedSpecifier(node) => node.into_node(),
-      Node::ImportStarAsSpecifier(node) => node.into_node(),
-      Node::Invalid(node) => node.into_node(),
-      Node::JSXAttr(node) => node.into_node(),
-      Node::JSXClosingElement(node) => node.into_node(),
-      Node::JSXClosingFragment(node) => node.into_node(),
-      Node::JSXElement(node) => node.into_node(),
-      Node::JSXEmptyExpr(node) => node.into_node(),
-      Node::JSXExprContainer(node) => node.into_node(),
-      Node::JSXFragment(node) => node.into_node(),
-      Node::JSXMemberExpr(node) => node.into_node(),
-      Node::JSXNamespacedName(node) => node.into_node(),
-      Node::JSXOpeningElement(node) => node.into_node(),
-      Node::JSXOpeningFragment(node) => node.into_node(),
-      Node::JSXSpreadChild(node) => node.into_node(),
-      Node::JSXText(node) => node.into_node(),
-      Node::KeyValuePatProp(node) => node.into_node(),
-      Node::KeyValueProp(node) => node.into_node(),
-      Node::LabeledStmt(node) => node.into_node(),
-      Node::MemberExpr(node) => node.into_node(),
-      Node::MetaPropExpr(node) => node.into_node(),
-      Node::MethodProp(node) => node.into_node(),
-      Node::Module(node) => node.into_node(),
-      Node::NamedExport(node) => node.into_node(),
-      Node::NewExpr(node) => node.into_node(),
-      Node::Null(node) => node.into_node(),
-      Node::Number(node) => node.into_node(),
-      Node::ObjectLit(node) => node.into_node(),
-      Node::ObjectPat(node) => node.into_node(),
-      Node::OptChainExpr(node) => node.into_node(),
-      Node::Param(node) => node.into_node(),
-      Node::ParenExpr(node) => node.into_node(),
-      Node::PrivateMethod(node) => node.into_node(),
-      Node::PrivateName(node) => node.into_node(),
-      Node::PrivateProp(node) => node.into_node(),
-      Node::Regex(node) => node.into_node(),
-      Node::RestPat(node) => node.into_node(),
-      Node::ReturnStmt(node) => node.into_node(),
-      Node::Script(node) => node.into_node(),
-      Node::SeqExpr(node) => node.into_node(),
-      Node::SetterProp(node) => node.into_node(),
-      Node::SpreadElement(node) => node.into_node(),
-      Node::Str(node) => node.into_node(),
-      Node::Super(node) => node.into_node(),
-      Node::SwitchCase(node) => node.into_node(),
-      Node::SwitchStmt(node) => node.into_node(),
-      Node::TaggedTpl(node) => node.into_node(),
-      Node::ThisExpr(node) => node.into_node(),
-      Node::ThrowStmt(node) => node.into_node(),
-      Node::Tpl(node) => node.into_node(),
-      Node::TplElement(node) => node.into_node(),
-      Node::TryStmt(node) => node.into_node(),
-      Node::TsArrayType(node) => node.into_node(),
-      Node::TsAsExpr(node) => node.into_node(),
-      Node::TsCallSignatureDecl(node) => node.into_node(),
-      Node::TsConditionalType(node) => node.into_node(),
-      Node::TsConstAssertion(node) => node.into_node(),
-      Node::TsConstructSignatureDecl(node) => node.into_node(),
-      Node::TsConstructorType(node) => node.into_node(),
-      Node::TsEnumDecl(node) => node.into_node(),
-      Node::TsEnumMember(node) => node.into_node(),
-      Node::TsExportAssignment(node) => node.into_node(),
-      Node::TsExprWithTypeArgs(node) => node.into_node(),
-      Node::TsExternalModuleRef(node) => node.into_node(),
-      Node::TsFnType(node) => node.into_node(),
-      Node::TsGetterSignature(node) => node.into_node(),
-      Node::TsImportEqualsDecl(node) => node.into_node(),
-      Node::TsImportType(node) => node.into_node(),
-      Node::TsIndexSignature(node) => node.into_node(),
-      Node::TsIndexedAccessType(node) => node.into_node(),
-      Node::TsInferType(node) => node.into_node(),
-      Node::TsInterfaceBody(node) => node.into_node(),
-      Node::TsInterfaceDecl(node) => node.into_node(),
-      Node::TsIntersectionType(node) => node.into_node(),
-      Node::TsKeywordType(node) => node.into_node(),
-      Node::TsLitType(node) => node.into_node(),
-      Node::TsMappedType(node) => node.into_node(),
-      Node::TsMethodSignature(node) => node.into_node(),
-      Node::TsModuleBlock(node) => node.into_node(),
-      Node::TsModuleDecl(node) => node.into_node(),
-      Node::TsNamespaceDecl(node) => node.into_node(),
-      Node::TsNamespaceExportDecl(node) => node.into_node(),
-      Node::TsNonNullExpr(node) => node.into_node(),
-      Node::TsOptionalType(node) => node.into_node(),
-      Node::TsParamProp(node) => node.into_node(),
-      Node::TsParenthesizedType(node) => node.into_node(),
-      Node::TsPropertySignature(node) => node.into_node(),
-      Node::TsQualifiedName(node) => node.into_node(),
-      Node::TsRestType(node) => node.into_node(),
-      Node::TsSetterSignature(node) => node.into_node(),
-      Node::TsThisType(node) => node.into_node(),
-      Node::TsTplLitType(node) => node.into_node(),
-      Node::TsTupleElement(node) => node.into_node(),
-      Node::TsTupleType(node) => node.into_node(),
-      Node::TsTypeAliasDecl(node) => node.into_node(),
-      Node::TsTypeAnn(node) => node.into_node(),
-      Node::TsTypeAssertion(node) => node.into_node(),
-      Node::TsTypeLit(node) => node.into_node(),
-      Node::TsTypeOperator(node) => node.into_node(),
-      Node::TsTypeParam(node) => node.into_node(),
-      Node::TsTypeParamDecl(node) => node.into_node(),
-      Node::TsTypeParamInstantiation(node) => node.into_node(),
-      Node::TsTypePredicate(node) => node.into_node(),
-      Node::TsTypeQuery(node) => node.into_node(),
-      Node::TsTypeRef(node) => node.into_node(),
-      Node::TsUnionType(node) => node.into_node(),
-      Node::UnaryExpr(node) => node.into_node(),
-      Node::UpdateExpr(node) => node.into_node(),
-      Node::VarDecl(node) => node.into_node(),
-      Node::VarDeclarator(node) => node.into_node(),
-      Node::WhileStmt(node) => node.into_node(),
-      Node::WithStmt(node) => node.into_node(),
-      Node::YieldExpr(node) => node.into_node(),
+      Node::ArrayLit(node) => node.as_node(),
+      Node::ArrayPat(node) => node.as_node(),
+      Node::ArrowExpr(node) => node.as_node(),
+      Node::AssignExpr(node) => node.as_node(),
+      Node::AssignPat(node) => node.as_node(),
+      Node::AssignPatProp(node) => node.as_node(),
+      Node::AssignProp(node) => node.as_node(),
+      Node::AwaitExpr(node) => node.as_node(),
+      Node::BigInt(node) => node.as_node(),
+      Node::BinExpr(node) => node.as_node(),
+      Node::BindingIdent(node) => node.as_node(),
+      Node::BlockStmt(node) => node.as_node(),
+      Node::Bool(node) => node.as_node(),
+      Node::BreakStmt(node) => node.as_node(),
+      Node::CallExpr(node) => node.as_node(),
+      Node::CatchClause(node) => node.as_node(),
+      Node::Class(node) => node.as_node(),
+      Node::ClassDecl(node) => node.as_node(),
+      Node::ClassExpr(node) => node.as_node(),
+      Node::ClassMethod(node) => node.as_node(),
+      Node::ClassProp(node) => node.as_node(),
+      Node::ComputedPropName(node) => node.as_node(),
+      Node::CondExpr(node) => node.as_node(),
+      Node::Constructor(node) => node.as_node(),
+      Node::ContinueStmt(node) => node.as_node(),
+      Node::DebuggerStmt(node) => node.as_node(),
+      Node::Decorator(node) => node.as_node(),
+      Node::DoWhileStmt(node) => node.as_node(),
+      Node::EmptyStmt(node) => node.as_node(),
+      Node::ExportAll(node) => node.as_node(),
+      Node::ExportDecl(node) => node.as_node(),
+      Node::ExportDefaultDecl(node) => node.as_node(),
+      Node::ExportDefaultExpr(node) => node.as_node(),
+      Node::ExportDefaultSpecifier(node) => node.as_node(),
+      Node::ExportNamedSpecifier(node) => node.as_node(),
+      Node::ExportNamespaceSpecifier(node) => node.as_node(),
+      Node::ExprOrSpread(node) => node.as_node(),
+      Node::ExprStmt(node) => node.as_node(),
+      Node::FnDecl(node) => node.as_node(),
+      Node::FnExpr(node) => node.as_node(),
+      Node::ForInStmt(node) => node.as_node(),
+      Node::ForOfStmt(node) => node.as_node(),
+      Node::ForStmt(node) => node.as_node(),
+      Node::Function(node) => node.as_node(),
+      Node::GetterProp(node) => node.as_node(),
+      Node::Ident(node) => node.as_node(),
+      Node::IfStmt(node) => node.as_node(),
+      Node::ImportDecl(node) => node.as_node(),
+      Node::ImportDefaultSpecifier(node) => node.as_node(),
+      Node::ImportNamedSpecifier(node) => node.as_node(),
+      Node::ImportStarAsSpecifier(node) => node.as_node(),
+      Node::Invalid(node) => node.as_node(),
+      Node::JSXAttr(node) => node.as_node(),
+      Node::JSXClosingElement(node) => node.as_node(),
+      Node::JSXClosingFragment(node) => node.as_node(),
+      Node::JSXElement(node) => node.as_node(),
+      Node::JSXEmptyExpr(node) => node.as_node(),
+      Node::JSXExprContainer(node) => node.as_node(),
+      Node::JSXFragment(node) => node.as_node(),
+      Node::JSXMemberExpr(node) => node.as_node(),
+      Node::JSXNamespacedName(node) => node.as_node(),
+      Node::JSXOpeningElement(node) => node.as_node(),
+      Node::JSXOpeningFragment(node) => node.as_node(),
+      Node::JSXSpreadChild(node) => node.as_node(),
+      Node::JSXText(node) => node.as_node(),
+      Node::KeyValuePatProp(node) => node.as_node(),
+      Node::KeyValueProp(node) => node.as_node(),
+      Node::LabeledStmt(node) => node.as_node(),
+      Node::MemberExpr(node) => node.as_node(),
+      Node::MetaPropExpr(node) => node.as_node(),
+      Node::MethodProp(node) => node.as_node(),
+      Node::Module(node) => node.as_node(),
+      Node::NamedExport(node) => node.as_node(),
+      Node::NewExpr(node) => node.as_node(),
+      Node::Null(node) => node.as_node(),
+      Node::Number(node) => node.as_node(),
+      Node::ObjectLit(node) => node.as_node(),
+      Node::ObjectPat(node) => node.as_node(),
+      Node::OptChainExpr(node) => node.as_node(),
+      Node::Param(node) => node.as_node(),
+      Node::ParenExpr(node) => node.as_node(),
+      Node::PrivateMethod(node) => node.as_node(),
+      Node::PrivateName(node) => node.as_node(),
+      Node::PrivateProp(node) => node.as_node(),
+      Node::Regex(node) => node.as_node(),
+      Node::RestPat(node) => node.as_node(),
+      Node::ReturnStmt(node) => node.as_node(),
+      Node::Script(node) => node.as_node(),
+      Node::SeqExpr(node) => node.as_node(),
+      Node::SetterProp(node) => node.as_node(),
+      Node::SpreadElement(node) => node.as_node(),
+      Node::Str(node) => node.as_node(),
+      Node::Super(node) => node.as_node(),
+      Node::SwitchCase(node) => node.as_node(),
+      Node::SwitchStmt(node) => node.as_node(),
+      Node::TaggedTpl(node) => node.as_node(),
+      Node::ThisExpr(node) => node.as_node(),
+      Node::ThrowStmt(node) => node.as_node(),
+      Node::Tpl(node) => node.as_node(),
+      Node::TplElement(node) => node.as_node(),
+      Node::TryStmt(node) => node.as_node(),
+      Node::TsArrayType(node) => node.as_node(),
+      Node::TsAsExpr(node) => node.as_node(),
+      Node::TsCallSignatureDecl(node) => node.as_node(),
+      Node::TsConditionalType(node) => node.as_node(),
+      Node::TsConstAssertion(node) => node.as_node(),
+      Node::TsConstructSignatureDecl(node) => node.as_node(),
+      Node::TsConstructorType(node) => node.as_node(),
+      Node::TsEnumDecl(node) => node.as_node(),
+      Node::TsEnumMember(node) => node.as_node(),
+      Node::TsExportAssignment(node) => node.as_node(),
+      Node::TsExprWithTypeArgs(node) => node.as_node(),
+      Node::TsExternalModuleRef(node) => node.as_node(),
+      Node::TsFnType(node) => node.as_node(),
+      Node::TsGetterSignature(node) => node.as_node(),
+      Node::TsImportEqualsDecl(node) => node.as_node(),
+      Node::TsImportType(node) => node.as_node(),
+      Node::TsIndexSignature(node) => node.as_node(),
+      Node::TsIndexedAccessType(node) => node.as_node(),
+      Node::TsInferType(node) => node.as_node(),
+      Node::TsInterfaceBody(node) => node.as_node(),
+      Node::TsInterfaceDecl(node) => node.as_node(),
+      Node::TsIntersectionType(node) => node.as_node(),
+      Node::TsKeywordType(node) => node.as_node(),
+      Node::TsLitType(node) => node.as_node(),
+      Node::TsMappedType(node) => node.as_node(),
+      Node::TsMethodSignature(node) => node.as_node(),
+      Node::TsModuleBlock(node) => node.as_node(),
+      Node::TsModuleDecl(node) => node.as_node(),
+      Node::TsNamespaceDecl(node) => node.as_node(),
+      Node::TsNamespaceExportDecl(node) => node.as_node(),
+      Node::TsNonNullExpr(node) => node.as_node(),
+      Node::TsOptionalType(node) => node.as_node(),
+      Node::TsParamProp(node) => node.as_node(),
+      Node::TsParenthesizedType(node) => node.as_node(),
+      Node::TsPropertySignature(node) => node.as_node(),
+      Node::TsQualifiedName(node) => node.as_node(),
+      Node::TsRestType(node) => node.as_node(),
+      Node::TsSetterSignature(node) => node.as_node(),
+      Node::TsThisType(node) => node.as_node(),
+      Node::TsTplLitType(node) => node.as_node(),
+      Node::TsTupleElement(node) => node.as_node(),
+      Node::TsTupleType(node) => node.as_node(),
+      Node::TsTypeAliasDecl(node) => node.as_node(),
+      Node::TsTypeAnn(node) => node.as_node(),
+      Node::TsTypeAssertion(node) => node.as_node(),
+      Node::TsTypeLit(node) => node.as_node(),
+      Node::TsTypeOperator(node) => node.as_node(),
+      Node::TsTypeParam(node) => node.as_node(),
+      Node::TsTypeParamDecl(node) => node.as_node(),
+      Node::TsTypeParamInstantiation(node) => node.as_node(),
+      Node::TsTypePredicate(node) => node.as_node(),
+      Node::TsTypeQuery(node) => node.as_node(),
+      Node::TsTypeRef(node) => node.as_node(),
+      Node::TsUnionType(node) => node.as_node(),
+      Node::UnaryExpr(node) => node.as_node(),
+      Node::UpdateExpr(node) => node.as_node(),
+      Node::VarDecl(node) => node.as_node(),
+      Node::VarDeclarator(node) => node.as_node(),
+      Node::WhileStmt(node) => node.as_node(),
+      Node::WithStmt(node) => node.as_node(),
+      Node::YieldExpr(node) => node.as_node(),
     }
   }
 
@@ -1464,10 +1464,10 @@ impl<'a> NodeTrait<'a> for BlockStmtOrExpr<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      BlockStmtOrExpr::BlockStmt(node) => node.into_node(),
-      BlockStmtOrExpr::Expr(node) => node.into_node(),
+      BlockStmtOrExpr::BlockStmt(node) => node.as_node(),
+      BlockStmtOrExpr::Expr(node) => node.as_node(),
     }
   }
 
@@ -1575,15 +1575,15 @@ impl<'a> NodeTrait<'a> for ClassMember<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      ClassMember::Constructor(node) => node.into_node(),
-      ClassMember::Method(node) => node.into_node(),
-      ClassMember::PrivateMethod(node) => node.into_node(),
-      ClassMember::ClassProp(node) => node.into_node(),
-      ClassMember::PrivateProp(node) => node.into_node(),
-      ClassMember::TsIndexSignature(node) => node.into_node(),
-      ClassMember::Empty(node) => node.into_node(),
+      ClassMember::Constructor(node) => node.as_node(),
+      ClassMember::Method(node) => node.as_node(),
+      ClassMember::PrivateMethod(node) => node.as_node(),
+      ClassMember::ClassProp(node) => node.as_node(),
+      ClassMember::PrivateProp(node) => node.as_node(),
+      ClassMember::TsIndexSignature(node) => node.as_node(),
+      ClassMember::Empty(node) => node.as_node(),
     }
   }
 
@@ -1709,15 +1709,15 @@ impl<'a> NodeTrait<'a> for Decl<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      Decl::Class(node) => node.into_node(),
-      Decl::Fn(node) => node.into_node(),
-      Decl::Var(node) => node.into_node(),
-      Decl::TsInterface(node) => node.into_node(),
-      Decl::TsTypeAlias(node) => node.into_node(),
-      Decl::TsEnum(node) => node.into_node(),
-      Decl::TsModule(node) => node.into_node(),
+      Decl::Class(node) => node.as_node(),
+      Decl::Fn(node) => node.as_node(),
+      Decl::Var(node) => node.as_node(),
+      Decl::TsInterface(node) => node.as_node(),
+      Decl::TsTypeAlias(node) => node.as_node(),
+      Decl::TsEnum(node) => node.as_node(),
+      Decl::TsModule(node) => node.as_node(),
     }
   }
 
@@ -1827,11 +1827,11 @@ impl<'a> NodeTrait<'a> for DefaultDecl<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      DefaultDecl::Class(node) => node.into_node(),
-      DefaultDecl::Fn(node) => node.into_node(),
-      DefaultDecl::TsInterfaceDecl(node) => node.into_node(),
+      DefaultDecl::Class(node) => node.as_node(),
+      DefaultDecl::Fn(node) => node.as_node(),
+      DefaultDecl::TsInterfaceDecl(node) => node.as_node(),
     }
   }
 
@@ -1925,11 +1925,11 @@ impl<'a> NodeTrait<'a> for ExportSpecifier<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      ExportSpecifier::Namespace(node) => node.into_node(),
-      ExportSpecifier::Default(node) => node.into_node(),
-      ExportSpecifier::Named(node) => node.into_node(),
+      ExportSpecifier::Namespace(node) => node.as_node(),
+      ExportSpecifier::Default(node) => node.as_node(),
+      ExportSpecifier::Named(node) => node.as_node(),
     }
   }
 
@@ -2158,43 +2158,43 @@ impl<'a> NodeTrait<'a> for Expr<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      Expr::This(node) => node.into_node(),
-      Expr::Array(node) => node.into_node(),
-      Expr::Object(node) => node.into_node(),
-      Expr::Fn(node) => node.into_node(),
-      Expr::Unary(node) => node.into_node(),
-      Expr::Update(node) => node.into_node(),
-      Expr::Bin(node) => node.into_node(),
-      Expr::Assign(node) => node.into_node(),
-      Expr::Member(node) => node.into_node(),
-      Expr::Cond(node) => node.into_node(),
-      Expr::Call(node) => node.into_node(),
-      Expr::New(node) => node.into_node(),
-      Expr::Seq(node) => node.into_node(),
-      Expr::Ident(node) => node.into_node(),
-      Expr::Lit(node) => node.into_node(),
-      Expr::Tpl(node) => node.into_node(),
-      Expr::TaggedTpl(node) => node.into_node(),
-      Expr::Arrow(node) => node.into_node(),
-      Expr::Class(node) => node.into_node(),
-      Expr::Yield(node) => node.into_node(),
-      Expr::MetaProp(node) => node.into_node(),
-      Expr::Await(node) => node.into_node(),
-      Expr::Paren(node) => node.into_node(),
-      Expr::JSXMember(node) => node.into_node(),
-      Expr::JSXNamespacedName(node) => node.into_node(),
-      Expr::JSXEmpty(node) => node.into_node(),
-      Expr::JSXElement(node) => node.into_node(),
-      Expr::JSXFragment(node) => node.into_node(),
-      Expr::TsTypeAssertion(node) => node.into_node(),
-      Expr::TsConstAssertion(node) => node.into_node(),
-      Expr::TsNonNull(node) => node.into_node(),
-      Expr::TsAs(node) => node.into_node(),
-      Expr::PrivateName(node) => node.into_node(),
-      Expr::OptChain(node) => node.into_node(),
-      Expr::Invalid(node) => node.into_node(),
+      Expr::This(node) => node.as_node(),
+      Expr::Array(node) => node.as_node(),
+      Expr::Object(node) => node.as_node(),
+      Expr::Fn(node) => node.as_node(),
+      Expr::Unary(node) => node.as_node(),
+      Expr::Update(node) => node.as_node(),
+      Expr::Bin(node) => node.as_node(),
+      Expr::Assign(node) => node.as_node(),
+      Expr::Member(node) => node.as_node(),
+      Expr::Cond(node) => node.as_node(),
+      Expr::Call(node) => node.as_node(),
+      Expr::New(node) => node.as_node(),
+      Expr::Seq(node) => node.as_node(),
+      Expr::Ident(node) => node.as_node(),
+      Expr::Lit(node) => node.as_node(),
+      Expr::Tpl(node) => node.as_node(),
+      Expr::TaggedTpl(node) => node.as_node(),
+      Expr::Arrow(node) => node.as_node(),
+      Expr::Class(node) => node.as_node(),
+      Expr::Yield(node) => node.as_node(),
+      Expr::MetaProp(node) => node.as_node(),
+      Expr::Await(node) => node.as_node(),
+      Expr::Paren(node) => node.as_node(),
+      Expr::JSXMember(node) => node.as_node(),
+      Expr::JSXNamespacedName(node) => node.as_node(),
+      Expr::JSXEmpty(node) => node.as_node(),
+      Expr::JSXElement(node) => node.as_node(),
+      Expr::JSXFragment(node) => node.as_node(),
+      Expr::TsTypeAssertion(node) => node.as_node(),
+      Expr::TsConstAssertion(node) => node.as_node(),
+      Expr::TsNonNull(node) => node.as_node(),
+      Expr::TsAs(node) => node.as_node(),
+      Expr::PrivateName(node) => node.as_node(),
+      Expr::OptChain(node) => node.as_node(),
+      Expr::Invalid(node) => node.as_node(),
     }
   }
 
@@ -2412,10 +2412,10 @@ impl<'a> NodeTrait<'a> for ExprOrSuper<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      ExprOrSuper::Super(node) => node.into_node(),
-      ExprOrSuper::Expr(node) => node.into_node(),
+      ExprOrSuper::Super(node) => node.as_node(),
+      ExprOrSuper::Expr(node) => node.as_node(),
     }
   }
 
@@ -2505,11 +2505,11 @@ impl<'a> NodeTrait<'a> for ImportSpecifier<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      ImportSpecifier::Named(node) => node.into_node(),
-      ImportSpecifier::Default(node) => node.into_node(),
-      ImportSpecifier::Namespace(node) => node.into_node(),
+      ImportSpecifier::Named(node) => node.as_node(),
+      ImportSpecifier::Default(node) => node.as_node(),
+      ImportSpecifier::Namespace(node) => node.as_node(),
     }
   }
 
@@ -2599,10 +2599,10 @@ impl<'a> NodeTrait<'a> for JSXAttrName<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      JSXAttrName::Ident(node) => node.into_node(),
-      JSXAttrName::JSXNamespacedName(node) => node.into_node(),
+      JSXAttrName::Ident(node) => node.as_node(),
+      JSXAttrName::JSXNamespacedName(node) => node.as_node(),
     }
   }
 
@@ -2688,10 +2688,10 @@ impl<'a> NodeTrait<'a> for JSXAttrOrSpread<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      JSXAttrOrSpread::JSXAttr(node) => node.into_node(),
-      JSXAttrOrSpread::SpreadElement(node) => node.into_node(),
+      JSXAttrOrSpread::JSXAttr(node) => node.as_node(),
+      JSXAttrOrSpread::SpreadElement(node) => node.as_node(),
     }
   }
 
@@ -2785,12 +2785,12 @@ impl<'a> NodeTrait<'a> for JSXAttrValue<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      JSXAttrValue::Lit(node) => node.into_node(),
-      JSXAttrValue::JSXExprContainer(node) => node.into_node(),
-      JSXAttrValue::JSXElement(node) => node.into_node(),
-      JSXAttrValue::JSXFragment(node) => node.into_node(),
+      JSXAttrValue::Lit(node) => node.as_node(),
+      JSXAttrValue::JSXExprContainer(node) => node.as_node(),
+      JSXAttrValue::JSXElement(node) => node.as_node(),
+      JSXAttrValue::JSXFragment(node) => node.as_node(),
     }
   }
 
@@ -2896,13 +2896,13 @@ impl<'a> NodeTrait<'a> for JSXElementChild<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      JSXElementChild::JSXText(node) => node.into_node(),
-      JSXElementChild::JSXExprContainer(node) => node.into_node(),
-      JSXElementChild::JSXSpreadChild(node) => node.into_node(),
-      JSXElementChild::JSXElement(node) => node.into_node(),
-      JSXElementChild::JSXFragment(node) => node.into_node(),
+      JSXElementChild::JSXText(node) => node.as_node(),
+      JSXElementChild::JSXExprContainer(node) => node.as_node(),
+      JSXElementChild::JSXSpreadChild(node) => node.as_node(),
+      JSXElementChild::JSXElement(node) => node.as_node(),
+      JSXElementChild::JSXFragment(node) => node.as_node(),
     }
   }
 
@@ -3004,11 +3004,11 @@ impl<'a> NodeTrait<'a> for JSXElementName<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      JSXElementName::Ident(node) => node.into_node(),
-      JSXElementName::JSXMemberExpr(node) => node.into_node(),
-      JSXElementName::JSXNamespacedName(node) => node.into_node(),
+      JSXElementName::Ident(node) => node.as_node(),
+      JSXElementName::JSXMemberExpr(node) => node.as_node(),
+      JSXElementName::JSXNamespacedName(node) => node.as_node(),
     }
   }
 
@@ -3098,10 +3098,10 @@ impl<'a> NodeTrait<'a> for JSXExpr<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      JSXExpr::JSXEmptyExpr(node) => node.into_node(),
-      JSXExpr::Expr(node) => node.into_node(),
+      JSXExpr::JSXEmptyExpr(node) => node.as_node(),
+      JSXExpr::Expr(node) => node.as_node(),
     }
   }
 
@@ -3188,10 +3188,10 @@ impl<'a> NodeTrait<'a> for JSXObject<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      JSXObject::JSXMemberExpr(node) => node.into_node(),
-      JSXObject::Ident(node) => node.into_node(),
+      JSXObject::JSXMemberExpr(node) => node.as_node(),
+      JSXObject::Ident(node) => node.as_node(),
     }
   }
 
@@ -3297,15 +3297,15 @@ impl<'a> NodeTrait<'a> for Lit<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      Lit::Str(node) => node.into_node(),
-      Lit::Bool(node) => node.into_node(),
-      Lit::Null(node) => node.into_node(),
-      Lit::Num(node) => node.into_node(),
-      Lit::BigInt(node) => node.into_node(),
-      Lit::Regex(node) => node.into_node(),
-      Lit::JSXText(node) => node.into_node(),
+      Lit::Str(node) => node.as_node(),
+      Lit::Bool(node) => node.as_node(),
+      Lit::Null(node) => node.as_node(),
+      Lit::Num(node) => node.as_node(),
+      Lit::BigInt(node) => node.as_node(),
+      Lit::Regex(node) => node.as_node(),
+      Lit::JSXText(node) => node.as_node(),
     }
   }
 
@@ -3439,17 +3439,17 @@ impl<'a> NodeTrait<'a> for ModuleDecl<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      ModuleDecl::Import(node) => node.into_node(),
-      ModuleDecl::ExportDecl(node) => node.into_node(),
-      ModuleDecl::ExportNamed(node) => node.into_node(),
-      ModuleDecl::ExportDefaultDecl(node) => node.into_node(),
-      ModuleDecl::ExportDefaultExpr(node) => node.into_node(),
-      ModuleDecl::ExportAll(node) => node.into_node(),
-      ModuleDecl::TsImportEquals(node) => node.into_node(),
-      ModuleDecl::TsExportAssignment(node) => node.into_node(),
-      ModuleDecl::TsNamespaceExport(node) => node.into_node(),
+      ModuleDecl::Import(node) => node.as_node(),
+      ModuleDecl::ExportDecl(node) => node.as_node(),
+      ModuleDecl::ExportNamed(node) => node.as_node(),
+      ModuleDecl::ExportDefaultDecl(node) => node.as_node(),
+      ModuleDecl::ExportDefaultExpr(node) => node.as_node(),
+      ModuleDecl::ExportAll(node) => node.as_node(),
+      ModuleDecl::TsImportEquals(node) => node.as_node(),
+      ModuleDecl::TsExportAssignment(node) => node.as_node(),
+      ModuleDecl::TsNamespaceExport(node) => node.as_node(),
     }
   }
 
@@ -3563,10 +3563,10 @@ impl<'a> NodeTrait<'a> for ModuleItem<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      ModuleItem::ModuleDecl(node) => node.into_node(),
-      ModuleItem::Stmt(node) => node.into_node(),
+      ModuleItem::ModuleDecl(node) => node.as_node(),
+      ModuleItem::Stmt(node) => node.as_node(),
     }
   }
 
@@ -3656,11 +3656,11 @@ impl<'a> NodeTrait<'a> for ObjectPatProp<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      ObjectPatProp::KeyValue(node) => node.into_node(),
-      ObjectPatProp::Assign(node) => node.into_node(),
-      ObjectPatProp::Rest(node) => node.into_node(),
+      ObjectPatProp::KeyValue(node) => node.as_node(),
+      ObjectPatProp::Assign(node) => node.as_node(),
+      ObjectPatProp::Rest(node) => node.as_node(),
     }
   }
 
@@ -3750,10 +3750,10 @@ impl<'a> NodeTrait<'a> for ParamOrTsParamProp<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      ParamOrTsParamProp::TsParamProp(node) => node.into_node(),
-      ParamOrTsParamProp::Param(node) => node.into_node(),
+      ParamOrTsParamProp::TsParamProp(node) => node.as_node(),
+      ParamOrTsParamProp::Param(node) => node.as_node(),
     }
   }
 
@@ -3860,15 +3860,15 @@ impl<'a> NodeTrait<'a> for Pat<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      Pat::Ident(node) => node.into_node(),
-      Pat::Array(node) => node.into_node(),
-      Pat::Rest(node) => node.into_node(),
-      Pat::Object(node) => node.into_node(),
-      Pat::Assign(node) => node.into_node(),
-      Pat::Invalid(node) => node.into_node(),
-      Pat::Expr(node) => node.into_node(),
+      Pat::Ident(node) => node.as_node(),
+      Pat::Array(node) => node.as_node(),
+      Pat::Rest(node) => node.as_node(),
+      Pat::Object(node) => node.as_node(),
+      Pat::Assign(node) => node.as_node(),
+      Pat::Invalid(node) => node.as_node(),
+      Pat::Expr(node) => node.as_node(),
     }
   }
 
@@ -3974,10 +3974,10 @@ impl<'a> NodeTrait<'a> for PatOrExpr<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      PatOrExpr::Expr(node) => node.into_node(),
-      PatOrExpr::Pat(node) => node.into_node(),
+      PatOrExpr::Expr(node) => node.as_node(),
+      PatOrExpr::Pat(node) => node.as_node(),
     }
   }
 
@@ -4082,14 +4082,14 @@ impl<'a> NodeTrait<'a> for Prop<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      Prop::Shorthand(node) => node.into_node(),
-      Prop::KeyValue(node) => node.into_node(),
-      Prop::Assign(node) => node.into_node(),
-      Prop::Getter(node) => node.into_node(),
-      Prop::Setter(node) => node.into_node(),
-      Prop::Method(node) => node.into_node(),
+      Prop::Shorthand(node) => node.as_node(),
+      Prop::KeyValue(node) => node.as_node(),
+      Prop::Assign(node) => node.as_node(),
+      Prop::Getter(node) => node.as_node(),
+      Prop::Setter(node) => node.as_node(),
+      Prop::Method(node) => node.as_node(),
     }
   }
 
@@ -4205,13 +4205,13 @@ impl<'a> NodeTrait<'a> for PropName<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      PropName::Ident(node) => node.into_node(),
-      PropName::Str(node) => node.into_node(),
-      PropName::Num(node) => node.into_node(),
-      PropName::Computed(node) => node.into_node(),
-      PropName::BigInt(node) => node.into_node(),
+      PropName::Ident(node) => node.as_node(),
+      PropName::Str(node) => node.as_node(),
+      PropName::Num(node) => node.as_node(),
+      PropName::Computed(node) => node.as_node(),
+      PropName::BigInt(node) => node.as_node(),
     }
   }
 
@@ -4310,10 +4310,10 @@ impl<'a> NodeTrait<'a> for PropOrSpread<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      PropOrSpread::Spread(node) => node.into_node(),
-      PropOrSpread::Prop(node) => node.into_node(),
+      PropOrSpread::Spread(node) => node.as_node(),
+      PropOrSpread::Prop(node) => node.as_node(),
     }
   }
 
@@ -4468,27 +4468,27 @@ impl<'a> NodeTrait<'a> for Stmt<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      Stmt::Block(node) => node.into_node(),
-      Stmt::Empty(node) => node.into_node(),
-      Stmt::Debugger(node) => node.into_node(),
-      Stmt::With(node) => node.into_node(),
-      Stmt::Return(node) => node.into_node(),
-      Stmt::Labeled(node) => node.into_node(),
-      Stmt::Break(node) => node.into_node(),
-      Stmt::Continue(node) => node.into_node(),
-      Stmt::If(node) => node.into_node(),
-      Stmt::Switch(node) => node.into_node(),
-      Stmt::Throw(node) => node.into_node(),
-      Stmt::Try(node) => node.into_node(),
-      Stmt::While(node) => node.into_node(),
-      Stmt::DoWhile(node) => node.into_node(),
-      Stmt::For(node) => node.into_node(),
-      Stmt::ForIn(node) => node.into_node(),
-      Stmt::ForOf(node) => node.into_node(),
-      Stmt::Decl(node) => node.into_node(),
-      Stmt::Expr(node) => node.into_node(),
+      Stmt::Block(node) => node.as_node(),
+      Stmt::Empty(node) => node.as_node(),
+      Stmt::Debugger(node) => node.as_node(),
+      Stmt::With(node) => node.as_node(),
+      Stmt::Return(node) => node.as_node(),
+      Stmt::Labeled(node) => node.as_node(),
+      Stmt::Break(node) => node.as_node(),
+      Stmt::Continue(node) => node.as_node(),
+      Stmt::If(node) => node.as_node(),
+      Stmt::Switch(node) => node.as_node(),
+      Stmt::Throw(node) => node.as_node(),
+      Stmt::Try(node) => node.as_node(),
+      Stmt::While(node) => node.as_node(),
+      Stmt::DoWhile(node) => node.as_node(),
+      Stmt::For(node) => node.as_node(),
+      Stmt::ForIn(node) => node.as_node(),
+      Stmt::ForOf(node) => node.as_node(),
+      Stmt::Decl(node) => node.as_node(),
+      Stmt::Expr(node) => node.as_node(),
     }
   }
 
@@ -4642,10 +4642,10 @@ impl<'a> NodeTrait<'a> for TsEntityName<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      TsEntityName::TsQualifiedName(node) => node.into_node(),
-      TsEntityName::Ident(node) => node.into_node(),
+      TsEntityName::TsQualifiedName(node) => node.as_node(),
+      TsEntityName::Ident(node) => node.as_node(),
     }
   }
 
@@ -4733,10 +4733,10 @@ impl<'a> NodeTrait<'a> for TsEnumMemberId<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      TsEnumMemberId::Ident(node) => node.into_node(),
-      TsEnumMemberId::Str(node) => node.into_node(),
+      TsEnumMemberId::Ident(node) => node.as_node(),
+      TsEnumMemberId::Str(node) => node.as_node(),
     }
   }
 
@@ -4822,10 +4822,10 @@ impl<'a> NodeTrait<'a> for TsFnOrConstructorType<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      TsFnOrConstructorType::TsFnType(node) => node.into_node(),
-      TsFnOrConstructorType::TsConstructorType(node) => node.into_node(),
+      TsFnOrConstructorType::TsFnType(node) => node.as_node(),
+      TsFnOrConstructorType::TsConstructorType(node) => node.as_node(),
     }
   }
 
@@ -4919,12 +4919,12 @@ impl<'a> NodeTrait<'a> for TsFnParam<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      TsFnParam::Ident(node) => node.into_node(),
-      TsFnParam::Array(node) => node.into_node(),
-      TsFnParam::Rest(node) => node.into_node(),
-      TsFnParam::Object(node) => node.into_node(),
+      TsFnParam::Ident(node) => node.as_node(),
+      TsFnParam::Array(node) => node.as_node(),
+      TsFnParam::Rest(node) => node.as_node(),
+      TsFnParam::Object(node) => node.as_node(),
     }
   }
 
@@ -5030,13 +5030,13 @@ impl<'a> NodeTrait<'a> for TsLit<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      TsLit::Number(node) => node.into_node(),
-      TsLit::Str(node) => node.into_node(),
-      TsLit::Bool(node) => node.into_node(),
-      TsLit::BigInt(node) => node.into_node(),
-      TsLit::Tpl(node) => node.into_node(),
+      TsLit::Number(node) => node.as_node(),
+      TsLit::Str(node) => node.as_node(),
+      TsLit::Bool(node) => node.as_node(),
+      TsLit::BigInt(node) => node.as_node(),
+      TsLit::Tpl(node) => node.as_node(),
     }
   }
 
@@ -5134,10 +5134,10 @@ impl<'a> NodeTrait<'a> for TsModuleName<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      TsModuleName::Ident(node) => node.into_node(),
-      TsModuleName::Str(node) => node.into_node(),
+      TsModuleName::Ident(node) => node.as_node(),
+      TsModuleName::Str(node) => node.as_node(),
     }
   }
 
@@ -5223,10 +5223,10 @@ impl<'a> NodeTrait<'a> for TsModuleRef<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      TsModuleRef::TsEntityName(node) => node.into_node(),
-      TsModuleRef::TsExternalModuleRef(node) => node.into_node(),
+      TsModuleRef::TsEntityName(node) => node.as_node(),
+      TsModuleRef::TsExternalModuleRef(node) => node.as_node(),
     }
   }
 
@@ -5314,10 +5314,10 @@ impl<'a> NodeTrait<'a> for TsNamespaceBody<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      TsNamespaceBody::TsModuleBlock(node) => node.into_node(),
-      TsNamespaceBody::TsNamespaceDecl(node) => node.into_node(),
+      TsNamespaceBody::TsModuleBlock(node) => node.as_node(),
+      TsNamespaceBody::TsNamespaceDecl(node) => node.as_node(),
     }
   }
 
@@ -5403,10 +5403,10 @@ impl<'a> NodeTrait<'a> for TsParamPropParam<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      TsParamPropParam::Ident(node) => node.into_node(),
-      TsParamPropParam::Assign(node) => node.into_node(),
+      TsParamPropParam::Ident(node) => node.as_node(),
+      TsParamPropParam::Assign(node) => node.as_node(),
     }
   }
 
@@ -5492,10 +5492,10 @@ impl<'a> NodeTrait<'a> for TsThisTypeOrIdent<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      TsThisTypeOrIdent::TsThisType(node) => node.into_node(),
-      TsThisTypeOrIdent::Ident(node) => node.into_node(),
+      TsThisTypeOrIdent::TsThisType(node) => node.as_node(),
+      TsThisTypeOrIdent::Ident(node) => node.as_node(),
     }
   }
 
@@ -5653,28 +5653,28 @@ impl<'a> NodeTrait<'a> for TsType<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      TsType::TsKeywordType(node) => node.into_node(),
-      TsType::TsThisType(node) => node.into_node(),
-      TsType::TsFnOrConstructorType(node) => node.into_node(),
-      TsType::TsTypeRef(node) => node.into_node(),
-      TsType::TsTypeQuery(node) => node.into_node(),
-      TsType::TsTypeLit(node) => node.into_node(),
-      TsType::TsArrayType(node) => node.into_node(),
-      TsType::TsTupleType(node) => node.into_node(),
-      TsType::TsOptionalType(node) => node.into_node(),
-      TsType::TsRestType(node) => node.into_node(),
-      TsType::TsUnionOrIntersectionType(node) => node.into_node(),
-      TsType::TsConditionalType(node) => node.into_node(),
-      TsType::TsInferType(node) => node.into_node(),
-      TsType::TsParenthesizedType(node) => node.into_node(),
-      TsType::TsTypeOperator(node) => node.into_node(),
-      TsType::TsIndexedAccessType(node) => node.into_node(),
-      TsType::TsMappedType(node) => node.into_node(),
-      TsType::TsLitType(node) => node.into_node(),
-      TsType::TsTypePredicate(node) => node.into_node(),
-      TsType::TsImportType(node) => node.into_node(),
+      TsType::TsKeywordType(node) => node.as_node(),
+      TsType::TsThisType(node) => node.as_node(),
+      TsType::TsFnOrConstructorType(node) => node.as_node(),
+      TsType::TsTypeRef(node) => node.as_node(),
+      TsType::TsTypeQuery(node) => node.as_node(),
+      TsType::TsTypeLit(node) => node.as_node(),
+      TsType::TsArrayType(node) => node.as_node(),
+      TsType::TsTupleType(node) => node.as_node(),
+      TsType::TsOptionalType(node) => node.as_node(),
+      TsType::TsRestType(node) => node.as_node(),
+      TsType::TsUnionOrIntersectionType(node) => node.as_node(),
+      TsType::TsConditionalType(node) => node.as_node(),
+      TsType::TsInferType(node) => node.as_node(),
+      TsType::TsParenthesizedType(node) => node.as_node(),
+      TsType::TsTypeOperator(node) => node.as_node(),
+      TsType::TsIndexedAccessType(node) => node.as_node(),
+      TsType::TsMappedType(node) => node.as_node(),
+      TsType::TsLitType(node) => node.as_node(),
+      TsType::TsTypePredicate(node) => node.as_node(),
+      TsType::TsImportType(node) => node.as_node(),
     }
   }
 
@@ -5852,15 +5852,15 @@ impl<'a> NodeTrait<'a> for TsTypeElement<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      TsTypeElement::TsCallSignatureDecl(node) => node.into_node(),
-      TsTypeElement::TsConstructSignatureDecl(node) => node.into_node(),
-      TsTypeElement::TsPropertySignature(node) => node.into_node(),
-      TsTypeElement::TsGetterSignature(node) => node.into_node(),
-      TsTypeElement::TsSetterSignature(node) => node.into_node(),
-      TsTypeElement::TsMethodSignature(node) => node.into_node(),
-      TsTypeElement::TsIndexSignature(node) => node.into_node(),
+      TsTypeElement::TsCallSignatureDecl(node) => node.as_node(),
+      TsTypeElement::TsConstructSignatureDecl(node) => node.as_node(),
+      TsTypeElement::TsPropertySignature(node) => node.as_node(),
+      TsTypeElement::TsGetterSignature(node) => node.as_node(),
+      TsTypeElement::TsSetterSignature(node) => node.as_node(),
+      TsTypeElement::TsMethodSignature(node) => node.as_node(),
+      TsTypeElement::TsIndexSignature(node) => node.as_node(),
     }
   }
 
@@ -5966,10 +5966,10 @@ impl<'a> NodeTrait<'a> for TsTypeQueryExpr<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      TsTypeQueryExpr::TsEntityName(node) => node.into_node(),
-      TsTypeQueryExpr::Import(node) => node.into_node(),
+      TsTypeQueryExpr::TsEntityName(node) => node.as_node(),
+      TsTypeQueryExpr::Import(node) => node.as_node(),
     }
   }
 
@@ -6055,10 +6055,10 @@ impl<'a> NodeTrait<'a> for TsUnionOrIntersectionType<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      TsUnionOrIntersectionType::TsUnionType(node) => node.into_node(),
-      TsUnionOrIntersectionType::TsIntersectionType(node) => node.into_node(),
+      TsUnionOrIntersectionType::TsUnionType(node) => node.as_node(),
+      TsUnionOrIntersectionType::TsIntersectionType(node) => node.as_node(),
     }
   }
 
@@ -6144,10 +6144,10 @@ impl<'a> NodeTrait<'a> for VarDeclOrExpr<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      VarDeclOrExpr::VarDecl(node) => node.into_node(),
-      VarDeclOrExpr::Expr(node) => node.into_node(),
+      VarDeclOrExpr::VarDecl(node) => node.as_node(),
+      VarDeclOrExpr::Expr(node) => node.as_node(),
     }
   }
 
@@ -6233,10 +6233,10 @@ impl<'a> NodeTrait<'a> for VarDeclOrPat<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      VarDeclOrPat::VarDecl(node) => node.into_node(),
-      VarDeclOrPat::Pat(node) => node.into_node(),
+      VarDeclOrPat::VarDecl(node) => node.as_node(),
+      VarDeclOrPat::Pat(node) => node.as_node(),
     }
   }
 
@@ -6309,7 +6309,7 @@ impl<'a> NodeTrait<'a> for ArrayLit<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -6392,7 +6392,7 @@ impl<'a> NodeTrait<'a> for ArrayPat<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -6487,7 +6487,7 @@ impl<'a> NodeTrait<'a> for ArrowExpr<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -6572,7 +6572,7 @@ impl<'a> NodeTrait<'a> for AssignExpr<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -6645,7 +6645,7 @@ impl<'a> NodeTrait<'a> for AssignPat<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -6722,7 +6722,7 @@ impl<'a> NodeTrait<'a> for AssignPatProp<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -6794,7 +6794,7 @@ impl<'a> NodeTrait<'a> for AssignProp<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -6861,7 +6861,7 @@ impl<'a> NodeTrait<'a> for AwaitExpr<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -6929,7 +6929,7 @@ impl<'a> NodeTrait<'a> for BigInt<'a> {
     Vec::with_capacity(0)
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -6999,7 +6999,7 @@ impl<'a> NodeTrait<'a> for BinExpr<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -7071,7 +7071,7 @@ impl<'a> NodeTrait<'a> for BindingIdent<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -7144,7 +7144,7 @@ impl<'a> NodeTrait<'a> for BlockStmt<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -7212,7 +7212,7 @@ impl<'a> NodeTrait<'a> for Bool<'a> {
     Vec::with_capacity(0)
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -7276,7 +7276,7 @@ impl<'a> NodeTrait<'a> for BreakStmt<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -7352,7 +7352,7 @@ impl<'a> NodeTrait<'a> for CallExpr<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -7432,7 +7432,7 @@ impl<'a> NodeTrait<'a> for CatchClause<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -7531,7 +7531,7 @@ impl<'a> NodeTrait<'a> for Class<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -7623,7 +7623,7 @@ impl<'a> NodeTrait<'a> for ClassDecl<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -7695,7 +7695,7 @@ impl<'a> NodeTrait<'a> for ClassExpr<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -7795,7 +7795,7 @@ impl<'a> NodeTrait<'a> for ClassMethod<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -7914,7 +7914,7 @@ impl<'a> NodeTrait<'a> for ClassProp<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -7991,7 +7991,7 @@ impl<'a> NodeTrait<'a> for ComputedPropName<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -8060,7 +8060,7 @@ impl<'a> NodeTrait<'a> for CondExpr<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -8147,7 +8147,7 @@ impl<'a> NodeTrait<'a> for Constructor<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -8221,7 +8221,7 @@ impl<'a> NodeTrait<'a> for ContinueStmt<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -8286,7 +8286,7 @@ impl<'a> NodeTrait<'a> for DebuggerStmt<'a> {
     Vec::with_capacity(0)
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -8348,7 +8348,7 @@ impl<'a> NodeTrait<'a> for Decorator<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -8415,7 +8415,7 @@ impl<'a> NodeTrait<'a> for DoWhileStmt<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -8479,7 +8479,7 @@ impl<'a> NodeTrait<'a> for EmptyStmt<'a> {
     Vec::with_capacity(0)
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -8546,7 +8546,7 @@ impl<'a> NodeTrait<'a> for ExportAll<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -8616,7 +8616,7 @@ impl<'a> NodeTrait<'a> for ExportDecl<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -8681,7 +8681,7 @@ impl<'a> NodeTrait<'a> for ExportDefaultDecl<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -8746,7 +8746,7 @@ impl<'a> NodeTrait<'a> for ExportDefaultExpr<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -8811,7 +8811,7 @@ impl<'a> NodeTrait<'a> for ExportDefaultSpecifier<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -8882,7 +8882,7 @@ impl<'a> NodeTrait<'a> for ExportNamedSpecifier<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -8953,7 +8953,7 @@ impl<'a> NodeTrait<'a> for ExportNamespaceSpecifier<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -9024,7 +9024,7 @@ impl<'a> NodeTrait<'a> for ExprOrSpread<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -9089,7 +9089,7 @@ impl<'a> NodeTrait<'a> for ExprStmt<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -9162,7 +9162,7 @@ impl<'a> NodeTrait<'a> for FnDecl<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -9234,7 +9234,7 @@ impl<'a> NodeTrait<'a> for FnExpr<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -9308,7 +9308,7 @@ impl<'a> NodeTrait<'a> for ForInStmt<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -9392,7 +9392,7 @@ impl<'a> NodeTrait<'a> for ForOfStmt<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -9473,7 +9473,7 @@ impl<'a> NodeTrait<'a> for ForStmt<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -9584,7 +9584,7 @@ impl<'a> NodeTrait<'a> for Function<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -9674,7 +9674,7 @@ impl<'a> NodeTrait<'a> for GetterProp<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -9758,7 +9758,7 @@ impl<'a> NodeTrait<'a> for Ident<'a> {
     Vec::with_capacity(0)
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -9826,7 +9826,7 @@ impl<'a> NodeTrait<'a> for IfStmt<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -9912,7 +9912,7 @@ impl<'a> NodeTrait<'a> for ImportDecl<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -9985,7 +9985,7 @@ impl<'a> NodeTrait<'a> for ImportDefaultSpecifier<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -10057,7 +10057,7 @@ impl<'a> NodeTrait<'a> for ImportNamedSpecifier<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -10128,7 +10128,7 @@ impl<'a> NodeTrait<'a> for ImportStarAsSpecifier<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -10191,7 +10191,7 @@ impl<'a> NodeTrait<'a> for Invalid<'a> {
     Vec::with_capacity(0)
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -10258,7 +10258,7 @@ impl<'a> NodeTrait<'a> for JSXAttr<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -10328,7 +10328,7 @@ impl<'a> NodeTrait<'a> for JSXClosingElement<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -10390,7 +10390,7 @@ impl<'a> NodeTrait<'a> for JSXClosingFragment<'a> {
     Vec::with_capacity(0)
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -10460,7 +10460,7 @@ impl<'a> NodeTrait<'a> for JSXElement<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -10529,7 +10529,7 @@ impl<'a> NodeTrait<'a> for JSXEmptyExpr<'a> {
     Vec::with_capacity(0)
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -10591,7 +10591,7 @@ impl<'a> NodeTrait<'a> for JSXExprContainer<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -10662,7 +10662,7 @@ impl<'a> NodeTrait<'a> for JSXFragment<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -10733,7 +10733,7 @@ impl<'a> NodeTrait<'a> for JSXMemberExpr<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -10803,7 +10803,7 @@ impl<'a> NodeTrait<'a> for JSXNamespacedName<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -10886,7 +10886,7 @@ impl<'a> NodeTrait<'a> for JSXOpeningElement<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -10955,7 +10955,7 @@ impl<'a> NodeTrait<'a> for JSXOpeningFragment<'a> {
     Vec::with_capacity(0)
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -11017,7 +11017,7 @@ impl<'a> NodeTrait<'a> for JSXSpreadChild<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -11089,7 +11089,7 @@ impl<'a> NodeTrait<'a> for JSXText<'a> {
     Vec::with_capacity(0)
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -11154,7 +11154,7 @@ impl<'a> NodeTrait<'a> for KeyValuePatProp<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -11223,7 +11223,7 @@ impl<'a> NodeTrait<'a> for KeyValueProp<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -11292,7 +11292,7 @@ impl<'a> NodeTrait<'a> for LabeledStmt<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -11367,7 +11367,7 @@ impl<'a> NodeTrait<'a> for MemberExpr<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -11436,7 +11436,7 @@ impl<'a> NodeTrait<'a> for MetaPropExpr<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -11505,7 +11505,7 @@ impl<'a> NodeTrait<'a> for MethodProp<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -11582,7 +11582,7 @@ impl<'a> NodeTrait<'a> for Module<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -11674,7 +11674,7 @@ impl<'a> NodeTrait<'a> for NamedExport<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -11759,7 +11759,7 @@ impl<'a> NodeTrait<'a> for NewExpr<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -11831,7 +11831,7 @@ impl<'a> NodeTrait<'a> for Null<'a> {
     Vec::with_capacity(0)
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -11899,7 +11899,7 @@ impl<'a> NodeTrait<'a> for Number<'a> {
     Vec::with_capacity(0)
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -11964,7 +11964,7 @@ impl<'a> NodeTrait<'a> for ObjectLit<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -12042,7 +12042,7 @@ impl<'a> NodeTrait<'a> for ObjectPat<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -12118,7 +12118,7 @@ impl<'a> NodeTrait<'a> for OptChainExpr<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -12187,7 +12187,7 @@ impl<'a> NodeTrait<'a> for Param<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -12254,7 +12254,7 @@ impl<'a> NodeTrait<'a> for ParenExpr<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -12349,7 +12349,7 @@ impl<'a> NodeTrait<'a> for PrivateMethod<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -12416,7 +12416,7 @@ impl<'a> NodeTrait<'a> for PrivateName<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -12529,7 +12529,7 @@ impl<'a> NodeTrait<'a> for PrivateProp<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -12613,7 +12613,7 @@ impl<'a> NodeTrait<'a> for Regex<'a> {
     Vec::with_capacity(0)
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -12686,7 +12686,7 @@ impl<'a> NodeTrait<'a> for RestPat<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -12758,7 +12758,7 @@ impl<'a> NodeTrait<'a> for ReturnStmt<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -12836,7 +12836,7 @@ impl<'a> NodeTrait<'a> for Script<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -12912,7 +12912,7 @@ impl<'a> NodeTrait<'a> for SeqExpr<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -12983,7 +12983,7 @@ impl<'a> NodeTrait<'a> for SetterProp<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -13061,7 +13061,7 @@ impl<'a> NodeTrait<'a> for SpreadElement<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -13138,7 +13138,7 @@ impl<'a> NodeTrait<'a> for Str<'a> {
     Vec::with_capacity(0)
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -13197,7 +13197,7 @@ impl<'a> NodeTrait<'a> for Super<'a> {
     Vec::with_capacity(0)
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -13266,7 +13266,7 @@ impl<'a> NodeTrait<'a> for SwitchCase<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -13340,7 +13340,7 @@ impl<'a> NodeTrait<'a> for SwitchStmt<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -13413,7 +13413,7 @@ impl<'a> NodeTrait<'a> for TaggedTpl<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -13482,7 +13482,7 @@ impl<'a> NodeTrait<'a> for ThisExpr<'a> {
     Vec::with_capacity(0)
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -13544,7 +13544,7 @@ impl<'a> NodeTrait<'a> for ThrowStmt<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -13615,7 +13615,7 @@ impl<'a> NodeTrait<'a> for Tpl<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -13692,7 +13692,7 @@ impl<'a> NodeTrait<'a> for TplElement<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -13770,7 +13770,7 @@ impl<'a> NodeTrait<'a> for TryStmt<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -13845,7 +13845,7 @@ impl<'a> NodeTrait<'a> for TsArrayType<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -13912,7 +13912,7 @@ impl<'a> NodeTrait<'a> for TsAsExpr<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -13989,7 +13989,7 @@ impl<'a> NodeTrait<'a> for TsCallSignatureDecl<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -14070,7 +14070,7 @@ impl<'a> NodeTrait<'a> for TsConditionalType<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -14141,7 +14141,7 @@ impl<'a> NodeTrait<'a> for TsConstAssertion<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -14216,7 +14216,7 @@ impl<'a> NodeTrait<'a> for TsConstructSignatureDecl<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -14305,7 +14305,7 @@ impl<'a> NodeTrait<'a> for TsConstructorType<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -14391,7 +14391,7 @@ impl<'a> NodeTrait<'a> for TsEnumDecl<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -14462,7 +14462,7 @@ impl<'a> NodeTrait<'a> for TsEnumMember<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -14535,7 +14535,7 @@ impl<'a> NodeTrait<'a> for TsExportAssignment<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -14604,7 +14604,7 @@ impl<'a> NodeTrait<'a> for TsExprWithTypeArgs<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -14674,7 +14674,7 @@ impl<'a> NodeTrait<'a> for TsExternalModuleRef<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -14747,7 +14747,7 @@ impl<'a> NodeTrait<'a> for TsFnType<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -14837,7 +14837,7 @@ impl<'a> NodeTrait<'a> for TsGetterSignature<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -14919,7 +14919,7 @@ impl<'a> NodeTrait<'a> for TsImportEqualsDecl<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -14994,7 +14994,7 @@ impl<'a> NodeTrait<'a> for TsImportType<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -15085,7 +15085,7 @@ impl<'a> NodeTrait<'a> for TsIndexSignature<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -15163,7 +15163,7 @@ impl<'a> NodeTrait<'a> for TsIndexedAccessType<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -15230,7 +15230,7 @@ impl<'a> NodeTrait<'a> for TsInferType<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -15297,7 +15297,7 @@ impl<'a> NodeTrait<'a> for TsInterfaceBody<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -15378,7 +15378,7 @@ impl<'a> NodeTrait<'a> for TsInterfaceDecl<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -15454,7 +15454,7 @@ impl<'a> NodeTrait<'a> for TsIntersectionType<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -15522,7 +15522,7 @@ impl<'a> NodeTrait<'a> for TsKeywordType<'a> {
     Vec::with_capacity(0)
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -15584,7 +15584,7 @@ impl<'a> NodeTrait<'a> for TsLitType<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -15667,7 +15667,7 @@ impl<'a> NodeTrait<'a> for TsMappedType<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -15768,7 +15768,7 @@ impl<'a> NodeTrait<'a> for TsMethodSignature<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -15847,7 +15847,7 @@ impl<'a> NodeTrait<'a> for TsModuleBlock<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -15927,7 +15927,7 @@ impl<'a> NodeTrait<'a> for TsModuleDecl<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -16010,7 +16010,7 @@ impl<'a> NodeTrait<'a> for TsNamespaceDecl<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -16077,7 +16077,7 @@ impl<'a> NodeTrait<'a> for TsNamespaceExportDecl<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -16142,7 +16142,7 @@ impl<'a> NodeTrait<'a> for TsNonNullExpr<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -16207,7 +16207,7 @@ impl<'a> NodeTrait<'a> for TsOptionalType<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -16287,7 +16287,7 @@ impl<'a> NodeTrait<'a> for TsParamProp<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -16354,7 +16354,7 @@ impl<'a> NodeTrait<'a> for TsParenthesizedType<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -16449,7 +16449,7 @@ impl<'a> NodeTrait<'a> for TsPropertySignature<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -16533,7 +16533,7 @@ impl<'a> NodeTrait<'a> for TsQualifiedName<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -16600,7 +16600,7 @@ impl<'a> NodeTrait<'a> for TsRestType<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -16681,7 +16681,7 @@ impl<'a> NodeTrait<'a> for TsSetterSignature<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -16745,7 +16745,7 @@ impl<'a> NodeTrait<'a> for TsThisType<'a> {
     Vec::with_capacity(0)
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -16813,7 +16813,7 @@ impl<'a> NodeTrait<'a> for TsTplLitType<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -16885,7 +16885,7 @@ impl<'a> NodeTrait<'a> for TsTupleElement<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -16957,7 +16957,7 @@ impl<'a> NodeTrait<'a> for TsTupleType<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -17034,7 +17034,7 @@ impl<'a> NodeTrait<'a> for TsTypeAliasDecl<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -17106,7 +17106,7 @@ impl<'a> NodeTrait<'a> for TsTypeAnn<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -17173,7 +17173,7 @@ impl<'a> NodeTrait<'a> for TsTypeAssertion<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -17242,7 +17242,7 @@ impl<'a> NodeTrait<'a> for TsTypeLit<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -17313,7 +17313,7 @@ impl<'a> NodeTrait<'a> for TsTypeOperator<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -17386,7 +17386,7 @@ impl<'a> NodeTrait<'a> for TsTypeParam<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -17463,7 +17463,7 @@ impl<'a> NodeTrait<'a> for TsTypeParamDecl<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -17530,7 +17530,7 @@ impl<'a> NodeTrait<'a> for TsTypeParamInstantiation<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -17605,7 +17605,7 @@ impl<'a> NodeTrait<'a> for TsTypePredicate<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -17676,7 +17676,7 @@ impl<'a> NodeTrait<'a> for TsTypeQuery<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -17745,7 +17745,7 @@ impl<'a> NodeTrait<'a> for TsTypeRef<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -17817,7 +17817,7 @@ impl<'a> NodeTrait<'a> for TsUnionType<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -17888,7 +17888,7 @@ impl<'a> NodeTrait<'a> for UnaryExpr<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -17963,7 +17963,7 @@ impl<'a> NodeTrait<'a> for UpdateExpr<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -18040,7 +18040,7 @@ impl<'a> NodeTrait<'a> for VarDecl<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -18117,7 +18117,7 @@ impl<'a> NodeTrait<'a> for VarDeclarator<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -18189,7 +18189,7 @@ impl<'a> NodeTrait<'a> for WhileStmt<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -18258,7 +18258,7 @@ impl<'a> NodeTrait<'a> for WithStmt<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
@@ -18333,7 +18333,7 @@ impl<'a> NodeTrait<'a> for YieldExpr<'a> {
     children
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     self.into()
   }
 
