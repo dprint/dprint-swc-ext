@@ -33,12 +33,6 @@ jobs:
       if: matrix.config.kind == 'test_debug'
       uses: bvm/gh-action@v1.1.0
 
-    - name: Install rustfmt and clippy
-      if: matrix.config.kind == 'test_debug'
-      run: |
-        rustup component add clippy
-        rustup component add rustfmt
-
     - name: Ensure code generation same
       if: matrix.config.kind == 'test_debug'
       run: |
@@ -53,12 +47,6 @@ jobs:
     - name: Build debug
       if: matrix.config.kind == 'test_debug'
       run: cd rs-lib && cargo build --verbose
-    - name: Fmt debug
-      if: matrix.config.kind == 'test_debug'
-      run: cd rs-lib && rustfmt --check src/lib.rs
-    - name: Clippy debug
-      if: matrix.config.kind == 'test_debug'
-      run: cd rs-lib && cargo clippy --all-targets -- -D clippy::all
     - name: Test debug
       if: matrix.config.kind == 'test_debug'
       run: cd rs-lib && cargo test --verbose --features serialize
