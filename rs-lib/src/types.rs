@@ -106,10 +106,10 @@ impl<'a> NodeTrait<'a> for Program<'a> {
     }
   }
 
-  fn into_node(&self) -> Node<'a> {
+  fn as_node(&self) -> Node<'a> {
     match self {
-      Program::Module(node) => node.into_node(),
-      Program::Script(node) => node.into_node(),
+      Program::Module(node) => node.as_node(),
+      Program::Script(node) => node.as_node(),
     }
   }
 
@@ -264,11 +264,11 @@ where
 pub trait NodeTrait<'a>: SpannedExt {
   fn parent(&self) -> Option<Node<'a>>;
   fn children(&self) -> Vec<Node<'a>>;
-  fn into_node(&self) -> Node<'a>;
+  fn as_node(&self) -> Node<'a>;
   fn kind(&self) -> NodeKind;
 
   fn ancestors(&self) -> AncestorIterator<'a> {
-    AncestorIterator::new(self.into_node())
+    AncestorIterator::new(self.as_node())
   }
 
   fn start_line(&self) -> usize {
@@ -422,7 +422,7 @@ pub trait NodeTrait<'a>: SpannedExt {
 
   /// Gets the root node.
   fn program(&self) -> Program<'a> {
-    let mut current: Node<'a> = self.into_node();
+    let mut current: Node<'a> = self.as_node();
     while let Some(parent) = current.parent() {
       current = parent;
     }
@@ -518,7 +518,7 @@ fn get_column_at_pos(program: &dyn RootNode, pos: BytePos) -> usize {
   let pos = pos.0 as usize;
   let mut line_start = 0;
   for i in (0..pos).rev() {
-    if text_bytes[i] == '\n' as u8 {
+    if text_bytes[i] == b'\n' {
       line_start = i + 1;
       break;
     }

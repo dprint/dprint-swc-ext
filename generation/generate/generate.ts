@@ -131,7 +131,7 @@ export function generate(analysisResult: AnalysisResult): string {
       writer.blankLine();
       implementTraitMethod("children", "Vec<Node<'a>>");
       writer.blankLine();
-      implementTraitMethod("into_node", "Node<'a>");
+      implementTraitMethod("as_node", "Node<'a>");
       writer.blankLine();
 
       implementTraitMethod("kind", "NodeKind", false, (fullName, struct) => {
@@ -239,7 +239,7 @@ export function generate(analysisResult: AnalysisResult): string {
         writer.blankLine();
         implementTraitMethod("children", "Vec<Node<'a>>", false);
         writer.blankLine();
-        implementTraitMethod("into_node", "Node<'a>", false);
+        implementTraitMethod("as_node", "Node<'a>", false);
         writer.blankLine();
         implementTraitMethod("kind", "NodeKind", false, (fullName, variant) => {
           if (variant.tupleArg != null && isSwcAstType(analysisResult, variant.tupleArg)) {
@@ -427,7 +427,7 @@ export function generate(analysisResult: AnalysisResult): string {
         writeChildrenMethod();
         writer.blankLine();
 
-        writer.write("fn into_node(&self) -> Node<'a>").block(() => {
+        writer.write("fn as_node(&self) -> Node<'a>").block(() => {
           writer.writeLine("self.into()");
         });
         writer.blankLine();

@@ -62,7 +62,7 @@ impl<'a> TokenContainer<'a> {
     let start_index = self.get_leftmost_token_index(lo);
     let end_index = self.get_rightmost_token_index(hi);
 
-    let start_index = start_index.unwrap_or(end_index.unwrap_or(0));
+    let start_index = start_index.unwrap_or_else(|| end_index.unwrap_or(0));
     let end_index = end_index.map(|i| i + 1).unwrap_or(start_index);
 
     &self.tokens[start_index..end_index]
