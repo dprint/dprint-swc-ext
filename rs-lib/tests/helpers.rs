@@ -22,10 +22,10 @@ pub fn run_test(file_text: &str, run_test: impl Fn(dprint_swc_ecma_ast_view::Pro
   });
 }
 
-pub fn run_test_with_module(
+pub fn run_test_with_module<'a>(
   file_path: &Path,
   file_text: &str,
-  run_test: impl Fn(&dprint_swc_ecma_ast_view::Module),
+  run_test: impl Fn(&'a dprint_swc_ecma_ast_view::Module<'a>),
 ) {
   let (module, tokens, source_file, comments) = get_swc_module(file_path, file_text);
   let info = dprint_swc_ecma_ast_view::ModuleInfo {
@@ -39,10 +39,10 @@ pub fn run_test_with_module(
   });
 }
 
-pub fn run_test_with_script(
+pub fn run_test_with_script<'a>(
   file_path: &Path,
   file_text: &str,
-  run_test: impl Fn(&dprint_swc_ecma_ast_view::Script),
+  run_test: impl Fn(&'a dprint_swc_ecma_ast_view::Script<'a>),
 ) {
   let (script, tokens, source_file, comments) = get_swc_script(file_path, file_text);
   let info = dprint_swc_ecma_ast_view::ScriptInfo {
