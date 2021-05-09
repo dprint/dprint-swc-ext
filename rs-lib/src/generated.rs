@@ -1945,8 +1945,8 @@ impl<'a> ExportSpecifier<'a> {
   pub fn is<T: CastableNode<'a>>(&self) -> bool {
     self.kind() == T::kind()
   }
-  pub fn parent(&self) -> Node<'a> {
-    NodeTrait::parent(self).unwrap()
+  pub fn parent(&self) -> &'a NamedExport<'a> {
+    NodeTrait::parent(self).unwrap().expect::<NamedExport>()
   }
 }
 
@@ -2583,8 +2583,8 @@ impl<'a> ImportSpecifier<'a> {
   pub fn is<T: CastableNode<'a>>(&self) -> bool {
     self.kind() == T::kind()
   }
-  pub fn parent(&self) -> Node<'a> {
-    NodeTrait::parent(self).unwrap()
+  pub fn parent(&self) -> &'a ImportDecl<'a> {
+    NodeTrait::parent(self).unwrap().expect::<ImportDecl>()
   }
 }
 

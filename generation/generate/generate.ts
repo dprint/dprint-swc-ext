@@ -243,9 +243,17 @@ export function generate(analysisResult: AnalysisResult): string {
 
         // add a preferred non-nullable `parent()` method if all the variants have a parent
         if (enumDef.variants.every(v => getAstStructForType(analysisResult, v.tupleArg)?.parents.length ?? 0 > 0)) {
-          writer.write("pub fn parent(&self) -> Node<'a>").block(() => {
-            writer.writeLine("NodeTrait::parent(self).unwrap()");
-          });
+          const variantStructs = enumDef.variants.map(v => getAstStructForType(analysisResult, v.tupleArg)!);
+          writer.write("pub fn parent(&self) -> ");
+          if (variantStructs.every(s => s.parents.length === 1 && s.parents[0].name === variantStructs[0].parents[0].name)) {
+            writer.write(`&'a ${variantStructs[0].parents[0].name}<'a>`).block(() => {
+              writer.writeLine(`NodeTrait::parent(self).unwrap().expect::<${variantStructs[0].parents[0].name}>()`);
+            });
+          } else {
+            writer.write("Node<'a>").block(() => {
+              writer.writeLine("NodeTrait::parent(self).unwrap()");
+            });
+          }
         }
       }).blankLine();
 
