@@ -674,8 +674,11 @@ export function generate(analysisResult: AnalysisResult): string {
         writer.write(`fn ${getSetParentForFunctionName(struct.name)}<'a>(`);
         writer.write(`node: &${struct.name}<'a>, `);
         writer.write(`parent: Node<'a>)`).block(() => {
+          // For some reason having a `Cell<Option<T>>` field for the parent in the struct
+          // was causing infering lifetimes to not work at all. The workaround here is to
+          // get rid of the cell and just do here what's done in an UnsafeCell...
+          // Seems to work, but not sure if it's ok to do...
           writer.write("unsafe").block(() => {
-            // do the same thing that's done in an UnsafeCell... most likely not ok...
             writer.writeLine(`let node_ptr = node as *const ${struct.name}<'a> as *mut ${struct.name}<'a>;`);
             writer.write(`(*node_ptr).parent.replace(`);
             if (struct.parents.length === 1) {
