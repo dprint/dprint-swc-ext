@@ -1,7 +1,17 @@
 import { AnalysisResult, AstEnumDefinition, AstEnumVariantDefinition, AstStructDefinition, TypeDefinition } from "../analyze/analysis_types.ts";
 import { createWriter } from "../utils/create_writer.ts";
 import { nameToSnakeCase } from "../utils/string_utils.ts";
-import { getIsForImpl, getIsReferenceType, isOptionType, isSwcAstType, isSwcNodeEnumType, isVecType, writeHeader, writeType } from "./helpers.ts";
+import {
+  getAstStructForType,
+  getIsForImpl,
+  getIsReferenceType,
+  isOptionType,
+  isSwcAstType,
+  isSwcNodeEnumType,
+  isVecType,
+  writeHeader,
+  writeType,
+} from "./helpers.ts";
 
 export function generate(analysisResult: AnalysisResult): string {
   const writer = createWriter();
@@ -27,7 +37,7 @@ export function generate(analysisResult: AnalysisResult): string {
   return writer.toString();
 
   function writeUseDeclarations() {
-    writer.writeLine("use std::cell::{Cell, RefCell};");
+    writer.writeLine("use std::cell::RefCell;");
     writer.writeLine("use std::mem;");
     writer.writeLine("use bumpalo::Bump;");
     writer.writeLine("use swc_common::{Span, Spanned};");
@@ -230,6 +240,13 @@ export function generate(analysisResult: AnalysisResult): string {
         writer.write("pub fn is<T: CastableNode<'a>>(&self) -> bool").block(() => {
           writer.writeLine("self.kind() == T::kind()");
         });
+
+        // add a preferred non-nullable `parent()` method if all the variants have a parent
+        if (enumDef.variants.every(v => getAstStructForType(analysisResult, v.tupleArg)?.parents.length ?? 0 > 0)) {
+          writer.write("pub fn parent(&self) -> Node<'a>").block(() => {
+            writer.writeLine("NodeTrait::parent(self).unwrap()");
+          });
+        }
       }).blankLine();
 
       writeTrait("Spanned", `${enumDef.name}<'a>`, () => {
@@ -372,9 +389,9 @@ export function generate(analysisResult: AnalysisResult): string {
       writer.write(`pub struct ${struct.name}<'a>`).block(() => {
         if (struct.parents.length > 0) {
           if (struct.parents.length === 1) {
-            writer.writeLine(`parent: Cell<Option<&'a ${struct.parents[0].name}<'a>>>,`);
+            writer.writeLine(`parent: Option<&'a ${struct.parents[0].name}<'a>>,`);
           } else {
-            writer.writeLine(`parent: Cell<Option<Node<'a>>>,`);
+            writer.writeLine(`parent: Option<Node<'a>>,`);
           }
         }
         if (struct.name === "Module" || struct.name === "Script") {
@@ -392,7 +409,7 @@ export function generate(analysisResult: AnalysisResult): string {
         }
       });
 
-      if (implFields.length > 0) {
+      if (implFields.length > 0 || struct.parents.length > 0) {
         writer.blankLineIfLastNot();
         writer.write(`impl<'a> ${struct.name}<'a>`).block(() => {
           if (struct.parents.length > 0) {
@@ -403,7 +420,7 @@ export function generate(analysisResult: AnalysisResult): string {
               writer.write(`Node<'a>`);
             }
             writer.block(() => {
-              writer.writeLine(`self.parent.get().unwrap()`);
+              writer.writeLine(`self.parent.unwrap()`);
             });
           }
 
@@ -452,9 +469,9 @@ export function generate(analysisResult: AnalysisResult): string {
             writer.write("None");
           } else {
             if (struct.parents.length === 1) {
-              writer.write("Some(self.parent.get().unwrap().into())");
+              writer.write("Some(self.parent.unwrap().into())");
             } else {
-              writer.write("Some(self.parent.get().unwrap().clone())");
+              writer.write("Some(self.parent.unwrap().clone())");
             }
           }
           writer.newLine();
@@ -618,7 +635,7 @@ export function generate(analysisResult: AnalysisResult): string {
         writer.write(`let node = bump.alloc(${struct.name} `).inlineBlock(() => {
           writer.write("inner,").newLine();
           if (struct.parents.length > 0) {
-            writer.write("parent: Cell::new(None),").newLine();
+            writer.write("parent: None,").newLine();
           }
           if (struct.name === "Module" || struct.name === "Script") {
             writer.write("source_file: source_file_info.source_file,").newLine();
@@ -657,13 +674,17 @@ export function generate(analysisResult: AnalysisResult): string {
         writer.write(`fn ${getSetParentForFunctionName(struct.name)}<'a>(`);
         writer.write(`node: &${struct.name}<'a>, `);
         writer.write(`parent: Node<'a>)`).block(() => {
-          writer.write(`node.parent.set(Some(`);
-          if (struct.parents.length === 1) {
-            writer.write(`parent.expect::<${struct.parents[0].name}>()`);
-          } else {
-            writer.write("parent");
-          }
-          writer.write("));");
+          writer.write("unsafe").block(() => {
+            // do the same thing that's done in an UnsafeCell... most likely not ok...
+            writer.writeLine(`let node_ptr = node as *const ${struct.name}<'a> as *mut ${struct.name}<'a>;`);
+            writer.write(`(*node_ptr).parent.replace(`);
+            if (struct.parents.length === 1) {
+              writer.write(`parent.expect::<${struct.parents[0].name}>()`);
+            } else {
+              writer.write("parent");
+            }
+            writer.write(");");
+          });
         });
       }
     }

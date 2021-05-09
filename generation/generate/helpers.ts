@@ -78,7 +78,14 @@ export function isSwcNodeEnumType(analysisResult: AnalysisResult, type: TypeDefi
 }
 
 export function isSwcAstType(analysisResult: AnalysisResult, type: TypeDefinition | undefined): boolean {
-  return type != null && type.kind === "Reference" && analysisResult.astStructs.some(s => s.name === type.name);
+  return getAstStructForType(analysisResult, type) != null;
+}
+
+export function getAstStructForType(analysisResult: AnalysisResult, type: TypeDefinition | undefined) {
+  if (type == null || type.kind !== "Reference") {
+    return undefined;
+  }
+  return analysisResult.astStructs.find(s => s.name === type.name);
 }
 
 export function isVecType(type: TypeDefinition | undefined): boolean {
