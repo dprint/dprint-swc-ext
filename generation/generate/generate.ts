@@ -1,7 +1,17 @@
 import { AnalysisResult, AstEnumDefinition, AstEnumVariantDefinition, AstStructDefinition, TypeDefinition } from "../analyze/analysis_types.ts";
 import { createWriter } from "../utils/create_writer.ts";
 import { nameToSnakeCase } from "../utils/string_utils.ts";
-import { getIsForImpl, getIsReferenceType, isOptionType, isSwcAstType, isSwcNodeEnumType, isVecType, writeHeader, writeType } from "./helpers.ts";
+import {
+  getAstStructForType,
+  getIsForImpl,
+  getIsReferenceType,
+  isOptionType,
+  isSwcAstType,
+  isSwcNodeEnumType,
+  isVecType,
+  writeHeader,
+  writeType,
+} from "./helpers.ts";
 
 export function generate(analysisResult: AnalysisResult): string {
   const writer = createWriter();
@@ -27,7 +37,8 @@ export function generate(analysisResult: AnalysisResult): string {
   return writer.toString();
 
   function writeUseDeclarations() {
-    writer.writeLine("use std::mem::{self, MaybeUninit};");
+    writer.writeLine("use std::cell::RefCell;");
+    writer.writeLine("use std::mem;");
     writer.writeLine("use bumpalo::Bump;");
     writer.writeLine("use swc_common::{Span, Spanned};");
     writer.write("pub use swc_ecmascript::ast::{self as swc_ast, ");
@@ -42,7 +53,7 @@ export function generate(analysisResult: AnalysisResult): string {
   function writeBumpAllocator() {
     // todo: probably do something else... how would this work across many files on different threads?
     writer.write("thread_local!").block(() => {
-      writer.writeLine("static LOCAL_BUMP_ALLOCATOR: std::cell::RefCell<Bump> = std::cell::RefCell::new(Bump::new());");
+      writer.writeLine("static LOCAL_BUMP_ALLOCATOR: RefCell<Bump> = RefCell::new(Bump::new());");
     }).blankLine();
   }
 
@@ -127,7 +138,9 @@ export function generate(analysisResult: AnalysisResult): string {
     writer.blankLine();
 
     writeTrait("NodeTrait<'a>", "Node<'a>", () => {
-      implementTraitMethod("parent", "Option<Node<'a>>");
+      implementTraitMethod("parent", "Option<Node<'a>>", false, (fullName, struct) => {
+        writer.write(`${fullName}(node) => NodeTrait::parent(*node)`);
+      });
       writer.blankLine();
       implementTraitMethod("children", "Vec<Node<'a>>");
       writer.blankLine();
@@ -227,6 +240,21 @@ export function generate(analysisResult: AnalysisResult): string {
         writer.write("pub fn is<T: CastableNode<'a>>(&self) -> bool").block(() => {
           writer.writeLine("self.kind() == T::kind()");
         });
+
+        // add a preferred non-nullable `parent()` method if all the variants have a parent
+        if (enumDef.variants.every(v => getAstStructForType(analysisResult, v.tupleArg)?.parents.length ?? 0 > 0)) {
+          const variantStructs = enumDef.variants.map(v => getAstStructForType(analysisResult, v.tupleArg)!);
+          writer.write("pub fn parent(&self) -> ");
+          if (variantStructs.every(s => s.parents.length === 1 && s.parents[0].name === variantStructs[0].parents[0].name)) {
+            writer.write(`&'a ${variantStructs[0].parents[0].name}<'a>`).block(() => {
+              writer.writeLine(`NodeTrait::parent(self).unwrap().expect::<${variantStructs[0].parents[0].name}>()`);
+            });
+          } else {
+            writer.write("Node<'a>").block(() => {
+              writer.writeLine("NodeTrait::parent(self).unwrap()");
+            });
+          }
+        }
       }).blankLine();
 
       writeTrait("Spanned", `${enumDef.name}<'a>`, () => {
@@ -235,7 +263,13 @@ export function generate(analysisResult: AnalysisResult): string {
       writer.blankLine();
 
       writeTrait("NodeTrait<'a>", `${enumDef.name}<'a>`, () => {
-        implementTraitMethod("parent", "Option<Node<'a>>", false);
+        implementTraitMethod("parent", "Option<Node<'a>>", false, (fullName, variant) => {
+          writer.write(`${fullName}(node) => NodeTrait::parent(`);
+          if (variant.tupleArg != null && isSwcAstType(analysisResult, variant.tupleArg)) {
+            writer.write("*");
+          }
+          writer.write(`node)`);
+        });
         writer.blankLine();
         implementTraitMethod("children", "Vec<Node<'a>>", false);
         writer.blankLine();
@@ -318,15 +352,30 @@ export function generate(analysisResult: AnalysisResult): string {
 
     function writeEnumFunctions() {
       writer.write(
-        `fn ${getViewForFunctionName(enumDef.name)}<'a>(inner: &'a swc_ast::${enumDef.name}, parent: Node<'a>, bump: &'a Bump) -> ${enumDef.name}<'a>`,
+        `fn ${getViewForFunctionName(enumDef.name)}<'a>(inner: &'a swc_ast::${enumDef.name}, bump: &'a Bump) -> ${enumDef.name}<'a>`,
       ).block(() => {
         // writer.writeLine(`println!("Entered ${enumDef.name}");`);
         writer.write("match inner").block(() => {
           for (const variant of enumDef.variants) {
             const fullName = `${enumDef.name}::${variant.name}`;
             writer.write(`swc_ast::${fullName}(value) => ${fullName}(`);
-            writeGetViewTypeExpression(variant.tupleArg!, false, "value");
+            writeGetViewTypeExpression(variant.tupleArg!, "value");
             writer.write("),");
+            writer.newLine();
+          }
+        });
+      }).blankLine();
+
+      writer.write(
+        `fn ${getSetParentForFunctionName(enumDef.name)}<'a>(node: &${enumDef.name}<'a>, parent: Node<'a>)`,
+      ).block(() => {
+        // writer.writeLine(`println!("Entered ${enumDef.name}");`);
+        writer.write("match node").block(() => {
+          for (const variant of enumDef.variants) {
+            const fullName = `${enumDef.name}::${variant.name}`;
+            writer.write(`${fullName}(value) => `);
+            writeSetParentExpression(variant.tupleArg!, "value");
+            writer.write(",");
             writer.newLine();
           }
         });
@@ -340,7 +389,7 @@ export function generate(analysisResult: AnalysisResult): string {
 
     writeStruct();
     writer.blankLine();
-    writeStructFunction();
+    writeStructFunctions();
 
     function writeStruct() {
       writeDocs(struct.docs);
@@ -348,9 +397,9 @@ export function generate(analysisResult: AnalysisResult): string {
       writer.write(`pub struct ${struct.name}<'a>`).block(() => {
         if (struct.parents.length > 0) {
           if (struct.parents.length === 1) {
-            writer.writeLine(`pub parent: &'a ${struct.parents[0].name}<'a>,`);
+            writer.writeLine(`parent: Option<&'a ${struct.parents[0].name}<'a>>,`);
           } else {
-            writer.writeLine(`pub parent: Node<'a>,`);
+            writer.writeLine(`parent: Option<Node<'a>>,`);
           }
         }
         if (struct.name === "Module" || struct.name === "Script") {
@@ -368,9 +417,21 @@ export function generate(analysisResult: AnalysisResult): string {
         }
       });
 
-      if (implFields.length > 0) {
+      if (implFields.length > 0 || struct.parents.length > 0) {
         writer.blankLineIfLastNot();
         writer.write(`impl<'a> ${struct.name}<'a>`).block(() => {
+          if (struct.parents.length > 0) {
+            writer.write("pub fn parent(&self) -> ");
+            if (struct.parents.length === 1) {
+              writer.write(`&'a ${struct.parents[0].name}<'a>`);
+            } else {
+              writer.write(`Node<'a>`);
+            }
+            writer.block(() => {
+              writer.writeLine(`self.parent.unwrap()`);
+            });
+          }
+
           for (const field of implFields) {
             const isReferenceType = getIsReferenceType(analysisResult, field.type);
             if (!writer.isAtStartOfFirstLineOfBlock()) {
@@ -416,9 +477,9 @@ export function generate(analysisResult: AnalysisResult): string {
             writer.write("None");
           } else {
             if (struct.parents.length === 1) {
-              writer.write("Some(self.parent.into())");
+              writer.write("Some(self.parent.unwrap().into())");
             } else {
-              writer.write("Some(self.parent.clone())");
+              writer.write("Some(self.parent.unwrap().clone())");
             }
           }
           writer.newLine();
@@ -548,15 +609,14 @@ export function generate(analysisResult: AnalysisResult): string {
       }
     }
 
-    function writeStructFunction() {
+    function writeStructFunctions() {
       writer.write(`fn ${getViewForFunctionName(struct.name)}<'a>(`);
       if (struct.name === "Module") {
         writer.write(`source_file_info: &'a ModuleInfo<'a>`);
       } else if (struct.name === "Script") {
         writer.write(`source_file_info: &'a ScriptInfo<'a>`);
       } else {
-        writer.write(`inner: &'a swc_ast::${struct.name}, `);
-        writer.write(`parent: Node<'a>`);
+        writer.write(`inner: &'a swc_ast::${struct.name}`);
       }
       writer.write(", bump: &'a Bump");
       writer.write(`) -> &'a ${struct.name}<'a>`);
@@ -583,12 +643,7 @@ export function generate(analysisResult: AnalysisResult): string {
         writer.write(`let node = bump.alloc(${struct.name} `).inlineBlock(() => {
           writer.write("inner,").newLine();
           if (struct.parents.length > 0) {
-            if (struct.parents.length === 1) {
-              writer.write(`parent: parent.expect::<${struct.parents[0].name}>()`);
-            } else {
-              writer.write("parent");
-            }
-            writer.write(",").newLine();
+            writer.write("parent: None,").newLine();
           }
           if (struct.name === "Module" || struct.name === "Script") {
             writer.write("source_file: source_file_info.source_file,").newLine();
@@ -596,38 +651,53 @@ export function generate(analysisResult: AnalysisResult): string {
             writer.write("comments,").newLine();
           }
           for (const field of structFields) {
+            writer.write(`${field.name}: `);
+            writeGetViewTypeExpression(field.type, `&inner.${field.name}`);
             if (isVecType(field.type)) {
-              writer.writeLine(`${field.name}: Vec::with_capacity(inner.${field.name}.len()),`);
-            } else if (isOptionType(field.type)) {
-              writer.writeLine(`${field.name}: None,`);
-            } else {
-              writer.writeLine(`${field.name}: unsafe { MaybeUninit::uninit().assume_init() },`);
+              writer.write(".collect()");
             }
+            writer.write(`,`).newLine();
           }
         }).write(");").newLine();
         if (structFields.length > 0) {
-          // hack to get it to avoid the borrow checker (because `.into()` will do a transmute)
           writer.writeLine(`let parent: Node<'a> = (&*node).into();`);
-          // writer.writeLine(`let parent = Node::${struct.name}(node);`);
 
-          for (const [i, field] of structFields.entries()) {
-            const shouldCloneParent = i < structFields.length - 1;
+          for (const field of structFields) {
             if (isVecType(field.type)) {
-              writer.write(`node.${field.name}.extend(`);
+              writeSetParentExpression(field.type, `node.${field.name}`);
             } else {
-              writer.write(`node.${field.name} = `);
+              writeSetParentExpression(field.type, `&node.${field.name}`);
+              writer.write(";");
             }
-            writeGetViewTypeExpression(field.type, shouldCloneParent, `&inner.${field.name}`);
-            if (isVecType(field.type)) {
-              writer.write(")");
-            }
-            writer.write(";").newLine();
+            writer.newLine();
           }
         }
 
         // writer.writeLine(`println!("Exited ${struct.name}");`);
         writer.writeLine("node");
       });
+
+      if (struct.parents.length > 0) {
+        writer.blankLine();
+        writer.write(`fn ${getSetParentForFunctionName(struct.name)}<'a>(`);
+        writer.write(`node: &${struct.name}<'a>, `);
+        writer.write(`parent: Node<'a>)`).block(() => {
+          // For some reason having a `Cell<Option<T>>` field for the parent in the struct
+          // was causing infering lifetimes to not work at all. The workaround here is to
+          // get rid of the cell and just do here what's done in an UnsafeCell...
+          // Seems to work, but not sure if it's ok to do...
+          writer.write("unsafe").block(() => {
+            writer.writeLine(`let node_ptr = node as *const ${struct.name}<'a> as *mut ${struct.name}<'a>;`);
+            writer.write(`(*node_ptr).parent.replace(`);
+            if (struct.parents.length === 1) {
+              writer.write(`parent.expect::<${struct.parents[0].name}>()`);
+            } else {
+              writer.write("parent");
+            }
+            writer.write(");");
+          });
+        });
+      }
     }
   }
 
@@ -641,7 +711,7 @@ export function generate(analysisResult: AnalysisResult): string {
     });
   }
 
-  function writeGetViewTypeExpression(type: TypeDefinition, shouldCloneParent: boolean, name: string) {
+  function writeGetViewTypeExpression(type: TypeDefinition, name: string) {
     if (type.kind === "Primitive") {
       throw new Error("Primitive types not handled here.");
     }
@@ -649,7 +719,7 @@ export function generate(analysisResult: AnalysisResult): string {
     if (type.name === "Option") {
       writer.write(`match ${name} `).inlineBlock(() => {
         writer.write("Some(value) => Some(");
-        writeGetViewTypeExpression(type.genericArgs[0], shouldCloneParent, "value");
+        writeGetViewTypeExpression(type.genericArgs[0], "value");
         if (isVecType(type.genericArgs[0])) {
           writer.write(".collect()");
         }
@@ -658,14 +728,28 @@ export function generate(analysisResult: AnalysisResult): string {
       });
     } else if (type.name === "Vec") {
       writer.write(`${name.replace(/^&/, "")}.iter().map(|value| `);
-      writeGetViewTypeExpression(type.genericArgs[0], true, "value");
+      writeGetViewTypeExpression(type.genericArgs[0], "value");
       writer.write(")");
     } else {
-      writer.write(`${getViewForFunctionName(type.name)}(${name}, parent`);
-      if (shouldCloneParent) {
-        writer.write(".clone()");
-      }
-      writer.write(`, bump)`);
+      writer.write(`${getViewForFunctionName(type.name)}(${name}, bump)`);
+    }
+  }
+
+  function writeSetParentExpression(type: TypeDefinition, name: string) {
+    if (type.kind === "Primitive") {
+      throw new Error("Primitive types not handled here.");
+    }
+
+    if (type.name === "Option") {
+      writer.write(`if let Some(value) = ${name} `).inlineBlock(() => {
+        writeSetParentExpression(type.genericArgs[0], "value");
+      });
+    } else if (type.name === "Vec") {
+      writer.write(`for value in ${name.replace(/^&/, "")}.iter() `).inlineBlock(() => {
+        writeSetParentExpression(type.genericArgs[0], "value");
+      });
+    } else {
+      writer.write(`${getSetParentForFunctionName(type.name)}(${name}, parent)`);
     }
   }
 
@@ -685,5 +769,9 @@ export function generate(analysisResult: AnalysisResult): string {
 
   function getViewForFunctionName(name: string) {
     return `get_view_for_${nameToSnakeCase(name)}`;
+  }
+
+  function getSetParentForFunctionName(name: string) {
+    return `set_parent_for_${nameToSnakeCase(name)}`;
   }
 }
