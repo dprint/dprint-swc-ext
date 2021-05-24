@@ -1,14 +1,14 @@
 {
   "binaries": [
     {
-      "path": "https://bvm.land/deno/1.7.4.json",
-      "checksum": "553f05a6d94a13fc20b2bb16298bc8efa80b08241f4258754a68bbea5c5026b7",
-      "version": "^1.7.4"
+      "path": "https://bvm.land/deno/1.10.2.json",
+      "checksum": "2c1a45a18757e9e9026991329420a77a8f53f843d9bb95aa8b2da43a78d115ef",
+      "version": "1.10.2"
     },
     {
-      "path": "https://github.com/dprint/dprint/releases/download/0.13.0/bvm.json",
-      "checksum": "77ac9b469c980c3c484bc937570b7aeb673ec2818cbdc996c659672f9d1f44a6",
-      "version": "0.13.0"
+      "path": "https://github.com/dprint/dprint/releases/download/0.14.1/bvm.json",
+      "checksum": "000ae66dcf123e95ce83e745a7dafc8f8db46ab197ba17e76fa61e2aa77d062e",
+      "version": "0.14.1"
     }
   ]
 }
