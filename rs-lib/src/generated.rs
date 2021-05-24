@@ -16983,6 +16983,10 @@ impl<'a> TsImportEqualsDecl<'a> {
   pub fn is_export(&self) -> bool {
     self.inner.is_export
   }
+
+  pub fn is_type_only(&self) -> bool {
+    self.inner.is_type_only
+  }
 }
 
 impl<'a> Spanned for TsImportEqualsDecl<'a> {
@@ -18590,6 +18594,10 @@ impl<'a> TsParamProp<'a> {
   /// At least one of `accessibility` or `readonly` must be set.
   pub fn accessibility(&self) -> Option<Accessibility> {
     self.inner.accessibility
+  }
+
+  pub fn is_override(&self) -> bool {
+    self.inner.is_override
   }
 
   pub fn readonly(&self) -> bool {

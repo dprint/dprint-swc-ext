@@ -3102,6 +3102,7 @@ export class TsImportEqualsDecl extends BaseNode {
     | TsModuleBlock;
   declare!: boolean;
   is_export!: boolean;
+  is_type_only!: boolean;
   id!: Ident;
   module_ref!: TsModuleRef;
 
@@ -3417,6 +3418,7 @@ export class TsParamProp extends BaseNode {
   decorators!: Array<Decorator>;
   /** At least one of `accessibility` or `readonly` must be set. */
   accessibility!: Accessibility | undefined;
+  is_override!: boolean;
   readonly!: boolean;
   param!: TsParamPropParam;
 

@@ -4720,6 +4720,15 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.begin_object_value(self.w)?;
     write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
+    let value = &node.is_type_only;
+    self.f.begin_object_key(self.w, false)?;
+    self.f.begin_string(self.w)?;
+    self.f.write_string_fragment(self.w, "isTypeOnly")?;
+    self.f.end_string(self.w)?;
+    self.f.end_object_key(self.w)?;
+    self.f.begin_object_value(self.w)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
+    self.f.end_object_value(self.w)?;
     let value = &node.id;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;
@@ -5508,6 +5517,15 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
       }
       None => {}
     }
+    let value = &node.is_override;
+    self.f.begin_object_key(self.w, false)?;
+    self.f.begin_string(self.w)?;
+    self.f.write_string_fragment(self.w, "isOverride")?;
+    self.f.end_string(self.w)?;
+    self.f.end_object_key(self.w)?;
+    self.f.begin_object_value(self.w)?;
+    write!(self.w, "{}", to_json_string(value)?)?;
+    self.f.end_object_value(self.w)?;
     let value = &node.readonly;
     self.f.begin_object_key(self.w, false)?;
     self.f.begin_string(self.w)?;

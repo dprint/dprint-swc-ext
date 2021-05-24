@@ -2,7 +2,7 @@ mod comments;
 mod tokens;
 mod types;
 
-#[allow(invalid_value, clippy::all)]
+#[allow(clippy::all)]
 #[rustfmt::skip]
 mod generated;
 
