@@ -1,6 +1,6 @@
 [package]
 name = "dprint-swc-ecma-ast-view"
-version = "0.22.0"
+version = "0.23.0"
 authors = ["David Sherret <dsherret@gmail.com>"]
 description = "View of the swc AST that's easier to navigate."
 edition = "2018"
@@ -15,7 +15,7 @@ serialize = ["serde_json"]
 [dependencies]
 swc_common = "0.10.21"
 swc_atoms = "0.2.6"
-swc_ecmascript = { version = "0.44.0", features = ["parser"] }
+swc_ecmascript = { version = "0.45.0", features = ["parser"] }
 num-bigint = "0.2"
 bumpalo = "3.6.1"
 fnv = "1.0.7"
