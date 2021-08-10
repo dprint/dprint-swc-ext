@@ -107,7 +107,8 @@ let tokens: Vec<swc_ecmascript::parser::token::TokenAndSpan> = ...;
 // setup for creating a view
 let program_info = ProgramInfo {
   program: &program,
-  // optionally provide the swc_common::SourceFile for using text related methods
+  // optionally provide the swc_common::SourceFile or an implementation
+  // of the `SourceFile` trait for using text related methods
   source_file: Some(&source_file),
   // optionally provide the comments for comment related methods
   comments: Some(&comments)

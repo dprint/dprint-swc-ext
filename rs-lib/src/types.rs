@@ -1,7 +1,8 @@
 use crate::comments::*;
 use crate::generated::*;
 use crate::tokens::*;
-use swc_common::{comments::SingleThreadedComments, BytePos, Span, Spanned};
+use swc_common::comments::SingleThreadedCommentsMapInner;
+use swc_common::{BytePos, Span, Spanned};
 use swc_ecmascript::parser::token::TokenAndSpan;
 
 pub enum NodeOrToken<'a> {
@@ -40,9 +41,34 @@ impl<'a> Spanned for NodeOrToken<'a> {
   }
 }
 
+pub trait SourceFile {
+  fn text(&self) -> &str;
+  fn lookup_line(&self, pos: BytePos) -> Option<usize>;
+  fn start_pos(&self) -> BytePos;
+  fn end_pos(&self) -> BytePos;
+}
+
+impl SourceFile for swc_common::SourceFile {
+  fn text(&self) -> &str {
+    &self.src
+  }
+
+  fn lookup_line(&self, pos: BytePos) -> Option<usize> {
+    self.lookup_line(pos)
+  }
+
+  fn start_pos(&self) -> BytePos {
+    self.start_pos
+  }
+
+  fn end_pos(&self) -> BytePos {
+    self.end_pos
+  }
+}
+
 /// A Module or Script node.
 pub trait RootNode<'a> {
-  fn source_file(&self) -> Option<&'a swc_common::SourceFile>;
+  fn source_file(&self) -> Option<&'a dyn SourceFile>;
   fn tokens(&self) -> Option<&'a TokenContainer<'a>>;
   fn comments(&self) -> Option<&'a CommentContainer<'a>>;
 
@@ -58,7 +84,7 @@ pub trait RootNode<'a> {
 macro_rules! implement_root_node {
   ($name:ty) => {
     impl<'a> RootNode<'a> for $name {
-      fn source_file(&self) -> Option<&'a swc_common::SourceFile> {
+      fn source_file(&self) -> Option<&'a dyn SourceFile> {
         self.source_file
       }
 
@@ -140,7 +166,7 @@ impl<'a> From<Program<'a>> for Node<'a> {
 }
 
 impl<'a> RootNode<'a> for Program<'a> {
-  fn source_file(&self) -> Option<&'a swc_common::SourceFile> {
+  fn source_file(&self) -> Option<&'a dyn SourceFile> {
     match self {
       Program::Module(module) => module.source_file,
       Program::Script(script) => script.source_file,
@@ -249,7 +275,7 @@ where
   fn text_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a str {
     let span = self.span();
     let source_file = root_node_to_source_file(program);
-    &source_file.src[(span.lo.0 as usize)..(span.hi.0 as usize)]
+    &source_file.text()[(span.lo.0 as usize)..(span.hi.0 as usize)]
   }
 
   fn leading_comments_fast<'a>(&self, program: &dyn RootNode<'a>) -> CommentsIterator<'a> {
@@ -492,7 +518,7 @@ impl TokenExt for TokenAndSpan {
   }
 }
 
-fn root_node_to_source_file<'a>(root_node: &dyn RootNode<'a>) -> &'a swc_common::SourceFile {
+fn root_node_to_source_file<'a>(root_node: &dyn RootNode<'a>) -> &'a dyn SourceFile {
   root_node
     .source_file()
     .expect("The source file must be provided to `with_view` in order to use this method.")
@@ -514,7 +540,7 @@ fn root_node_to_comment_container<'a>(root_node: &dyn RootNode<'a>) -> &'a Comme
 
 fn get_column_at_pos(program: &dyn RootNode, pos: BytePos) -> usize {
   let source_file = root_node_to_source_file(program);
-  let text_bytes = source_file.src.as_bytes();
+  let text_bytes = source_file.text().as_bytes();
   let pos = pos.0 as usize;
   let mut line_start = 0;
   for i in (0..pos).rev() {
@@ -523,7 +549,7 @@ fn get_column_at_pos(program: &dyn RootNode, pos: BytePos) -> usize {
       break;
     }
   }
-  let text_slice = &source_file.src[line_start..pos];
+  let text_slice = &source_file.text()[line_start..pos];
   text_slice.chars().count()
 }
 
@@ -533,27 +559,33 @@ pub trait CastableNode<'a> {
 }
 
 #[derive(Clone, Copy)]
+pub struct Comments<'a> {
+  pub leading: &'a SingleThreadedCommentsMapInner,
+  pub trailing: &'a SingleThreadedCommentsMapInner,
+}
+
+#[derive(Clone, Copy)]
 pub struct ProgramInfo<'a> {
   pub program: &'a swc_ecmascript::ast::Program,
-  pub source_file: Option<&'a swc_common::SourceFile>,
+  pub source_file: Option<&'a dyn SourceFile>,
   pub tokens: Option<&'a [TokenAndSpan]>,
-  pub comments: Option<&'a SingleThreadedComments>,
+  pub comments: Option<Comments<'a>>,
 }
 
 #[derive(Clone, Copy)]
 pub struct ModuleInfo<'a> {
   pub module: &'a swc_ecmascript::ast::Module,
-  pub source_file: Option<&'a swc_common::SourceFile>,
+  pub source_file: Option<&'a dyn SourceFile>,
   pub tokens: Option<&'a [TokenAndSpan]>,
-  pub comments: Option<&'a SingleThreadedComments>,
+  pub comments: Option<Comments<'a>>,
 }
 
 #[derive(Clone, Copy)]
 pub struct ScriptInfo<'a> {
   pub script: &'a swc_ecmascript::ast::Script,
-  pub source_file: Option<&'a swc_common::SourceFile>,
+  pub source_file: Option<&'a dyn SourceFile>,
   pub tokens: Option<&'a [TokenAndSpan]>,
-  pub comments: Option<&'a SingleThreadedComments>,
+  pub comments: Option<Comments<'a>>,
 }
 
 #[derive(Clone)]

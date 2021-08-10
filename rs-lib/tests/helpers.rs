@@ -28,11 +28,15 @@ pub fn run_test_with_module(
   run_test: impl Fn(&dprint_swc_ecma_ast_view::Module),
 ) {
   let (module, tokens, source_file, comments) = get_swc_module(file_path, file_text);
+  let (leading, trailing) = comments.borrow_all();
   let info = dprint_swc_ecma_ast_view::ModuleInfo {
     module: &module,
     source_file: Some(&source_file),
     tokens: Some(&tokens),
-    comments: Some(&comments),
+    comments: Some(dprint_swc_ecma_ast_view::Comments {
+      leading: &leading,
+      trailing: &trailing,
+    }),
   };
   dprint_swc_ecma_ast_view::with_ast_view_for_module(info, |module| {
     run_test(module);
@@ -45,11 +49,15 @@ pub fn run_test_with_script(
   run_test: impl Fn(&dprint_swc_ecma_ast_view::Script),
 ) {
   let (script, tokens, source_file, comments) = get_swc_script(file_path, file_text);
+  let (leading, trailing) = comments.borrow_all();
   let info = dprint_swc_ecma_ast_view::ScriptInfo {
     script: &script,
     source_file: Some(&source_file),
     tokens: Some(&tokens),
-    comments: Some(&comments),
+    comments: Some(dprint_swc_ecma_ast_view::Comments {
+      leading: &leading,
+      trailing: &trailing,
+    }),
   };
   dprint_swc_ecma_ast_view::with_ast_view_for_script(info, |script| {
     run_test(script);

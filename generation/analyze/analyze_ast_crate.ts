@@ -100,7 +100,7 @@ export function analyzeAstCrate() {
       if (enumDec.visibility !== "public") {
         continue;
       }
-      if (enumDec.name === "Program" || enumDec.name === "TsSignatureDecl") {
+      if (enumDec.name === "Program" || enumDec.name === "TsSignatureDecl" || enumDec.name === "TargetEnv") {
         continue;
       }
 

@@ -403,7 +403,7 @@ export function generate(analysisResult: AnalysisResult): string {
           }
         }
         if (struct.name === "Module" || struct.name === "Script") {
-          writer.writeLine("pub source_file: Option<&'a swc_common::SourceFile>,");
+          writer.writeLine("pub source_file: Option<&'a dyn SourceFile>,");
           writer.writeLine("pub tokens: Option<&'a TokenContainer<'a>>,");
           writer.writeLine("pub comments: Option<&'a CommentContainer<'a>>,");
         }
@@ -632,7 +632,8 @@ export function generate(analysisResult: AnalysisResult): string {
             `let comments = source_file_info.comments.map(|c| &*bump.alloc(CommentContainer::new(`,
           );
           writer.indent(() => {
-            writer.writeLine("c,");
+            writer.writeLine("c.leading,");
+            writer.writeLine("c.trailing,");
             writer.writeLine(`tokens.expect("Tokens must be provided when using comments."),`);
             writer.writeLine(`source_file_info.source_file.expect("Source file must be provided when using comments"),`);
           });

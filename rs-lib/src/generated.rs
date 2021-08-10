@@ -13028,7 +13028,7 @@ fn set_parent_for_method_prop<'a>(node: &MethodProp<'a>, parent: Node<'a>) {
 
 #[derive(Clone)]
 pub struct Module<'a> {
-  pub source_file: Option<&'a swc_common::SourceFile>,
+  pub source_file: Option<&'a dyn SourceFile>,
   pub tokens: Option<&'a TokenContainer<'a>>,
   pub comments: Option<&'a CommentContainer<'a>>,
   pub inner: &'a swc_ast::Module,
@@ -13094,7 +13094,8 @@ fn get_view_for_module<'a>(source_file_info: &'a ModuleInfo<'a>, bump: &'a Bump)
   let inner = source_file_info.module;
   let tokens = source_file_info.tokens.map(|t| &*bump.alloc(TokenContainer::new(t)));
   let comments = source_file_info.comments.map(|c| &*bump.alloc(CommentContainer::new(
-    c,
+    c.leading,
+    c.trailing,
     tokens.expect("Tokens must be provided when using comments."),
     source_file_info.source_file.expect("Source file must be provided when using comments"),
   )));
@@ -14493,7 +14494,7 @@ fn set_parent_for_return_stmt<'a>(node: &ReturnStmt<'a>, parent: Node<'a>) {
 
 #[derive(Clone)]
 pub struct Script<'a> {
-  pub source_file: Option<&'a swc_common::SourceFile>,
+  pub source_file: Option<&'a dyn SourceFile>,
   pub tokens: Option<&'a TokenContainer<'a>>,
   pub comments: Option<&'a CommentContainer<'a>>,
   pub inner: &'a swc_ast::Script,
@@ -14559,7 +14560,8 @@ fn get_view_for_script<'a>(source_file_info: &'a ScriptInfo<'a>, bump: &'a Bump)
   let inner = source_file_info.script;
   let tokens = source_file_info.tokens.map(|t| &*bump.alloc(TokenContainer::new(t)));
   let comments = source_file_info.comments.map(|c| &*bump.alloc(CommentContainer::new(
-    c,
+    c.leading,
+    c.trailing,
     tokens.expect("Tokens must be provided when using comments."),
     source_file_info.source_file.expect("Source file must be provided when using comments"),
   )));

@@ -1,24 +1,23 @@
-use crate::tokens::*;
-use std::cell::Ref;
+use crate::{SourceFile, tokens::*};
 use swc_common::{
-  comments::{Comment, SingleThreadedComments, SingleThreadedCommentsMapInner},
+  comments::{Comment, SingleThreadedCommentsMapInner},
   BytePos,
 };
 
 pub struct CommentContainer<'a> {
-  pub leading: Ref<'a, SingleThreadedCommentsMapInner>,
-  pub trailing: Ref<'a, SingleThreadedCommentsMapInner>,
+  pub leading: &'a SingleThreadedCommentsMapInner,
+  pub trailing: &'a SingleThreadedCommentsMapInner,
   tokens: &'a TokenContainer<'a>,
-  source_file: &'a swc_common::SourceFile,
+  source_file: &'a dyn SourceFile,
 }
 
 impl<'a> CommentContainer<'a> {
   pub fn new(
-    comments: &'a SingleThreadedComments,
+    leading: &'a SingleThreadedCommentsMapInner,
+    trailing: &'a SingleThreadedCommentsMapInner,
     tokens: &'a TokenContainer<'a>,
-    source_file: &'a swc_common::SourceFile,
+    source_file: &'a dyn SourceFile,
   ) -> Self {
-    let (leading, trailing) = comments.borrow_all();
     CommentContainer {
       leading,
       trailing,
@@ -46,7 +45,7 @@ impl<'a> CommentContainer<'a> {
     let next_token_lo = self
       .tokens
       .get_next_token_lo(hi)
-      .unwrap_or(self.source_file.end_pos);
+      .unwrap_or(self.source_file.end_pos());
     let trailing = self.get_trailing(hi);
     let leading = self.get_leading(next_token_lo);
     combine_comment_vecs(trailing, leading)
