@@ -95,10 +95,10 @@ pub struct SourceFileTextInfo {
 }
 
 impl SourceFileTextInfo {
-  pub fn new(start_pos: BytePos, text: &str) -> Self {
+  pub fn new(start_pos: BytePos, text: String) -> Self {
     Self {
-      line_start_byte_positions: get_line_start_positions(start_pos, text),
-      text: text.to_string(),
+      line_start_byte_positions: get_line_start_positions(start_pos, &text),
+      text,
     }
   }
 }
@@ -174,7 +174,7 @@ mod test {
   fn line_and_column_index() {
     let text = "12\n3\r\n4\n5";
     for i in 0..10 {
-      let info = SourceFileTextInfo::new(BytePos(0 + i), text);
+      let info = SourceFileTextInfo::new(BytePos(0 + i), text.to_string());
       assert_pos_line_and_col(&info, 0 + i, 0, 0); // 1
       assert_pos_line_and_col(&info, 1 + i, 0, 1); // 2
       assert_pos_line_and_col(&info, 2 + i, 0, 2); // \n
@@ -191,14 +191,14 @@ mod test {
   #[test]
   #[should_panic(expected = "the provided position 0 was less than the start position 1")]
   fn line_and_column_index_panic_less_than() {
-    let info = SourceFileTextInfo::new(BytePos(1), "test");
+    let info = SourceFileTextInfo::new(BytePos(1), "test".to_string());
     info.line_and_column_index(BytePos(0));
   }
 
   #[test]
   #[should_panic(expected = "the provided position 6 was greater than the end position 5")]
   fn line_and_column_index_panic_greater_than() {
-    let info = SourceFileTextInfo::new(BytePos(1), "test");
+    let info = SourceFileTextInfo::new(BytePos(1), "test".to_string());
     info.line_and_column_index(BytePos(6));
   }
 
@@ -207,7 +207,7 @@ mod test {
     expected = "the specified line index 1 was greater or equal to the number of lines (1)"
   )]
   fn line_begin_pos_equal_number_lines() {
-    let info = SourceFileTextInfo::new(BytePos(1), "test");
+    let info = SourceFileTextInfo::new(BytePos(1), "test".to_string());
     info.line_begin_pos(1);
   }
 
