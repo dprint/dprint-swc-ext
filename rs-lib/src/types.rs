@@ -1,5 +1,6 @@
 use crate::comments::*;
 use crate::generated::*;
+use crate::source_file::SourceFile;
 use crate::tokens::*;
 use swc_common::comments::SingleThreadedCommentsMapInner;
 use swc_common::{BytePos, Span, Spanned};
@@ -38,31 +39,6 @@ impl<'a> Spanned for NodeOrToken<'a> {
       NodeOrToken::Node(node) => node.span(),
       NodeOrToken::Token(token) => token.span(),
     }
-  }
-}
-
-pub trait SourceFile {
-  fn text(&self) -> &str;
-  fn lookup_line(&self, pos: BytePos) -> Option<usize>;
-  fn start_pos(&self) -> BytePos;
-  fn end_pos(&self) -> BytePos;
-}
-
-impl SourceFile for swc_common::SourceFile {
-  fn text(&self) -> &str {
-    &self.src
-  }
-
-  fn lookup_line(&self, pos: BytePos) -> Option<usize> {
-    self.lookup_line(pos)
-  }
-
-  fn start_pos(&self) -> BytePos {
-    self.start_pos
-  }
-
-  fn end_pos(&self) -> BytePos {
-    self.end_pos
   }
 }
 
@@ -243,15 +219,11 @@ where
   }
 
   fn start_line_fast(&self, program: &dyn RootNode) -> usize {
-    root_node_to_source_file(program)
-      .lookup_line(self.lo())
-      .unwrap_or(0)
+    root_node_to_source_file(program).line_index(self.lo())
   }
 
   fn end_line_fast(&self, program: &dyn RootNode) -> usize {
-    root_node_to_source_file(program)
-      .lookup_line(self.hi())
-      .unwrap_or(0)
+    root_node_to_source_file(program).line_index(self.hi())
   }
 
   fn start_column_fast(&self, program: &dyn RootNode) -> usize {

@@ -45,6 +45,7 @@ export function generate(analysisResult: AnalysisResult): string {
     writer.write(analysisResult.plainEnums.map(e => e.name).join(", "));
     writer.write("};").newLine();
     writer.writeLine("use crate::comments::*;");
+    writer.writeLine("use crate::source_file::*;");
     writer.writeLine("use crate::tokens::*;");
     writer.writeLine("use crate::types::*;");
     writer.blankLine();

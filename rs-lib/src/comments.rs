@@ -1,4 +1,4 @@
-use crate::{SourceFile, tokens::*};
+use crate::{tokens::*, SourceFile};
 use swc_common::{
   comments::{Comment, SingleThreadedCommentsMapInner},
   BytePos,
