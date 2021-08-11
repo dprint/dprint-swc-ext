@@ -45,7 +45,7 @@ impl<'a> CommentContainer<'a> {
     let next_token_lo = self
       .tokens
       .get_next_token_lo(hi)
-      .unwrap_or(self.source_file.end_pos());
+      .unwrap_or(self.source_file.span().hi());
     let trailing = self.get_trailing(hi);
     let leading = self.get_leading(next_token_lo);
     combine_comment_vecs(trailing, leading)
