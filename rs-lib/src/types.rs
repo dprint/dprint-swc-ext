@@ -5,6 +5,7 @@ use crate::tokens::*;
 use swc_common::comments::SingleThreadedCommentsMapInner;
 use swc_common::{BytePos, Span, Spanned};
 use swc_ecmascript::parser::token::TokenAndSpan;
+use swc_ecmascript::ast::{self as swc_ast};
 
 pub enum NodeOrToken<'a> {
   Node(Node<'a>),
@@ -537,8 +538,25 @@ pub struct Comments<'a> {
 }
 
 #[derive(Clone, Copy)]
+pub enum ProgramRef<'a> {
+  Module(&'a swc_ast::Module),
+  Script(&'a swc_ast::Script),
+}
+
+impl<'a> From<&'a swc_ast::Program> for ProgramRef<'a> {
+  fn from(program: &'a swc_ast::Program) -> Self {
+    use swc_ast::Program;
+
+    match program {
+      Program::Module(module) => ProgramRef::Module(module),
+      Program::Script(script) => ProgramRef::Script(script),
+    }
+  }
+}
+
+#[derive(Clone, Copy)]
 pub struct ProgramInfo<'a> {
-  pub program: &'a swc_ecmascript::ast::Program,
+  pub program: ProgramRef<'a>,
   pub source_file: Option<&'a dyn SourceFile>,
   pub tokens: Option<&'a [TokenAndSpan]>,
   pub comments: Option<Comments<'a>>,
@@ -546,7 +564,7 @@ pub struct ProgramInfo<'a> {
 
 #[derive(Clone, Copy)]
 pub struct ModuleInfo<'a> {
-  pub module: &'a swc_ecmascript::ast::Module,
+  pub module: &'a swc_ast::Module,
   pub source_file: Option<&'a dyn SourceFile>,
   pub tokens: Option<&'a [TokenAndSpan]>,
   pub comments: Option<Comments<'a>>,
@@ -554,7 +572,7 @@ pub struct ModuleInfo<'a> {
 
 #[derive(Clone, Copy)]
 pub struct ScriptInfo<'a> {
-  pub script: &'a swc_ecmascript::ast::Script,
+  pub script: &'a swc_ast::Script,
   pub source_file: Option<&'a dyn SourceFile>,
   pub tokens: Option<&'a [TokenAndSpan]>,
   pub comments: Option<Comments<'a>>,

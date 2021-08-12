@@ -16,7 +16,7 @@ thread_local! {
 
 pub fn with_ast_view<'a, T>(info: ProgramInfo, with_view: impl FnOnce(Program<'a>) -> T) -> T {
   match info.program {
-    swc_ast::Program::Module(module) => {
+    ProgramRef::Module(module) => {
       with_ast_view_for_module(ModuleInfo {
         module,
         source_file: info.source_file,
@@ -24,7 +24,7 @@ pub fn with_ast_view<'a, T>(info: ProgramInfo, with_view: impl FnOnce(Program<'a
         comments: info.comments,
       }, |module| with_view(Program::Module(module)))
     }
-    swc_ast::Program::Script(script) => {
+    ProgramRef::Script(script) => {
       with_ast_view_for_script(ScriptInfo {
         script,
         source_file: info.source_file,

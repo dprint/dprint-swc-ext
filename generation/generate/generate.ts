@@ -61,7 +61,7 @@ export function generate(analysisResult: AnalysisResult): string {
   function writePublicFunctions() {
     writer.write("pub fn with_ast_view<'a, T>(info: ProgramInfo, with_view: impl FnOnce(Program<'a>) -> T) -> T").block(() => {
       writer.write("match info.program").block(() => {
-        writer.write("swc_ast::Program::Module(module) =>").block(() => {
+        writer.write("ProgramRef::Module(module) =>").block(() => {
           writer.write("with_ast_view_for_module(ModuleInfo ").inlineBlock(() => {
             writer.writeLine("module,");
             writer.writeLine("source_file: info.source_file,");
@@ -69,7 +69,7 @@ export function generate(analysisResult: AnalysisResult): string {
             writer.writeLine("comments: info.comments,");
           }).write(", |module| with_view(Program::Module(module)))");
         });
-        writer.write("swc_ast::Program::Script(script) =>").block(() => {
+        writer.write("ProgramRef::Script(script) =>").block(() => {
           writer.write("with_ast_view_for_script(ScriptInfo ").inlineBlock(() => {
             writer.writeLine("script,");
             writer.writeLine("source_file: info.source_file,");
