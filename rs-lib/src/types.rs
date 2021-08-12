@@ -5,7 +5,7 @@ use crate::tokens::*;
 use swc_common::comments::SingleThreadedCommentsMapInner;
 use swc_common::{BytePos, Span, Spanned};
 use swc_ecmascript::parser::token::TokenAndSpan;
-use swc_ecmascript::ast::{self as swc_ast};
+use swc_ecmascript::ast as swc_ast;
 
 pub enum NodeOrToken<'a> {
   Node(Node<'a>),
@@ -550,6 +550,27 @@ impl<'a> From<&'a swc_ast::Program> for ProgramRef<'a> {
     match program {
       Program::Module(module) => ProgramRef::Module(module),
       Program::Script(script) => ProgramRef::Script(script),
+    }
+  }
+}
+
+impl<'a> From<&'a swc_ast::Module> for ProgramRef<'a> {
+  fn from(module: &'a swc_ast::Module) -> Self {
+    ProgramRef::Module(module)
+  }
+}
+
+impl<'a> From<&'a swc_ast::Script> for ProgramRef<'a> {
+  fn from(script: &'a swc_ast::Script) -> Self {
+    ProgramRef::Script(script)
+  }
+}
+
+impl<'a> Spanned for ProgramRef<'a> {
+  fn span(&self) -> Span {
+    match self {
+      ProgramRef::Module(node) => node.span(),
+      ProgramRef::Script(node) => node.span(),
     }
   }
 }
