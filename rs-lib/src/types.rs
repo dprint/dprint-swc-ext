@@ -4,8 +4,8 @@ use crate::source_file::SourceFile;
 use crate::tokens::*;
 use swc_common::comments::SingleThreadedCommentsMapInner;
 use swc_common::{BytePos, Span, Spanned};
-use swc_ecmascript::parser::token::TokenAndSpan;
 use swc_ecmascript::ast as swc_ast;
+use swc_ecmascript::parser::token::TokenAndSpan;
 
 pub enum NodeOrToken<'a> {
   Node(Node<'a>),
