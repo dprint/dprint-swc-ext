@@ -1,6 +1,6 @@
 use swc_common::{BytePos, Span};
-use text_lines::LineAndColumnIndex;
-use text_lines::TextLines;
+pub use text_lines::LineAndColumnIndex;
+pub use text_lines::TextLines;
 
 pub trait SourceFile {
   fn text(&self) -> &str;
