@@ -94,7 +94,8 @@ impl SourceFile for swc_common::SourceFile {
       line_text
         .char_indices()
         .take_while(|(c_pos, _)| line_begin_pos + c_pos <= pos)
-        .count() - 1
+        .count()
+        - 1
     };
 
     LineAndColumnIndex {
@@ -156,6 +157,15 @@ impl SourceFileTextInfo {
 
   fn get_pos_from_relative_index(&self, relative_index: usize) -> BytePos {
     self.start_pos + BytePos(relative_index as u32)
+  }
+}
+
+impl std::fmt::Debug for SourceFileTextInfo {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    f.debug_struct("SourceFileTextInfo")
+      .field("start_pos", &self.start_pos)
+      .field("text", &self.text)
+      .finish()
   }
 }
 
