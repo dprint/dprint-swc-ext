@@ -13,7 +13,8 @@ export type ClassMember =
   | ClassProp
   | PrivateProp
   | TsIndexSignature
-  | EmptyStmt;
+  | EmptyStmt
+  | StaticBlock;
 
 export type Decl =
   | ClassDecl
@@ -870,6 +871,7 @@ export enum NodeKind {
   SeqExpr,
   SetterProp,
   SpreadElement,
+  StaticBlock,
   Str,
   Super,
   SwitchCase,
@@ -1035,6 +1037,7 @@ export type Node =
 | SeqExpr
 | SetterProp
 | SpreadElement
+| StaticBlock
 | Str
 | Super
 | SwitchCase
@@ -2675,6 +2678,21 @@ export class SpreadElement extends BaseNode {
     const children: Node[] = new Array(1);
     let i = 0;
     children[i++] = this.expr;
+    return children;
+  }
+}
+
+export class StaticBlock extends BaseNode {
+  kind!: NodeKind.StaticBlock;
+  parent!: Class;
+  body!: Array<Stmt>;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(this.body.length);
+    let i = 0;
+    for (const child of this.body) {
+      children[i++] = child;
+    }
     return children;
   }
 }

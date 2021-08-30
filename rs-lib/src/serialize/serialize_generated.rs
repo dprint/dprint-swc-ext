@@ -3729,7 +3729,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     Ok(())
   }
 
-  pub fn serialize_str(&mut self, node: &Str) -> Result<(), Error> {
+  pub fn serialize_static_block(&mut self, node: &StaticBlock) -> Result<(), Error> {
     self.f.begin_object(self.w)?;
     self.f.begin_object_key(self.w, true)?;
     self.f.begin_string(self.w)?;
@@ -3738,6 +3738,36 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
     self.f.write_u32(self.w, 91)?;
+    self.f.end_object_value(self.w)?;
+    self.serialize_span_props(&node.span(), false)?;
+    let value = &node.body;
+    self.f.begin_object_key(self.w, false)?;
+    self.f.begin_string(self.w)?;
+    self.f.write_string_fragment(self.w, "body")?;
+    self.f.end_string(self.w)?;
+    self.f.end_object_key(self.w)?;
+    self.f.begin_object_value(self.w)?;
+    self.f.begin_array(self.w)?;
+    for (i, item) in value.iter().enumerate() {
+      self.f.begin_array_value(self.w, i == 0)?;
+      self.serialize_stmt(item)?;
+      self.f.end_array_value(self.w)?;
+    }
+    self.f.end_array(self.w)?;
+    self.f.end_object_value(self.w)?;
+    self.f.end_object(self.w)?;
+    Ok(())
+  }
+
+  pub fn serialize_str(&mut self, node: &Str) -> Result<(), Error> {
+    self.f.begin_object(self.w)?;
+    self.f.begin_object_key(self.w, true)?;
+    self.f.begin_string(self.w)?;
+    self.f.write_string_fragment(self.w, "kind")?;
+    self.f.end_string(self.w)?;
+    self.f.end_object_key(self.w)?;
+    self.f.begin_object_value(self.w)?;
+    self.f.write_u32(self.w, 92)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.value;
@@ -3779,7 +3809,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 92)?;
+    self.f.write_u32(self.w, 93)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     self.f.end_object(self.w)?;
@@ -3794,7 +3824,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 93)?;
+    self.f.write_u32(self.w, 94)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     match &node.test {
@@ -3837,7 +3867,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 94)?;
+    self.f.write_u32(self.w, 95)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.discriminant;
@@ -3876,7 +3906,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 95)?;
+    self.f.write_u32(self.w, 96)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.tag;
@@ -3922,7 +3952,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 96)?;
+    self.f.write_u32(self.w, 97)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     self.f.end_object(self.w)?;
@@ -3937,7 +3967,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 97)?;
+    self.f.write_u32(self.w, 98)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.arg;
@@ -3961,7 +3991,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 98)?;
+    self.f.write_u32(self.w, 99)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.exprs;
@@ -4006,7 +4036,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 99)?;
+    self.f.write_u32(self.w, 100)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.tail;
@@ -4052,7 +4082,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 100)?;
+    self.f.write_u32(self.w, 101)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.block;
@@ -4101,7 +4131,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 101)?;
+    self.f.write_u32(self.w, 102)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.elem_type;
@@ -4125,7 +4155,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 102)?;
+    self.f.write_u32(self.w, 103)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.expr;
@@ -4158,7 +4188,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 103)?;
+    self.f.write_u32(self.w, 104)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.params;
@@ -4213,7 +4243,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 104)?;
+    self.f.write_u32(self.w, 105)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.check_type;
@@ -4264,7 +4294,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 105)?;
+    self.f.write_u32(self.w, 106)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.expr;
@@ -4288,7 +4318,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 106)?;
+    self.f.write_u32(self.w, 107)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.params;
@@ -4343,7 +4373,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 107)?;
+    self.f.write_u32(self.w, 108)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.params;
@@ -4404,7 +4434,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 108)?;
+    self.f.write_u32(self.w, 109)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.declare;
@@ -4461,7 +4491,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 109)?;
+    self.f.write_u32(self.w, 110)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.id;
@@ -4498,7 +4528,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 110)?;
+    self.f.write_u32(self.w, 111)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.expr;
@@ -4522,7 +4552,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 111)?;
+    self.f.write_u32(self.w, 112)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.expr;
@@ -4559,7 +4589,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 112)?;
+    self.f.write_u32(self.w, 113)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.expr;
@@ -4583,7 +4613,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 113)?;
+    self.f.write_u32(self.w, 114)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.params;
@@ -4635,7 +4665,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 114)?;
+    self.f.write_u32(self.w, 115)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.readonly;
@@ -4699,7 +4729,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 115)?;
+    self.f.write_u32(self.w, 116)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.declare;
@@ -4759,7 +4789,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 116)?;
+    self.f.write_u32(self.w, 117)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.arg;
@@ -4808,7 +4838,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 117)?;
+    self.f.write_u32(self.w, 118)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.params;
@@ -4869,7 +4899,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 118)?;
+    self.f.write_u32(self.w, 119)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.readonly;
@@ -4911,7 +4941,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 119)?;
+    self.f.write_u32(self.w, 120)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.type_param;
@@ -4935,7 +4965,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 120)?;
+    self.f.write_u32(self.w, 121)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.body;
@@ -4965,7 +4995,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 121)?;
+    self.f.write_u32(self.w, 122)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.id;
@@ -5035,7 +5065,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 122)?;
+    self.f.write_u32(self.w, 123)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.types;
@@ -5065,7 +5095,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 123)?;
+    self.f.write_u32(self.w, 124)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.kind;
@@ -5089,7 +5119,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 124)?;
+    self.f.write_u32(self.w, 125)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.lit;
@@ -5113,7 +5143,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 125)?;
+    self.f.write_u32(self.w, 126)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     match &node.readonly {
@@ -5187,7 +5217,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 126)?;
+    self.f.write_u32(self.w, 127)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.readonly;
@@ -5278,7 +5308,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 127)?;
+    self.f.write_u32(self.w, 128)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.body;
@@ -5308,7 +5338,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 128)?;
+    self.f.write_u32(self.w, 129)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.declare;
@@ -5363,7 +5393,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 129)?;
+    self.f.write_u32(self.w, 130)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.declare;
@@ -5414,7 +5444,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 130)?;
+    self.f.write_u32(self.w, 131)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.id;
@@ -5438,7 +5468,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 131)?;
+    self.f.write_u32(self.w, 132)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.expr;
@@ -5462,7 +5492,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 132)?;
+    self.f.write_u32(self.w, 133)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.type_ann;
@@ -5486,7 +5516,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 133)?;
+    self.f.write_u32(self.w, 134)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.decorators;
@@ -5556,7 +5586,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 134)?;
+    self.f.write_u32(self.w, 135)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.type_ann;
@@ -5580,7 +5610,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 135)?;
+    self.f.write_u32(self.w, 136)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.readonly;
@@ -5684,7 +5714,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 136)?;
+    self.f.write_u32(self.w, 137)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.left;
@@ -5717,7 +5747,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 137)?;
+    self.f.write_u32(self.w, 138)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.type_ann;
@@ -5741,7 +5771,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 138)?;
+    self.f.write_u32(self.w, 139)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.readonly;
@@ -5801,7 +5831,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 139)?;
+    self.f.write_u32(self.w, 140)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     self.f.end_object(self.w)?;
@@ -5816,7 +5846,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 140)?;
+    self.f.write_u32(self.w, 141)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.types;
@@ -5861,7 +5891,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 141)?;
+    self.f.write_u32(self.w, 142)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     match &node.label {
@@ -5898,7 +5928,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 142)?;
+    self.f.write_u32(self.w, 143)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.elem_types;
@@ -5928,7 +5958,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 143)?;
+    self.f.write_u32(self.w, 144)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.declare;
@@ -5983,7 +6013,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 144)?;
+    self.f.write_u32(self.w, 145)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.type_ann;
@@ -6007,7 +6037,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 145)?;
+    self.f.write_u32(self.w, 146)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.expr;
@@ -6040,7 +6070,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 146)?;
+    self.f.write_u32(self.w, 147)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.members;
@@ -6070,7 +6100,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 147)?;
+    self.f.write_u32(self.w, 148)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.op;
@@ -6103,7 +6133,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 148)?;
+    self.f.write_u32(self.w, 149)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.name;
@@ -6152,7 +6182,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 149)?;
+    self.f.write_u32(self.w, 150)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.params;
@@ -6182,7 +6212,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 150)?;
+    self.f.write_u32(self.w, 151)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.params;
@@ -6212,7 +6242,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 151)?;
+    self.f.write_u32(self.w, 152)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.asserts;
@@ -6258,7 +6288,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 152)?;
+    self.f.write_u32(self.w, 153)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.expr_name;
@@ -6282,7 +6312,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 153)?;
+    self.f.write_u32(self.w, 154)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.type_name;
@@ -6319,7 +6349,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 154)?;
+    self.f.write_u32(self.w, 155)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.types;
@@ -6349,7 +6379,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 155)?;
+    self.f.write_u32(self.w, 156)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.op;
@@ -6382,7 +6412,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 156)?;
+    self.f.write_u32(self.w, 157)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.op;
@@ -6424,7 +6454,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 157)?;
+    self.f.write_u32(self.w, 158)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.kind;
@@ -6472,7 +6502,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 158)?;
+    self.f.write_u32(self.w, 159)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.name;
@@ -6518,7 +6548,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 159)?;
+    self.f.write_u32(self.w, 160)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.test;
@@ -6551,7 +6581,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 160)?;
+    self.f.write_u32(self.w, 161)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     let value = &node.obj;
@@ -6584,7 +6614,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.write_u32(self.w, 161)?;
+    self.f.write_u32(self.w, 162)?;
     self.f.end_object_value(self.w)?;
     self.serialize_span_props(&node.span(), false)?;
     match &node.arg {
@@ -6630,6 +6660,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
       ClassMember::PrivateProp(node) => self.serialize_private_prop(node)?,
       ClassMember::TsIndexSignature(node) => self.serialize_ts_index_signature(node)?,
       ClassMember::Empty(node) => self.serialize_empty_stmt(node)?,
+      ClassMember::StaticBlock(node) => self.serialize_static_block(node)?,
     }
     Ok(())
   }

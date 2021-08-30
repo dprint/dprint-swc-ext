@@ -152,6 +152,7 @@ pub enum Node<'a> {
   SeqExpr(&'a SeqExpr<'a>),
   SetterProp(&'a SetterProp<'a>),
   SpreadElement(&'a SpreadElement<'a>),
+  StaticBlock(&'a StaticBlock<'a>),
   Str(&'a Str<'a>),
   Super(&'a Super<'a>),
   SwitchCase(&'a SwitchCase<'a>),
@@ -337,6 +338,7 @@ impl<'a> Spanned for Node<'a> {
       Node::SeqExpr(node) => node.span(),
       Node::SetterProp(node) => node.span(),
       Node::SpreadElement(node) => node.span(),
+      Node::StaticBlock(node) => node.span(),
       Node::Str(node) => node.span(),
       Node::Super(node) => node.span(),
       Node::SwitchCase(node) => node.span(),
@@ -506,6 +508,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::SeqExpr(node) => NodeTrait::parent(*node),
       Node::SetterProp(node) => NodeTrait::parent(*node),
       Node::SpreadElement(node) => NodeTrait::parent(*node),
+      Node::StaticBlock(node) => NodeTrait::parent(*node),
       Node::Str(node) => NodeTrait::parent(*node),
       Node::Super(node) => NodeTrait::parent(*node),
       Node::SwitchCase(node) => NodeTrait::parent(*node),
@@ -673,6 +676,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::SeqExpr(node) => node.children(),
       Node::SetterProp(node) => node.children(),
       Node::SpreadElement(node) => node.children(),
+      Node::StaticBlock(node) => node.children(),
       Node::Str(node) => node.children(),
       Node::Super(node) => node.children(),
       Node::SwitchCase(node) => node.children(),
@@ -840,6 +844,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::SeqExpr(node) => node.as_node(),
       Node::SetterProp(node) => node.as_node(),
       Node::SpreadElement(node) => node.as_node(),
+      Node::StaticBlock(node) => node.as_node(),
       Node::Str(node) => node.as_node(),
       Node::Super(node) => node.as_node(),
       Node::SwitchCase(node) => node.as_node(),
@@ -1007,6 +1012,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::SeqExpr(_) => NodeKind::SeqExpr,
       Node::SetterProp(_) => NodeKind::SetterProp,
       Node::SpreadElement(_) => NodeKind::SpreadElement,
+      Node::StaticBlock(_) => NodeKind::StaticBlock,
       Node::Str(_) => NodeKind::Str,
       Node::Super(_) => NodeKind::Super,
       Node::SwitchCase(_) => NodeKind::SwitchCase,
@@ -1175,6 +1181,7 @@ pub enum NodeKind {
   SeqExpr,
   SetterProp,
   SpreadElement,
+  StaticBlock,
   Str,
   Super,
   SwitchCase,
@@ -1342,6 +1349,7 @@ impl std::fmt::Display for NodeKind {
       NodeKind::SeqExpr => "SeqExpr",
       NodeKind::SetterProp => "SetterProp",
       NodeKind::SpreadElement => "SpreadElement",
+      NodeKind::StaticBlock => "StaticBlock",
       NodeKind::Str => "Str",
       NodeKind::Super => "Super",
       NodeKind::SwitchCase => "SwitchCase",
@@ -1524,6 +1532,7 @@ pub enum ClassMember<'a> {
   PrivateProp(&'a PrivateProp<'a>),
   TsIndexSignature(&'a TsIndexSignature<'a>),
   Empty(&'a EmptyStmt<'a>),
+  StaticBlock(&'a StaticBlock<'a>),
 }
 
 impl<'a> ClassMember<'a> {
@@ -1558,6 +1567,7 @@ impl<'a> Spanned for ClassMember<'a> {
       ClassMember::PrivateProp(node) => node.span(),
       ClassMember::TsIndexSignature(node) => node.span(),
       ClassMember::Empty(node) => node.span(),
+      ClassMember::StaticBlock(node) => node.span(),
     }
   }
 }
@@ -1572,6 +1582,7 @@ impl<'a> NodeTrait<'a> for ClassMember<'a> {
       ClassMember::PrivateProp(node) => NodeTrait::parent(*node),
       ClassMember::TsIndexSignature(node) => NodeTrait::parent(*node),
       ClassMember::Empty(node) => NodeTrait::parent(*node),
+      ClassMember::StaticBlock(node) => NodeTrait::parent(*node),
     }
   }
 
@@ -1584,6 +1595,7 @@ impl<'a> NodeTrait<'a> for ClassMember<'a> {
       ClassMember::PrivateProp(node) => node.children(),
       ClassMember::TsIndexSignature(node) => node.children(),
       ClassMember::Empty(node) => node.children(),
+      ClassMember::StaticBlock(node) => node.children(),
     }
   }
 
@@ -1596,6 +1608,7 @@ impl<'a> NodeTrait<'a> for ClassMember<'a> {
       ClassMember::PrivateProp(node) => node.as_node(),
       ClassMember::TsIndexSignature(node) => node.as_node(),
       ClassMember::Empty(node) => node.as_node(),
+      ClassMember::StaticBlock(node) => node.as_node(),
     }
   }
 
@@ -1608,6 +1621,7 @@ impl<'a> NodeTrait<'a> for ClassMember<'a> {
       ClassMember::PrivateProp(_) => NodeKind::PrivateProp,
       ClassMember::TsIndexSignature(_) => NodeKind::TsIndexSignature,
       ClassMember::Empty(_) => NodeKind::EmptyStmt,
+      ClassMember::StaticBlock(_) => NodeKind::StaticBlock,
     }
   }
 }
@@ -1622,6 +1636,7 @@ impl<'a> From<&ClassMember<'a>> for Node<'a> {
       ClassMember::PrivateProp(node) => (*node).into(),
       ClassMember::TsIndexSignature(node) => (*node).into(),
       ClassMember::Empty(node) => (*node).into(),
+      ClassMember::StaticBlock(node) => (*node).into(),
     }
   }
 }
@@ -1636,6 +1651,7 @@ impl<'a> From<ClassMember<'a>> for Node<'a> {
       ClassMember::PrivateProp(node) => node.into(),
       ClassMember::TsIndexSignature(node) => node.into(),
       ClassMember::Empty(node) => node.into(),
+      ClassMember::StaticBlock(node) => node.into(),
     }
   }
 }
@@ -1649,6 +1665,7 @@ fn get_view_for_class_member<'a>(inner: &'a swc_ast::ClassMember, bump: &'a Bump
     swc_ast::ClassMember::PrivateProp(value) => ClassMember::PrivateProp(get_view_for_private_prop(value, bump)),
     swc_ast::ClassMember::TsIndexSignature(value) => ClassMember::TsIndexSignature(get_view_for_ts_index_signature(value, bump)),
     swc_ast::ClassMember::Empty(value) => ClassMember::Empty(get_view_for_empty_stmt(value, bump)),
+    swc_ast::ClassMember::StaticBlock(value) => ClassMember::StaticBlock(get_view_for_static_block(value, bump)),
   }
 }
 
@@ -1661,6 +1678,7 @@ fn set_parent_for_class_member<'a>(node: &ClassMember<'a>, parent: Node<'a>) {
     ClassMember::PrivateProp(value) => set_parent_for_private_prop(value, parent),
     ClassMember::TsIndexSignature(value) => set_parent_for_ts_index_signature(value, parent),
     ClassMember::Empty(value) => set_parent_for_empty_stmt(value, parent),
+    ClassMember::StaticBlock(value) => set_parent_for_static_block(value, parent),
   }
 }
 
@@ -14834,6 +14852,88 @@ fn set_parent_for_spread_element<'a>(node: &SpreadElement<'a>, parent: Node<'a>)
   unsafe {
     let node_ptr = node as *const SpreadElement<'a> as *mut SpreadElement<'a>;
     (*node_ptr).parent.replace(parent);
+  }
+}
+
+#[derive(Clone)]
+pub struct StaticBlock<'a> {
+  parent: Option<&'a Class<'a>>,
+  pub inner: &'a swc_ast::StaticBlock,
+  pub body: Vec<Stmt<'a>>,
+}
+
+impl<'a> StaticBlock<'a> {
+  pub fn parent(&self) -> &'a Class<'a> {
+    self.parent.unwrap()
+  }
+}
+
+impl<'a> Spanned for StaticBlock<'a> {
+  fn span(&self) -> Span {
+    self.inner.span()
+  }
+}
+
+impl<'a> From<&StaticBlock<'a>> for Node<'a> {
+  fn from(node: &StaticBlock<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&StaticBlock<'a>, &'a StaticBlock<'a>>(node) };
+    Node::StaticBlock(node)
+  }
+}
+
+impl<'a> NodeTrait<'a> for StaticBlock<'a> {
+  fn parent(&self) -> Option<Node<'a>> {
+    Some(self.parent.unwrap().into())
+  }
+
+  fn children(&self) -> Vec<Node<'a>> {
+    let mut children = Vec::with_capacity(self.body.len());
+    for child in self.body.iter() {
+      children.push(child.into());
+    }
+    children
+  }
+
+  fn as_node(&self) -> Node<'a> {
+    self.into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::StaticBlock
+  }
+}
+
+impl<'a> CastableNode<'a> for StaticBlock<'a> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
+    if let Node::StaticBlock(node) = node {
+      Some(node)
+    } else {
+      None
+    }
+  }
+
+  fn kind() -> NodeKind {
+    NodeKind::StaticBlock
+  }
+}
+
+fn get_view_for_static_block<'a>(inner: &'a swc_ast::StaticBlock, bump: &'a Bump) -> &'a StaticBlock<'a> {
+  let node = bump.alloc(StaticBlock {
+    inner,
+    parent: None,
+    body: inner.body.iter().map(|value| get_view_for_stmt(value, bump)).collect(),
+  });
+  let parent: Node<'a> = (&*node).into();
+  for value in node.body.iter() {
+    set_parent_for_stmt(value, parent)
+  }
+  node
+}
+
+fn set_parent_for_static_block<'a>(node: &StaticBlock<'a>, parent: Node<'a>) {
+  unsafe {
+    let node_ptr = node as *const StaticBlock<'a> as *mut StaticBlock<'a>;
+    (*node_ptr).parent.replace(parent.expect::<Class>());
   }
 }
 

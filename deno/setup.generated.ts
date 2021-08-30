@@ -203,6 +203,8 @@ function getNodeClass(node: any) {
       return types.SetterProp;
     case types.NodeKind.SpreadElement:
       return types.SpreadElement;
+    case types.NodeKind.StaticBlock:
+      return types.StaticBlock;
     case types.NodeKind.Str:
       return types.Str;
     case types.NodeKind.Super:
