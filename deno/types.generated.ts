@@ -2685,14 +2685,12 @@ export class SpreadElement extends BaseNode {
 export class StaticBlock extends BaseNode {
   kind!: NodeKind.StaticBlock;
   parent!: Class;
-  body!: Array<Stmt>;
+  body!: BlockStmt;
 
   getChildren(): Node[] {
-    const children: Node[] = new Array(this.body.length);
+    const children: Node[] = new Array(1);
     let i = 0;
-    for (const child of this.body) {
-      children[i++] = child;
-    }
+    children[i++] = this.body;
     return children;
   }
 }

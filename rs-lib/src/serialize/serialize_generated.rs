@@ -3747,13 +3747,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.f.begin_array(self.w)?;
-    for (i, item) in value.iter().enumerate() {
-      self.f.begin_array_value(self.w, i == 0)?;
-      self.serialize_stmt(item)?;
-      self.f.end_array_value(self.w)?;
-    }
-    self.f.end_array(self.w)?;
+    self.serialize_block_stmt(value)?;
     self.f.end_object_value(self.w)?;
     self.f.end_object(self.w)?;
     Ok(())
