@@ -14859,7 +14859,7 @@ fn set_parent_for_spread_element<'a>(node: &SpreadElement<'a>, parent: Node<'a>)
 pub struct StaticBlock<'a> {
   parent: Option<&'a Class<'a>>,
   pub inner: &'a swc_ast::StaticBlock,
-  pub body: Vec<Stmt<'a>>,
+  pub body: &'a BlockStmt<'a>,
 }
 
 impl<'a> StaticBlock<'a> {
@@ -14887,10 +14887,8 @@ impl<'a> NodeTrait<'a> for StaticBlock<'a> {
   }
 
   fn children(&self) -> Vec<Node<'a>> {
-    let mut children = Vec::with_capacity(self.body.len());
-    for child in self.body.iter() {
-      children.push(child.into());
-    }
+    let mut children = Vec::with_capacity(1);
+    children.push(self.body.into());
     children
   }
 
@@ -14921,12 +14919,10 @@ fn get_view_for_static_block<'a>(inner: &'a swc_ast::StaticBlock, bump: &'a Bump
   let node = bump.alloc(StaticBlock {
     inner,
     parent: None,
-    body: inner.body.iter().map(|value| get_view_for_stmt(value, bump)).collect(),
+    body: get_view_for_block_stmt(&inner.body, bump),
   });
   let parent: Node<'a> = (&*node).into();
-  for value in node.body.iter() {
-    set_parent_for_stmt(value, parent)
-  }
+  set_parent_for_block_stmt(&node.body, parent);
   node
 }
 
