@@ -21,13 +21,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Cache cargo
-      uses: actions/cache@v2
-      with:
-        path: |
-          ~/rs-lib/.cargo/registry
-          ~/rs-lib/.cargo/git
-          rs-lib/target
-        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      uses: Swatinem/rust-cache@v1
 
     - name: Install bvm binaries
       if: matrix.config.kind == 'test_debug'
