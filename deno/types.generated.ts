@@ -1714,6 +1714,8 @@ export class ExportNamedSpecifier extends BaseNode {
   orig!: Ident;
   /** `Some(bar)` in `export { foo as bar }` */
   exported!: Ident | undefined;
+  /** `type` in `export { type foo as bar }` */
+  is_type_only!: boolean;
 
   getChildren(): Node[] {
     const children: Node[] = new Array(1 + (this.exported == null ? 0 : 1));
@@ -2006,6 +2008,7 @@ export class ImportNamedSpecifier extends BaseNode {
   parent!: ImportDecl;
   local!: Ident;
   imported!: Ident | undefined;
+  is_type_only!: boolean;
 
   getChildren(): Node[] {
     const children: Node[] = new Array(1 + (this.imported == null ? 0 : 1));

@@ -9856,6 +9856,11 @@ impl<'a> ExportNamedSpecifier<'a> {
   pub fn parent(&self) -> &'a NamedExport<'a> {
     self.parent.unwrap()
   }
+
+  /// `type` in `export { type foo as bar }`
+  pub fn is_type_only(&self) -> bool {
+    self.inner.is_type_only
+  }
 }
 
 impl<'a> Spanned for ExportNamedSpecifier<'a> {
@@ -11243,6 +11248,10 @@ pub struct ImportNamedSpecifier<'a> {
 impl<'a> ImportNamedSpecifier<'a> {
   pub fn parent(&self) -> &'a ImportDecl<'a> {
     self.parent.unwrap()
+  }
+
+  pub fn is_type_only(&self) -> bool {
+    self.inner.is_type_only
   }
 }
 

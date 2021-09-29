@@ -1,12 +1,12 @@
-use fnv::FnvHashMap;
+use rustc_hash::FxHashMap;
 use swc_common::BytePos;
 use swc_ecmascript::parser::token::TokenAndSpan;
 
 pub struct TokenContainer<'a> {
   pub tokens: &'a [TokenAndSpan],
-  // Uses an FnvHashMap because it has faster lookups for u32 keys than the default hasher.
-  lo_to_index: FnvHashMap<BytePos, usize>,
-  hi_to_index: FnvHashMap<BytePos, usize>,
+  // Uses an FxHashMap because it has faster lookups for u32 keys than the default hasher.
+  lo_to_index: FxHashMap<BytePos, usize>,
+  hi_to_index: FxHashMap<BytePos, usize>,
 }
 
 impl<'a> TokenContainer<'a> {

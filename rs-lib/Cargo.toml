@@ -12,12 +12,12 @@ serialize = ["serde_json"]
 
 [dependencies]
 bumpalo = "3.7.0"
-fnv = "1.0.7"
+rustc-hash = "1.1.0"
 num-bigint = "0.2"
 serde_json = { version = "1.0.66", optional = true }
 swc_atoms = "0.2.7"
-swc_common = "0.12.2"
-swc_ecmascript = { version = "0.64.0", features = ["parser"] }
+swc_common = "0.13.1"
+swc_ecmascript = { version = "0.68.0", features = ["parser"] }
 text_lines = "0.3.0"
 
 [dev-dependencies]
