@@ -1,0 +1,23 @@
+use swc_atoms::JsWord;
+use swc_common::SyntaxContext;
+
+use crate::BindingIdent;
+use crate::Ident;
+
+/// Redeclaration of `swc_ecma_utils::Id`.
+/// Contains the name and scope of the identifier, but only
+/// when the tree has been resolved with an swc resolver
+/// such as ts_resolver.
+pub type Id = (JsWord, SyntaxContext);
+
+impl<'a> Ident<'a> {
+  pub fn to_id(&self) -> Id {
+    (self.inner.sym.clone(), self.inner.span.ctxt())
+  }
+}
+
+impl<'a> BindingIdent<'a> {
+  pub fn to_id(&self) -> Id {
+    self.id.to_id()
+  }
+}

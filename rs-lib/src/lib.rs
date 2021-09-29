@@ -1,4 +1,5 @@
 mod comments;
+mod custom;
 mod source_file;
 mod tokens;
 mod types;
@@ -11,6 +12,7 @@ mod generated;
 mod serialize;
 
 pub use comments::CommentsIterator;
+pub use custom::*;
 pub use generated::*;
 pub use source_file::*;
 pub use types::*;
