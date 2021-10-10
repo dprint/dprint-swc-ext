@@ -33,7 +33,7 @@ pub fn get_multi_byte_chars(file_text: &str) -> Vec<MultiByteChar> {
   multi_byte_chars
 }
 
-pub fn byte_pos_to_char_pos(multi_byte_chars: &Vec<MultiByteChar>, byte_pos: BytePos) -> u32 {
+pub fn byte_pos_to_char_pos(multi_byte_chars: &[MultiByteChar], byte_pos: BytePos) -> u32 {
   let mut char_pos = byte_pos.0;
   for multi_byte_char in multi_byte_chars.iter() {
     if multi_byte_char.pos < byte_pos {

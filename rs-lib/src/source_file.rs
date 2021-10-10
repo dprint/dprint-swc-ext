@@ -227,7 +227,7 @@ mod test {
     }
 
     fn run_with_source_file(source_file: impl SourceFile, i: u32) {
-      assert_pos_line_and_col(&source_file, 0 + i, 0, 0); // 1
+      assert_pos_line_and_col(&source_file, i, 0, 0); // 1
       assert_pos_line_and_col(&source_file, 1 + i, 0, 1); // 2
       assert_pos_line_and_col(&source_file, 2 + i, 0, 2); // \n
       assert_pos_line_and_col(&source_file, 3 + i, 1, 0); // 3
@@ -274,12 +274,12 @@ mod test {
   fn line_start() {
     let text = "12\n3\r\n4\n5";
     for i in 0..10 {
-      run_with_source_file(SourceFileTextInfo::new(BytePos(0 + i), text.to_string()), i);
+      run_with_source_file(SourceFileTextInfo::new(BytePos(i), text.to_string()), i);
       run_with_source_file(new_swc_source_file(i, text), i);
     }
 
     fn run_with_source_file(source_file: impl SourceFile, i: u32) {
-      assert_line_start(&source_file, 0, BytePos(0 + i));
+      assert_line_start(&source_file, 0, BytePos(i));
       assert_line_start(&source_file, 1, BytePos(3 + i));
       assert_line_start(&source_file, 2, BytePos(6 + i));
       assert_line_start(&source_file, 3, BytePos(8 + i));
@@ -303,7 +303,7 @@ mod test {
   fn line_end() {
     let text = "12\n3\r\n4\n5";
     for i in 0..10 {
-      run_with_source_file(SourceFileTextInfo::new(BytePos(0 + i), text.to_string()), i);
+      run_with_source_file(SourceFileTextInfo::new(BytePos(i), text.to_string()), i);
       run_with_source_file(new_swc_source_file(i, text), i);
     }
 

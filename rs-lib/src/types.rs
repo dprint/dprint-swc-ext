@@ -46,12 +46,12 @@ impl<'a> Spanned for NodeOrToken<'a> {
 /// A Module or Script node.
 pub trait RootNode<'a> {
   fn source_file(&self) -> Option<&'a dyn SourceFile>;
-  fn tokens(&self) -> Option<&'a TokenContainer<'a>>;
-  fn comments(&self) -> Option<&'a CommentContainer<'a>>;
+  fn token_container(&self) -> Option<&'a TokenContainer<'a>>;
+  fn comment_container(&self) -> Option<&'a CommentContainer<'a>>;
 
   fn token_at_index(&self, index: usize) -> Option<&'a TokenAndSpan> {
-    let tokens = self.tokens();
-    let token_container = tokens
+    let token_container = self.token_container();
+    let token_container = token_container
       .as_ref()
       .expect("The tokens must be provided to `with_view` in order to use this method.");
     token_container.get_token_at_index(index)
@@ -65,11 +65,11 @@ macro_rules! implement_root_node {
         self.source_file
       }
 
-      fn tokens(&self) -> Option<&'a TokenContainer<'a>> {
+      fn token_container(&self) -> Option<&'a TokenContainer<'a>> {
         self.tokens
       }
 
-      fn comments(&self) -> Option<&'a CommentContainer<'a>> {
+      fn comment_container(&self) -> Option<&'a CommentContainer<'a>> {
         self.comments
       }
     }
@@ -150,14 +150,14 @@ impl<'a> RootNode<'a> for Program<'a> {
     }
   }
 
-  fn tokens(&self) -> Option<&'a TokenContainer<'a>> {
+  fn token_container(&self) -> Option<&'a TokenContainer<'a>> {
     match self {
       Program::Module(module) => module.tokens,
       Program::Script(script) => script.tokens,
     }
   }
 
-  fn comments(&self) -> Option<&'a CommentContainer<'a>> {
+  fn comment_container(&self) -> Option<&'a CommentContainer<'a>> {
     match self {
       Program::Module(module) => module.comments,
       Program::Script(script) => script.comments,
@@ -180,18 +180,12 @@ pub trait SpannedExt {
 
   fn previous_token_fast<'a>(&self, program: &dyn RootNode<'a>) -> Option<&'a TokenAndSpan> {
     let token_container = root_node_to_token_container(program);
-    let index = token_container.get_token_index_at_lo(self.lo());
-    if index == 0 {
-      None
-    } else {
-      token_container.get_token_at_index(index - 1)
-    }
+    token_container.get_previous_token(self.lo())
   }
 
   fn next_token_fast<'a>(&self, program: &dyn RootNode<'a>) -> Option<&'a TokenAndSpan> {
     let token_container = root_node_to_token_container(program);
-    let index = token_container.get_token_index_at_hi(self.hi());
-    token_container.get_token_at_index(index + 1)
+    token_container.get_next_token(self.hi())
   }
 
   fn previous_tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndSpan] {
@@ -499,14 +493,14 @@ fn root_node_to_source_file<'a>(root_node: &dyn RootNode<'a>) -> &'a dyn SourceF
 
 fn root_node_to_token_container<'a>(root_node: &dyn RootNode<'a>) -> &'a TokenContainer<'a> {
   root_node
-    .tokens()
+    .token_container()
     .as_ref()
     .expect("The tokens must be provided to `with_view` in order to use this method.")
 }
 
 fn root_node_to_comment_container<'a>(root_node: &dyn RootNode<'a>) -> &'a CommentContainer<'a> {
   root_node
-    .comments()
+    .comment_container()
     .as_ref()
     .expect("The comments must be provided to `with_view` in order to use this method.")
 }
@@ -619,5 +613,52 @@ impl<'a> Iterator for AncestorIterator<'a> {
       self.current = parent;
     }
     parent
+  }
+}
+
+#[cfg(test)]
+mod test {
+  use crate::test_helpers::run_test;
+  use crate::*;
+
+  #[test]
+  fn it_should_get_children() {
+    run_test("class Test { a: string; b: number; }", |program| {
+      let class_decl = program.children()[0].expect::<ClassDecl>();
+      let children = class_decl.class.children();
+      assert_eq!(children.len(), 2);
+      assert_eq!(children[0].text(), "a: string;");
+      assert_eq!(children[1].text(), "b: number;");
+    });
+  }
+
+  #[test]
+  fn it_should_get_all_comments() {
+    run_test(
+      r#"
+/// <reference path="foo" />
+const a = 42;
+
+/*
+ * block comment
+ */
+let b = true;
+
+// line comment
+let c = "";
+
+function foo(name: /* inline comment */ string) {
+  console.log(`hello, ${name}`); // greeting!
+}
+
+// trailing comment
+"#,
+      |program| {
+        assert_eq!(
+          program.comment_container().unwrap().all_comments().count(),
+          6
+        );
+      },
+    );
   }
 }

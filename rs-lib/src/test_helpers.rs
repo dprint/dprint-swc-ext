@@ -10,56 +10,48 @@ use swc_ecmascript::parser::{
 };
 
 #[cfg(feature = "serialize")]
-use {dprint_swc_ecma_ast_view::*, std::path::PathBuf};
+use {super::*, std::path::PathBuf};
 
-pub fn run_test(file_text: &str, run_test: impl Fn(dprint_swc_ecma_ast_view::Program)) {
+pub fn run_test(file_text: &str, run_test: impl Fn(super::Program)) {
   let file_path = Path::new("test.ts");
   run_test_with_module(file_path, file_text, |module| {
-    run_test(dprint_swc_ecma_ast_view::Program::Module(module))
+    run_test(super::Program::Module(module))
   });
   run_test_with_script(file_path, file_text, |script| {
-    run_test(dprint_swc_ecma_ast_view::Program::Script(script))
+    run_test(super::Program::Script(script))
   });
 }
 
-pub fn run_test_with_module(
-  file_path: &Path,
-  file_text: &str,
-  run_test: impl Fn(&dprint_swc_ecma_ast_view::Module),
-) {
+pub fn run_test_with_module(file_path: &Path, file_text: &str, run_test: impl Fn(&super::Module)) {
   let (module, tokens, source_file, comments) = get_swc_module(file_path, file_text);
   let (leading, trailing) = comments.borrow_all();
-  let info = dprint_swc_ecma_ast_view::ModuleInfo {
+  let info = super::ModuleInfo {
     module: &module,
     source_file: Some(&source_file),
     tokens: Some(&tokens),
-    comments: Some(dprint_swc_ecma_ast_view::Comments {
+    comments: Some(super::Comments {
       leading: &leading,
       trailing: &trailing,
     }),
   };
-  dprint_swc_ecma_ast_view::with_ast_view_for_module(info, |module| {
+  super::with_ast_view_for_module(info, |module| {
     run_test(module);
   });
 }
 
-pub fn run_test_with_script(
-  file_path: &Path,
-  file_text: &str,
-  run_test: impl Fn(&dprint_swc_ecma_ast_view::Script),
-) {
+pub fn run_test_with_script(file_path: &Path, file_text: &str, run_test: impl Fn(&super::Script)) {
   let (script, tokens, source_file, comments) = get_swc_script(file_path, file_text);
   let (leading, trailing) = comments.borrow_all();
-  let info = dprint_swc_ecma_ast_view::ScriptInfo {
+  let info = super::ScriptInfo {
     script: &script,
     source_file: Some(&source_file),
     tokens: Some(&tokens),
-    comments: Some(dprint_swc_ecma_ast_view::Comments {
+    comments: Some(super::Comments {
       leading: &leading,
       trailing: &trailing,
     }),
   };
-  dprint_swc_ecma_ast_view::with_ast_view_for_script(info, |script| {
+  super::with_ast_view_for_script(info, |script| {
     run_test(script);
   });
 }
@@ -170,12 +162,12 @@ pub fn get_swc_script(
 
 #[cfg(feature = "serialize")]
 pub fn run_serialize_test(file_text: &str, expected_json_path: impl AsRef<Path>) {
-  run_test_with_module(&Path::new("test.ts"), file_text, |module| {
+  run_test_with_module(Path::new("test.ts"), file_text, |module| {
     // check AST
     {
       let mut formatter = serde_json::ser::PrettyFormatter::new();
       let mut buffer = Vec::new();
-      serialize_module(&mut buffer, &mut formatter, file_text, &module.inner).unwrap();
+      serialize_module(&mut buffer, &mut formatter, file_text, module.inner).unwrap();
       // std::fs::write(&expected_json_path, &buffer).unwrap();
       let expected = std::fs::read_to_string(expected_json_path.as_ref()).unwrap();
       pretty_assertions::assert_eq!(String::from_utf8(buffer).unwrap(), expected.trim());
@@ -210,8 +202,8 @@ pub fn run_serialize_test(file_text: &str, expected_json_path: impl AsRef<Path>)
         &mut buffer,
         &mut formatter,
         file_text,
-        &comments_container.leading,
-        &comments_container.trailing,
+        comments_container.leading,
+        comments_container.trailing,
       )
       .unwrap();
       // std::fs::write(&expected_json_path, &buffer).unwrap();

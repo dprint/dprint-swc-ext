@@ -35,7 +35,11 @@ impl<'a> CommentContainer<'a> {
   }
 
   pub fn leading_comments(&'a self, lo: BytePos) -> CommentsIterator<'a> {
-    let previous_token_hi = self.tokens.get_previous_token_hi(lo).unwrap_or(BytePos(0));
+    let previous_token_hi = self
+      .tokens
+      .get_previous_token(lo)
+      .map(|t| t.span.hi)
+      .unwrap_or(BytePos(0));
     let trailing = self.get_trailing(previous_token_hi);
     let leading = self.get_leading(lo);
     combine_comment_vecs(trailing, leading)
@@ -44,8 +48,9 @@ impl<'a> CommentContainer<'a> {
   pub fn trailing_comments(&'a self, hi: BytePos) -> CommentsIterator<'a> {
     let next_token_lo = self
       .tokens
-      .get_next_token_lo(hi)
-      .unwrap_or(self.source_file.span().hi());
+      .get_next_token(hi)
+      .map(|t| t.span.lo)
+      .unwrap_or_else(|| self.source_file.span().hi());
     let trailing = self.get_trailing(hi);
     let leading = self.get_leading(next_token_lo);
     combine_comment_vecs(trailing, leading)
