@@ -35,25 +35,41 @@ impl<'a> CommentContainer<'a> {
   }
 
   pub fn leading_comments(&'a self, lo: BytePos) -> CommentsIterator<'a> {
-    let previous_token_hi = self
-      .tokens
-      .get_previous_token(lo)
-      .map(|t| t.span.hi)
-      .unwrap_or(BytePos(0));
-    let trailing = self.get_trailing(previous_token_hi);
+    let previous_token_hi = self.tokens.get_token_index_at_lo(lo).map(|index| {
+      if index == 0 {
+        BytePos(0)
+      } else {
+        self.tokens.get_token_at_index(index - 1).unwrap().span.hi
+      }
+    });
     let leading = self.get_leading(lo);
-    combine_comment_vecs(trailing, leading)
+    if let Some(previous_token_hi) = previous_token_hi {
+      let trailing = self.get_trailing(previous_token_hi);
+      combine_comment_vecs(trailing, leading)
+    } else {
+      leading
+        .map(|l| CommentsIterator::new(vec![l]))
+        .unwrap_or_default()
+    }
   }
 
   pub fn trailing_comments(&'a self, hi: BytePos) -> CommentsIterator<'a> {
-    let next_token_lo = self
-      .tokens
-      .get_next_token(hi)
-      .map(|t| t.span.lo)
-      .unwrap_or_else(|| self.source_file.span().hi());
+    let next_token_lo = self.tokens.get_token_index_at_hi(hi).map(|index| {
+      self
+        .tokens
+        .get_token_at_index(index + 1)
+        .map(|t| t.span.lo)
+        .unwrap_or_else(|| self.source_file.span().hi())
+    });
     let trailing = self.get_trailing(hi);
-    let leading = self.get_leading(next_token_lo);
-    combine_comment_vecs(trailing, leading)
+    if let Some(next_token_lo) = next_token_lo {
+      let leading = self.get_leading(next_token_lo);
+      combine_comment_vecs(trailing, leading)
+    } else {
+      trailing
+        .map(|t| CommentsIterator::new(vec![t]))
+        .unwrap_or_default()
+    }
   }
 
   fn get_leading(&'a self, lo: BytePos) -> Option<&'a Vec<Comment>> {
@@ -90,7 +106,11 @@ pub struct CommentsIterator<'a> {
 }
 
 impl<'a> CommentsIterator<'a> {
-  pub fn new(comment_vecs: Vec<&'a Vec<Comment>>) -> CommentsIterator<'a> {
+  pub fn empty() -> Self {
+    Self::new(Vec::with_capacity(0))
+  }
+
+  pub fn new(comment_vecs: Vec<&'a Vec<Comment>>) -> Self {
     let outer_index_back = comment_vecs.len();
     CommentsIterator {
       comment_vecs,
@@ -130,6 +150,12 @@ impl<'a> CommentsIterator<'a> {
     } else {
       None
     }
+  }
+}
+
+impl<'a> Default for CommentsIterator<'a> {
+  fn default() -> Self {
+    Self::empty()
   }
 }
 
@@ -180,5 +206,23 @@ impl<'a> DoubleEndedIterator for CommentsIterator<'a> {
       .get(self.outer_index_back)
       .map(|inner| inner.get(self.inner_index_back))
       .flatten()
+  }
+}
+
+#[cfg(test)]
+mod test {
+  use swc_common::BytePos;
+
+  use crate::test_helpers::*;
+  use crate::SpannedExt;
+
+  #[test]
+  fn trailing_comments_start_of_file_no_match() {
+    run_test(r#"5 // test"#, |program| {
+      // previously there was a bug here where it would return the
+      // comments after the token
+      let trailing_comments = BytePos(0).trailing_comments_fast(&program);
+      assert!(trailing_comments.is_empty());
+    });
   }
 }

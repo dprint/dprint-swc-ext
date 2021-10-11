@@ -26,32 +26,12 @@ impl<'a> TokenContainer<'a> {
     }
   }
 
-  pub fn get_token_index_at_lo(&self, lo: BytePos) -> usize {
-    if let Some(&index) = self.lo_to_index.get(&lo) {
-      index
-    // fallback
-    } else if let Some(&index) = self.hi_to_index.get(&lo) {
-      index
-    } else {
-      panic!(
-        "The specified lo position ({}) did not have a token index.",
-        lo.0
-      )
-    }
+  pub fn get_token_index_at_lo(&self, lo: BytePos) -> Option<usize> {
+    self.lo_to_index.get(&lo).copied()
   }
 
-  pub fn get_token_index_at_hi(&self, hi: BytePos) -> usize {
-    if let Some(&index) = self.hi_to_index.get(&hi) {
-      index
-    // fallback
-    } else if let Some(&index) = self.lo_to_index.get(&hi) {
-      index
-    } else {
-      panic!(
-        "The specified hi position ({}) did not have a token index.",
-        hi.0
-      )
-    }
+  pub fn get_token_index_at_hi(&self, hi: BytePos) -> Option<usize> {
+    self.hi_to_index.get(&hi).copied()
   }
 
   pub fn get_token_at_index(&self, index: usize) -> Option<&TokenAndSpan> {
@@ -151,41 +131,51 @@ impl<'a> TokenContainer<'a> {
 mod test {
   use swc_common::BytePos;
 
-  use crate::RootNode;
   use crate::test_helpers::*;
+  use crate::RootNode;
 
   #[test]
   fn get_next_token() {
-    run_test(
-      r#"let /* a */ a = 5;"#,
-      |program| {
-        let token_container = program.token_container().unwrap();
-        // low token of previous token
-        assert_eq!(
-          token_container.get_next_token(BytePos(0)).unwrap().span.lo(),
-          BytePos(12),
-        );
-        // hi of previous token
-        assert_eq!(
-          token_container.get_next_token(BytePos(3)).unwrap().span.lo(),
-          BytePos(12),
-        );
-        // in comment before token
-        assert_eq!(
-          token_container.get_next_token(BytePos(5)).unwrap().span.lo(),
-          BytePos(12),
-        );
-        // in whitespace before token
-        assert_eq!(
-          token_container.get_next_token(BytePos(11)).unwrap().span.lo(),
-          BytePos(12),
-        );
-        // at hi of last token
-        assert_eq!(
-          token_container.get_next_token(BytePos(18)),
-          None,
-        );
-      },
-    );
+    run_test(r#"let /* a */ a = 5;"#, |program| {
+      let token_container = program.token_container().unwrap();
+      // low token of previous token
+      assert_eq!(
+        token_container
+          .get_next_token(BytePos(0))
+          .unwrap()
+          .span
+          .lo(),
+        BytePos(12),
+      );
+      // hi of previous token
+      assert_eq!(
+        token_container
+          .get_next_token(BytePos(3))
+          .unwrap()
+          .span
+          .lo(),
+        BytePos(12),
+      );
+      // in comment before token
+      assert_eq!(
+        token_container
+          .get_next_token(BytePos(5))
+          .unwrap()
+          .span
+          .lo(),
+        BytePos(12),
+      );
+      // in whitespace before token
+      assert_eq!(
+        token_container
+          .get_next_token(BytePos(11))
+          .unwrap()
+          .span
+          .lo(),
+        BytePos(12),
+      );
+      // at hi of last token
+      assert_eq!(token_container.get_next_token(BytePos(18)), None,);
+    });
   }
 }

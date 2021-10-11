@@ -190,13 +190,31 @@ pub trait SpannedExt {
 
   fn previous_tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndSpan] {
     let token_container = root_node_to_token_container(program);
-    let index = token_container.get_token_index_at_lo(self.lo());
+    let index = token_container
+      .get_token_index_at_lo(self.lo())
+      // fallback
+      .or_else(|| token_container.get_token_index_at_hi(self.lo()))
+      .unwrap_or_else(|| {
+        panic!(
+          "The specified lo position ({}) did not have a token index.",
+          self.lo().0
+        )
+      });
     &token_container.tokens[0..index]
   }
 
   fn next_tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndSpan] {
     let token_container = root_node_to_token_container(program);
-    let index = token_container.get_token_index_at_hi(self.hi());
+    let index = token_container
+      .get_token_index_at_hi(self.hi())
+      // fallback
+      .or_else(|| token_container.get_token_index_at_lo(self.hi()))
+      .unwrap_or_else(|| {
+        panic!(
+          "The specified hi position ({}) did not have a token index.",
+          self.hi().0
+        )
+      });
     &token_container.tokens[index + 1..]
   }
 }
@@ -481,7 +499,7 @@ pub trait TokenExt {
 impl TokenExt for TokenAndSpan {
   fn token_index(&self, program: &dyn RootNode) -> usize {
     let token_container = root_node_to_token_container(program);
-    token_container.get_token_index_at_lo(self.span.lo)
+    token_container.get_token_index_at_lo(self.span.lo).unwrap()
   }
 }
 
