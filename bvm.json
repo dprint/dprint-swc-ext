@@ -6,9 +6,9 @@
       "version": "1.14.2"
     },
     {
-      "path": "https://github.com/dprint/dprint/releases/download/0.17.3/bvm.json",
-      "checksum": "783d450225e3ec1c26a05e99189d1087e61f427c1fba29b0dc98a9dd56e910fd",
-      "version": "0.17.3"
+      "path": "https://github.com/dprint/dprint/releases/download/0.18.1/bvm.json",
+      "checksum": "cba0b680b3a25cbe9185a13d7e735cb448fbae6cb1f579fe32a620e2df87feb0",
+      "version": "0.18.1"
     }
   ]
 }
