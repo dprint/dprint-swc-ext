@@ -406,6 +406,7 @@ export enum EsVersion {
   Es2019,
   Es2020,
   Es2021,
+  Es2022,
 }
 
 export enum MethodKind {
