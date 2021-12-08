@@ -32,7 +32,7 @@ jobs:
       run: |
         . $BVM_INSTALL_DIR/bin/bvm-init
         cargo install cargo-clone
-        rustup toolchain install nightly-2021-06-27 # until https://github.com/rust-lang/rust/issues/87887 is fixed
+        rustup toolchain install nightly
         chmod +x ./scripts/generate.sh
         ./scripts/generate.sh
         echo Checking for git changes...

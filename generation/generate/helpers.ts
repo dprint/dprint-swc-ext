@@ -95,3 +95,7 @@ export function isVecType(type: TypeDefinition | undefined): boolean {
 export function isOptionType(type: TypeDefinition | undefined): boolean {
   return type != null && type.kind === "Reference" && type.name === "Option";
 }
+
+export function isResultType(type: TypeDefinition | undefined): boolean {
+  return type != null && type.kind === "Reference" && type.name === "Result";
+}

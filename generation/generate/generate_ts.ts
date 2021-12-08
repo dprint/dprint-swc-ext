@@ -1,6 +1,6 @@
 import { AnalysisResult, AstStructDefinition, DocableDefinition, EnumDefinition, PlainEnumDefinition, TypeDefinition } from "../analyze/analysis_types.ts";
 import { createWriter } from "../utils/create_writer.ts";
-import { getIsForImpl, isOptionType, isVecType, writeHeader } from "./helpers.ts";
+import { getIsForImpl, isOptionType, isResultType, isVecType, writeHeader } from "./helpers.ts";
 
 export function generateTypeScriptTypes(analysisResult: AnalysisResult): string {
   const writer = createWriter();
@@ -114,7 +114,7 @@ export function generateTypeScriptTypes(analysisResult: AnalysisResult): string 
         if (type.kind === "Primitive") {
           throw new Error("Should not have analyzed a primitive type here.");
         }
-        if (isOptionType(type)) {
+        if (isOptionType(type) || isResultType(type)) {
           writer.write(`if (${name} != null)`).block(() => {
             writeAppendChild(type.genericArgs[0], name);
           });
@@ -151,7 +151,7 @@ export function generateTypeScriptTypes(analysisResult: AnalysisResult): string 
             throw new Error("Should not have analyzed a primitive type here.");
           }
 
-          if (type.name === "Option") {
+          if (isOptionType(type) || isResultType(type)) {
             return `(${name} == null ? 0 : ${getTypeCapacityExpr(type.genericArgs[0], name)})`;
           } else if (type.name === "Vec") {
             return `${name}.length`;
@@ -254,10 +254,7 @@ export function generateTypeScriptTypes(analysisResult: AnalysisResult): string 
         }
         break;
       case "Reference":
-        if (isOptionType(type)) {
-          if (type.genericArgs.length !== 1) {
-            throw new Error("Expected 1 type argument.");
-          }
+        if (isOptionType(type) || isResultType(type)) {
           writeType(type.genericArgs[0]);
           if (isInArray) {
             // arrays are serialized with empty values being `null` instead of `undefined`

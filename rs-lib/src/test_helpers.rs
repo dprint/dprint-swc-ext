@@ -4,9 +4,9 @@ use swc_common::{
   errors::{DiagnosticBuilder, Emitter, Handler},
   BytePos, FileName, SourceFile,
 };
-use swc_ecmascript::ast::{Module, Script};
+use swc_ecmascript::ast::{Module, Script, EsVersion};
 use swc_ecmascript::parser::{
-  lexer::Lexer, token::TokenAndSpan, Capturing, JscTarget, Parser, StringInput, Syntax,
+  lexer::Lexer, token::TokenAndSpan, Capturing, Parser, StringInput, Syntax,
 };
 
 #[cfg(feature = "serialize")]
@@ -79,13 +79,12 @@ pub fn get_swc_module(
   return {
     let ts_config = swc_ecmascript::parser::TsConfig {
       tsx: should_parse_as_jsx(file_path),
-      dynamic_import: true,
       decorators: true,
       ..Default::default()
     };
     let lexer = Lexer::new(
       Syntax::Typescript(ts_config),
-      JscTarget::Es2019,
+      EsVersion::Es2022,
       StringInput::from(&source_file),
       Some(&comments),
     );
@@ -131,13 +130,12 @@ pub fn get_swc_script(
   return {
     let ts_config = swc_ecmascript::parser::TsConfig {
       tsx: should_parse_as_jsx(file_path),
-      dynamic_import: true,
       decorators: true,
       ..Default::default()
     };
     let lexer = Lexer::new(
       Syntax::Typescript(ts_config),
-      JscTarget::Es2019,
+      EsVersion::Es2022,
       StringInput::from(&source_file),
       Some(&comments),
     );

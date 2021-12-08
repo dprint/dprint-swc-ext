@@ -7280,7 +7280,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
         write!(self.w, "{}", to_json_string(value)?)?;
         self.f.end_object_value(self.w)?;
         match &cooked {
-          Some(value) => {
+          Ok(value) => {
             self.f.begin_object_key(self.w, false)?;
             self.f.begin_string(self.w)?;
             self.f.write_string_fragment(self.w, "cooked")?;
@@ -7290,7 +7290,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
             write!(self.w, "{}", to_json_string(value)?)?;
             self.f.end_object_value(self.w)?;
           }
-          None => {}
+          Err(_) => {}
         }
         let value = &has_escape;
         self.f.begin_object_key(self.w, false)?;

@@ -1,7 +1,7 @@
 import { AnalysisResult, AstEnumDefinition, AstStructDefinition, EnumDefinition, TypeDefinition } from "../analyze/analysis_types.ts";
 import { createWriter } from "../utils/create_writer.ts";
 import { nameToSnakeCase, snakeToCamelCase } from "../utils/string_utils.ts";
-import { isOptionType, isSwcAstType, isSwcNodeEnumType, isVecType, writeHeader } from "./helpers.ts";
+import { isOptionType, isResultType, isSwcAstType, isSwcNodeEnumType, isVecType, writeHeader } from "./helpers.ts";
 
 export function generateSerialize(analysisResult: AnalysisResult): string {
   const writer = createWriter();
@@ -226,12 +226,19 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
   }
 
   function writeSkipOptional(name: string, type: TypeDefinition, inner: () => void) {
-    if (type.kind === "Reference" && isOptionType(type)) {
+    if (isOptionType(type)) {
       writer.write(`match ${name} `).inlineBlock(() => {
         writer.write(`Some(value) =>`).block(() => {
           inner();
         });
         writer.writeLine("None => {}");
+      });
+    } else if (isResultType(type)) {
+      writer.write(`match ${name} `).inlineBlock(() => {
+        writer.write(`Ok(value) =>`).block(() => {
+          inner();
+        });
+        writer.writeLine("Err(_) => {}");
       });
     } else {
       writer.writeLine(`let value = ${name};`);
@@ -255,6 +262,17 @@ export function generateSerialize(analysisResult: AnalysisResult): string {
             writeTypeValueSerialization("value", type.genericArgs[0], true);
           });
           writer.writeLine(`None => self.f.write_null(self.w)?,`);
+        });
+      } else {
+        writeTypeValueSerialization(name, type.genericArgs[0], true);
+      }
+    } else if (type.kind === "Reference" && isResultType(type)) {
+      if (writeOptionalCheck) {
+        writer.write(`match ${name} `).inlineBlock(() => {
+          writer.write(`Ok(value) => `).block(() => {
+            writeTypeValueSerialization("value", type.genericArgs[0], true);
+          });
+          writer.writeLine(`Err(_) => self.f.write_null(self.w)?,`);
         });
       } else {
         writeTypeValueSerialization(name, type.genericArgs[0], true);
