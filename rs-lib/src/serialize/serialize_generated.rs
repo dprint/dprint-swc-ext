@@ -947,7 +947,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_expr(value)?;
+    self.serialize_prop_name(value)?;
     self.f.end_object_value(self.w)?;
     match &node.value {
       Some(value) => {
@@ -997,15 +997,6 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
       self.f.end_array_value(self.w)?;
     }
     self.f.end_array(self.w)?;
-    self.f.end_object_value(self.w)?;
-    let value = &node.computed;
-    self.f.begin_object_key(self.w, false)?;
-    self.f.begin_string(self.w)?;
-    self.f.write_string_fragment(self.w, "computed")?;
-    self.f.end_string(self.w)?;
-    self.f.end_object_key(self.w)?;
-    self.f.begin_object_value(self.w)?;
-    write!(self.w, "{}", to_json_string(value)?)?;
     self.f.end_object_value(self.w)?;
     match &node.accessibility {
       Some(value) => {

@@ -1286,7 +1286,7 @@ export class BinExpr extends BaseNode {
   }
 }
 
-/** Identifer used as a pattern. */
+/** Identifier used as a pattern. */
 export class BindingIdent extends BaseNode {
   kind!: NodeKind.BindingIdent;
   parent!: Node;
@@ -1487,12 +1487,11 @@ export class ClassMethod extends BaseNode {
 export class ClassProp extends BaseNode {
   kind!: NodeKind.ClassProp;
   parent!: Class;
-  key!: Expr;
+  key!: PropName;
   value!: Expr | undefined;
   type_ann!: TsTypeAnn | undefined;
   is_static!: boolean;
   decorators!: Array<Decorator>;
-  computed!: boolean;
   /** Typescript extension. */
   accessibility!: Accessibility | undefined;
   /** Typescript extension. */
@@ -1953,7 +1952,7 @@ export class GetterProp extends BaseNode {
  * in rust, type like `Scope`  requires [Arc<Mutex<Scope>>] so swc uses
  * different approach. Instead of passing scopes, swc annotates two variables
  * with different tag, which is named
- * [SyntaxContext][swc_common::SyntaxContext]. The notation for the syntax
+ * [SyntaxContext]. The notation for the syntax
  * context is #n where n is a number. e.g. `foo#1`
  * 
  * For the example above, after applying resolver pass, it becomes.
@@ -1967,9 +1966,20 @@ export class GetterProp extends BaseNode {
  * 
  * Thanks to the `tag` we attached, we can now distinguish them.
  * 
- * ([JsWord], [SyntaxContext][swc_common::SyntaxContext])
+ * ([JsWord], [SyntaxContext])
+ * 
+ * See [Id], which is a type alias for this.
  * 
  * This can be used to store all variables in a module to single hash map.
+ * 
+ * # Comparison
+ * 
+ * While comparing two identifiers, you can use `.to_id()`.
+ * 
+ * # HashMap
+ * 
+ * There's a type named [Id] which only contains minimal information to
+ * distinguish identifiers.
  */
 export class Ident extends BaseNode {
   kind!: NodeKind.Ident;

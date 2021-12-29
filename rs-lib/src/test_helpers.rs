@@ -4,7 +4,7 @@ use swc_common::{
   errors::{DiagnosticBuilder, Emitter, Handler},
   BytePos, FileName, SourceFile,
 };
-use swc_ecmascript::ast::{Module, Script, EsVersion};
+use swc_ecmascript::ast::{EsVersion, Module, Script};
 use swc_ecmascript::parser::{
   lexer::Lexer, token::TokenAndSpan, Capturing, Parser, StringInput, Syntax,
 };

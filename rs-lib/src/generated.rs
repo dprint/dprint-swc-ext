@@ -7692,7 +7692,7 @@ fn set_parent_for_bin_expr<'a>(node: &BinExpr<'a>, parent: Node<'a>) {
   }
 }
 
-/// Identifer used as a pattern.
+/// Identifier used as a pattern.
 #[derive(Clone)]
 pub struct BindingIdent<'a> {
   parent: Option<Node<'a>>,
@@ -8640,7 +8640,7 @@ fn set_parent_for_class_method<'a>(node: &ClassMethod<'a>, parent: Node<'a>) {
 pub struct ClassProp<'a> {
   parent: Option<&'a Class<'a>>,
   pub inner: &'a swc_ast::ClassProp,
-  pub key: Expr<'a>,
+  pub key: PropName<'a>,
   pub value: Option<Expr<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
   pub decorators: Vec<&'a Decorator<'a>>,
@@ -8653,10 +8653,6 @@ impl<'a> ClassProp<'a> {
 
   pub fn is_static(&self) -> bool {
     self.inner.is_static
-  }
-
-  pub fn computed(&self) -> bool {
-    self.inner.computed
   }
 
   /// Typescript extension.
@@ -8750,7 +8746,7 @@ fn get_view_for_class_prop<'a>(inner: &'a swc_ast::ClassProp, bump: &'a Bump) ->
   let node = bump.alloc(ClassProp {
     inner,
     parent: None,
-    key: get_view_for_expr(&inner.key, bump),
+    key: get_view_for_prop_name(&inner.key, bump),
     value: match &inner.value {
       Some(value) => Some(get_view_for_expr(value, bump)),
       None => None,
@@ -8762,7 +8758,7 @@ fn get_view_for_class_prop<'a>(inner: &'a swc_ast::ClassProp, bump: &'a Bump) ->
     decorators: inner.decorators.iter().map(|value| get_view_for_decorator(value, bump)).collect(),
   });
   let parent: Node<'a> = (&*node).into();
-  set_parent_for_expr(&node.key, parent);
+  set_parent_for_prop_name(&node.key, parent);
   if let Some(value) = &node.value {
     set_parent_for_expr(value, parent)
   };
@@ -10901,7 +10897,7 @@ fn set_parent_for_getter_prop<'a>(node: &GetterProp<'a>, parent: Node<'a>) {
 /// in rust, type like `Scope`  requires [Arc<Mutex<Scope>>] so swc uses
 /// different approach. Instead of passing scopes, swc annotates two variables
 /// with different tag, which is named
-/// [SyntaxContext][swc_common::SyntaxContext]. The notation for the syntax
+/// [SyntaxContext]. The notation for the syntax
 /// context is #n where n is a number. e.g. `foo#1`
 ///
 /// For the example above, after applying resolver pass, it becomes.
@@ -10915,9 +10911,20 @@ fn set_parent_for_getter_prop<'a>(node: &GetterProp<'a>, parent: Node<'a>) {
 ///
 /// Thanks to the `tag` we attached, we can now distinguish them.
 ///
-/// ([JsWord], [SyntaxContext][swc_common::SyntaxContext])
+/// ([JsWord], [SyntaxContext])
+///
+/// See [Id], which is a type alias for this.
 ///
 /// This can be used to store all variables in a module to single hash map.
+///
+/// # Comparison
+///
+/// While comparing two identifiers, you can use `.to_id()`.
+///
+/// # HashMap
+///
+/// There's a type named [Id] which only contains minimal information to
+/// distinguish identifiers.
 #[derive(Clone)]
 pub struct Ident<'a> {
   parent: Option<Node<'a>>,
