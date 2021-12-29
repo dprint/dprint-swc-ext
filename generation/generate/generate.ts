@@ -41,7 +41,8 @@ export function generate(analysisResult: AnalysisResult): string {
     writer.writeLine("use std::mem;");
     writer.writeLine("use bumpalo::Bump;");
     writer.writeLine("use swc_common::{Span, Spanned};");
-    writer.write("pub use swc_ecmascript::ast::{self as swc_ast, ");
+    writer.writeLine("use swc_ecmascript::ast as swc_ast;");
+    writer.write("pub use swc_ecmascript::ast::{");
     writer.write(analysisResult.plainEnums.map(e => e.name).join(", "));
     writer.write("};").newLine();
     writer.writeLine("use crate::comments::*;");
