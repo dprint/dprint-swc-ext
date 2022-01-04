@@ -136,6 +136,10 @@ export type ModuleDecl =
   | TsExportAssignment
   | TsNamespaceExportDecl;
 
+export type ModuleExportName =
+  | Ident
+  | Str;
+
 export type ModuleItem =
   | ModuleDecl
   | Stmt;
@@ -1711,9 +1715,9 @@ export class ExportNamedSpecifier extends BaseNode {
   kind!: NodeKind.ExportNamedSpecifier;
   parent!: NamedExport;
   /** `foo` in `export { foo as bar }` */
-  orig!: Ident;
+  orig!: ModuleExportName;
   /** `Some(bar)` in `export { foo as bar }` */
-  exported!: Ident | undefined;
+  exported!: ModuleExportName | undefined;
   /** `type` in `export { type foo as bar }` */
   is_type_only!: boolean;
 
@@ -2058,7 +2062,7 @@ export class ImportNamedSpecifier extends BaseNode {
   kind!: NodeKind.ImportNamedSpecifier;
   parent!: ImportDecl;
   local!: Ident;
-  imported!: Ident | undefined;
+  imported!: ModuleExportName | undefined;
   is_type_only!: boolean;
 
   getChildren(): Node[] {
@@ -2749,6 +2753,18 @@ export class StaticBlock extends BaseNode {
   }
 }
 
+/**
+ * A string literal.
+ * 
+ * # Note
+ * 
+ * You have to use [StrKind::Synthesized] if you modify the `value` of [Str].
+ * This behavior is for preserving the original source code.
+ * 
+ * In other words, `swc_ecma_codegen` tries to preserve escapes or unicode
+ * characters in the original source code and you can opt-out of this by using
+ * [StrKind::Synthesized].
+ */
 export class Str extends BaseNode {
   kind!: NodeKind.Str;
   parent!: Node;
@@ -2874,6 +2890,13 @@ export class TplElement extends BaseNode {
   parent!: Tpl
     | TsTplLitType;
   tail!: boolean;
+  /**
+   * This value is never used by `swc_ecma_codegen`, and this fact is
+   * considered as a public API.
+   * 
+   * If you are going to use codegen right after creating a [TplElement], you
+   * don't have to worry about this value.
+   */
   cooked!: Str | undefined;
   raw!: Str;
 

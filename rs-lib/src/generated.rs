@@ -3755,6 +3755,105 @@ fn set_parent_for_module_decl<'a>(node: &ModuleDecl<'a>, parent: Node<'a>) {
 }
 
 #[derive(Copy, Clone)]
+pub enum ModuleExportName<'a> {
+  Ident(&'a Ident<'a>),
+  Str(&'a Str<'a>),
+}
+
+impl<'a> ModuleExportName<'a> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+    T::to(&self.into())
+  }
+
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::to(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
+  }
+  pub fn parent(&self) -> Node<'a> {
+    NodeTrait::parent(self).unwrap()
+  }
+}
+
+impl<'a> Spanned for ModuleExportName<'a> {
+  fn span(&self) -> Span {
+    match self {
+      ModuleExportName::Ident(node) => node.span(),
+      ModuleExportName::Str(node) => node.span(),
+    }
+  }
+}
+
+impl<'a> NodeTrait<'a> for ModuleExportName<'a> {
+  fn parent(&self) -> Option<Node<'a>> {
+    match self {
+      ModuleExportName::Ident(node) => NodeTrait::parent(*node),
+      ModuleExportName::Str(node) => NodeTrait::parent(*node),
+    }
+  }
+
+  fn children(&self) -> Vec<Node<'a>> {
+    match self {
+      ModuleExportName::Ident(node) => node.children(),
+      ModuleExportName::Str(node) => node.children(),
+    }
+  }
+
+  fn as_node(&self) -> Node<'a> {
+    match self {
+      ModuleExportName::Ident(node) => node.as_node(),
+      ModuleExportName::Str(node) => node.as_node(),
+    }
+  }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      ModuleExportName::Ident(_) => NodeKind::Ident,
+      ModuleExportName::Str(_) => NodeKind::Str,
+    }
+  }
+}
+
+impl<'a> From<&ModuleExportName<'a>> for Node<'a> {
+  fn from(node: &ModuleExportName<'a>) -> Node<'a> {
+    match node {
+      ModuleExportName::Ident(node) => (*node).into(),
+      ModuleExportName::Str(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<ModuleExportName<'a>> for Node<'a> {
+  fn from(node: ModuleExportName<'a>) -> Node<'a> {
+    match node {
+      ModuleExportName::Ident(node) => node.into(),
+      ModuleExportName::Str(node) => node.into(),
+    }
+  }
+}
+
+fn get_view_for_module_export_name<'a>(inner: &'a swc_ast::ModuleExportName, bump: &'a Bump) -> ModuleExportName<'a> {
+  match inner {
+    swc_ast::ModuleExportName::Ident(value) => ModuleExportName::Ident(get_view_for_ident(value, bump)),
+    swc_ast::ModuleExportName::Str(value) => ModuleExportName::Str(get_view_for_str(value, bump)),
+  }
+}
+
+fn set_parent_for_module_export_name<'a>(node: &ModuleExportName<'a>, parent: Node<'a>) {
+  match node {
+    ModuleExportName::Ident(value) => set_parent_for_ident(value, parent),
+    ModuleExportName::Str(value) => set_parent_for_str(value, parent),
+  }
+}
+
+#[derive(Copy, Clone)]
 pub enum ModuleItem<'a> {
   ModuleDecl(ModuleDecl<'a>),
   Stmt(Stmt<'a>),
@@ -9844,9 +9943,9 @@ pub struct ExportNamedSpecifier<'a> {
   parent: Option<&'a NamedExport<'a>>,
   pub inner: &'a swc_ast::ExportNamedSpecifier,
   /// `foo` in `export { foo as bar }`
-  pub orig: &'a Ident<'a>,
+  pub orig: ModuleExportName<'a>,
   /// `Some(bar)` in `export { foo as bar }`
-  pub exported: Option<&'a Ident<'a>>,
+  pub exported: Option<ModuleExportName<'a>>,
 }
 
 impl<'a> ExportNamedSpecifier<'a> {
@@ -9880,8 +9979,8 @@ impl<'a> NodeTrait<'a> for ExportNamedSpecifier<'a> {
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.exported { Some(_value) => 1, None => 0, });
-    children.push(self.orig.into());
-    if let Some(child) = self.exported {
+    children.push((&self.orig).into());
+    if let Some(child) = self.exported.as_ref() {
       children.push(child.into());
     }
     children
@@ -9914,16 +10013,16 @@ fn get_view_for_export_named_specifier<'a>(inner: &'a swc_ast::ExportNamedSpecif
   let node = bump.alloc(ExportNamedSpecifier {
     inner,
     parent: None,
-    orig: get_view_for_ident(&inner.orig, bump),
+    orig: get_view_for_module_export_name(&inner.orig, bump),
     exported: match &inner.exported {
-      Some(value) => Some(get_view_for_ident(value, bump)),
+      Some(value) => Some(get_view_for_module_export_name(value, bump)),
       None => None,
     },
   });
   let parent: Node<'a> = (&*node).into();
-  set_parent_for_ident(&node.orig, parent);
+  set_parent_for_module_export_name(&node.orig, parent);
   if let Some(value) = &node.exported {
-    set_parent_for_ident(value, parent)
+    set_parent_for_module_export_name(value, parent)
   };
   node
 }
@@ -11288,7 +11387,7 @@ pub struct ImportNamedSpecifier<'a> {
   parent: Option<&'a ImportDecl<'a>>,
   pub inner: &'a swc_ast::ImportNamedSpecifier,
   pub local: &'a Ident<'a>,
-  pub imported: Option<&'a Ident<'a>>,
+  pub imported: Option<ModuleExportName<'a>>,
 }
 
 impl<'a> ImportNamedSpecifier<'a> {
@@ -11322,7 +11421,7 @@ impl<'a> NodeTrait<'a> for ImportNamedSpecifier<'a> {
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1 + match &self.imported { Some(_value) => 1, None => 0, });
     children.push(self.local.into());
-    if let Some(child) = self.imported {
+    if let Some(child) = self.imported.as_ref() {
       children.push(child.into());
     }
     children
@@ -11357,14 +11456,14 @@ fn get_view_for_import_named_specifier<'a>(inner: &'a swc_ast::ImportNamedSpecif
     parent: None,
     local: get_view_for_ident(&inner.local, bump),
     imported: match &inner.imported {
-      Some(value) => Some(get_view_for_ident(value, bump)),
+      Some(value) => Some(get_view_for_module_export_name(value, bump)),
       None => None,
     },
   });
   let parent: Node<'a> = (&*node).into();
   set_parent_for_ident(&node.local, parent);
   if let Some(value) = &node.imported {
-    set_parent_for_ident(value, parent)
+    set_parent_for_module_export_name(value, parent)
   };
   node
 }
@@ -14988,6 +15087,16 @@ fn set_parent_for_static_block<'a>(node: &StaticBlock<'a>, parent: Node<'a>) {
   }
 }
 
+/// A string literal.
+///
+/// # Note
+///
+/// You have to use [StrKind::Synthesized] if you modify the `value` of [Str].
+/// This behavior is for preserving the original source code.
+///
+/// In other words, `swc_ecma_codegen` tries to preserve escapes or unicode
+/// characters in the original source code and you can opt-out of this by using
+/// [StrKind::Synthesized].
 #[derive(Clone)]
 pub struct Str<'a> {
   parent: Option<Node<'a>>,
@@ -15662,6 +15771,11 @@ fn set_parent_for_tpl<'a>(node: &Tpl<'a>, parent: Node<'a>) {
 pub struct TplElement<'a> {
   parent: Option<Node<'a>>,
   pub inner: &'a swc_ast::TplElement,
+  /// This value is never used by `swc_ecma_codegen`, and this fact is
+  /// considered as a public API.
+  ///
+  /// If you are going to use codegen right after creating a [TplElement], you
+  /// don't have to worry about this value.
   pub cooked: Option<&'a Str<'a>>,
   pub raw: &'a Str<'a>,
 }

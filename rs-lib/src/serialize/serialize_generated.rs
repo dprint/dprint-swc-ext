@@ -1474,7 +1474,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
     self.f.end_string(self.w)?;
     self.f.end_object_key(self.w)?;
     self.f.begin_object_value(self.w)?;
-    self.serialize_ident(value)?;
+    self.serialize_module_export_name(value)?;
     self.f.end_object_value(self.w)?;
     match &node.exported {
       Some(value) => {
@@ -1484,7 +1484,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
         self.f.end_string(self.w)?;
         self.f.end_object_key(self.w)?;
         self.f.begin_object_value(self.w)?;
-        self.serialize_ident(value)?;
+        self.serialize_module_export_name(value)?;
         self.f.end_object_value(self.w)?;
       }
       None => {}
@@ -2166,7 +2166,7 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
         self.f.end_string(self.w)?;
         self.f.end_object_key(self.w)?;
         self.f.begin_object_value(self.w)?;
-        self.serialize_ident(value)?;
+        self.serialize_module_export_name(value)?;
         self.f.end_object_value(self.w)?;
       }
       None => {}
@@ -6843,6 +6843,14 @@ impl<'a, TWrite: Write, TJsonFormatter: JsonFormatter> FileSerializer<'a, TWrite
       ModuleDecl::TsImportEquals(node) => self.serialize_ts_import_equals_decl(node)?,
       ModuleDecl::TsExportAssignment(node) => self.serialize_ts_export_assignment(node)?,
       ModuleDecl::TsNamespaceExport(node) => self.serialize_ts_namespace_export_decl(node)?,
+    }
+    Ok(())
+  }
+
+  pub fn serialize_module_export_name(&mut self, node: &ModuleExportName) -> Result<(), Error> {
+    match node {
+      ModuleExportName::Ident(node) => self.serialize_ident(node)?,
+      ModuleExportName::Str(node) => self.serialize_str(node)?,
     }
     Ok(())
   }
