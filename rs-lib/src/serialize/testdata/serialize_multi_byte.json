@@ -1,5 +1,5 @@
 {
-  "kind": 71,
+  "kind": 72,
   "start": 0,
   "end": 3,
   "body": [
@@ -8,7 +8,7 @@
       "start": 0,
       "end": 3,
       "expr": {
-        "kind": 92,
+        "kind": 93,
         "start": 0,
         "end": 3,
         "value": "🚀",

@@ -115,6 +115,8 @@ function getNodeClass(node: any) {
       return types.Ident;
     case types.NodeKind.IfStmt:
       return types.IfStmt;
+    case types.NodeKind.Import:
+      return types.Import;
     case types.NodeKind.ImportDecl:
       return types.ImportDecl;
     case types.NodeKind.ImportDefaultSpecifier:
@@ -209,6 +211,8 @@ function getNodeClass(node: any) {
       return types.Str;
     case types.NodeKind.Super:
       return types.Super;
+    case types.NodeKind.SuperPropExpr:
+      return types.SuperPropExpr;
     case types.NodeKind.SwitchCase:
       return types.SwitchCase;
     case types.NodeKind.SwitchStmt:

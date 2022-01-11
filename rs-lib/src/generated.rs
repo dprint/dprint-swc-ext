@@ -5,7 +5,7 @@ use std::mem;
 use bumpalo::Bump;
 use swc_common::{Span, Spanned};
 use swc_ecmascript::ast as swc_ast;
-pub use swc_ecmascript::ast::{Accessibility, AssignOp, BinaryOp, EsVersion, MethodKind, StrKind, TruePlusMinus, TsKeywordTypeKind, TsTypeOperatorOp, UnaryOp, UpdateOp, VarDeclKind};
+pub use swc_ecmascript::ast::{Accessibility, AssignOp, BinaryOp, EsVersion, MetaPropKind, MethodKind, StrKind, TruePlusMinus, TsKeywordTypeKind, TsTypeOperatorOp, UnaryOp, UpdateOp, VarDeclKind};
 use crate::comments::*;
 use crate::source_file::*;
 use crate::tokens::*;
@@ -109,6 +109,7 @@ pub enum Node<'a> {
   GetterProp(&'a GetterProp<'a>),
   Ident(&'a Ident<'a>),
   IfStmt(&'a IfStmt<'a>),
+  Import(&'a Import<'a>),
   ImportDecl(&'a ImportDecl<'a>),
   ImportDefaultSpecifier(&'a ImportDefaultSpecifier<'a>),
   ImportNamedSpecifier(&'a ImportNamedSpecifier<'a>),
@@ -156,6 +157,7 @@ pub enum Node<'a> {
   StaticBlock(&'a StaticBlock<'a>),
   Str(&'a Str<'a>),
   Super(&'a Super<'a>),
+  SuperPropExpr(&'a SuperPropExpr<'a>),
   SwitchCase(&'a SwitchCase<'a>),
   SwitchStmt(&'a SwitchStmt<'a>),
   TaggedTpl(&'a TaggedTpl<'a>),
@@ -295,6 +297,7 @@ impl<'a> Spanned for Node<'a> {
       Node::GetterProp(node) => node.span(),
       Node::Ident(node) => node.span(),
       Node::IfStmt(node) => node.span(),
+      Node::Import(node) => node.span(),
       Node::ImportDecl(node) => node.span(),
       Node::ImportDefaultSpecifier(node) => node.span(),
       Node::ImportNamedSpecifier(node) => node.span(),
@@ -342,6 +345,7 @@ impl<'a> Spanned for Node<'a> {
       Node::StaticBlock(node) => node.span(),
       Node::Str(node) => node.span(),
       Node::Super(node) => node.span(),
+      Node::SuperPropExpr(node) => node.span(),
       Node::SwitchCase(node) => node.span(),
       Node::SwitchStmt(node) => node.span(),
       Node::TaggedTpl(node) => node.span(),
@@ -465,6 +469,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::GetterProp(node) => NodeTrait::parent(*node),
       Node::Ident(node) => NodeTrait::parent(*node),
       Node::IfStmt(node) => NodeTrait::parent(*node),
+      Node::Import(node) => NodeTrait::parent(*node),
       Node::ImportDecl(node) => NodeTrait::parent(*node),
       Node::ImportDefaultSpecifier(node) => NodeTrait::parent(*node),
       Node::ImportNamedSpecifier(node) => NodeTrait::parent(*node),
@@ -512,6 +517,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::StaticBlock(node) => NodeTrait::parent(*node),
       Node::Str(node) => NodeTrait::parent(*node),
       Node::Super(node) => NodeTrait::parent(*node),
+      Node::SuperPropExpr(node) => NodeTrait::parent(*node),
       Node::SwitchCase(node) => NodeTrait::parent(*node),
       Node::SwitchStmt(node) => NodeTrait::parent(*node),
       Node::TaggedTpl(node) => NodeTrait::parent(*node),
@@ -633,6 +639,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::GetterProp(node) => node.children(),
       Node::Ident(node) => node.children(),
       Node::IfStmt(node) => node.children(),
+      Node::Import(node) => node.children(),
       Node::ImportDecl(node) => node.children(),
       Node::ImportDefaultSpecifier(node) => node.children(),
       Node::ImportNamedSpecifier(node) => node.children(),
@@ -680,6 +687,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::StaticBlock(node) => node.children(),
       Node::Str(node) => node.children(),
       Node::Super(node) => node.children(),
+      Node::SuperPropExpr(node) => node.children(),
       Node::SwitchCase(node) => node.children(),
       Node::SwitchStmt(node) => node.children(),
       Node::TaggedTpl(node) => node.children(),
@@ -801,6 +809,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::GetterProp(node) => node.as_node(),
       Node::Ident(node) => node.as_node(),
       Node::IfStmt(node) => node.as_node(),
+      Node::Import(node) => node.as_node(),
       Node::ImportDecl(node) => node.as_node(),
       Node::ImportDefaultSpecifier(node) => node.as_node(),
       Node::ImportNamedSpecifier(node) => node.as_node(),
@@ -848,6 +857,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::StaticBlock(node) => node.as_node(),
       Node::Str(node) => node.as_node(),
       Node::Super(node) => node.as_node(),
+      Node::SuperPropExpr(node) => node.as_node(),
       Node::SwitchCase(node) => node.as_node(),
       Node::SwitchStmt(node) => node.as_node(),
       Node::TaggedTpl(node) => node.as_node(),
@@ -969,6 +979,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::GetterProp(_) => NodeKind::GetterProp,
       Node::Ident(_) => NodeKind::Ident,
       Node::IfStmt(_) => NodeKind::IfStmt,
+      Node::Import(_) => NodeKind::Import,
       Node::ImportDecl(_) => NodeKind::ImportDecl,
       Node::ImportDefaultSpecifier(_) => NodeKind::ImportDefaultSpecifier,
       Node::ImportNamedSpecifier(_) => NodeKind::ImportNamedSpecifier,
@@ -1016,6 +1027,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::StaticBlock(_) => NodeKind::StaticBlock,
       Node::Str(_) => NodeKind::Str,
       Node::Super(_) => NodeKind::Super,
+      Node::SuperPropExpr(_) => NodeKind::SuperPropExpr,
       Node::SwitchCase(_) => NodeKind::SwitchCase,
       Node::SwitchStmt(_) => NodeKind::SwitchStmt,
       Node::TaggedTpl(_) => NodeKind::TaggedTpl,
@@ -1138,6 +1150,7 @@ pub enum NodeKind {
   GetterProp,
   Ident,
   IfStmt,
+  Import,
   ImportDecl,
   ImportDefaultSpecifier,
   ImportNamedSpecifier,
@@ -1185,6 +1198,7 @@ pub enum NodeKind {
   StaticBlock,
   Str,
   Super,
+  SuperPropExpr,
   SwitchCase,
   SwitchStmt,
   TaggedTpl,
@@ -1306,6 +1320,7 @@ impl std::fmt::Display for NodeKind {
       NodeKind::GetterProp => "GetterProp",
       NodeKind::Ident => "Ident",
       NodeKind::IfStmt => "IfStmt",
+      NodeKind::Import => "Import",
       NodeKind::ImportDecl => "ImportDecl",
       NodeKind::ImportDefaultSpecifier => "ImportDefaultSpecifier",
       NodeKind::ImportNamedSpecifier => "ImportNamedSpecifier",
@@ -1353,6 +1368,7 @@ impl std::fmt::Display for NodeKind {
       NodeKind::StaticBlock => "StaticBlock",
       NodeKind::Str => "Str",
       NodeKind::Super => "Super",
+      NodeKind::SuperPropExpr => "SuperPropExpr",
       NodeKind::SwitchCase => "SwitchCase",
       NodeKind::SwitchStmt => "SwitchStmt",
       NodeKind::TaggedTpl => "TaggedTpl",
@@ -1519,6 +1535,112 @@ fn set_parent_for_block_stmt_or_expr<'a>(node: &BlockStmtOrExpr<'a>, parent: Nod
   match node {
     BlockStmtOrExpr::BlockStmt(value) => set_parent_for_block_stmt(value, parent),
     BlockStmtOrExpr::Expr(value) => set_parent_for_expr(value, parent),
+  }
+}
+
+#[derive(Copy, Clone)]
+pub enum Callee<'a> {
+  Super(&'a Super<'a>),
+  Import(&'a Import<'a>),
+  Expr(Expr<'a>),
+}
+
+impl<'a> Callee<'a> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+    T::to(&self.into())
+  }
+
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::to(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
+  }
+}
+
+impl<'a> Spanned for Callee<'a> {
+  fn span(&self) -> Span {
+    match self {
+      Callee::Super(node) => node.span(),
+      Callee::Import(node) => node.span(),
+      Callee::Expr(node) => node.span(),
+    }
+  }
+}
+
+impl<'a> NodeTrait<'a> for Callee<'a> {
+  fn parent(&self) -> Option<Node<'a>> {
+    match self {
+      Callee::Super(node) => NodeTrait::parent(*node),
+      Callee::Import(node) => NodeTrait::parent(*node),
+      Callee::Expr(node) => NodeTrait::parent(node),
+    }
+  }
+
+  fn children(&self) -> Vec<Node<'a>> {
+    match self {
+      Callee::Super(node) => node.children(),
+      Callee::Import(node) => node.children(),
+      Callee::Expr(node) => node.children(),
+    }
+  }
+
+  fn as_node(&self) -> Node<'a> {
+    match self {
+      Callee::Super(node) => node.as_node(),
+      Callee::Import(node) => node.as_node(),
+      Callee::Expr(node) => node.as_node(),
+    }
+  }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      Callee::Super(_) => NodeKind::Super,
+      Callee::Import(_) => NodeKind::Import,
+      Callee::Expr(node) => node.kind(),
+    }
+  }
+}
+
+impl<'a> From<&Callee<'a>> for Node<'a> {
+  fn from(node: &Callee<'a>) -> Node<'a> {
+    match node {
+      Callee::Super(node) => (*node).into(),
+      Callee::Import(node) => (*node).into(),
+      Callee::Expr(node) => node.into(),
+    }
+  }
+}
+
+impl<'a> From<Callee<'a>> for Node<'a> {
+  fn from(node: Callee<'a>) -> Node<'a> {
+    match node {
+      Callee::Super(node) => node.into(),
+      Callee::Import(node) => node.into(),
+      Callee::Expr(node) => node.into(),
+    }
+  }
+}
+
+fn get_view_for_callee<'a>(inner: &'a swc_ast::Callee, bump: &'a Bump) -> Callee<'a> {
+  match inner {
+    swc_ast::Callee::Super(value) => Callee::Super(get_view_for_super(value, bump)),
+    swc_ast::Callee::Import(value) => Callee::Import(get_view_for_import(value, bump)),
+    swc_ast::Callee::Expr(value) => Callee::Expr(get_view_for_expr(value, bump)),
+  }
+}
+
+fn set_parent_for_callee<'a>(node: &Callee<'a>, parent: Node<'a>) {
+  match node {
+    Callee::Super(value) => set_parent_for_super(value, parent),
+    Callee::Import(value) => set_parent_for_import(value, parent),
+    Callee::Expr(value) => set_parent_for_expr(value, parent),
   }
 }
 
@@ -2066,6 +2188,7 @@ pub enum Expr<'a> {
   /// computed is false, the node corresponds to a static (a.b) member
   /// expression and property is an Identifier.
   Member(&'a MemberExpr<'a>),
+  SuperProp(&'a SuperPropExpr<'a>),
   /// true ? 'a' : 'b'
   Cond(&'a CondExpr<'a>),
   Call(&'a CallExpr<'a>),
@@ -2127,6 +2250,7 @@ impl<'a> Spanned for Expr<'a> {
       Expr::Bin(node) => node.span(),
       Expr::Assign(node) => node.span(),
       Expr::Member(node) => node.span(),
+      Expr::SuperProp(node) => node.span(),
       Expr::Cond(node) => node.span(),
       Expr::Call(node) => node.span(),
       Expr::New(node) => node.span(),
@@ -2169,6 +2293,7 @@ impl<'a> NodeTrait<'a> for Expr<'a> {
       Expr::Bin(node) => NodeTrait::parent(*node),
       Expr::Assign(node) => NodeTrait::parent(*node),
       Expr::Member(node) => NodeTrait::parent(*node),
+      Expr::SuperProp(node) => NodeTrait::parent(*node),
       Expr::Cond(node) => NodeTrait::parent(*node),
       Expr::Call(node) => NodeTrait::parent(*node),
       Expr::New(node) => NodeTrait::parent(*node),
@@ -2209,6 +2334,7 @@ impl<'a> NodeTrait<'a> for Expr<'a> {
       Expr::Bin(node) => node.children(),
       Expr::Assign(node) => node.children(),
       Expr::Member(node) => node.children(),
+      Expr::SuperProp(node) => node.children(),
       Expr::Cond(node) => node.children(),
       Expr::Call(node) => node.children(),
       Expr::New(node) => node.children(),
@@ -2249,6 +2375,7 @@ impl<'a> NodeTrait<'a> for Expr<'a> {
       Expr::Bin(node) => node.as_node(),
       Expr::Assign(node) => node.as_node(),
       Expr::Member(node) => node.as_node(),
+      Expr::SuperProp(node) => node.as_node(),
       Expr::Cond(node) => node.as_node(),
       Expr::Call(node) => node.as_node(),
       Expr::New(node) => node.as_node(),
@@ -2289,6 +2416,7 @@ impl<'a> NodeTrait<'a> for Expr<'a> {
       Expr::Bin(_) => NodeKind::BinExpr,
       Expr::Assign(_) => NodeKind::AssignExpr,
       Expr::Member(_) => NodeKind::MemberExpr,
+      Expr::SuperProp(_) => NodeKind::SuperPropExpr,
       Expr::Cond(_) => NodeKind::CondExpr,
       Expr::Call(_) => NodeKind::CallExpr,
       Expr::New(_) => NodeKind::NewExpr,
@@ -2331,6 +2459,7 @@ impl<'a> From<&Expr<'a>> for Node<'a> {
       Expr::Bin(node) => (*node).into(),
       Expr::Assign(node) => (*node).into(),
       Expr::Member(node) => (*node).into(),
+      Expr::SuperProp(node) => (*node).into(),
       Expr::Cond(node) => (*node).into(),
       Expr::Call(node) => (*node).into(),
       Expr::New(node) => (*node).into(),
@@ -2373,6 +2502,7 @@ impl<'a> From<Expr<'a>> for Node<'a> {
       Expr::Bin(node) => node.into(),
       Expr::Assign(node) => node.into(),
       Expr::Member(node) => node.into(),
+      Expr::SuperProp(node) => node.into(),
       Expr::Cond(node) => node.into(),
       Expr::Call(node) => node.into(),
       Expr::New(node) => node.into(),
@@ -2414,6 +2544,7 @@ fn get_view_for_expr<'a>(inner: &'a swc_ast::Expr, bump: &'a Bump) -> Expr<'a> {
     swc_ast::Expr::Bin(value) => Expr::Bin(get_view_for_bin_expr(value, bump)),
     swc_ast::Expr::Assign(value) => Expr::Assign(get_view_for_assign_expr(value, bump)),
     swc_ast::Expr::Member(value) => Expr::Member(get_view_for_member_expr(value, bump)),
+    swc_ast::Expr::SuperProp(value) => Expr::SuperProp(get_view_for_super_prop_expr(value, bump)),
     swc_ast::Expr::Cond(value) => Expr::Cond(get_view_for_cond_expr(value, bump)),
     swc_ast::Expr::Call(value) => Expr::Call(get_view_for_call_expr(value, bump)),
     swc_ast::Expr::New(value) => Expr::New(get_view_for_new_expr(value, bump)),
@@ -2454,6 +2585,7 @@ fn set_parent_for_expr<'a>(node: &Expr<'a>, parent: Node<'a>) {
     Expr::Bin(value) => set_parent_for_bin_expr(value, parent),
     Expr::Assign(value) => set_parent_for_assign_expr(value, parent),
     Expr::Member(value) => set_parent_for_member_expr(value, parent),
+    Expr::SuperProp(value) => set_parent_for_super_prop_expr(value, parent),
     Expr::Cond(value) => set_parent_for_cond_expr(value, parent),
     Expr::Call(value) => set_parent_for_call_expr(value, parent),
     Expr::New(value) => set_parent_for_new_expr(value, parent),
@@ -2480,102 +2612,6 @@ fn set_parent_for_expr<'a>(node: &Expr<'a>, parent: Node<'a>) {
     Expr::PrivateName(value) => set_parent_for_private_name(value, parent),
     Expr::OptChain(value) => set_parent_for_opt_chain_expr(value, parent),
     Expr::Invalid(value) => set_parent_for_invalid(value, parent),
-  }
-}
-
-#[derive(Copy, Clone)]
-pub enum ExprOrSuper<'a> {
-  Super(&'a Super<'a>),
-  Expr(Expr<'a>),
-}
-
-impl<'a> ExprOrSuper<'a> {
-  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::to(&self.into())
-  }
-
-  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
-    let node: Node<'a> = self.into();
-    if let Some(result) = T::to(&node) {
-      result
-    } else {
-      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
-    }
-  }
-
-  pub fn is<T: CastableNode<'a>>(&self) -> bool {
-    self.kind() == T::kind()
-  }
-}
-
-impl<'a> Spanned for ExprOrSuper<'a> {
-  fn span(&self) -> Span {
-    match self {
-      ExprOrSuper::Super(node) => node.span(),
-      ExprOrSuper::Expr(node) => node.span(),
-    }
-  }
-}
-
-impl<'a> NodeTrait<'a> for ExprOrSuper<'a> {
-  fn parent(&self) -> Option<Node<'a>> {
-    match self {
-      ExprOrSuper::Super(node) => NodeTrait::parent(*node),
-      ExprOrSuper::Expr(node) => NodeTrait::parent(node),
-    }
-  }
-
-  fn children(&self) -> Vec<Node<'a>> {
-    match self {
-      ExprOrSuper::Super(node) => node.children(),
-      ExprOrSuper::Expr(node) => node.children(),
-    }
-  }
-
-  fn as_node(&self) -> Node<'a> {
-    match self {
-      ExprOrSuper::Super(node) => node.as_node(),
-      ExprOrSuper::Expr(node) => node.as_node(),
-    }
-  }
-
-  fn kind(&self) -> NodeKind {
-    match self {
-      ExprOrSuper::Super(_) => NodeKind::Super,
-      ExprOrSuper::Expr(node) => node.kind(),
-    }
-  }
-}
-
-impl<'a> From<&ExprOrSuper<'a>> for Node<'a> {
-  fn from(node: &ExprOrSuper<'a>) -> Node<'a> {
-    match node {
-      ExprOrSuper::Super(node) => (*node).into(),
-      ExprOrSuper::Expr(node) => node.into(),
-    }
-  }
-}
-
-impl<'a> From<ExprOrSuper<'a>> for Node<'a> {
-  fn from(node: ExprOrSuper<'a>) -> Node<'a> {
-    match node {
-      ExprOrSuper::Super(node) => node.into(),
-      ExprOrSuper::Expr(node) => node.into(),
-    }
-  }
-}
-
-fn get_view_for_expr_or_super<'a>(inner: &'a swc_ast::ExprOrSuper, bump: &'a Bump) -> ExprOrSuper<'a> {
-  match inner {
-    swc_ast::ExprOrSuper::Super(value) => ExprOrSuper::Super(get_view_for_super(value, bump)),
-    swc_ast::ExprOrSuper::Expr(value) => ExprOrSuper::Expr(get_view_for_expr(value, bump)),
-  }
-}
-
-fn set_parent_for_expr_or_super<'a>(node: &ExprOrSuper<'a>, parent: Node<'a>) {
-  match node {
-    ExprOrSuper::Super(value) => set_parent_for_super(value, parent),
-    ExprOrSuper::Expr(value) => set_parent_for_expr(value, parent),
   }
 }
 
@@ -3582,6 +3618,115 @@ fn set_parent_for_lit<'a>(node: &Lit<'a>, parent: Node<'a>) {
     Lit::BigInt(value) => set_parent_for_big_int(value, parent),
     Lit::Regex(value) => set_parent_for_regex(value, parent),
     Lit::JSXText(value) => set_parent_for_jsxtext(value, parent),
+  }
+}
+
+#[derive(Copy, Clone)]
+pub enum MemberProp<'a> {
+  Ident(&'a Ident<'a>),
+  PrivateName(&'a PrivateName<'a>),
+  Computed(&'a ComputedPropName<'a>),
+}
+
+impl<'a> MemberProp<'a> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+    T::to(&self.into())
+  }
+
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::to(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
+  }
+  pub fn parent(&self) -> Node<'a> {
+    NodeTrait::parent(self).unwrap()
+  }
+}
+
+impl<'a> Spanned for MemberProp<'a> {
+  fn span(&self) -> Span {
+    match self {
+      MemberProp::Ident(node) => node.span(),
+      MemberProp::PrivateName(node) => node.span(),
+      MemberProp::Computed(node) => node.span(),
+    }
+  }
+}
+
+impl<'a> NodeTrait<'a> for MemberProp<'a> {
+  fn parent(&self) -> Option<Node<'a>> {
+    match self {
+      MemberProp::Ident(node) => NodeTrait::parent(*node),
+      MemberProp::PrivateName(node) => NodeTrait::parent(*node),
+      MemberProp::Computed(node) => NodeTrait::parent(*node),
+    }
+  }
+
+  fn children(&self) -> Vec<Node<'a>> {
+    match self {
+      MemberProp::Ident(node) => node.children(),
+      MemberProp::PrivateName(node) => node.children(),
+      MemberProp::Computed(node) => node.children(),
+    }
+  }
+
+  fn as_node(&self) -> Node<'a> {
+    match self {
+      MemberProp::Ident(node) => node.as_node(),
+      MemberProp::PrivateName(node) => node.as_node(),
+      MemberProp::Computed(node) => node.as_node(),
+    }
+  }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      MemberProp::Ident(_) => NodeKind::Ident,
+      MemberProp::PrivateName(_) => NodeKind::PrivateName,
+      MemberProp::Computed(_) => NodeKind::ComputedPropName,
+    }
+  }
+}
+
+impl<'a> From<&MemberProp<'a>> for Node<'a> {
+  fn from(node: &MemberProp<'a>) -> Node<'a> {
+    match node {
+      MemberProp::Ident(node) => (*node).into(),
+      MemberProp::PrivateName(node) => (*node).into(),
+      MemberProp::Computed(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<MemberProp<'a>> for Node<'a> {
+  fn from(node: MemberProp<'a>) -> Node<'a> {
+    match node {
+      MemberProp::Ident(node) => node.into(),
+      MemberProp::PrivateName(node) => node.into(),
+      MemberProp::Computed(node) => node.into(),
+    }
+  }
+}
+
+fn get_view_for_member_prop<'a>(inner: &'a swc_ast::MemberProp, bump: &'a Bump) -> MemberProp<'a> {
+  match inner {
+    swc_ast::MemberProp::Ident(value) => MemberProp::Ident(get_view_for_ident(value, bump)),
+    swc_ast::MemberProp::PrivateName(value) => MemberProp::PrivateName(get_view_for_private_name(value, bump)),
+    swc_ast::MemberProp::Computed(value) => MemberProp::Computed(get_view_for_computed_prop_name(value, bump)),
+  }
+}
+
+fn set_parent_for_member_prop<'a>(node: &MemberProp<'a>, parent: Node<'a>) {
+  match node {
+    MemberProp::Ident(value) => set_parent_for_ident(value, parent),
+    MemberProp::PrivateName(value) => set_parent_for_private_name(value, parent),
+    MemberProp::Computed(value) => set_parent_for_computed_prop_name(value, parent),
   }
 }
 
@@ -5034,6 +5179,105 @@ fn set_parent_for_stmt<'a>(node: &Stmt<'a>, parent: Node<'a>) {
     Stmt::ForOf(value) => set_parent_for_for_of_stmt(value, parent),
     Stmt::Decl(value) => set_parent_for_decl(value, parent),
     Stmt::Expr(value) => set_parent_for_expr_stmt(value, parent),
+  }
+}
+
+#[derive(Copy, Clone)]
+pub enum SuperProp<'a> {
+  Ident(&'a Ident<'a>),
+  Computed(&'a ComputedPropName<'a>),
+}
+
+impl<'a> SuperProp<'a> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+    T::to(&self.into())
+  }
+
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::to(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
+  }
+  pub fn parent(&self) -> Node<'a> {
+    NodeTrait::parent(self).unwrap()
+  }
+}
+
+impl<'a> Spanned for SuperProp<'a> {
+  fn span(&self) -> Span {
+    match self {
+      SuperProp::Ident(node) => node.span(),
+      SuperProp::Computed(node) => node.span(),
+    }
+  }
+}
+
+impl<'a> NodeTrait<'a> for SuperProp<'a> {
+  fn parent(&self) -> Option<Node<'a>> {
+    match self {
+      SuperProp::Ident(node) => NodeTrait::parent(*node),
+      SuperProp::Computed(node) => NodeTrait::parent(*node),
+    }
+  }
+
+  fn children(&self) -> Vec<Node<'a>> {
+    match self {
+      SuperProp::Ident(node) => node.children(),
+      SuperProp::Computed(node) => node.children(),
+    }
+  }
+
+  fn as_node(&self) -> Node<'a> {
+    match self {
+      SuperProp::Ident(node) => node.as_node(),
+      SuperProp::Computed(node) => node.as_node(),
+    }
+  }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      SuperProp::Ident(_) => NodeKind::Ident,
+      SuperProp::Computed(_) => NodeKind::ComputedPropName,
+    }
+  }
+}
+
+impl<'a> From<&SuperProp<'a>> for Node<'a> {
+  fn from(node: &SuperProp<'a>) -> Node<'a> {
+    match node {
+      SuperProp::Ident(node) => (*node).into(),
+      SuperProp::Computed(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<SuperProp<'a>> for Node<'a> {
+  fn from(node: SuperProp<'a>) -> Node<'a> {
+    match node {
+      SuperProp::Ident(node) => node.into(),
+      SuperProp::Computed(node) => node.into(),
+    }
+  }
+}
+
+fn get_view_for_super_prop<'a>(inner: &'a swc_ast::SuperProp, bump: &'a Bump) -> SuperProp<'a> {
+  match inner {
+    swc_ast::SuperProp::Ident(value) => SuperProp::Ident(get_view_for_ident(value, bump)),
+    swc_ast::SuperProp::Computed(value) => SuperProp::Computed(get_view_for_computed_prop_name(value, bump)),
+  }
+}
+
+fn set_parent_for_super_prop<'a>(node: &SuperProp<'a>, parent: Node<'a>) {
+  match node {
+    SuperProp::Ident(value) => set_parent_for_ident(value, parent),
+    SuperProp::Computed(value) => set_parent_for_computed_prop_name(value, parent),
   }
 }
 
@@ -8130,7 +8374,7 @@ fn set_parent_for_break_stmt<'a>(node: &BreakStmt<'a>, parent: Node<'a>) {
 pub struct CallExpr<'a> {
   parent: Option<Node<'a>>,
   pub inner: &'a swc_ast::CallExpr,
-  pub callee: ExprOrSuper<'a>,
+  pub callee: Callee<'a>,
   pub args: Vec<&'a ExprOrSpread<'a>>,
   pub type_args: Option<&'a TsTypeParamInstantiation<'a>>,
 }
@@ -8198,7 +8442,7 @@ fn get_view_for_call_expr<'a>(inner: &'a swc_ast::CallExpr, bump: &'a Bump) -> &
   let node = bump.alloc(CallExpr {
     inner,
     parent: None,
-    callee: get_view_for_expr_or_super(&inner.callee, bump),
+    callee: get_view_for_callee(&inner.callee, bump),
     args: inner.args.iter().map(|value| get_view_for_expr_or_spread(value, bump)).collect(),
     type_args: match &inner.type_args {
       Some(value) => Some(get_view_for_ts_type_param_instantiation(value, bump)),
@@ -8206,7 +8450,7 @@ fn get_view_for_call_expr<'a>(inner: &'a swc_ast::CallExpr, bump: &'a Bump) -> &
     },
   });
   let parent: Node<'a> = (&*node).into();
-  set_parent_for_expr_or_super(&node.callee, parent);
+  set_parent_for_callee(&node.callee, parent);
   for value in node.args.iter() {
     set_parent_for_expr_or_spread(value, parent)
   }
@@ -10039,7 +10283,7 @@ fn set_parent_for_export_named_specifier<'a>(node: &ExportNamedSpecifier<'a>, pa
 pub struct ExportNamespaceSpecifier<'a> {
   parent: Option<&'a NamedExport<'a>>,
   pub inner: &'a swc_ast::ExportNamespaceSpecifier,
-  pub name: &'a Ident<'a>,
+  pub name: ModuleExportName<'a>,
 }
 
 impl<'a> ExportNamespaceSpecifier<'a> {
@@ -10068,7 +10312,7 @@ impl<'a> NodeTrait<'a> for ExportNamespaceSpecifier<'a> {
 
   fn children(&self) -> Vec<Node<'a>> {
     let mut children = Vec::with_capacity(1);
-    children.push(self.name.into());
+    children.push((&self.name).into());
     children
   }
 
@@ -10099,10 +10343,10 @@ fn get_view_for_export_namespace_specifier<'a>(inner: &'a swc_ast::ExportNamespa
   let node = bump.alloc(ExportNamespaceSpecifier {
     inner,
     parent: None,
-    name: get_view_for_ident(&inner.name, bump),
+    name: get_view_for_module_export_name(&inner.name, bump),
   });
   let parent: Node<'a> = (&*node).into();
-  set_parent_for_ident(&node.name, parent);
+  set_parent_for_module_export_name(&node.name, parent);
   node
 }
 
@@ -11196,6 +11440,78 @@ fn set_parent_for_if_stmt<'a>(node: &IfStmt<'a>, parent: Node<'a>) {
   unsafe {
     let node_ptr = node as *const IfStmt<'a> as *mut IfStmt<'a>;
     (*node_ptr).parent.replace(parent);
+  }
+}
+
+#[derive(Clone)]
+pub struct Import<'a> {
+  parent: Option<&'a CallExpr<'a>>,
+  pub inner: &'a swc_ast::Import,
+}
+
+impl<'a> Import<'a> {
+  pub fn parent(&self) -> &'a CallExpr<'a> {
+    self.parent.unwrap()
+  }
+}
+
+impl<'a> Spanned for Import<'a> {
+  fn span(&self) -> Span {
+    self.inner.span()
+  }
+}
+
+impl<'a> From<&Import<'a>> for Node<'a> {
+  fn from(node: &Import<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&Import<'a>, &'a Import<'a>>(node) };
+    Node::Import(node)
+  }
+}
+
+impl<'a> NodeTrait<'a> for Import<'a> {
+  fn parent(&self) -> Option<Node<'a>> {
+    Some(self.parent.unwrap().into())
+  }
+
+  fn children(&self) -> Vec<Node<'a>> {
+    Vec::with_capacity(0)
+  }
+
+  fn as_node(&self) -> Node<'a> {
+    self.into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::Import
+  }
+}
+
+impl<'a> CastableNode<'a> for Import<'a> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
+    if let Node::Import(node) = node {
+      Some(node)
+    } else {
+      None
+    }
+  }
+
+  fn kind() -> NodeKind {
+    NodeKind::Import
+  }
+}
+
+fn get_view_for_import<'a>(inner: &'a swc_ast::Import, bump: &'a Bump) -> &'a Import<'a> {
+  let node = bump.alloc(Import {
+    inner,
+    parent: None,
+  });
+  node
+}
+
+fn set_parent_for_import<'a>(node: &Import<'a>, parent: Node<'a>) {
+  unsafe {
+    let node_ptr = node as *const Import<'a> as *mut Import<'a>;
+    (*node_ptr).parent.replace(parent.expect::<CallExpr>());
   }
 }
 
@@ -12953,17 +13269,13 @@ fn set_parent_for_labeled_stmt<'a>(node: &LabeledStmt<'a>, parent: Node<'a>) {
 pub struct MemberExpr<'a> {
   parent: Option<Node<'a>>,
   pub inner: &'a swc_ast::MemberExpr,
-  pub obj: ExprOrSuper<'a>,
-  pub prop: Expr<'a>,
+  pub obj: Expr<'a>,
+  pub prop: MemberProp<'a>,
 }
 
 impl<'a> MemberExpr<'a> {
   pub fn parent(&self) -> Node<'a> {
     self.parent.unwrap()
-  }
-
-  pub fn computed(&self) -> bool {
-    self.inner.computed
   }
 }
 
@@ -13019,12 +13331,12 @@ fn get_view_for_member_expr<'a>(inner: &'a swc_ast::MemberExpr, bump: &'a Bump) 
   let node = bump.alloc(MemberExpr {
     inner,
     parent: None,
-    obj: get_view_for_expr_or_super(&inner.obj, bump),
-    prop: get_view_for_expr(&inner.prop, bump),
+    obj: get_view_for_expr(&inner.obj, bump),
+    prop: get_view_for_member_prop(&inner.prop, bump),
   });
   let parent: Node<'a> = (&*node).into();
-  set_parent_for_expr_or_super(&node.obj, parent);
-  set_parent_for_expr(&node.prop, parent);
+  set_parent_for_expr(&node.obj, parent);
+  set_parent_for_member_prop(&node.prop, parent);
   node
 }
 
@@ -13039,13 +13351,15 @@ fn set_parent_for_member_expr<'a>(node: &MemberExpr<'a>, parent: Node<'a>) {
 pub struct MetaPropExpr<'a> {
   parent: Option<Node<'a>>,
   pub inner: &'a swc_ast::MetaPropExpr,
-  pub meta: &'a Ident<'a>,
-  pub prop: &'a Ident<'a>,
 }
 
 impl<'a> MetaPropExpr<'a> {
   pub fn parent(&self) -> Node<'a> {
     self.parent.unwrap()
+  }
+
+  pub fn prop_kind(&self) -> MetaPropKind {
+    self.inner.kind
   }
 }
 
@@ -13068,10 +13382,7 @@ impl<'a> NodeTrait<'a> for MetaPropExpr<'a> {
   }
 
   fn children(&self) -> Vec<Node<'a>> {
-    let mut children = Vec::with_capacity(2);
-    children.push(self.meta.into());
-    children.push(self.prop.into());
-    children
+    Vec::with_capacity(0)
   }
 
   fn as_node(&self) -> Node<'a> {
@@ -13101,12 +13412,7 @@ fn get_view_for_meta_prop_expr<'a>(inner: &'a swc_ast::MetaPropExpr, bump: &'a B
   let node = bump.alloc(MetaPropExpr {
     inner,
     parent: None,
-    meta: get_view_for_ident(&inner.meta, bump),
-    prop: get_view_for_ident(&inner.prop, bump),
   });
-  let parent: Node<'a> = (&*node).into();
-  set_parent_for_ident(&node.meta, parent);
-  set_parent_for_ident(&node.prop, parent);
   node
 }
 
@@ -15250,6 +15556,88 @@ fn get_view_for_super<'a>(inner: &'a swc_ast::Super, bump: &'a Bump) -> &'a Supe
 fn set_parent_for_super<'a>(node: &Super<'a>, parent: Node<'a>) {
   unsafe {
     let node_ptr = node as *const Super<'a> as *mut Super<'a>;
+    (*node_ptr).parent.replace(parent);
+  }
+}
+
+#[derive(Clone)]
+pub struct SuperPropExpr<'a> {
+  parent: Option<Node<'a>>,
+  pub inner: &'a swc_ast::SuperPropExpr,
+  pub obj: &'a Super<'a>,
+  pub prop: SuperProp<'a>,
+}
+
+impl<'a> SuperPropExpr<'a> {
+  pub fn parent(&self) -> Node<'a> {
+    self.parent.unwrap()
+  }
+}
+
+impl<'a> Spanned for SuperPropExpr<'a> {
+  fn span(&self) -> Span {
+    self.inner.span()
+  }
+}
+
+impl<'a> From<&SuperPropExpr<'a>> for Node<'a> {
+  fn from(node: &SuperPropExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&SuperPropExpr<'a>, &'a SuperPropExpr<'a>>(node) };
+    Node::SuperPropExpr(node)
+  }
+}
+
+impl<'a> NodeTrait<'a> for SuperPropExpr<'a> {
+  fn parent(&self) -> Option<Node<'a>> {
+    Some(self.parent.unwrap().clone())
+  }
+
+  fn children(&self) -> Vec<Node<'a>> {
+    let mut children = Vec::with_capacity(2);
+    children.push(self.obj.into());
+    children.push((&self.prop).into());
+    children
+  }
+
+  fn as_node(&self) -> Node<'a> {
+    self.into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::SuperPropExpr
+  }
+}
+
+impl<'a> CastableNode<'a> for SuperPropExpr<'a> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
+    if let Node::SuperPropExpr(node) = node {
+      Some(node)
+    } else {
+      None
+    }
+  }
+
+  fn kind() -> NodeKind {
+    NodeKind::SuperPropExpr
+  }
+}
+
+fn get_view_for_super_prop_expr<'a>(inner: &'a swc_ast::SuperPropExpr, bump: &'a Bump) -> &'a SuperPropExpr<'a> {
+  let node = bump.alloc(SuperPropExpr {
+    inner,
+    parent: None,
+    obj: get_view_for_super(&inner.obj, bump),
+    prop: get_view_for_super_prop(&inner.prop, bump),
+  });
+  let parent: Node<'a> = (&*node).into();
+  set_parent_for_super(&node.obj, parent);
+  set_parent_for_super_prop(&node.prop, parent);
+  node
+}
+
+fn set_parent_for_super_prop_expr<'a>(node: &SuperPropExpr<'a>, parent: Node<'a>) {
+  unsafe {
+    let node_ptr = node as *const SuperPropExpr<'a> as *mut SuperPropExpr<'a>;
     (*node_ptr).parent.replace(parent);
   }
 }

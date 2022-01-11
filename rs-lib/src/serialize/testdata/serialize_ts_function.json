@@ -1,5 +1,5 @@
 {
-  "kind": 71,
+  "kind": 72,
   "start": 0,
   "end": 68,
   "body": [
@@ -21,12 +21,12 @@
         "end": 68,
         "params": [
           {
-            "kind": 79,
+            "kind": 80,
             "start": 13,
             "end": 33,
             "decorators": [],
             "pat": {
-              "kind": 77,
+              "kind": 78,
               "start": 13,
               "end": 33,
               "props": [
@@ -45,16 +45,16 @@
               ],
               "optional": false,
               "typeAnn": {
-                "kind": 145,
+                "kind": 147,
                 "start": 18,
                 "end": 33,
                 "typeAnn": {
-                  "kind": 147,
+                  "kind": 149,
                   "start": 20,
                   "end": 33,
                   "members": [
                     {
-                      "kind": 136,
+                      "kind": 138,
                       "start": 22,
                       "end": 31,
                       "readonly": false,
@@ -69,11 +69,11 @@
                       "optional": false,
                       "params": [],
                       "typeAnn": {
-                        "kind": 145,
+                        "kind": 147,
                         "start": 23,
                         "end": 31,
                         "typeAnn": {
-                          "kind": 124,
+                          "kind": 126,
                           "start": 25,
                           "end": 31,
                           "keywordKind": "number"
@@ -93,7 +93,7 @@
           "end": 68,
           "stmts": [
             {
-              "kind": 86,
+              "kind": 87,
               "start": 46,
               "end": 66,
               "arg": {
@@ -121,7 +121,7 @@
                   }
                 },
                 "right": {
-                  "kind": 75,
+                  "kind": 76,
                   "start": 64,
                   "end": 65,
                   "value": 0.0
@@ -133,11 +133,11 @@
         "isGenerator": false,
         "isAsync": false,
         "returnType": {
-          "kind": 145,
+          "kind": 147,
           "start": 34,
           "end": 43,
           "typeAnn": {
-            "kind": 124,
+            "kind": 126,
             "start": 36,
             "end": 43,
             "keywordKind": "boolean"

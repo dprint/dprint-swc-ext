@@ -6,6 +6,11 @@ export type BlockStmtOrExpr =
   | BlockStmt
   | Expr;
 
+export type Callee =
+  | Super
+  | Import
+  | Expr;
+
 export type ClassMember =
   | Constructor
   | ClassMethod
@@ -45,6 +50,7 @@ export type Expr =
   | BinExpr
   | AssignExpr
   | MemberExpr
+  | SuperPropExpr
   | CondExpr
   | CallExpr
   | NewExpr
@@ -71,10 +77,6 @@ export type Expr =
   | PrivateName
   | OptChainExpr
   | Invalid;
-
-export type ExprOrSuper =
-  | Super
-  | Expr;
 
 export type ImportSpecifier =
   | ImportNamedSpecifier
@@ -124,6 +126,11 @@ export type Lit =
   | BigInt
   | Regex
   | JSXText;
+
+export type MemberProp =
+  | Ident
+  | PrivateName
+  | ComputedPropName;
 
 export type ModuleDecl =
   | ImportDecl
@@ -205,6 +212,10 @@ export type Stmt =
   | ForOfStmt
   | Decl
   | ExprStmt;
+
+export type SuperProp =
+  | Ident
+  | ComputedPropName;
 
 export type TsEntityName =
   | TsQualifiedName
@@ -411,6 +422,13 @@ export enum EsVersion {
   Es2020,
   Es2021,
   Es2022,
+}
+
+export enum MetaPropKind {
+  /** `new.target` */
+  NewTarget,
+  /** `import.meta` */
+  ImportMeta,
 }
 
 export enum MethodKind {
@@ -832,6 +850,7 @@ export enum NodeKind {
   GetterProp,
   Ident,
   IfStmt,
+  Import,
   ImportDecl,
   ImportDefaultSpecifier,
   ImportNamedSpecifier,
@@ -879,6 +898,7 @@ export enum NodeKind {
   StaticBlock,
   Str,
   Super,
+  SuperPropExpr,
   SwitchCase,
   SwitchStmt,
   TaggedTpl,
@@ -998,6 +1018,7 @@ export type Node =
 | GetterProp
 | Ident
 | IfStmt
+| Import
 | ImportDecl
 | ImportDefaultSpecifier
 | ImportNamedSpecifier
@@ -1045,6 +1066,7 @@ export type Node =
 | StaticBlock
 | Str
 | Super
+| SuperPropExpr
 | SwitchCase
 | SwitchStmt
 | TaggedTpl
@@ -1352,7 +1374,7 @@ export class BreakStmt extends BaseNode {
 export class CallExpr extends BaseNode {
   kind!: NodeKind.CallExpr;
   parent!: Node;
-  callee!: ExprOrSuper;
+  callee!: Callee;
   args!: Array<ExprOrSpread>;
   type_args!: TsTypeParamInstantiation | undefined;
 
@@ -1736,7 +1758,7 @@ export class ExportNamedSpecifier extends BaseNode {
 export class ExportNamespaceSpecifier extends BaseNode {
   kind!: NodeKind.ExportNamespaceSpecifier;
   parent!: NamedExport;
-  name!: Ident;
+  name!: ModuleExportName;
 
   getChildren(): Node[] {
     const children: Node[] = new Array(1);
@@ -2013,6 +2035,15 @@ export class IfStmt extends BaseNode {
       children[i++] = this.alt;
     }
     return children;
+  }
+}
+
+export class Import extends BaseNode {
+  kind!: NodeKind.Import;
+  parent!: CallExpr;
+
+  getChildren(): Node[] {
+    return new Array(0);
   }
 }
 
@@ -2344,9 +2375,8 @@ export class LabeledStmt extends BaseNode {
 export class MemberExpr extends BaseNode {
   kind!: NodeKind.MemberExpr;
   parent!: Node;
-  obj!: ExprOrSuper;
-  prop!: Expr;
-  computed!: boolean;
+  obj!: Expr;
+  prop!: MemberProp;
 
   getChildren(): Node[] {
     const children: Node[] = new Array(2);
@@ -2360,15 +2390,10 @@ export class MemberExpr extends BaseNode {
 export class MetaPropExpr extends BaseNode {
   kind!: NodeKind.MetaPropExpr;
   parent!: Node;
-  meta!: Ident;
-  prop!: Ident;
+  prop_kind!: MetaPropKind;
 
   getChildren(): Node[] {
-    const children: Node[] = new Array(2);
-    let i = 0;
-    children[i++] = this.meta;
-    children[i++] = this.prop;
-    return children;
+    return new Array(0);
   }
 }
 
@@ -2781,10 +2806,25 @@ export class Str extends BaseNode {
 export class Super extends BaseNode {
   kind!: NodeKind.Super;
   parent!: CallExpr
-    | MemberExpr;
+    | SuperPropExpr;
 
   getChildren(): Node[] {
     return new Array(0);
+  }
+}
+
+export class SuperPropExpr extends BaseNode {
+  kind!: NodeKind.SuperPropExpr;
+  parent!: Node;
+  obj!: Super;
+  prop!: SuperProp;
+
+  getChildren(): Node[] {
+    const children: Node[] = new Array(2);
+    let i = 0;
+    children[i++] = this.obj;
+    children[i++] = this.prop;
+    return children;
   }
 }
 

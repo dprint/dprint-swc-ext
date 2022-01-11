@@ -81,8 +81,11 @@ export function analyzeAstCrate() {
             return "keyword_kind";
           case "Str":
             return "str_kind";
+          case "MetaPropExpr":
+            return "prop_kind";
           default:
-            throw new Error(`Unhandled custom name for ${item.name}.`);
+            // need to rename `kind` because it conflicts with the `kind(): NodeKind` method
+            throw new Error(`Unhandled renaming of kind property for ${item.name}.`);
         }
       } else {
         return fieldName;
