@@ -40,17 +40,20 @@ jobs:
 
     - name: Build debug
       if: matrix.config.kind == 'test_debug'
-      run: cd rs-lib && cargo build --verbose
+      run: cd rs-lib && cargo build
+    - name: Clippy
+      if: matrix.config.kind == 'test_debug'
+      run: cd rs-lib && cargo clippy --all-features
     - name: Test debug
       if: matrix.config.kind == 'test_debug'
-      run: cd rs-lib && cargo test --verbose --features serialize
+      run: cd rs-lib && cargo test --features serialize
 
     - name: Build release
       if: matrix.config.kind == 'test_release'
-      run: cd rs-lib && cargo build --release --verbose
+      run: cd rs-lib && cargo build --release
     - name: Test release
       if: matrix.config.kind == 'test_release'
-      run: cd rs-lib && cargo test --release --verbose --features serialize
+      run: cd rs-lib && cargo test --release --features serialize
 
     - name: Cargo login
       if: matrix.config.kind == 'test_release' && startsWith(github.ref, 'refs/tags/')
