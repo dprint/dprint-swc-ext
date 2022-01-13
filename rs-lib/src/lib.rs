@@ -1,5 +1,3 @@
-#![warn(clippy::print_stdout)]
-
 mod comments;
 mod custom;
 mod source_file;
