@@ -6,15 +6,10 @@ edition = "2018"
 license = "MIT"
 description = "View of the swc AST that's easier to navigate."
 
-[features]
-default = []
-serialize = ["serde_json"]
-
 [dependencies]
 bumpalo = "3.8.0"
 num-bigint = "0.2"
 rustc-hash = "1.1.0"
-serde_json = { version = "1.0.68", optional = true }
 swc_atoms = "0.2.9"
 swc_common = "0.17.0"
 swc_ecmascript = { version = "0.108.1", features = ["parser"] }
