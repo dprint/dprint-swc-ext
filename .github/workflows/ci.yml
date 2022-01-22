@@ -46,14 +46,14 @@ jobs:
       run: cd rs-lib && cargo clippy --all-features
     - name: Test debug
       if: matrix.config.kind == 'test_debug'
-      run: cd rs-lib && cargo test --features serialize
+      run: cd rs-lib && cargo test
 
     - name: Build release
       if: matrix.config.kind == 'test_release'
       run: cd rs-lib && cargo build --release
     - name: Test release
       if: matrix.config.kind == 'test_release'
-      run: cd rs-lib && cargo test --release --features serialize
+      run: cd rs-lib && cargo test --release
 
     - name: Cargo login
       if: matrix.config.kind == 'test_release' && startsWith(github.ref, 'refs/tags/')
