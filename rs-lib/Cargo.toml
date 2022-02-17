@@ -11,8 +11,8 @@ bumpalo = "3.8.0"
 num-bigint = "0.2"
 rustc-hash = "1.1.0"
 swc_atoms = "0.2.9"
-swc_common = "0.17.2"
-swc_ecmascript = { version = "0.111.10", features = ["parser"] }
+swc_common = "0.17.5"
+swc_ecmascript = { version = "0.114.2", features = ["parser"] }
 text_lines = "0.4.1"
 
 [dev-dependencies]
