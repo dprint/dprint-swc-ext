@@ -32,12 +32,3 @@ impl<'a> BindingIdent<'a> {
     self.id.ctxt()
   }
 }
-
-impl<'a> OptChainExpr<'a> {
-  pub fn expr(&self) -> Expr {
-    match self.base {
-      OptChainBase::Member(member_expr) => member_expr.obj,
-      OptChainBase::Call(call_expr) => call_expr.callee,
-    }
-  }
-}
