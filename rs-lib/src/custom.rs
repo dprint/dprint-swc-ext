@@ -2,7 +2,10 @@ use swc_atoms::JsWord;
 use swc_common::SyntaxContext;
 
 use crate::BindingIdent;
+use crate::Expr;
 use crate::Ident;
+use crate::OptChainBase;
+use crate::OptChainExpr;
 
 /// Redeclaration of `swc_ecma_utils::Id`.
 /// Contains the name and scope of the identifier, but only
@@ -27,5 +30,14 @@ impl<'a> BindingIdent<'a> {
 
   pub fn ctxt(&self) -> SyntaxContext {
     self.id.ctxt()
+  }
+}
+
+impl<'a> OptChainExpr<'a> {
+  pub fn expr(&self) -> Expr {
+    match self.base {
+      OptChainBase::Member(member_expr) => member_expr.obj,
+      OptChainBase::Call(call_expr) => call_expr.callee,
+    }
   }
 }
