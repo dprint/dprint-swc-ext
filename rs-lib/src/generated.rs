@@ -14846,6 +14846,10 @@ impl<'a> PrivateProp<'a> {
   pub fn readonly(&self) -> bool {
     self.inner.readonly
   }
+
+  pub fn definite(&self) -> bool {
+    self.inner.definite
+  }
 }
 
 impl<'a> Spanned for PrivateProp<'a> {
