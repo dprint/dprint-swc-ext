@@ -5,7 +5,7 @@ use std::mem;
 use bumpalo::Bump;
 use swc_common::{Span, Spanned};
 use swc_ecmascript::ast as swc_ast;
-pub use swc_ecmascript::ast::{Accessibility, AssignOp, BinaryOp, EsVersion, MetaPropKind, MethodKind, StrKind, TruePlusMinus, TsKeywordTypeKind, TsTypeOperatorOp, UnaryOp, UpdateOp, VarDeclKind};
+pub use swc_ecmascript::ast::{Accessibility, AssignOp, BinaryOp, EsVersion, MetaPropKind, MethodKind, TruePlusMinus, TsKeywordTypeKind, TsTypeOperatorOp, UnaryOp, UpdateOp, VarDeclKind};
 use crate::comments::*;
 use crate::source_file::*;
 use crate::tokens::*;
@@ -8013,6 +8013,12 @@ impl<'a> BigInt<'a> {
   pub fn value(&self) -> &num_bigint::BigInt {
     &self.inner.value
   }
+
+  /// Use `None` value only for transformations to avoid recalculate
+  /// characters in big integer
+  pub fn raw(&self) -> &Option<swc_atoms::JsWord> {
+    &self.inner.raw
+  }
 }
 
 impl<'a> Spanned for BigInt<'a> {
@@ -14039,6 +14045,12 @@ impl<'a> Number<'a> {
   pub fn value(&self) -> f64 {
     self.inner.value
   }
+
+  /// Use `None` value only for transformations to avoid recalculate
+  /// characters in number literal
+  pub fn raw(&self) -> &Option<swc_atoms::JsWord> {
+    &self.inner.raw
+  }
 }
 
 impl<'a> Spanned for Number<'a> {
@@ -15626,15 +15638,6 @@ fn set_parent_for_static_block<'a>(node: &StaticBlock<'a>, parent: Node<'a>) {
 }
 
 /// A string literal.
-///
-/// # Note
-///
-/// You have to use [StrKind::Synthesized] if you modify the `value` of [Str].
-/// This behavior is for preserving the original source code.
-///
-/// In other words, `swc_ecma_codegen` tries to preserve escapes or unicode
-/// characters in the original source code and you can opt-out of this by using
-/// [StrKind::Synthesized].
 #[derive(Clone)]
 pub struct Str<'a> {
   parent: Option<Node<'a>>,
@@ -15650,13 +15653,10 @@ impl<'a> Str<'a> {
     &self.inner.value
   }
 
-  /// This includes line escape.
-  pub fn has_escape(&self) -> bool {
-    self.inner.has_escape
-  }
-
-  pub fn str_kind(&self) -> StrKind {
-    self.inner.kind
+  /// Use `None` value only for transformations to avoid recalculate escaped
+  /// characters in strings
+  pub fn raw(&self) -> &Option<swc_atoms::JsWord> {
+    &self.inner.raw
   }
 }
 
@@ -16391,13 +16391,6 @@ fn set_parent_for_tpl<'a>(node: &Tpl<'a>, parent: Node<'a>) {
 pub struct TplElement<'a> {
   parent: Option<Node<'a>>,
   pub inner: &'a swc_ast::TplElement,
-  /// This value is never used by `swc_ecma_codegen`, and this fact is
-  /// considered as a public API.
-  ///
-  /// If you are going to use codegen right after creating a [TplElement], you
-  /// don't have to worry about this value.
-  pub cooked: Option<&'a Str<'a>>,
-  pub raw: &'a Str<'a>,
 }
 
 impl<'a> TplElement<'a> {
@@ -16407,6 +16400,19 @@ impl<'a> TplElement<'a> {
 
   pub fn tail(&self) -> bool {
     self.inner.tail
+  }
+
+  /// This value is never used by `swc_ecma_codegen`, and this fact is
+  /// considered as a public API.
+  ///
+  /// If you are going to use codegen right after creating a [TplElement], you
+  /// don't have to worry about this value.
+  pub fn cooked(&self) -> &Option<swc_atoms::JsWord> {
+    &self.inner.cooked
+  }
+
+  pub fn raw(&self) -> &swc_atoms::JsWord {
+    &self.inner.raw
   }
 }
 
@@ -16429,12 +16435,7 @@ impl<'a> NodeTrait<'a> for TplElement<'a> {
   }
 
   fn children(&self) -> Vec<Node<'a>> {
-    let mut children = Vec::with_capacity(1 + match &self.cooked { Some(_value) => 1, None => 0, });
-    if let Some(child) = self.cooked {
-      children.push(child.into());
-    }
-    children.push(self.raw.into());
-    children
+    Vec::with_capacity(0)
   }
 
   fn as_node(&self) -> Node<'a> {
@@ -16464,17 +16465,7 @@ fn get_view_for_tpl_element<'a>(inner: &'a swc_ast::TplElement, bump: &'a Bump) 
   let node = bump.alloc(TplElement {
     inner,
     parent: None,
-    cooked: match &inner.cooked {
-      Some(value) => Some(get_view_for_str(value, bump)),
-      None => None,
-    },
-    raw: get_view_for_str(&inner.raw, bump),
   });
-  let parent: Node<'a> = (&*node).into();
-  if let Some(value) = &node.cooked {
-    set_parent_for_str(value, parent)
-  };
-  set_parent_for_str(&node.raw, parent);
   node
 }
 
@@ -20877,6 +20868,14 @@ pub struct TsTypeParam<'a> {
 impl<'a> TsTypeParam<'a> {
   pub fn parent(&self) -> Node<'a> {
     self.parent.unwrap()
+  }
+
+  pub fn is_in(&self) -> bool {
+    self.inner.is_in
+  }
+
+  pub fn is_out(&self) -> bool {
+    self.inner.is_out
   }
 }
 

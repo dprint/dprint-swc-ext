@@ -2,10 +2,7 @@ use swc_atoms::JsWord;
 use swc_common::SyntaxContext;
 
 use crate::BindingIdent;
-use crate::Expr;
 use crate::Ident;
-use crate::OptChainBase;
-use crate::OptChainExpr;
 
 /// Redeclaration of `swc_ecma_utils::Id`.
 /// Contains the name and scope of the identifier, but only

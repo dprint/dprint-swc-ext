@@ -19,6 +19,10 @@ then
     echo "Setting up swc_ecma_parser $SWC_PARSER_VERSION..."
     rm -rf swc_ecma_parser
     cargo clone swc_ecma_parser@$SWC_PARSER_VERSION
+    # generate these files to make cargo happy
+    mkdir -p swc_ecma_parser/benches/compare && touch swc_ecma_parser/benches/compare/main.rs
+    mkdir -p swc_ecma_parser/benches/lexer && touch swc_ecma_parser/benches/lexer/main.rs
+    mkdir -p swc_ecma_parser/benches/parser && touch swc_ecma_parser/benches/parser/main.rs
     (cd swc_ecma_parser && cargo +nightly rustdoc -- --output-format json -Z unstable-options)
     cp swc_ecma_parser/target/doc/swc_ecma_parser.json swc_ecma_parser.json
 
