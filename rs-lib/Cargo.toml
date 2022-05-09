@@ -1,6 +1,6 @@
 [package]
 name = "dprint-swc-ecma-ast-view"
-version = "0.55.0"
+version = "0.56.0"
 authors = ["David Sherret <dsherret@gmail.com>"]
 edition = "2021"
 license = "MIT"
@@ -11,8 +11,8 @@ bumpalo = "3.9.1"
 num-bigint = "0.4"
 rustc-hash = "1.1.0"
 swc_atoms = "0.2.11"
-swc_common = "0.17.19"
-swc_ecmascript = { version = "0.143.0", features = ["parser"] }
+swc_common = "0.17.25"
+swc_ecmascript = { version = "0.154.0", features = ["parser"] }
 text_lines = "0.4.1"
 
 [dev-dependencies]
