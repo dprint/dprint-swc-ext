@@ -14,7 +14,7 @@ The library at `./rs-lib` is code generated from [swc_ecma_ast](https://crates.i
 
 ## Helpers
 
-SourceRanged (All):
+All (`SourceRanged` trait):
 
 - `.start(&self) -> SourcePos`
 - `.end(&self) -> SourcePos`
@@ -68,6 +68,10 @@ Node/Enum Node:
 - `.expect::<NodeType>(&self) -> &NodeType`
 - `.is::<NodeType>(&self) -> bool`
 
+`TokenAndRange` methods:
+
+- `.token_index(&self, root_node: &dyn RootNode) -> usize` - Gets the token index of the specified module.
+
 Root Node (Program/Module/Script):
 
 - `token_at_index(&self, index: &usize) - Option<&TokenAndRange>`
@@ -100,7 +104,7 @@ Code can be written like so:
 let source_file: swc_common::SourceFile = ...;
 let program: swc_ecmascript::ast::Program = ...;
 let comments: swc_common::comments::SingleThreadedComments = ...;
-let tokens: Vec<TokenAndRange> = ...; // use `.into()` on swc's TokenAndSpan
+let tokens: Vec<TokenAndRange> = ...; // use `.into()` on swc's TokenAndSpan to get a TokenAndRange
 
 // setup for creating a view
 let program_info = ProgramInfo {
