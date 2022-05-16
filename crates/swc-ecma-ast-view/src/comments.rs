@@ -1,14 +1,15 @@
+use dprint_swc_ext::SourceTextInfo;
+
+use crate::swc::common::comments::Comment;
+use crate::swc::common::comments::SingleThreadedCommentsMapInner;
 use crate::tokens::*;
-use crate::SourceFile;
 use crate::SourcePos;
-use swc_common::comments::Comment;
-use swc_common::comments::SingleThreadedCommentsMapInner;
 
 pub struct CommentContainer<'a> {
   pub leading: &'a SingleThreadedCommentsMapInner,
   pub trailing: &'a SingleThreadedCommentsMapInner,
   tokens: &'a TokenContainer<'a>,
-  source_file: &'a dyn SourceFile,
+  text_info: &'a SourceTextInfo,
 }
 
 impl<'a> CommentContainer<'a> {
@@ -16,13 +17,13 @@ impl<'a> CommentContainer<'a> {
     leading: &'a SingleThreadedCommentsMapInner,
     trailing: &'a SingleThreadedCommentsMapInner,
     tokens: &'a TokenContainer<'a>,
-    source_file: &'a dyn SourceFile,
+    text_info: &'a SourceTextInfo,
   ) -> Self {
     CommentContainer {
       leading,
       trailing,
       tokens,
-      source_file,
+      text_info,
     }
   }
 
@@ -59,7 +60,7 @@ impl<'a> CommentContainer<'a> {
         .tokens
         .get_token_at_index(index + 1)
         .map(|t| t.range.start)
-        .unwrap_or_else(|| self.source_file.range().end)
+        .unwrap_or_else(|| self.text_info.range().end)
     });
     let trailing = self.get_trailing(end);
     if let Some(next_token_lo) = next_token_lo {
@@ -212,7 +213,7 @@ impl<'a> DoubleEndedIterator for CommentsIterator<'a> {
 mod test {
   use crate::test_helpers::*;
   use crate::SourcePos;
-  use crate::SourceRanged;
+  use crate::SourceRangedExt;
 
   #[test]
   fn trailing_comments_start_of_file_no_match() {

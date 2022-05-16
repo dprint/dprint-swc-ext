@@ -1,0 +1,5 @@
+[workspace]
+members = [
+  "crates/swc-ext",
+  "crates/swc-ecma-ast-view",
+]

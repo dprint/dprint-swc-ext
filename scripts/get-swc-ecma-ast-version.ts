@@ -1,7 +1,7 @@
 // see https://doc.rust-lang.org/cargo/commands/cargo-metadata.html
 const cmd = Deno.run({
   cmd: ["cargo", "metadata", "--format-version", "1"],
-  cwd: "./rs-lib",
+  cwd: "./crates/swc-ecma-ast-view",
   stdout: "piped",
 });
 

@@ -40,13 +40,14 @@ export function generate(analysisResult: AnalysisResult): string {
     writer.writeLine("use std::cell::RefCell;");
     writer.writeLine("use std::mem;");
     writer.writeLine("use bumpalo::Bump;");
-    writer.writeLine("use swc_common::Spanned;");
-    writer.writeLine("use swc_ecmascript::ast as swc_ast;");
-    writer.write("pub use swc_ecmascript::ast::{");
+    writer.writeLine("use crate::swc::common::Spanned;");
+    writer.writeLine("use crate::swc::ast as swc_ast;");
+    writer.writeLine("use crate::swc::atoms as swc_atoms;");
+    writer.write("pub use crate::swc::ast::{");
     writer.write(analysisResult.plainEnums.map(e => e.name).join(", "));
     writer.write("};").newLine();
+    writer.writeLine("use crate::swc::common as swc_common;");
     writer.writeLine("use crate::comments::*;");
-    writer.writeLine("use crate::source_file::*;");
     writer.writeLine("use crate::tokens::*;");
     writer.writeLine("use crate::types::*;");
     writer.blankLine();
@@ -65,7 +66,7 @@ export function generate(analysisResult: AnalysisResult): string {
         writer.write("ProgramRef::Module(module) =>").block(() => {
           writer.write("with_ast_view_for_module(ModuleInfo ").inlineBlock(() => {
             writer.writeLine("module,");
-            writer.writeLine("source_file: info.source_file,");
+            writer.writeLine("text_info: info.text_info,");
             writer.writeLine("tokens: info.tokens,");
             writer.writeLine("comments: info.comments,");
           }).write(", |module| with_view(Program::Module(module)))");
@@ -73,7 +74,7 @@ export function generate(analysisResult: AnalysisResult): string {
         writer.write("ProgramRef::Script(script) =>").block(() => {
           writer.write("with_ast_view_for_script(ScriptInfo ").inlineBlock(() => {
             writer.writeLine("script,");
-            writer.writeLine("source_file: info.source_file,");
+            writer.writeLine("text_info: info.text_info,");
             writer.writeLine("tokens: info.tokens,");
             writer.writeLine("comments: info.comments,");
           }).write(", |script| with_view(Program::Script(script)))");
@@ -407,7 +408,7 @@ export function generate(analysisResult: AnalysisResult): string {
           }
         }
         if (struct.name === "Module" || struct.name === "Script") {
-          writer.writeLine("pub source_file: Option<&'a dyn SourceFile>,");
+          writer.writeLine("pub text_info: Option<&'a SourceTextInfo>,");
           writer.writeLine("pub tokens: Option<&'a TokenContainer<'a>>,");
           writer.writeLine("pub comments: Option<&'a CommentContainer<'a>>,");
         }
@@ -643,7 +644,7 @@ export function generate(analysisResult: AnalysisResult): string {
             writer.writeLine("c.leading,");
             writer.writeLine("c.trailing,");
             writer.writeLine(`tokens.expect("Tokens must be provided when using comments."),`);
-            writer.writeLine(`source_file_info.source_file.expect("Source file must be provided when using comments"),`);
+            writer.writeLine(`source_file_info.text_info.expect("Text info must be provided when using comments"),`);
           });
           writer.writeLine(")));");
         }
@@ -655,7 +656,7 @@ export function generate(analysisResult: AnalysisResult): string {
             writer.write("parent: None,").newLine();
           }
           if (struct.name === "Module" || struct.name === "Script") {
-            writer.write("source_file: source_file_info.source_file,").newLine();
+            writer.write("source_file: source_file_info.text_info,").newLine();
             writer.write("tokens,").newLine();
             writer.write("comments,").newLine();
           }

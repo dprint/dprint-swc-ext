@@ -3,11 +3,12 @@
 use std::cell::RefCell;
 use std::mem;
 use bumpalo::Bump;
-use swc_common::Spanned;
-use swc_ecmascript::ast as swc_ast;
-pub use swc_ecmascript::ast::{Accessibility, AssignOp, BinaryOp, EsVersion, MetaPropKind, MethodKind, TruePlusMinus, TsKeywordTypeKind, TsTypeOperatorOp, UnaryOp, UpdateOp, VarDeclKind};
+use crate::swc::common::Spanned;
+use crate::swc::ast as swc_ast;
+use crate::swc::atoms as swc_atoms;
+pub use crate::swc::ast::{Accessibility, AssignOp, BinaryOp, EsVersion, MetaPropKind, MethodKind, TruePlusMinus, TsKeywordTypeKind, TsTypeOperatorOp, UnaryOp, UpdateOp, VarDeclKind};
+use crate::swc::common as swc_common;
 use crate::comments::*;
-use crate::source_file::*;
 use crate::tokens::*;
 use crate::types::*;
 
@@ -20,7 +21,7 @@ pub fn with_ast_view<'a, T>(info: ProgramInfo, with_view: impl FnOnce(Program<'a
     ProgramRef::Module(module) => {
       with_ast_view_for_module(ModuleInfo {
         module,
-        source_file: info.source_file,
+        text_info: info.text_info,
         tokens: info.tokens,
         comments: info.comments,
       }, |module| with_view(Program::Module(module)))
@@ -28,7 +29,7 @@ pub fn with_ast_view<'a, T>(info: ProgramInfo, with_view: impl FnOnce(Program<'a
     ProgramRef::Script(script) => {
       with_ast_view_for_script(ScriptInfo {
         script,
-        source_file: info.source_file,
+        text_info: info.text_info,
         tokens: info.tokens,
         comments: info.comments,
       }, |script| with_view(Program::Script(script)))
@@ -14437,7 +14438,7 @@ fn set_parent_for_method_prop<'a>(node: &MethodProp<'a>, parent: Node<'a>) {
 
 #[derive(Clone)]
 pub struct Module<'a> {
-  pub source_file: Option<&'a dyn SourceFile>,
+  pub text_info: Option<&'a SourceTextInfo>,
   pub tokens: Option<&'a TokenContainer<'a>>,
   pub comments: Option<&'a CommentContainer<'a>>,
   pub inner: &'a swc_ast::Module,
@@ -14509,11 +14510,11 @@ fn get_view_for_module<'a>(source_file_info: &'a ModuleInfo<'a>, bump: &'a Bump)
     c.leading,
     c.trailing,
     tokens.expect("Tokens must be provided when using comments."),
-    source_file_info.source_file.expect("Source file must be provided when using comments"),
+    source_file_info.text_info.expect("Source file must be provided when using comments"),
   )));
   let node = bump.alloc(Module {
     inner,
-    source_file: source_file_info.source_file,
+    text_info: source_file_info.text_info,
     tokens,
     comments,
     body: inner.body.iter().map(|value| get_view_for_module_item(value, bump)).collect(),
@@ -16058,7 +16059,7 @@ fn set_parent_for_return_stmt<'a>(node: &ReturnStmt<'a>, parent: Node<'a>) {
 
 #[derive(Clone)]
 pub struct Script<'a> {
-  pub source_file: Option<&'a dyn SourceFile>,
+  pub text_info: Option<&'a SourceTextInfo>,
   pub tokens: Option<&'a TokenContainer<'a>>,
   pub comments: Option<&'a CommentContainer<'a>>,
   pub inner: &'a swc_ast::Script,
@@ -16130,11 +16131,11 @@ fn get_view_for_script<'a>(source_file_info: &'a ScriptInfo<'a>, bump: &'a Bump)
     c.leading,
     c.trailing,
     tokens.expect("Tokens must be provided when using comments."),
-    source_file_info.source_file.expect("Source file must be provided when using comments"),
+    source_file_info.text_info.expect("Source file must be provided when using comments"),
   )));
   let node = bump.alloc(Script {
     inner,
-    source_file: source_file_info.source_file,
+    text_info: source_file_info.text_info,
     tokens,
     comments,
     body: inner.body.iter().map(|value| get_view_for_stmt(value, bump)).collect(),

@@ -1,6 +1,5 @@
-use swc_atoms::JsWord;
-use swc_common::SyntaxContext;
-
+use crate::swc::atoms::JsWord;
+use crate::swc::common::SyntaxContext;
 use crate::BindingIdent;
 use crate::Ident;
 

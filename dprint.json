@@ -12,7 +12,7 @@
     "./swc_ecma_ast.json",
     "./swc_ecma_parser.json",
     "**/*.generated.ts",
-    "./rs-lib/src/**/*generated.rs",
+    "**/*generated.rs",
     "**/testdata",
     "**/target"
   ],

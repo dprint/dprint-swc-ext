@@ -8,12 +8,9 @@ description = "View of the swc AST that's easier to navigate."
 
 [dependencies]
 bumpalo = "3.9.1"
+dprint-swc-ext = { version = "0.1.0", path = "../swc-ext" }
 num-bigint = "0.4"
 rustc-hash = "1.1.0"
-swc_atoms = "0.2.11"
-swc_common = "0.18.3"
-swc_ecmascript = { version = "0.157.0", features = ["parser"] }
-text_lines = "0.4.1"
 
 [dev-dependencies]
 pretty_assertions = "1.0.0"

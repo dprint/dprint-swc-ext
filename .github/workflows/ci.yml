@@ -43,20 +43,20 @@ jobs:
 
     - name: Build debug
       if: matrix.config.kind == 'test_debug'
-      run: cd rs-lib && cargo build
+      run: cargo build
     - name: Clippy
       if: matrix.config.kind == 'test_debug'
-      run: cd rs-lib && cargo clippy --all-features
+      run: cargo clippy --all-features
     - name: Test debug
       if: matrix.config.kind == 'test_debug'
-      run: cd rs-lib && cargo test
+      run: cargo test
 
     - name: Build release
       if: matrix.config.kind == 'test_release'
-      run: cd rs-lib && cargo build --release
+      run: cargo build --release
     - name: Test release
       if: matrix.config.kind == 'test_release'
-      run: cd rs-lib && cargo test --release
+      run: cargo test --release
 
     - name: Publish on version change
       env:
@@ -66,4 +66,4 @@ jobs:
         github.repository == 'dprint/dprint-swc-ecma-ast-view' &&
         github.ref == 'refs/heads/main' &&
         matrix.config.kind == 'test_release'
-      run: cd rs-lib && deno run -A --no-check https://raw.githubusercontent.com/denoland/automation/0.4.0/tasks/release_on_crate_version_change.ts --publish
+      run: cd crates/swc-ecma-ast-view && deno run -A --no-check https://raw.githubusercontent.com/denoland/automation/0.4.0/tasks/release_on_crate_version_change.ts --publish

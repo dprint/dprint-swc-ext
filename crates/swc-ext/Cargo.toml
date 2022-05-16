@@ -1,0 +1,10 @@
+[package]
+name = "dprint-swc-ext"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+swc_atoms = "0.2.11"
+swc_common = "0.18.3"
+swc_ecmascript = { version = "0.157.0", features = ["parser"] }
+text_lines = "0.4.1"

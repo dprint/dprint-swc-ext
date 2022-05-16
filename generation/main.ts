@@ -3,4 +3,4 @@ import { generate } from "./generate/generate.ts";
 
 const analysisResult = analyze();
 
-Deno.writeTextFileSync("./rs-lib/src/generated.rs", generate(analysisResult));
+Deno.writeTextFileSync("./crates/swc-ecma-ast-view/src/generated.rs", generate(analysisResult));

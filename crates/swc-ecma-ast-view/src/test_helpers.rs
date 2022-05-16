@@ -1,11 +1,12 @@
-use std::path::Path;
-use swc_common::{
+use dprint_swc_ext::SourceTextInfo;
+
+use crate::swc::ast::{EsVersion, Module, Script};
+use crate::swc::common::{
   comments::SingleThreadedComments,
   errors::{DiagnosticBuilder, Emitter, Handler},
-  FileName, SourceFile,
 };
-use swc_ecmascript::ast::{EsVersion, Module, Script};
-use swc_ecmascript::parser::{lexer::Lexer, Capturing, Parser, StringInput, Syntax};
+use crate::swc::parser::{lexer::Lexer, Capturing, Parser, StringInput, Syntax};
+use std::path::Path;
 
 use crate::{SourcePos, TokenAndRange};
 
@@ -23,11 +24,11 @@ pub fn run_test(file_text: &str, run_test: impl Fn(super::Program)) {
 }
 
 pub fn run_test_with_module(file_path: &Path, file_text: &str, run_test: impl Fn(&super::Module)) {
-  let (module, tokens, source_file, comments) = get_swc_module(file_path, file_text);
+  let (module, tokens, text_info, comments) = get_swc_module(file_path, file_text);
   let (leading, trailing) = comments.borrow_all();
   let info = super::ModuleInfo {
     module: &module,
-    source_file: Some(&source_file),
+    text_info: Some(&text_info),
     tokens: Some(&tokens),
     comments: Some(super::Comments {
       leading: &leading,
@@ -40,11 +41,11 @@ pub fn run_test_with_module(file_path: &Path, file_text: &str, run_test: impl Fn
 }
 
 pub fn run_test_with_script(file_path: &Path, file_text: &str, run_test: impl Fn(&super::Script)) {
-  let (script, tokens, source_file, comments) = get_swc_script(file_path, file_text);
+  let (script, tokens, text_info, comments) = get_swc_script(file_path, file_text);
   let (leading, trailing) = comments.borrow_all();
   let info = super::ScriptInfo {
     script: &script,
-    source_file: Some(&source_file),
+    text_info: Some(&text_info),
     tokens: Some(&tokens),
     comments: Some(super::Comments {
       leading: &leading,
@@ -62,22 +63,16 @@ pub fn get_swc_module(
 ) -> (
   Module,
   Vec<TokenAndRange>,
-  SourceFile,
+  SourceTextInfo,
   SingleThreadedComments,
 ) {
   // lifted from dprint-plugin-typescript
   let handler = Handler::with_emitter(false, false, Box::new(EmptyEmitter {}));
-  let source_file = SourceFile::new(
-    FileName::Custom(file_path.to_string_lossy().into()),
-    false,
-    FileName::Custom(file_path.to_string_lossy().into()),
-    file_text.into(),
-    SourcePos::START_BYTE_POS,
-  );
+  let source_text_info = SourceTextInfo::from_string(file_text.to_string());
 
   let comments: SingleThreadedComments = Default::default();
   return {
-    let ts_config = swc_ecmascript::parser::TsConfig {
+    let ts_config = crate::swc::parser::TsConfig {
       tsx: should_parse_as_jsx(file_path),
       decorators: true,
       ..Default::default()
@@ -85,7 +80,7 @@ pub fn get_swc_module(
     let lexer = Lexer::new(
       Syntax::Typescript(ts_config),
       EsVersion::Es2022,
-      StringInput::from(&source_file),
+      source_text_info.as_string_input(),
       Some(&comments),
     );
     let lexer = Capturing::new(lexer);
@@ -106,7 +101,7 @@ pub fn get_swc_module(
         // return the formatted diagnostic string
         Err(diagnostic.message())
       }
-      Ok(module) => Ok((module, tokens, source_file, comments)),
+      Ok(module) => Ok((module, tokens, source_text_info, comments)),
     }
   }
   .unwrap();
@@ -118,22 +113,16 @@ pub fn get_swc_script(
 ) -> (
   Script,
   Vec<TokenAndRange>,
-  SourceFile,
+  SourceTextInfo,
   SingleThreadedComments,
 ) {
   // lifted from dprint-plugin-typescript
   let handler = Handler::with_emitter(false, false, Box::new(EmptyEmitter {}));
-  let source_file = SourceFile::new(
-    FileName::Custom(file_path.to_string_lossy().into()),
-    false,
-    FileName::Custom(file_path.to_string_lossy().into()),
-    file_text.into(),
-    SourcePos::START_BYTE_POS,
-  );
+  let source_text_info = SourceTextInfo::from_string(file_text.to_string());
 
   let comments: SingleThreadedComments = Default::default();
   return {
-    let ts_config = swc_ecmascript::parser::TsConfig {
+    let ts_config = crate::swc::parser::TsConfig {
       tsx: should_parse_as_jsx(file_path),
       decorators: true,
       ..Default::default()
@@ -141,7 +130,7 @@ pub fn get_swc_script(
     let lexer = Lexer::new(
       Syntax::Typescript(ts_config),
       EsVersion::Es2022,
-      StringInput::from(&source_file),
+      source_text_info.as_string_input(),
       Some(&comments),
     );
     let lexer = Capturing::new(lexer);
@@ -162,7 +151,7 @@ pub fn get_swc_script(
         // return the formatted diagnostic string
         Err(diagnostic.message())
       }
-      Ok(script) => Ok((script, tokens, source_file, comments)),
+      Ok(script) => Ok((script, tokens, source_text_info, comments)),
     }
   }
   .unwrap();
