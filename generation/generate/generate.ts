@@ -40,7 +40,7 @@ export function generate(analysisResult: AnalysisResult): string {
     writer.writeLine("use std::cell::RefCell;");
     writer.writeLine("use std::mem;");
     writer.writeLine("use bumpalo::Bump;");
-    writer.writeLine("use swc_common::{Span, Spanned};");
+    writer.writeLine("use swc_common::Spanned;");
     writer.writeLine("use swc_ecmascript::ast as swc_ast;");
     writer.write("pub use swc_ecmascript::ast::{");
     writer.write(analysisResult.plainEnums.map(e => e.name).join(", "));
@@ -134,8 +134,9 @@ export function generate(analysisResult: AnalysisResult): string {
       });
     }).blankLine();
 
-    writeTrait("Spanned", "Node<'a>", () => {
-      implementTraitMethod("span", "Span");
+    writeTrait("SourceRanged", "Node<'a>", () => {
+      implementTraitMethod("start", "SourcePos");
+      implementTraitMethod("end", "SourcePos");
     });
     writer.blankLine();
 
@@ -259,8 +260,9 @@ export function generate(analysisResult: AnalysisResult): string {
         }
       }).blankLine();
 
-      writeTrait("Spanned", `${enumDef.name}<'a>`, () => {
-        implementTraitMethod("span", "Span");
+      writeTrait("SourceRanged", `${enumDef.name}<'a>`, () => {
+        implementTraitMethod("start", "SourcePos");
+        implementTraitMethod("end", "SourcePos");
       });
       writer.blankLine();
 
@@ -457,9 +459,13 @@ export function generate(analysisResult: AnalysisResult): string {
       }
 
       writer.blankLineIfLastNot();
-      writeTrait("Spanned", `${struct.name}<'a>`, () => {
-        writer.write("fn span(&self) -> Span").block(() => {
-          writer.writeLine("self.inner.span()");
+      writeTrait("SourceRanged", `${struct.name}<'a>`, () => {
+        writer.write("fn start(&self) -> SourcePos").block(() => {
+          writer.writeLine("SourcePos::from_byte_pos(self.inner.span().lo)");
+        });
+
+        writer.write("fn end(&self) -> SourcePos").block(() => {
+          writer.writeLine("SourcePos::from_byte_pos(self.inner.span().hi)");
         });
       });
 

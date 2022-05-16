@@ -3,7 +3,7 @@
 use std::cell::RefCell;
 use std::mem;
 use bumpalo::Bump;
-use swc_common::{Span, Spanned};
+use swc_common::Spanned;
 use swc_ecmascript::ast as swc_ast;
 pub use swc_ecmascript::ast::{Accessibility, AssignOp, BinaryOp, EsVersion, MetaPropKind, MethodKind, TruePlusMinus, TsKeywordTypeKind, TsTypeOperatorOp, UnaryOp, UpdateOp, VarDeclKind};
 use crate::comments::*;
@@ -249,176 +249,347 @@ impl<'a> Node<'a> {
   }
 }
 
-impl<'a> Spanned for Node<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for Node<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      Node::ArrayLit(node) => node.span(),
-      Node::ArrayPat(node) => node.span(),
-      Node::ArrowExpr(node) => node.span(),
-      Node::AssignExpr(node) => node.span(),
-      Node::AssignPat(node) => node.span(),
-      Node::AssignPatProp(node) => node.span(),
-      Node::AssignProp(node) => node.span(),
-      Node::AwaitExpr(node) => node.span(),
-      Node::BigInt(node) => node.span(),
-      Node::BinExpr(node) => node.span(),
-      Node::BindingIdent(node) => node.span(),
-      Node::BlockStmt(node) => node.span(),
-      Node::Bool(node) => node.span(),
-      Node::BreakStmt(node) => node.span(),
-      Node::CallExpr(node) => node.span(),
-      Node::CatchClause(node) => node.span(),
-      Node::Class(node) => node.span(),
-      Node::ClassDecl(node) => node.span(),
-      Node::ClassExpr(node) => node.span(),
-      Node::ClassMethod(node) => node.span(),
-      Node::ClassProp(node) => node.span(),
-      Node::ComputedPropName(node) => node.span(),
-      Node::CondExpr(node) => node.span(),
-      Node::Constructor(node) => node.span(),
-      Node::ContinueStmt(node) => node.span(),
-      Node::DebuggerStmt(node) => node.span(),
-      Node::Decorator(node) => node.span(),
-      Node::DoWhileStmt(node) => node.span(),
-      Node::EmptyStmt(node) => node.span(),
-      Node::ExportAll(node) => node.span(),
-      Node::ExportDecl(node) => node.span(),
-      Node::ExportDefaultDecl(node) => node.span(),
-      Node::ExportDefaultExpr(node) => node.span(),
-      Node::ExportDefaultSpecifier(node) => node.span(),
-      Node::ExportNamedSpecifier(node) => node.span(),
-      Node::ExportNamespaceSpecifier(node) => node.span(),
-      Node::ExprOrSpread(node) => node.span(),
-      Node::ExprStmt(node) => node.span(),
-      Node::FnDecl(node) => node.span(),
-      Node::FnExpr(node) => node.span(),
-      Node::ForInStmt(node) => node.span(),
-      Node::ForOfStmt(node) => node.span(),
-      Node::ForStmt(node) => node.span(),
-      Node::Function(node) => node.span(),
-      Node::GetterProp(node) => node.span(),
-      Node::Ident(node) => node.span(),
-      Node::IfStmt(node) => node.span(),
-      Node::Import(node) => node.span(),
-      Node::ImportDecl(node) => node.span(),
-      Node::ImportDefaultSpecifier(node) => node.span(),
-      Node::ImportNamedSpecifier(node) => node.span(),
-      Node::ImportStarAsSpecifier(node) => node.span(),
-      Node::Invalid(node) => node.span(),
-      Node::JSXAttr(node) => node.span(),
-      Node::JSXClosingElement(node) => node.span(),
-      Node::JSXClosingFragment(node) => node.span(),
-      Node::JSXElement(node) => node.span(),
-      Node::JSXEmptyExpr(node) => node.span(),
-      Node::JSXExprContainer(node) => node.span(),
-      Node::JSXFragment(node) => node.span(),
-      Node::JSXMemberExpr(node) => node.span(),
-      Node::JSXNamespacedName(node) => node.span(),
-      Node::JSXOpeningElement(node) => node.span(),
-      Node::JSXOpeningFragment(node) => node.span(),
-      Node::JSXSpreadChild(node) => node.span(),
-      Node::JSXText(node) => node.span(),
-      Node::KeyValuePatProp(node) => node.span(),
-      Node::KeyValueProp(node) => node.span(),
-      Node::LabeledStmt(node) => node.span(),
-      Node::MemberExpr(node) => node.span(),
-      Node::MetaPropExpr(node) => node.span(),
-      Node::MethodProp(node) => node.span(),
-      Node::Module(node) => node.span(),
-      Node::NamedExport(node) => node.span(),
-      Node::NewExpr(node) => node.span(),
-      Node::Null(node) => node.span(),
-      Node::Number(node) => node.span(),
-      Node::ObjectLit(node) => node.span(),
-      Node::ObjectPat(node) => node.span(),
-      Node::OptCall(node) => node.span(),
-      Node::OptChainExpr(node) => node.span(),
-      Node::Param(node) => node.span(),
-      Node::ParenExpr(node) => node.span(),
-      Node::PrivateMethod(node) => node.span(),
-      Node::PrivateName(node) => node.span(),
-      Node::PrivateProp(node) => node.span(),
-      Node::Regex(node) => node.span(),
-      Node::RestPat(node) => node.span(),
-      Node::ReturnStmt(node) => node.span(),
-      Node::Script(node) => node.span(),
-      Node::SeqExpr(node) => node.span(),
-      Node::SetterProp(node) => node.span(),
-      Node::SpreadElement(node) => node.span(),
-      Node::StaticBlock(node) => node.span(),
-      Node::Str(node) => node.span(),
-      Node::Super(node) => node.span(),
-      Node::SuperPropExpr(node) => node.span(),
-      Node::SwitchCase(node) => node.span(),
-      Node::SwitchStmt(node) => node.span(),
-      Node::TaggedTpl(node) => node.span(),
-      Node::ThisExpr(node) => node.span(),
-      Node::ThrowStmt(node) => node.span(),
-      Node::Tpl(node) => node.span(),
-      Node::TplElement(node) => node.span(),
-      Node::TryStmt(node) => node.span(),
-      Node::TsArrayType(node) => node.span(),
-      Node::TsAsExpr(node) => node.span(),
-      Node::TsCallSignatureDecl(node) => node.span(),
-      Node::TsConditionalType(node) => node.span(),
-      Node::TsConstAssertion(node) => node.span(),
-      Node::TsConstructSignatureDecl(node) => node.span(),
-      Node::TsConstructorType(node) => node.span(),
-      Node::TsEnumDecl(node) => node.span(),
-      Node::TsEnumMember(node) => node.span(),
-      Node::TsExportAssignment(node) => node.span(),
-      Node::TsExprWithTypeArgs(node) => node.span(),
-      Node::TsExternalModuleRef(node) => node.span(),
-      Node::TsFnType(node) => node.span(),
-      Node::TsGetterSignature(node) => node.span(),
-      Node::TsImportEqualsDecl(node) => node.span(),
-      Node::TsImportType(node) => node.span(),
-      Node::TsIndexSignature(node) => node.span(),
-      Node::TsIndexedAccessType(node) => node.span(),
-      Node::TsInferType(node) => node.span(),
-      Node::TsInstantiation(node) => node.span(),
-      Node::TsInterfaceBody(node) => node.span(),
-      Node::TsInterfaceDecl(node) => node.span(),
-      Node::TsIntersectionType(node) => node.span(),
-      Node::TsKeywordType(node) => node.span(),
-      Node::TsLitType(node) => node.span(),
-      Node::TsMappedType(node) => node.span(),
-      Node::TsMethodSignature(node) => node.span(),
-      Node::TsModuleBlock(node) => node.span(),
-      Node::TsModuleDecl(node) => node.span(),
-      Node::TsNamespaceDecl(node) => node.span(),
-      Node::TsNamespaceExportDecl(node) => node.span(),
-      Node::TsNonNullExpr(node) => node.span(),
-      Node::TsOptionalType(node) => node.span(),
-      Node::TsParamProp(node) => node.span(),
-      Node::TsParenthesizedType(node) => node.span(),
-      Node::TsPropertySignature(node) => node.span(),
-      Node::TsQualifiedName(node) => node.span(),
-      Node::TsRestType(node) => node.span(),
-      Node::TsSetterSignature(node) => node.span(),
-      Node::TsThisType(node) => node.span(),
-      Node::TsTplLitType(node) => node.span(),
-      Node::TsTupleElement(node) => node.span(),
-      Node::TsTupleType(node) => node.span(),
-      Node::TsTypeAliasDecl(node) => node.span(),
-      Node::TsTypeAnn(node) => node.span(),
-      Node::TsTypeAssertion(node) => node.span(),
-      Node::TsTypeLit(node) => node.span(),
-      Node::TsTypeOperator(node) => node.span(),
-      Node::TsTypeParam(node) => node.span(),
-      Node::TsTypeParamDecl(node) => node.span(),
-      Node::TsTypeParamInstantiation(node) => node.span(),
-      Node::TsTypePredicate(node) => node.span(),
-      Node::TsTypeQuery(node) => node.span(),
-      Node::TsTypeRef(node) => node.span(),
-      Node::TsUnionType(node) => node.span(),
-      Node::UnaryExpr(node) => node.span(),
-      Node::UpdateExpr(node) => node.span(),
-      Node::VarDecl(node) => node.span(),
-      Node::VarDeclarator(node) => node.span(),
-      Node::WhileStmt(node) => node.span(),
-      Node::WithStmt(node) => node.span(),
-      Node::YieldExpr(node) => node.span(),
+      Node::ArrayLit(node) => node.start(),
+      Node::ArrayPat(node) => node.start(),
+      Node::ArrowExpr(node) => node.start(),
+      Node::AssignExpr(node) => node.start(),
+      Node::AssignPat(node) => node.start(),
+      Node::AssignPatProp(node) => node.start(),
+      Node::AssignProp(node) => node.start(),
+      Node::AwaitExpr(node) => node.start(),
+      Node::BigInt(node) => node.start(),
+      Node::BinExpr(node) => node.start(),
+      Node::BindingIdent(node) => node.start(),
+      Node::BlockStmt(node) => node.start(),
+      Node::Bool(node) => node.start(),
+      Node::BreakStmt(node) => node.start(),
+      Node::CallExpr(node) => node.start(),
+      Node::CatchClause(node) => node.start(),
+      Node::Class(node) => node.start(),
+      Node::ClassDecl(node) => node.start(),
+      Node::ClassExpr(node) => node.start(),
+      Node::ClassMethod(node) => node.start(),
+      Node::ClassProp(node) => node.start(),
+      Node::ComputedPropName(node) => node.start(),
+      Node::CondExpr(node) => node.start(),
+      Node::Constructor(node) => node.start(),
+      Node::ContinueStmt(node) => node.start(),
+      Node::DebuggerStmt(node) => node.start(),
+      Node::Decorator(node) => node.start(),
+      Node::DoWhileStmt(node) => node.start(),
+      Node::EmptyStmt(node) => node.start(),
+      Node::ExportAll(node) => node.start(),
+      Node::ExportDecl(node) => node.start(),
+      Node::ExportDefaultDecl(node) => node.start(),
+      Node::ExportDefaultExpr(node) => node.start(),
+      Node::ExportDefaultSpecifier(node) => node.start(),
+      Node::ExportNamedSpecifier(node) => node.start(),
+      Node::ExportNamespaceSpecifier(node) => node.start(),
+      Node::ExprOrSpread(node) => node.start(),
+      Node::ExprStmt(node) => node.start(),
+      Node::FnDecl(node) => node.start(),
+      Node::FnExpr(node) => node.start(),
+      Node::ForInStmt(node) => node.start(),
+      Node::ForOfStmt(node) => node.start(),
+      Node::ForStmt(node) => node.start(),
+      Node::Function(node) => node.start(),
+      Node::GetterProp(node) => node.start(),
+      Node::Ident(node) => node.start(),
+      Node::IfStmt(node) => node.start(),
+      Node::Import(node) => node.start(),
+      Node::ImportDecl(node) => node.start(),
+      Node::ImportDefaultSpecifier(node) => node.start(),
+      Node::ImportNamedSpecifier(node) => node.start(),
+      Node::ImportStarAsSpecifier(node) => node.start(),
+      Node::Invalid(node) => node.start(),
+      Node::JSXAttr(node) => node.start(),
+      Node::JSXClosingElement(node) => node.start(),
+      Node::JSXClosingFragment(node) => node.start(),
+      Node::JSXElement(node) => node.start(),
+      Node::JSXEmptyExpr(node) => node.start(),
+      Node::JSXExprContainer(node) => node.start(),
+      Node::JSXFragment(node) => node.start(),
+      Node::JSXMemberExpr(node) => node.start(),
+      Node::JSXNamespacedName(node) => node.start(),
+      Node::JSXOpeningElement(node) => node.start(),
+      Node::JSXOpeningFragment(node) => node.start(),
+      Node::JSXSpreadChild(node) => node.start(),
+      Node::JSXText(node) => node.start(),
+      Node::KeyValuePatProp(node) => node.start(),
+      Node::KeyValueProp(node) => node.start(),
+      Node::LabeledStmt(node) => node.start(),
+      Node::MemberExpr(node) => node.start(),
+      Node::MetaPropExpr(node) => node.start(),
+      Node::MethodProp(node) => node.start(),
+      Node::Module(node) => node.start(),
+      Node::NamedExport(node) => node.start(),
+      Node::NewExpr(node) => node.start(),
+      Node::Null(node) => node.start(),
+      Node::Number(node) => node.start(),
+      Node::ObjectLit(node) => node.start(),
+      Node::ObjectPat(node) => node.start(),
+      Node::OptCall(node) => node.start(),
+      Node::OptChainExpr(node) => node.start(),
+      Node::Param(node) => node.start(),
+      Node::ParenExpr(node) => node.start(),
+      Node::PrivateMethod(node) => node.start(),
+      Node::PrivateName(node) => node.start(),
+      Node::PrivateProp(node) => node.start(),
+      Node::Regex(node) => node.start(),
+      Node::RestPat(node) => node.start(),
+      Node::ReturnStmt(node) => node.start(),
+      Node::Script(node) => node.start(),
+      Node::SeqExpr(node) => node.start(),
+      Node::SetterProp(node) => node.start(),
+      Node::SpreadElement(node) => node.start(),
+      Node::StaticBlock(node) => node.start(),
+      Node::Str(node) => node.start(),
+      Node::Super(node) => node.start(),
+      Node::SuperPropExpr(node) => node.start(),
+      Node::SwitchCase(node) => node.start(),
+      Node::SwitchStmt(node) => node.start(),
+      Node::TaggedTpl(node) => node.start(),
+      Node::ThisExpr(node) => node.start(),
+      Node::ThrowStmt(node) => node.start(),
+      Node::Tpl(node) => node.start(),
+      Node::TplElement(node) => node.start(),
+      Node::TryStmt(node) => node.start(),
+      Node::TsArrayType(node) => node.start(),
+      Node::TsAsExpr(node) => node.start(),
+      Node::TsCallSignatureDecl(node) => node.start(),
+      Node::TsConditionalType(node) => node.start(),
+      Node::TsConstAssertion(node) => node.start(),
+      Node::TsConstructSignatureDecl(node) => node.start(),
+      Node::TsConstructorType(node) => node.start(),
+      Node::TsEnumDecl(node) => node.start(),
+      Node::TsEnumMember(node) => node.start(),
+      Node::TsExportAssignment(node) => node.start(),
+      Node::TsExprWithTypeArgs(node) => node.start(),
+      Node::TsExternalModuleRef(node) => node.start(),
+      Node::TsFnType(node) => node.start(),
+      Node::TsGetterSignature(node) => node.start(),
+      Node::TsImportEqualsDecl(node) => node.start(),
+      Node::TsImportType(node) => node.start(),
+      Node::TsIndexSignature(node) => node.start(),
+      Node::TsIndexedAccessType(node) => node.start(),
+      Node::TsInferType(node) => node.start(),
+      Node::TsInstantiation(node) => node.start(),
+      Node::TsInterfaceBody(node) => node.start(),
+      Node::TsInterfaceDecl(node) => node.start(),
+      Node::TsIntersectionType(node) => node.start(),
+      Node::TsKeywordType(node) => node.start(),
+      Node::TsLitType(node) => node.start(),
+      Node::TsMappedType(node) => node.start(),
+      Node::TsMethodSignature(node) => node.start(),
+      Node::TsModuleBlock(node) => node.start(),
+      Node::TsModuleDecl(node) => node.start(),
+      Node::TsNamespaceDecl(node) => node.start(),
+      Node::TsNamespaceExportDecl(node) => node.start(),
+      Node::TsNonNullExpr(node) => node.start(),
+      Node::TsOptionalType(node) => node.start(),
+      Node::TsParamProp(node) => node.start(),
+      Node::TsParenthesizedType(node) => node.start(),
+      Node::TsPropertySignature(node) => node.start(),
+      Node::TsQualifiedName(node) => node.start(),
+      Node::TsRestType(node) => node.start(),
+      Node::TsSetterSignature(node) => node.start(),
+      Node::TsThisType(node) => node.start(),
+      Node::TsTplLitType(node) => node.start(),
+      Node::TsTupleElement(node) => node.start(),
+      Node::TsTupleType(node) => node.start(),
+      Node::TsTypeAliasDecl(node) => node.start(),
+      Node::TsTypeAnn(node) => node.start(),
+      Node::TsTypeAssertion(node) => node.start(),
+      Node::TsTypeLit(node) => node.start(),
+      Node::TsTypeOperator(node) => node.start(),
+      Node::TsTypeParam(node) => node.start(),
+      Node::TsTypeParamDecl(node) => node.start(),
+      Node::TsTypeParamInstantiation(node) => node.start(),
+      Node::TsTypePredicate(node) => node.start(),
+      Node::TsTypeQuery(node) => node.start(),
+      Node::TsTypeRef(node) => node.start(),
+      Node::TsUnionType(node) => node.start(),
+      Node::UnaryExpr(node) => node.start(),
+      Node::UpdateExpr(node) => node.start(),
+      Node::VarDecl(node) => node.start(),
+      Node::VarDeclarator(node) => node.start(),
+      Node::WhileStmt(node) => node.start(),
+      Node::WithStmt(node) => node.start(),
+      Node::YieldExpr(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      Node::ArrayLit(node) => node.end(),
+      Node::ArrayPat(node) => node.end(),
+      Node::ArrowExpr(node) => node.end(),
+      Node::AssignExpr(node) => node.end(),
+      Node::AssignPat(node) => node.end(),
+      Node::AssignPatProp(node) => node.end(),
+      Node::AssignProp(node) => node.end(),
+      Node::AwaitExpr(node) => node.end(),
+      Node::BigInt(node) => node.end(),
+      Node::BinExpr(node) => node.end(),
+      Node::BindingIdent(node) => node.end(),
+      Node::BlockStmt(node) => node.end(),
+      Node::Bool(node) => node.end(),
+      Node::BreakStmt(node) => node.end(),
+      Node::CallExpr(node) => node.end(),
+      Node::CatchClause(node) => node.end(),
+      Node::Class(node) => node.end(),
+      Node::ClassDecl(node) => node.end(),
+      Node::ClassExpr(node) => node.end(),
+      Node::ClassMethod(node) => node.end(),
+      Node::ClassProp(node) => node.end(),
+      Node::ComputedPropName(node) => node.end(),
+      Node::CondExpr(node) => node.end(),
+      Node::Constructor(node) => node.end(),
+      Node::ContinueStmt(node) => node.end(),
+      Node::DebuggerStmt(node) => node.end(),
+      Node::Decorator(node) => node.end(),
+      Node::DoWhileStmt(node) => node.end(),
+      Node::EmptyStmt(node) => node.end(),
+      Node::ExportAll(node) => node.end(),
+      Node::ExportDecl(node) => node.end(),
+      Node::ExportDefaultDecl(node) => node.end(),
+      Node::ExportDefaultExpr(node) => node.end(),
+      Node::ExportDefaultSpecifier(node) => node.end(),
+      Node::ExportNamedSpecifier(node) => node.end(),
+      Node::ExportNamespaceSpecifier(node) => node.end(),
+      Node::ExprOrSpread(node) => node.end(),
+      Node::ExprStmt(node) => node.end(),
+      Node::FnDecl(node) => node.end(),
+      Node::FnExpr(node) => node.end(),
+      Node::ForInStmt(node) => node.end(),
+      Node::ForOfStmt(node) => node.end(),
+      Node::ForStmt(node) => node.end(),
+      Node::Function(node) => node.end(),
+      Node::GetterProp(node) => node.end(),
+      Node::Ident(node) => node.end(),
+      Node::IfStmt(node) => node.end(),
+      Node::Import(node) => node.end(),
+      Node::ImportDecl(node) => node.end(),
+      Node::ImportDefaultSpecifier(node) => node.end(),
+      Node::ImportNamedSpecifier(node) => node.end(),
+      Node::ImportStarAsSpecifier(node) => node.end(),
+      Node::Invalid(node) => node.end(),
+      Node::JSXAttr(node) => node.end(),
+      Node::JSXClosingElement(node) => node.end(),
+      Node::JSXClosingFragment(node) => node.end(),
+      Node::JSXElement(node) => node.end(),
+      Node::JSXEmptyExpr(node) => node.end(),
+      Node::JSXExprContainer(node) => node.end(),
+      Node::JSXFragment(node) => node.end(),
+      Node::JSXMemberExpr(node) => node.end(),
+      Node::JSXNamespacedName(node) => node.end(),
+      Node::JSXOpeningElement(node) => node.end(),
+      Node::JSXOpeningFragment(node) => node.end(),
+      Node::JSXSpreadChild(node) => node.end(),
+      Node::JSXText(node) => node.end(),
+      Node::KeyValuePatProp(node) => node.end(),
+      Node::KeyValueProp(node) => node.end(),
+      Node::LabeledStmt(node) => node.end(),
+      Node::MemberExpr(node) => node.end(),
+      Node::MetaPropExpr(node) => node.end(),
+      Node::MethodProp(node) => node.end(),
+      Node::Module(node) => node.end(),
+      Node::NamedExport(node) => node.end(),
+      Node::NewExpr(node) => node.end(),
+      Node::Null(node) => node.end(),
+      Node::Number(node) => node.end(),
+      Node::ObjectLit(node) => node.end(),
+      Node::ObjectPat(node) => node.end(),
+      Node::OptCall(node) => node.end(),
+      Node::OptChainExpr(node) => node.end(),
+      Node::Param(node) => node.end(),
+      Node::ParenExpr(node) => node.end(),
+      Node::PrivateMethod(node) => node.end(),
+      Node::PrivateName(node) => node.end(),
+      Node::PrivateProp(node) => node.end(),
+      Node::Regex(node) => node.end(),
+      Node::RestPat(node) => node.end(),
+      Node::ReturnStmt(node) => node.end(),
+      Node::Script(node) => node.end(),
+      Node::SeqExpr(node) => node.end(),
+      Node::SetterProp(node) => node.end(),
+      Node::SpreadElement(node) => node.end(),
+      Node::StaticBlock(node) => node.end(),
+      Node::Str(node) => node.end(),
+      Node::Super(node) => node.end(),
+      Node::SuperPropExpr(node) => node.end(),
+      Node::SwitchCase(node) => node.end(),
+      Node::SwitchStmt(node) => node.end(),
+      Node::TaggedTpl(node) => node.end(),
+      Node::ThisExpr(node) => node.end(),
+      Node::ThrowStmt(node) => node.end(),
+      Node::Tpl(node) => node.end(),
+      Node::TplElement(node) => node.end(),
+      Node::TryStmt(node) => node.end(),
+      Node::TsArrayType(node) => node.end(),
+      Node::TsAsExpr(node) => node.end(),
+      Node::TsCallSignatureDecl(node) => node.end(),
+      Node::TsConditionalType(node) => node.end(),
+      Node::TsConstAssertion(node) => node.end(),
+      Node::TsConstructSignatureDecl(node) => node.end(),
+      Node::TsConstructorType(node) => node.end(),
+      Node::TsEnumDecl(node) => node.end(),
+      Node::TsEnumMember(node) => node.end(),
+      Node::TsExportAssignment(node) => node.end(),
+      Node::TsExprWithTypeArgs(node) => node.end(),
+      Node::TsExternalModuleRef(node) => node.end(),
+      Node::TsFnType(node) => node.end(),
+      Node::TsGetterSignature(node) => node.end(),
+      Node::TsImportEqualsDecl(node) => node.end(),
+      Node::TsImportType(node) => node.end(),
+      Node::TsIndexSignature(node) => node.end(),
+      Node::TsIndexedAccessType(node) => node.end(),
+      Node::TsInferType(node) => node.end(),
+      Node::TsInstantiation(node) => node.end(),
+      Node::TsInterfaceBody(node) => node.end(),
+      Node::TsInterfaceDecl(node) => node.end(),
+      Node::TsIntersectionType(node) => node.end(),
+      Node::TsKeywordType(node) => node.end(),
+      Node::TsLitType(node) => node.end(),
+      Node::TsMappedType(node) => node.end(),
+      Node::TsMethodSignature(node) => node.end(),
+      Node::TsModuleBlock(node) => node.end(),
+      Node::TsModuleDecl(node) => node.end(),
+      Node::TsNamespaceDecl(node) => node.end(),
+      Node::TsNamespaceExportDecl(node) => node.end(),
+      Node::TsNonNullExpr(node) => node.end(),
+      Node::TsOptionalType(node) => node.end(),
+      Node::TsParamProp(node) => node.end(),
+      Node::TsParenthesizedType(node) => node.end(),
+      Node::TsPropertySignature(node) => node.end(),
+      Node::TsQualifiedName(node) => node.end(),
+      Node::TsRestType(node) => node.end(),
+      Node::TsSetterSignature(node) => node.end(),
+      Node::TsThisType(node) => node.end(),
+      Node::TsTplLitType(node) => node.end(),
+      Node::TsTupleElement(node) => node.end(),
+      Node::TsTupleType(node) => node.end(),
+      Node::TsTypeAliasDecl(node) => node.end(),
+      Node::TsTypeAnn(node) => node.end(),
+      Node::TsTypeAssertion(node) => node.end(),
+      Node::TsTypeLit(node) => node.end(),
+      Node::TsTypeOperator(node) => node.end(),
+      Node::TsTypeParam(node) => node.end(),
+      Node::TsTypeParamDecl(node) => node.end(),
+      Node::TsTypeParamInstantiation(node) => node.end(),
+      Node::TsTypePredicate(node) => node.end(),
+      Node::TsTypeQuery(node) => node.end(),
+      Node::TsTypeRef(node) => node.end(),
+      Node::TsUnionType(node) => node.end(),
+      Node::UnaryExpr(node) => node.end(),
+      Node::UpdateExpr(node) => node.end(),
+      Node::VarDecl(node) => node.end(),
+      Node::VarDeclarator(node) => node.end(),
+      Node::WhileStmt(node) => node.end(),
+      Node::WithStmt(node) => node.end(),
+      Node::YieldExpr(node) => node.end(),
     }
   }
 }
@@ -1483,11 +1654,17 @@ impl<'a> BlockStmtOrExpr<'a> {
   }
 }
 
-impl<'a> Spanned for BlockStmtOrExpr<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for BlockStmtOrExpr<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      BlockStmtOrExpr::BlockStmt(node) => node.span(),
-      BlockStmtOrExpr::Expr(node) => node.span(),
+      BlockStmtOrExpr::BlockStmt(node) => node.start(),
+      BlockStmtOrExpr::Expr(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      BlockStmtOrExpr::BlockStmt(node) => node.end(),
+      BlockStmtOrExpr::Expr(node) => node.end(),
     }
   }
 }
@@ -1580,12 +1757,19 @@ impl<'a> Callee<'a> {
   }
 }
 
-impl<'a> Spanned for Callee<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for Callee<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      Callee::Super(node) => node.span(),
-      Callee::Import(node) => node.span(),
-      Callee::Expr(node) => node.span(),
+      Callee::Super(node) => node.start(),
+      Callee::Import(node) => node.start(),
+      Callee::Expr(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      Callee::Super(node) => node.end(),
+      Callee::Import(node) => node.end(),
+      Callee::Expr(node) => node.end(),
     }
   }
 }
@@ -1696,17 +1880,29 @@ impl<'a> ClassMember<'a> {
   }
 }
 
-impl<'a> Spanned for ClassMember<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for ClassMember<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      ClassMember::Constructor(node) => node.span(),
-      ClassMember::Method(node) => node.span(),
-      ClassMember::PrivateMethod(node) => node.span(),
-      ClassMember::ClassProp(node) => node.span(),
-      ClassMember::PrivateProp(node) => node.span(),
-      ClassMember::TsIndexSignature(node) => node.span(),
-      ClassMember::Empty(node) => node.span(),
-      ClassMember::StaticBlock(node) => node.span(),
+      ClassMember::Constructor(node) => node.start(),
+      ClassMember::Method(node) => node.start(),
+      ClassMember::PrivateMethod(node) => node.start(),
+      ClassMember::ClassProp(node) => node.start(),
+      ClassMember::PrivateProp(node) => node.start(),
+      ClassMember::TsIndexSignature(node) => node.start(),
+      ClassMember::Empty(node) => node.start(),
+      ClassMember::StaticBlock(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      ClassMember::Constructor(node) => node.end(),
+      ClassMember::Method(node) => node.end(),
+      ClassMember::PrivateMethod(node) => node.end(),
+      ClassMember::ClassProp(node) => node.end(),
+      ClassMember::PrivateProp(node) => node.end(),
+      ClassMember::TsIndexSignature(node) => node.end(),
+      ClassMember::Empty(node) => node.end(),
+      ClassMember::StaticBlock(node) => node.end(),
     }
   }
 }
@@ -1854,16 +2050,27 @@ impl<'a> Decl<'a> {
   }
 }
 
-impl<'a> Spanned for Decl<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for Decl<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      Decl::Class(node) => node.span(),
-      Decl::Fn(node) => node.span(),
-      Decl::Var(node) => node.span(),
-      Decl::TsInterface(node) => node.span(),
-      Decl::TsTypeAlias(node) => node.span(),
-      Decl::TsEnum(node) => node.span(),
-      Decl::TsModule(node) => node.span(),
+      Decl::Class(node) => node.start(),
+      Decl::Fn(node) => node.start(),
+      Decl::Var(node) => node.start(),
+      Decl::TsInterface(node) => node.start(),
+      Decl::TsTypeAlias(node) => node.start(),
+      Decl::TsEnum(node) => node.start(),
+      Decl::TsModule(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      Decl::Class(node) => node.end(),
+      Decl::Fn(node) => node.end(),
+      Decl::Var(node) => node.end(),
+      Decl::TsInterface(node) => node.end(),
+      Decl::TsTypeAlias(node) => node.end(),
+      Decl::TsEnum(node) => node.end(),
+      Decl::TsModule(node) => node.end(),
     }
   }
 }
@@ -1999,12 +2206,19 @@ impl<'a> DefaultDecl<'a> {
   }
 }
 
-impl<'a> Spanned for DefaultDecl<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for DefaultDecl<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      DefaultDecl::Class(node) => node.span(),
-      DefaultDecl::Fn(node) => node.span(),
-      DefaultDecl::TsInterfaceDecl(node) => node.span(),
+      DefaultDecl::Class(node) => node.start(),
+      DefaultDecl::Fn(node) => node.start(),
+      DefaultDecl::TsInterfaceDecl(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      DefaultDecl::Class(node) => node.end(),
+      DefaultDecl::Fn(node) => node.end(),
+      DefaultDecl::TsInterfaceDecl(node) => node.end(),
     }
   }
 }
@@ -2108,12 +2322,19 @@ impl<'a> ExportSpecifier<'a> {
   }
 }
 
-impl<'a> Spanned for ExportSpecifier<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for ExportSpecifier<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      ExportSpecifier::Namespace(node) => node.span(),
-      ExportSpecifier::Default(node) => node.span(),
-      ExportSpecifier::Named(node) => node.span(),
+      ExportSpecifier::Namespace(node) => node.start(),
+      ExportSpecifier::Default(node) => node.start(),
+      ExportSpecifier::Named(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      ExportSpecifier::Namespace(node) => node.end(),
+      ExportSpecifier::Default(node) => node.end(),
+      ExportSpecifier::Named(node) => node.end(),
     }
   }
 }
@@ -2255,46 +2476,87 @@ impl<'a> Expr<'a> {
   }
 }
 
-impl<'a> Spanned for Expr<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for Expr<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      Expr::This(node) => node.span(),
-      Expr::Array(node) => node.span(),
-      Expr::Object(node) => node.span(),
-      Expr::Fn(node) => node.span(),
-      Expr::Unary(node) => node.span(),
-      Expr::Update(node) => node.span(),
-      Expr::Bin(node) => node.span(),
-      Expr::Assign(node) => node.span(),
-      Expr::Member(node) => node.span(),
-      Expr::SuperProp(node) => node.span(),
-      Expr::Cond(node) => node.span(),
-      Expr::Call(node) => node.span(),
-      Expr::New(node) => node.span(),
-      Expr::Seq(node) => node.span(),
-      Expr::Ident(node) => node.span(),
-      Expr::Lit(node) => node.span(),
-      Expr::Tpl(node) => node.span(),
-      Expr::TaggedTpl(node) => node.span(),
-      Expr::Arrow(node) => node.span(),
-      Expr::Class(node) => node.span(),
-      Expr::Yield(node) => node.span(),
-      Expr::MetaProp(node) => node.span(),
-      Expr::Await(node) => node.span(),
-      Expr::Paren(node) => node.span(),
-      Expr::JSXMember(node) => node.span(),
-      Expr::JSXNamespacedName(node) => node.span(),
-      Expr::JSXEmpty(node) => node.span(),
-      Expr::JSXElement(node) => node.span(),
-      Expr::JSXFragment(node) => node.span(),
-      Expr::TsTypeAssertion(node) => node.span(),
-      Expr::TsConstAssertion(node) => node.span(),
-      Expr::TsNonNull(node) => node.span(),
-      Expr::TsAs(node) => node.span(),
-      Expr::TsInstantiation(node) => node.span(),
-      Expr::PrivateName(node) => node.span(),
-      Expr::OptChain(node) => node.span(),
-      Expr::Invalid(node) => node.span(),
+      Expr::This(node) => node.start(),
+      Expr::Array(node) => node.start(),
+      Expr::Object(node) => node.start(),
+      Expr::Fn(node) => node.start(),
+      Expr::Unary(node) => node.start(),
+      Expr::Update(node) => node.start(),
+      Expr::Bin(node) => node.start(),
+      Expr::Assign(node) => node.start(),
+      Expr::Member(node) => node.start(),
+      Expr::SuperProp(node) => node.start(),
+      Expr::Cond(node) => node.start(),
+      Expr::Call(node) => node.start(),
+      Expr::New(node) => node.start(),
+      Expr::Seq(node) => node.start(),
+      Expr::Ident(node) => node.start(),
+      Expr::Lit(node) => node.start(),
+      Expr::Tpl(node) => node.start(),
+      Expr::TaggedTpl(node) => node.start(),
+      Expr::Arrow(node) => node.start(),
+      Expr::Class(node) => node.start(),
+      Expr::Yield(node) => node.start(),
+      Expr::MetaProp(node) => node.start(),
+      Expr::Await(node) => node.start(),
+      Expr::Paren(node) => node.start(),
+      Expr::JSXMember(node) => node.start(),
+      Expr::JSXNamespacedName(node) => node.start(),
+      Expr::JSXEmpty(node) => node.start(),
+      Expr::JSXElement(node) => node.start(),
+      Expr::JSXFragment(node) => node.start(),
+      Expr::TsTypeAssertion(node) => node.start(),
+      Expr::TsConstAssertion(node) => node.start(),
+      Expr::TsNonNull(node) => node.start(),
+      Expr::TsAs(node) => node.start(),
+      Expr::TsInstantiation(node) => node.start(),
+      Expr::PrivateName(node) => node.start(),
+      Expr::OptChain(node) => node.start(),
+      Expr::Invalid(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      Expr::This(node) => node.end(),
+      Expr::Array(node) => node.end(),
+      Expr::Object(node) => node.end(),
+      Expr::Fn(node) => node.end(),
+      Expr::Unary(node) => node.end(),
+      Expr::Update(node) => node.end(),
+      Expr::Bin(node) => node.end(),
+      Expr::Assign(node) => node.end(),
+      Expr::Member(node) => node.end(),
+      Expr::SuperProp(node) => node.end(),
+      Expr::Cond(node) => node.end(),
+      Expr::Call(node) => node.end(),
+      Expr::New(node) => node.end(),
+      Expr::Seq(node) => node.end(),
+      Expr::Ident(node) => node.end(),
+      Expr::Lit(node) => node.end(),
+      Expr::Tpl(node) => node.end(),
+      Expr::TaggedTpl(node) => node.end(),
+      Expr::Arrow(node) => node.end(),
+      Expr::Class(node) => node.end(),
+      Expr::Yield(node) => node.end(),
+      Expr::MetaProp(node) => node.end(),
+      Expr::Await(node) => node.end(),
+      Expr::Paren(node) => node.end(),
+      Expr::JSXMember(node) => node.end(),
+      Expr::JSXNamespacedName(node) => node.end(),
+      Expr::JSXEmpty(node) => node.end(),
+      Expr::JSXElement(node) => node.end(),
+      Expr::JSXFragment(node) => node.end(),
+      Expr::TsTypeAssertion(node) => node.end(),
+      Expr::TsConstAssertion(node) => node.end(),
+      Expr::TsNonNull(node) => node.end(),
+      Expr::TsAs(node) => node.end(),
+      Expr::TsInstantiation(node) => node.end(),
+      Expr::PrivateName(node) => node.end(),
+      Expr::OptChain(node) => node.end(),
+      Expr::Invalid(node) => node.end(),
     }
   }
 }
@@ -2670,12 +2932,19 @@ impl<'a> ImportSpecifier<'a> {
   }
 }
 
-impl<'a> Spanned for ImportSpecifier<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for ImportSpecifier<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      ImportSpecifier::Named(node) => node.span(),
-      ImportSpecifier::Default(node) => node.span(),
-      ImportSpecifier::Namespace(node) => node.span(),
+      ImportSpecifier::Named(node) => node.start(),
+      ImportSpecifier::Default(node) => node.start(),
+      ImportSpecifier::Namespace(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      ImportSpecifier::Named(node) => node.end(),
+      ImportSpecifier::Default(node) => node.end(),
+      ImportSpecifier::Namespace(node) => node.end(),
     }
   }
 }
@@ -2778,11 +3047,17 @@ impl<'a> JSXAttrName<'a> {
   }
 }
 
-impl<'a> Spanned for JSXAttrName<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for JSXAttrName<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      JSXAttrName::Ident(node) => node.span(),
-      JSXAttrName::JSXNamespacedName(node) => node.span(),
+      JSXAttrName::Ident(node) => node.start(),
+      JSXAttrName::JSXNamespacedName(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      JSXAttrName::Ident(node) => node.end(),
+      JSXAttrName::JSXNamespacedName(node) => node.end(),
     }
   }
 }
@@ -2877,11 +3152,17 @@ impl<'a> JSXAttrOrSpread<'a> {
   }
 }
 
-impl<'a> Spanned for JSXAttrOrSpread<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for JSXAttrOrSpread<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      JSXAttrOrSpread::JSXAttr(node) => node.span(),
-      JSXAttrOrSpread::SpreadElement(node) => node.span(),
+      JSXAttrOrSpread::JSXAttr(node) => node.start(),
+      JSXAttrOrSpread::SpreadElement(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      JSXAttrOrSpread::JSXAttr(node) => node.end(),
+      JSXAttrOrSpread::SpreadElement(node) => node.end(),
     }
   }
 }
@@ -2975,13 +3256,21 @@ impl<'a> JSXAttrValue<'a> {
   }
 }
 
-impl<'a> Spanned for JSXAttrValue<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for JSXAttrValue<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      JSXAttrValue::Lit(node) => node.span(),
-      JSXAttrValue::JSXExprContainer(node) => node.span(),
-      JSXAttrValue::JSXElement(node) => node.span(),
-      JSXAttrValue::JSXFragment(node) => node.span(),
+      JSXAttrValue::Lit(node) => node.start(),
+      JSXAttrValue::JSXExprContainer(node) => node.start(),
+      JSXAttrValue::JSXElement(node) => node.start(),
+      JSXAttrValue::JSXFragment(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      JSXAttrValue::Lit(node) => node.end(),
+      JSXAttrValue::JSXExprContainer(node) => node.end(),
+      JSXAttrValue::JSXElement(node) => node.end(),
+      JSXAttrValue::JSXFragment(node) => node.end(),
     }
   }
 }
@@ -3095,14 +3384,23 @@ impl<'a> JSXElementChild<'a> {
   }
 }
 
-impl<'a> Spanned for JSXElementChild<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for JSXElementChild<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      JSXElementChild::JSXText(node) => node.span(),
-      JSXElementChild::JSXExprContainer(node) => node.span(),
-      JSXElementChild::JSXSpreadChild(node) => node.span(),
-      JSXElementChild::JSXElement(node) => node.span(),
-      JSXElementChild::JSXFragment(node) => node.span(),
+      JSXElementChild::JSXText(node) => node.start(),
+      JSXElementChild::JSXExprContainer(node) => node.start(),
+      JSXElementChild::JSXSpreadChild(node) => node.start(),
+      JSXElementChild::JSXElement(node) => node.start(),
+      JSXElementChild::JSXFragment(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      JSXElementChild::JSXText(node) => node.end(),
+      JSXElementChild::JSXExprContainer(node) => node.end(),
+      JSXElementChild::JSXSpreadChild(node) => node.end(),
+      JSXElementChild::JSXElement(node) => node.end(),
+      JSXElementChild::JSXFragment(node) => node.end(),
     }
   }
 }
@@ -3222,12 +3520,19 @@ impl<'a> JSXElementName<'a> {
   }
 }
 
-impl<'a> Spanned for JSXElementName<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for JSXElementName<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      JSXElementName::Ident(node) => node.span(),
-      JSXElementName::JSXMemberExpr(node) => node.span(),
-      JSXElementName::JSXNamespacedName(node) => node.span(),
+      JSXElementName::Ident(node) => node.start(),
+      JSXElementName::JSXMemberExpr(node) => node.start(),
+      JSXElementName::JSXNamespacedName(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      JSXElementName::Ident(node) => node.end(),
+      JSXElementName::JSXMemberExpr(node) => node.end(),
+      JSXElementName::JSXNamespacedName(node) => node.end(),
     }
   }
 }
@@ -3327,11 +3632,17 @@ impl<'a> JSXExpr<'a> {
   }
 }
 
-impl<'a> Spanned for JSXExpr<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for JSXExpr<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      JSXExpr::JSXEmptyExpr(node) => node.span(),
-      JSXExpr::Expr(node) => node.span(),
+      JSXExpr::JSXEmptyExpr(node) => node.start(),
+      JSXExpr::Expr(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      JSXExpr::JSXEmptyExpr(node) => node.end(),
+      JSXExpr::Expr(node) => node.end(),
     }
   }
 }
@@ -3427,11 +3738,17 @@ impl<'a> JSXObject<'a> {
   }
 }
 
-impl<'a> Spanned for JSXObject<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for JSXObject<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      JSXObject::JSXMemberExpr(node) => node.span(),
-      JSXObject::Ident(node) => node.span(),
+      JSXObject::JSXMemberExpr(node) => node.start(),
+      JSXObject::Ident(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      JSXObject::JSXMemberExpr(node) => node.end(),
+      JSXObject::Ident(node) => node.end(),
     }
   }
 }
@@ -3531,16 +3848,27 @@ impl<'a> Lit<'a> {
   }
 }
 
-impl<'a> Spanned for Lit<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for Lit<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      Lit::Str(node) => node.span(),
-      Lit::Bool(node) => node.span(),
-      Lit::Null(node) => node.span(),
-      Lit::Num(node) => node.span(),
-      Lit::BigInt(node) => node.span(),
-      Lit::Regex(node) => node.span(),
-      Lit::JSXText(node) => node.span(),
+      Lit::Str(node) => node.start(),
+      Lit::Bool(node) => node.start(),
+      Lit::Null(node) => node.start(),
+      Lit::Num(node) => node.start(),
+      Lit::BigInt(node) => node.start(),
+      Lit::Regex(node) => node.start(),
+      Lit::JSXText(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      Lit::Str(node) => node.end(),
+      Lit::Bool(node) => node.end(),
+      Lit::Null(node) => node.end(),
+      Lit::Num(node) => node.end(),
+      Lit::BigInt(node) => node.end(),
+      Lit::Regex(node) => node.end(),
+      Lit::JSXText(node) => node.end(),
     }
   }
 }
@@ -3676,12 +4004,19 @@ impl<'a> MemberProp<'a> {
   }
 }
 
-impl<'a> Spanned for MemberProp<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for MemberProp<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      MemberProp::Ident(node) => node.span(),
-      MemberProp::PrivateName(node) => node.span(),
-      MemberProp::Computed(node) => node.span(),
+      MemberProp::Ident(node) => node.start(),
+      MemberProp::PrivateName(node) => node.start(),
+      MemberProp::Computed(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      MemberProp::Ident(node) => node.end(),
+      MemberProp::PrivateName(node) => node.end(),
+      MemberProp::Computed(node) => node.end(),
     }
   }
 }
@@ -3791,18 +4126,31 @@ impl<'a> ModuleDecl<'a> {
   }
 }
 
-impl<'a> Spanned for ModuleDecl<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for ModuleDecl<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      ModuleDecl::Import(node) => node.span(),
-      ModuleDecl::ExportDecl(node) => node.span(),
-      ModuleDecl::ExportNamed(node) => node.span(),
-      ModuleDecl::ExportDefaultDecl(node) => node.span(),
-      ModuleDecl::ExportDefaultExpr(node) => node.span(),
-      ModuleDecl::ExportAll(node) => node.span(),
-      ModuleDecl::TsImportEquals(node) => node.span(),
-      ModuleDecl::TsExportAssignment(node) => node.span(),
-      ModuleDecl::TsNamespaceExport(node) => node.span(),
+      ModuleDecl::Import(node) => node.start(),
+      ModuleDecl::ExportDecl(node) => node.start(),
+      ModuleDecl::ExportNamed(node) => node.start(),
+      ModuleDecl::ExportDefaultDecl(node) => node.start(),
+      ModuleDecl::ExportDefaultExpr(node) => node.start(),
+      ModuleDecl::ExportAll(node) => node.start(),
+      ModuleDecl::TsImportEquals(node) => node.start(),
+      ModuleDecl::TsExportAssignment(node) => node.start(),
+      ModuleDecl::TsNamespaceExport(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      ModuleDecl::Import(node) => node.end(),
+      ModuleDecl::ExportDecl(node) => node.end(),
+      ModuleDecl::ExportNamed(node) => node.end(),
+      ModuleDecl::ExportDefaultDecl(node) => node.end(),
+      ModuleDecl::ExportDefaultExpr(node) => node.end(),
+      ModuleDecl::ExportAll(node) => node.end(),
+      ModuleDecl::TsImportEquals(node) => node.end(),
+      ModuleDecl::TsExportAssignment(node) => node.end(),
+      ModuleDecl::TsNamespaceExport(node) => node.end(),
     }
   }
 }
@@ -3953,11 +4301,17 @@ impl<'a> ModuleExportName<'a> {
   }
 }
 
-impl<'a> Spanned for ModuleExportName<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for ModuleExportName<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      ModuleExportName::Ident(node) => node.span(),
-      ModuleExportName::Str(node) => node.span(),
+      ModuleExportName::Ident(node) => node.start(),
+      ModuleExportName::Str(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      ModuleExportName::Ident(node) => node.end(),
+      ModuleExportName::Str(node) => node.end(),
     }
   }
 }
@@ -4049,11 +4403,17 @@ impl<'a> ModuleItem<'a> {
   }
 }
 
-impl<'a> Spanned for ModuleItem<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for ModuleItem<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      ModuleItem::ModuleDecl(node) => node.span(),
-      ModuleItem::Stmt(node) => node.span(),
+      ModuleItem::ModuleDecl(node) => node.start(),
+      ModuleItem::Stmt(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      ModuleItem::ModuleDecl(node) => node.end(),
+      ModuleItem::Stmt(node) => node.end(),
     }
   }
 }
@@ -4149,12 +4509,19 @@ impl<'a> ObjectPatProp<'a> {
   }
 }
 
-impl<'a> Spanned for ObjectPatProp<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for ObjectPatProp<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      ObjectPatProp::KeyValue(node) => node.span(),
-      ObjectPatProp::Assign(node) => node.span(),
-      ObjectPatProp::Rest(node) => node.span(),
+      ObjectPatProp::KeyValue(node) => node.start(),
+      ObjectPatProp::Assign(node) => node.start(),
+      ObjectPatProp::Rest(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      ObjectPatProp::KeyValue(node) => node.end(),
+      ObjectPatProp::Assign(node) => node.end(),
+      ObjectPatProp::Rest(node) => node.end(),
     }
   }
 }
@@ -4257,11 +4624,17 @@ impl<'a> OptChainBase<'a> {
   }
 }
 
-impl<'a> Spanned for OptChainBase<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for OptChainBase<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      OptChainBase::Member(node) => node.span(),
-      OptChainBase::Call(node) => node.span(),
+      OptChainBase::Member(node) => node.start(),
+      OptChainBase::Call(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      OptChainBase::Member(node) => node.end(),
+      OptChainBase::Call(node) => node.end(),
     }
   }
 }
@@ -4356,11 +4729,17 @@ impl<'a> ParamOrTsParamProp<'a> {
   }
 }
 
-impl<'a> Spanned for ParamOrTsParamProp<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for ParamOrTsParamProp<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      ParamOrTsParamProp::TsParamProp(node) => node.span(),
-      ParamOrTsParamProp::Param(node) => node.span(),
+      ParamOrTsParamProp::TsParamProp(node) => node.start(),
+      ParamOrTsParamProp::Param(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      ParamOrTsParamProp::TsParamProp(node) => node.end(),
+      ParamOrTsParamProp::Param(node) => node.end(),
     }
   }
 }
@@ -4458,16 +4837,27 @@ impl<'a> Pat<'a> {
   }
 }
 
-impl<'a> Spanned for Pat<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for Pat<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      Pat::Ident(node) => node.span(),
-      Pat::Array(node) => node.span(),
-      Pat::Rest(node) => node.span(),
-      Pat::Object(node) => node.span(),
-      Pat::Assign(node) => node.span(),
-      Pat::Invalid(node) => node.span(),
-      Pat::Expr(node) => node.span(),
+      Pat::Ident(node) => node.start(),
+      Pat::Array(node) => node.start(),
+      Pat::Rest(node) => node.start(),
+      Pat::Object(node) => node.start(),
+      Pat::Assign(node) => node.start(),
+      Pat::Invalid(node) => node.start(),
+      Pat::Expr(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      Pat::Ident(node) => node.end(),
+      Pat::Array(node) => node.end(),
+      Pat::Rest(node) => node.end(),
+      Pat::Object(node) => node.end(),
+      Pat::Assign(node) => node.end(),
+      Pat::Invalid(node) => node.end(),
+      Pat::Expr(node) => node.end(),
     }
   }
 }
@@ -4599,11 +4989,17 @@ impl<'a> PatOrExpr<'a> {
   }
 }
 
-impl<'a> Spanned for PatOrExpr<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for PatOrExpr<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      PatOrExpr::Expr(node) => node.span(),
-      PatOrExpr::Pat(node) => node.span(),
+      PatOrExpr::Expr(node) => node.start(),
+      PatOrExpr::Pat(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      PatOrExpr::Expr(node) => node.end(),
+      PatOrExpr::Pat(node) => node.end(),
     }
   }
 }
@@ -4705,15 +5101,25 @@ impl<'a> Prop<'a> {
   }
 }
 
-impl<'a> Spanned for Prop<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for Prop<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      Prop::Shorthand(node) => node.span(),
-      Prop::KeyValue(node) => node.span(),
-      Prop::Assign(node) => node.span(),
-      Prop::Getter(node) => node.span(),
-      Prop::Setter(node) => node.span(),
-      Prop::Method(node) => node.span(),
+      Prop::Shorthand(node) => node.start(),
+      Prop::KeyValue(node) => node.start(),
+      Prop::Assign(node) => node.start(),
+      Prop::Getter(node) => node.start(),
+      Prop::Setter(node) => node.start(),
+      Prop::Method(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      Prop::Shorthand(node) => node.end(),
+      Prop::KeyValue(node) => node.end(),
+      Prop::Assign(node) => node.end(),
+      Prop::Getter(node) => node.end(),
+      Prop::Setter(node) => node.end(),
+      Prop::Method(node) => node.end(),
     }
   }
 }
@@ -4845,14 +5251,23 @@ impl<'a> PropName<'a> {
   }
 }
 
-impl<'a> Spanned for PropName<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for PropName<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      PropName::Ident(node) => node.span(),
-      PropName::Str(node) => node.span(),
-      PropName::Num(node) => node.span(),
-      PropName::Computed(node) => node.span(),
-      PropName::BigInt(node) => node.span(),
+      PropName::Ident(node) => node.start(),
+      PropName::Str(node) => node.start(),
+      PropName::Num(node) => node.start(),
+      PropName::Computed(node) => node.start(),
+      PropName::BigInt(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      PropName::Ident(node) => node.end(),
+      PropName::Str(node) => node.end(),
+      PropName::Num(node) => node.end(),
+      PropName::Computed(node) => node.end(),
+      PropName::BigInt(node) => node.end(),
     }
   }
 }
@@ -4969,11 +5384,17 @@ impl<'a> PropOrSpread<'a> {
   }
 }
 
-impl<'a> Spanned for PropOrSpread<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for PropOrSpread<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      PropOrSpread::Spread(node) => node.span(),
-      PropOrSpread::Prop(node) => node.span(),
+      PropOrSpread::Spread(node) => node.start(),
+      PropOrSpread::Prop(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      PropOrSpread::Spread(node) => node.end(),
+      PropOrSpread::Prop(node) => node.end(),
     }
   }
 }
@@ -5083,28 +5504,51 @@ impl<'a> Stmt<'a> {
   }
 }
 
-impl<'a> Spanned for Stmt<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for Stmt<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      Stmt::Block(node) => node.span(),
-      Stmt::Empty(node) => node.span(),
-      Stmt::Debugger(node) => node.span(),
-      Stmt::With(node) => node.span(),
-      Stmt::Return(node) => node.span(),
-      Stmt::Labeled(node) => node.span(),
-      Stmt::Break(node) => node.span(),
-      Stmt::Continue(node) => node.span(),
-      Stmt::If(node) => node.span(),
-      Stmt::Switch(node) => node.span(),
-      Stmt::Throw(node) => node.span(),
-      Stmt::Try(node) => node.span(),
-      Stmt::While(node) => node.span(),
-      Stmt::DoWhile(node) => node.span(),
-      Stmt::For(node) => node.span(),
-      Stmt::ForIn(node) => node.span(),
-      Stmt::ForOf(node) => node.span(),
-      Stmt::Decl(node) => node.span(),
-      Stmt::Expr(node) => node.span(),
+      Stmt::Block(node) => node.start(),
+      Stmt::Empty(node) => node.start(),
+      Stmt::Debugger(node) => node.start(),
+      Stmt::With(node) => node.start(),
+      Stmt::Return(node) => node.start(),
+      Stmt::Labeled(node) => node.start(),
+      Stmt::Break(node) => node.start(),
+      Stmt::Continue(node) => node.start(),
+      Stmt::If(node) => node.start(),
+      Stmt::Switch(node) => node.start(),
+      Stmt::Throw(node) => node.start(),
+      Stmt::Try(node) => node.start(),
+      Stmt::While(node) => node.start(),
+      Stmt::DoWhile(node) => node.start(),
+      Stmt::For(node) => node.start(),
+      Stmt::ForIn(node) => node.start(),
+      Stmt::ForOf(node) => node.start(),
+      Stmt::Decl(node) => node.start(),
+      Stmt::Expr(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      Stmt::Block(node) => node.end(),
+      Stmt::Empty(node) => node.end(),
+      Stmt::Debugger(node) => node.end(),
+      Stmt::With(node) => node.end(),
+      Stmt::Return(node) => node.end(),
+      Stmt::Labeled(node) => node.end(),
+      Stmt::Break(node) => node.end(),
+      Stmt::Continue(node) => node.end(),
+      Stmt::If(node) => node.end(),
+      Stmt::Switch(node) => node.end(),
+      Stmt::Throw(node) => node.end(),
+      Stmt::Try(node) => node.end(),
+      Stmt::While(node) => node.end(),
+      Stmt::DoWhile(node) => node.end(),
+      Stmt::For(node) => node.end(),
+      Stmt::ForIn(node) => node.end(),
+      Stmt::ForOf(node) => node.end(),
+      Stmt::Decl(node) => node.end(),
+      Stmt::Expr(node) => node.end(),
     }
   }
 }
@@ -5335,11 +5779,17 @@ impl<'a> SuperProp<'a> {
   }
 }
 
-impl<'a> Spanned for SuperProp<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for SuperProp<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      SuperProp::Ident(node) => node.span(),
-      SuperProp::Computed(node) => node.span(),
+      SuperProp::Ident(node) => node.start(),
+      SuperProp::Computed(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      SuperProp::Ident(node) => node.end(),
+      SuperProp::Computed(node) => node.end(),
     }
   }
 }
@@ -5434,11 +5884,17 @@ impl<'a> TsEntityName<'a> {
   }
 }
 
-impl<'a> Spanned for TsEntityName<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for TsEntityName<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      TsEntityName::TsQualifiedName(node) => node.span(),
-      TsEntityName::Ident(node) => node.span(),
+      TsEntityName::TsQualifiedName(node) => node.start(),
+      TsEntityName::Ident(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      TsEntityName::TsQualifiedName(node) => node.end(),
+      TsEntityName::Ident(node) => node.end(),
     }
   }
 }
@@ -5535,11 +5991,17 @@ impl<'a> TsEnumMemberId<'a> {
   }
 }
 
-impl<'a> Spanned for TsEnumMemberId<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for TsEnumMemberId<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      TsEnumMemberId::Ident(node) => node.span(),
-      TsEnumMemberId::Str(node) => node.span(),
+      TsEnumMemberId::Ident(node) => node.start(),
+      TsEnumMemberId::Str(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      TsEnumMemberId::Ident(node) => node.end(),
+      TsEnumMemberId::Str(node) => node.end(),
     }
   }
 }
@@ -5634,11 +6096,17 @@ impl<'a> TsFnOrConstructorType<'a> {
   }
 }
 
-impl<'a> Spanned for TsFnOrConstructorType<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for TsFnOrConstructorType<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      TsFnOrConstructorType::TsFnType(node) => node.span(),
-      TsFnOrConstructorType::TsConstructorType(node) => node.span(),
+      TsFnOrConstructorType::TsFnType(node) => node.start(),
+      TsFnOrConstructorType::TsConstructorType(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      TsFnOrConstructorType::TsFnType(node) => node.end(),
+      TsFnOrConstructorType::TsConstructorType(node) => node.end(),
     }
   }
 }
@@ -5735,13 +6203,21 @@ impl<'a> TsFnParam<'a> {
   }
 }
 
-impl<'a> Spanned for TsFnParam<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for TsFnParam<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      TsFnParam::Ident(node) => node.span(),
-      TsFnParam::Array(node) => node.span(),
-      TsFnParam::Rest(node) => node.span(),
-      TsFnParam::Object(node) => node.span(),
+      TsFnParam::Ident(node) => node.start(),
+      TsFnParam::Array(node) => node.start(),
+      TsFnParam::Rest(node) => node.start(),
+      TsFnParam::Object(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      TsFnParam::Ident(node) => node.end(),
+      TsFnParam::Array(node) => node.end(),
+      TsFnParam::Rest(node) => node.end(),
+      TsFnParam::Object(node) => node.end(),
     }
   }
 }
@@ -5855,14 +6331,23 @@ impl<'a> TsLit<'a> {
   }
 }
 
-impl<'a> Spanned for TsLit<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for TsLit<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      TsLit::Number(node) => node.span(),
-      TsLit::Str(node) => node.span(),
-      TsLit::Bool(node) => node.span(),
-      TsLit::BigInt(node) => node.span(),
-      TsLit::Tpl(node) => node.span(),
+      TsLit::Number(node) => node.start(),
+      TsLit::Str(node) => node.start(),
+      TsLit::Bool(node) => node.start(),
+      TsLit::BigInt(node) => node.start(),
+      TsLit::Tpl(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      TsLit::Number(node) => node.end(),
+      TsLit::Str(node) => node.end(),
+      TsLit::Bool(node) => node.end(),
+      TsLit::BigInt(node) => node.end(),
+      TsLit::Tpl(node) => node.end(),
     }
   }
 }
@@ -5981,11 +6466,17 @@ impl<'a> TsModuleName<'a> {
   }
 }
 
-impl<'a> Spanned for TsModuleName<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for TsModuleName<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      TsModuleName::Ident(node) => node.span(),
-      TsModuleName::Str(node) => node.span(),
+      TsModuleName::Ident(node) => node.start(),
+      TsModuleName::Str(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      TsModuleName::Ident(node) => node.end(),
+      TsModuleName::Str(node) => node.end(),
     }
   }
 }
@@ -6077,11 +6568,17 @@ impl<'a> TsModuleRef<'a> {
   }
 }
 
-impl<'a> Spanned for TsModuleRef<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for TsModuleRef<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      TsModuleRef::TsEntityName(node) => node.span(),
-      TsModuleRef::TsExternalModuleRef(node) => node.span(),
+      TsModuleRef::TsEntityName(node) => node.start(),
+      TsModuleRef::TsExternalModuleRef(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      TsModuleRef::TsEntityName(node) => node.end(),
+      TsModuleRef::TsExternalModuleRef(node) => node.end(),
     }
   }
 }
@@ -6178,11 +6675,17 @@ impl<'a> TsNamespaceBody<'a> {
   }
 }
 
-impl<'a> Spanned for TsNamespaceBody<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for TsNamespaceBody<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      TsNamespaceBody::TsModuleBlock(node) => node.span(),
-      TsNamespaceBody::TsNamespaceDecl(node) => node.span(),
+      TsNamespaceBody::TsModuleBlock(node) => node.start(),
+      TsNamespaceBody::TsNamespaceDecl(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      TsNamespaceBody::TsModuleBlock(node) => node.end(),
+      TsNamespaceBody::TsNamespaceDecl(node) => node.end(),
     }
   }
 }
@@ -6277,11 +6780,17 @@ impl<'a> TsParamPropParam<'a> {
   }
 }
 
-impl<'a> Spanned for TsParamPropParam<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for TsParamPropParam<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      TsParamPropParam::Ident(node) => node.span(),
-      TsParamPropParam::Assign(node) => node.span(),
+      TsParamPropParam::Ident(node) => node.start(),
+      TsParamPropParam::Assign(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      TsParamPropParam::Ident(node) => node.end(),
+      TsParamPropParam::Assign(node) => node.end(),
     }
   }
 }
@@ -6376,11 +6885,17 @@ impl<'a> TsThisTypeOrIdent<'a> {
   }
 }
 
-impl<'a> Spanned for TsThisTypeOrIdent<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for TsThisTypeOrIdent<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      TsThisTypeOrIdent::TsThisType(node) => node.span(),
-      TsThisTypeOrIdent::Ident(node) => node.span(),
+      TsThisTypeOrIdent::TsThisType(node) => node.start(),
+      TsThisTypeOrIdent::Ident(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      TsThisTypeOrIdent::TsThisType(node) => node.end(),
+      TsThisTypeOrIdent::Ident(node) => node.end(),
     }
   }
 }
@@ -6490,29 +7005,53 @@ impl<'a> TsType<'a> {
   }
 }
 
-impl<'a> Spanned for TsType<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for TsType<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      TsType::TsKeywordType(node) => node.span(),
-      TsType::TsThisType(node) => node.span(),
-      TsType::TsFnOrConstructorType(node) => node.span(),
-      TsType::TsTypeRef(node) => node.span(),
-      TsType::TsTypeQuery(node) => node.span(),
-      TsType::TsTypeLit(node) => node.span(),
-      TsType::TsArrayType(node) => node.span(),
-      TsType::TsTupleType(node) => node.span(),
-      TsType::TsOptionalType(node) => node.span(),
-      TsType::TsRestType(node) => node.span(),
-      TsType::TsUnionOrIntersectionType(node) => node.span(),
-      TsType::TsConditionalType(node) => node.span(),
-      TsType::TsInferType(node) => node.span(),
-      TsType::TsParenthesizedType(node) => node.span(),
-      TsType::TsTypeOperator(node) => node.span(),
-      TsType::TsIndexedAccessType(node) => node.span(),
-      TsType::TsMappedType(node) => node.span(),
-      TsType::TsLitType(node) => node.span(),
-      TsType::TsTypePredicate(node) => node.span(),
-      TsType::TsImportType(node) => node.span(),
+      TsType::TsKeywordType(node) => node.start(),
+      TsType::TsThisType(node) => node.start(),
+      TsType::TsFnOrConstructorType(node) => node.start(),
+      TsType::TsTypeRef(node) => node.start(),
+      TsType::TsTypeQuery(node) => node.start(),
+      TsType::TsTypeLit(node) => node.start(),
+      TsType::TsArrayType(node) => node.start(),
+      TsType::TsTupleType(node) => node.start(),
+      TsType::TsOptionalType(node) => node.start(),
+      TsType::TsRestType(node) => node.start(),
+      TsType::TsUnionOrIntersectionType(node) => node.start(),
+      TsType::TsConditionalType(node) => node.start(),
+      TsType::TsInferType(node) => node.start(),
+      TsType::TsParenthesizedType(node) => node.start(),
+      TsType::TsTypeOperator(node) => node.start(),
+      TsType::TsIndexedAccessType(node) => node.start(),
+      TsType::TsMappedType(node) => node.start(),
+      TsType::TsLitType(node) => node.start(),
+      TsType::TsTypePredicate(node) => node.start(),
+      TsType::TsImportType(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      TsType::TsKeywordType(node) => node.end(),
+      TsType::TsThisType(node) => node.end(),
+      TsType::TsFnOrConstructorType(node) => node.end(),
+      TsType::TsTypeRef(node) => node.end(),
+      TsType::TsTypeQuery(node) => node.end(),
+      TsType::TsTypeLit(node) => node.end(),
+      TsType::TsArrayType(node) => node.end(),
+      TsType::TsTupleType(node) => node.end(),
+      TsType::TsOptionalType(node) => node.end(),
+      TsType::TsRestType(node) => node.end(),
+      TsType::TsUnionOrIntersectionType(node) => node.end(),
+      TsType::TsConditionalType(node) => node.end(),
+      TsType::TsInferType(node) => node.end(),
+      TsType::TsParenthesizedType(node) => node.end(),
+      TsType::TsTypeOperator(node) => node.end(),
+      TsType::TsIndexedAccessType(node) => node.end(),
+      TsType::TsMappedType(node) => node.end(),
+      TsType::TsLitType(node) => node.end(),
+      TsType::TsTypePredicate(node) => node.end(),
+      TsType::TsImportType(node) => node.end(),
     }
   }
 }
@@ -6756,16 +7295,27 @@ impl<'a> TsTypeElement<'a> {
   }
 }
 
-impl<'a> Spanned for TsTypeElement<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for TsTypeElement<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      TsTypeElement::TsCallSignatureDecl(node) => node.span(),
-      TsTypeElement::TsConstructSignatureDecl(node) => node.span(),
-      TsTypeElement::TsPropertySignature(node) => node.span(),
-      TsTypeElement::TsGetterSignature(node) => node.span(),
-      TsTypeElement::TsSetterSignature(node) => node.span(),
-      TsTypeElement::TsMethodSignature(node) => node.span(),
-      TsTypeElement::TsIndexSignature(node) => node.span(),
+      TsTypeElement::TsCallSignatureDecl(node) => node.start(),
+      TsTypeElement::TsConstructSignatureDecl(node) => node.start(),
+      TsTypeElement::TsPropertySignature(node) => node.start(),
+      TsTypeElement::TsGetterSignature(node) => node.start(),
+      TsTypeElement::TsSetterSignature(node) => node.start(),
+      TsTypeElement::TsMethodSignature(node) => node.start(),
+      TsTypeElement::TsIndexSignature(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      TsTypeElement::TsCallSignatureDecl(node) => node.end(),
+      TsTypeElement::TsConstructSignatureDecl(node) => node.end(),
+      TsTypeElement::TsPropertySignature(node) => node.end(),
+      TsTypeElement::TsGetterSignature(node) => node.end(),
+      TsTypeElement::TsSetterSignature(node) => node.end(),
+      TsTypeElement::TsMethodSignature(node) => node.end(),
+      TsTypeElement::TsIndexSignature(node) => node.end(),
     }
   }
 }
@@ -6897,11 +7447,17 @@ impl<'a> TsTypeQueryExpr<'a> {
   }
 }
 
-impl<'a> Spanned for TsTypeQueryExpr<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for TsTypeQueryExpr<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      TsTypeQueryExpr::TsEntityName(node) => node.span(),
-      TsTypeQueryExpr::Import(node) => node.span(),
+      TsTypeQueryExpr::TsEntityName(node) => node.start(),
+      TsTypeQueryExpr::Import(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      TsTypeQueryExpr::TsEntityName(node) => node.end(),
+      TsTypeQueryExpr::Import(node) => node.end(),
     }
   }
 }
@@ -6996,11 +7552,17 @@ impl<'a> TsUnionOrIntersectionType<'a> {
   }
 }
 
-impl<'a> Spanned for TsUnionOrIntersectionType<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for TsUnionOrIntersectionType<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      TsUnionOrIntersectionType::TsUnionType(node) => node.span(),
-      TsUnionOrIntersectionType::TsIntersectionType(node) => node.span(),
+      TsUnionOrIntersectionType::TsUnionType(node) => node.start(),
+      TsUnionOrIntersectionType::TsIntersectionType(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      TsUnionOrIntersectionType::TsUnionType(node) => node.end(),
+      TsUnionOrIntersectionType::TsIntersectionType(node) => node.end(),
     }
   }
 }
@@ -7092,11 +7654,17 @@ impl<'a> VarDeclOrExpr<'a> {
   }
 }
 
-impl<'a> Spanned for VarDeclOrExpr<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for VarDeclOrExpr<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      VarDeclOrExpr::VarDecl(node) => node.span(),
-      VarDeclOrExpr::Expr(node) => node.span(),
+      VarDeclOrExpr::VarDecl(node) => node.start(),
+      VarDeclOrExpr::Expr(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      VarDeclOrExpr::VarDecl(node) => node.end(),
+      VarDeclOrExpr::Expr(node) => node.end(),
     }
   }
 }
@@ -7188,11 +7756,17 @@ impl<'a> VarDeclOrPat<'a> {
   }
 }
 
-impl<'a> Spanned for VarDeclOrPat<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for VarDeclOrPat<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      VarDeclOrPat::VarDecl(node) => node.span(),
-      VarDeclOrPat::Pat(node) => node.span(),
+      VarDeclOrPat::VarDecl(node) => node.start(),
+      VarDeclOrPat::Pat(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      VarDeclOrPat::VarDecl(node) => node.end(),
+      VarDeclOrPat::Pat(node) => node.end(),
     }
   }
 }
@@ -7273,9 +7847,12 @@ impl<'a> ArrayLit<'a> {
   }
 }
 
-impl<'a> Spanned for ArrayLit<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ArrayLit<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -7368,9 +7945,12 @@ impl<'a> ArrayPat<'a> {
   }
 }
 
-impl<'a> Spanned for ArrayPat<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ArrayPat<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -7478,9 +8058,12 @@ impl<'a> ArrowExpr<'a> {
   }
 }
 
-impl<'a> Spanned for ArrowExpr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ArrowExpr<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -7588,9 +8171,12 @@ impl<'a> AssignExpr<'a> {
   }
 }
 
-impl<'a> Spanned for AssignExpr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for AssignExpr<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -7671,9 +8257,12 @@ impl<'a> AssignPat<'a> {
   }
 }
 
-impl<'a> Spanned for AssignPat<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for AssignPat<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -7764,9 +8353,12 @@ impl<'a> AssignPatProp<'a> {
   }
 }
 
-impl<'a> Spanned for AssignPatProp<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for AssignPatProp<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -7853,9 +8445,12 @@ impl<'a> AssignProp<'a> {
   }
 }
 
-impl<'a> Spanned for AssignProp<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for AssignProp<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -7934,9 +8529,12 @@ impl<'a> AwaitExpr<'a> {
   }
 }
 
-impl<'a> Spanned for AwaitExpr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for AwaitExpr<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -8021,9 +8619,12 @@ impl<'a> BigInt<'a> {
   }
 }
 
-impl<'a> Spanned for BigInt<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for BigInt<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -8099,9 +8700,12 @@ impl<'a> BinExpr<'a> {
   }
 }
 
-impl<'a> Spanned for BinExpr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for BinExpr<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -8182,9 +8786,12 @@ impl<'a> BindingIdent<'a> {
   }
 }
 
-impl<'a> Spanned for BindingIdent<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for BindingIdent<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -8271,9 +8878,12 @@ impl<'a> BlockStmt<'a> {
   }
 }
 
-impl<'a> Spanned for BlockStmt<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for BlockStmt<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -8365,9 +8975,12 @@ impl<'a> Bool<'a> {
   }
 }
 
-impl<'a> Spanned for Bool<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for Bool<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -8438,9 +9051,12 @@ impl<'a> BreakStmt<'a> {
   }
 }
 
-impl<'a> Spanned for BreakStmt<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for BreakStmt<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -8525,9 +9141,12 @@ impl<'a> CallExpr<'a> {
   }
 }
 
-impl<'a> Spanned for CallExpr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for CallExpr<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -8625,9 +9244,12 @@ impl<'a> CatchClause<'a> {
   }
 }
 
-impl<'a> Spanned for CatchClause<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for CatchClause<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -8723,9 +9345,12 @@ impl<'a> Class<'a> {
   }
 }
 
-impl<'a> Spanned for Class<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for Class<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -8854,9 +9479,12 @@ impl<'a> ClassDecl<'a> {
   }
 }
 
-impl<'a> Spanned for ClassDecl<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ClassDecl<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -8937,9 +9565,12 @@ impl<'a> ClassExpr<'a> {
   }
 }
 
-impl<'a> Spanned for ClassExpr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ClassExpr<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -9052,9 +9683,12 @@ impl<'a> ClassMethod<'a> {
   }
 }
 
-impl<'a> Spanned for ClassMethod<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ClassMethod<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -9170,9 +9804,12 @@ impl<'a> ClassProp<'a> {
   }
 }
 
-impl<'a> Spanned for ClassProp<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ClassProp<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -9275,9 +9912,12 @@ impl<'a> ComputedPropName<'a> {
   }
 }
 
-impl<'a> Spanned for ComputedPropName<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ComputedPropName<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -9355,9 +9995,12 @@ impl<'a> CondExpr<'a> {
   }
 }
 
-impl<'a> Spanned for CondExpr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for CondExpr<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -9449,9 +10092,12 @@ impl<'a> Constructor<'a> {
   }
 }
 
-impl<'a> Spanned for Constructor<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for Constructor<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -9544,9 +10190,12 @@ impl<'a> ContinueStmt<'a> {
   }
 }
 
-impl<'a> Spanned for ContinueStmt<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ContinueStmt<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -9628,9 +10277,12 @@ impl<'a> DebuggerStmt<'a> {
   }
 }
 
-impl<'a> Spanned for DebuggerStmt<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for DebuggerStmt<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -9701,9 +10353,12 @@ impl<'a> Decorator<'a> {
   }
 }
 
-impl<'a> Spanned for Decorator<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for Decorator<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -9780,9 +10435,12 @@ impl<'a> DoWhileStmt<'a> {
   }
 }
 
-impl<'a> Spanned for DoWhileStmt<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for DoWhileStmt<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -9860,9 +10518,12 @@ impl<'a> EmptyStmt<'a> {
   }
 }
 
-impl<'a> Spanned for EmptyStmt<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for EmptyStmt<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -9935,9 +10596,12 @@ impl<'a> ExportAll<'a> {
   }
 }
 
-impl<'a> Spanned for ExportAll<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ExportAll<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -10023,9 +10687,12 @@ impl<'a> ExportDecl<'a> {
   }
 }
 
-impl<'a> Spanned for ExportDecl<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ExportDecl<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -10101,9 +10768,12 @@ impl<'a> ExportDefaultDecl<'a> {
   }
 }
 
-impl<'a> Spanned for ExportDefaultDecl<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ExportDefaultDecl<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -10179,9 +10849,12 @@ impl<'a> ExportDefaultExpr<'a> {
   }
 }
 
-impl<'a> Spanned for ExportDefaultExpr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ExportDefaultExpr<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -10257,9 +10930,12 @@ impl<'a> ExportDefaultSpecifier<'a> {
   }
 }
 
-impl<'a> Spanned for ExportDefaultSpecifier<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ExportDefaultSpecifier<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -10343,9 +11019,12 @@ impl<'a> ExportNamedSpecifier<'a> {
   }
 }
 
-impl<'a> Spanned for ExportNamedSpecifier<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ExportNamedSpecifier<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -10432,9 +11111,12 @@ impl<'a> ExportNamespaceSpecifier<'a> {
   }
 }
 
-impl<'a> Spanned for ExportNamespaceSpecifier<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ExportNamespaceSpecifier<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -10514,9 +11196,12 @@ impl<'a> ExprOrSpread<'a> {
   }
 }
 
-impl<'a> Spanned for ExprOrSpread<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ExprOrSpread<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -10592,9 +11277,12 @@ impl<'a> ExprStmt<'a> {
   }
 }
 
-impl<'a> Spanned for ExprStmt<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ExprStmt<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -10675,9 +11363,12 @@ impl<'a> FnDecl<'a> {
   }
 }
 
-impl<'a> Spanned for FnDecl<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for FnDecl<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -10758,9 +11449,12 @@ impl<'a> FnExpr<'a> {
   }
 }
 
-impl<'a> Spanned for FnExpr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for FnExpr<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -10848,9 +11542,12 @@ impl<'a> ForInStmt<'a> {
   }
 }
 
-impl<'a> Spanned for ForInStmt<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ForInStmt<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -10943,9 +11640,12 @@ impl<'a> ForOfStmt<'a> {
   }
 }
 
-impl<'a> Spanned for ForOfStmt<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ForOfStmt<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -11030,9 +11730,12 @@ impl<'a> ForStmt<'a> {
   }
 }
 
-impl<'a> Spanned for ForStmt<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ForStmt<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -11153,9 +11856,12 @@ impl<'a> Function<'a> {
   }
 }
 
-impl<'a> Spanned for Function<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for Function<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -11274,9 +11980,12 @@ impl<'a> GetterProp<'a> {
   }
 }
 
-impl<'a> Spanned for GetterProp<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for GetterProp<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -11430,9 +12139,12 @@ impl<'a> Ident<'a> {
   }
 }
 
-impl<'a> Spanned for Ident<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for Ident<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -11505,9 +12217,12 @@ impl<'a> IfStmt<'a> {
   }
 }
 
-impl<'a> Spanned for IfStmt<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for IfStmt<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -11595,9 +12310,12 @@ impl<'a> Import<'a> {
   }
 }
 
-impl<'a> Spanned for Import<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for Import<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -11674,9 +12392,12 @@ impl<'a> ImportDecl<'a> {
   }
 }
 
-impl<'a> Spanned for ImportDecl<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ImportDecl<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -11770,9 +12491,12 @@ impl<'a> ImportDefaultSpecifier<'a> {
   }
 }
 
-impl<'a> Spanned for ImportDefaultSpecifier<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ImportDefaultSpecifier<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -11856,9 +12580,12 @@ impl<'a> ImportNamedSpecifier<'a> {
   }
 }
 
-impl<'a> Spanned for ImportNamedSpecifier<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ImportNamedSpecifier<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -11945,9 +12672,12 @@ impl<'a> ImportStarAsSpecifier<'a> {
   }
 }
 
-impl<'a> Spanned for ImportStarAsSpecifier<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ImportStarAsSpecifier<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -12023,9 +12753,12 @@ impl<'a> Invalid<'a> {
   }
 }
 
-impl<'a> Spanned for Invalid<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for Invalid<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -12098,9 +12831,12 @@ impl<'a> JSXAttr<'a> {
   }
 }
 
-impl<'a> Spanned for JSXAttr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for JSXAttr<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -12186,9 +12922,12 @@ impl<'a> JSXClosingElement<'a> {
   }
 }
 
-impl<'a> Spanned for JSXClosingElement<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for JSXClosingElement<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -12263,9 +13002,12 @@ impl<'a> JSXClosingFragment<'a> {
   }
 }
 
-impl<'a> Spanned for JSXClosingFragment<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for JSXClosingFragment<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -12338,9 +13080,12 @@ impl<'a> JSXElement<'a> {
   }
 }
 
-impl<'a> Spanned for JSXElement<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for JSXElement<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -12432,9 +13177,12 @@ impl<'a> JSXEmptyExpr<'a> {
   }
 }
 
-impl<'a> Spanned for JSXEmptyExpr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for JSXEmptyExpr<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -12505,9 +13253,12 @@ impl<'a> JSXExprContainer<'a> {
   }
 }
 
-impl<'a> Spanned for JSXExprContainer<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for JSXExprContainer<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -12585,9 +13336,12 @@ impl<'a> JSXFragment<'a> {
   }
 }
 
-impl<'a> Spanned for JSXFragment<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for JSXFragment<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -12674,9 +13428,12 @@ impl<'a> JSXMemberExpr<'a> {
   }
 }
 
-impl<'a> Spanned for JSXMemberExpr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for JSXMemberExpr<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -12757,9 +13514,12 @@ impl<'a> JSXNamespacedName<'a> {
   }
 }
 
-impl<'a> Spanned for JSXNamespacedName<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for JSXNamespacedName<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -12846,9 +13606,12 @@ impl<'a> JSXOpeningElement<'a> {
   }
 }
 
-impl<'a> Spanned for JSXOpeningElement<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for JSXOpeningElement<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -12940,9 +13703,12 @@ impl<'a> JSXOpeningFragment<'a> {
   }
 }
 
-impl<'a> Spanned for JSXOpeningFragment<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for JSXOpeningFragment<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -13013,9 +13779,12 @@ impl<'a> JSXSpreadChild<'a> {
   }
 }
 
-impl<'a> Spanned for JSXSpreadChild<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for JSXSpreadChild<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -13098,9 +13867,12 @@ impl<'a> JSXText<'a> {
   }
 }
 
-impl<'a> Spanned for JSXText<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for JSXText<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -13173,9 +13945,12 @@ impl<'a> KeyValuePatProp<'a> {
   }
 }
 
-impl<'a> Spanned for KeyValuePatProp<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for KeyValuePatProp<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -13255,9 +14030,12 @@ impl<'a> KeyValueProp<'a> {
   }
 }
 
-impl<'a> Spanned for KeyValueProp<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for KeyValueProp<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -13337,9 +14115,12 @@ impl<'a> LabeledStmt<'a> {
   }
 }
 
-impl<'a> Spanned for LabeledStmt<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for LabeledStmt<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -13419,9 +14200,12 @@ impl<'a> MemberExpr<'a> {
   }
 }
 
-impl<'a> Spanned for MemberExpr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for MemberExpr<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -13503,9 +14287,12 @@ impl<'a> MetaPropExpr<'a> {
   }
 }
 
-impl<'a> Spanned for MetaPropExpr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for MetaPropExpr<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -13577,9 +14364,12 @@ impl<'a> MethodProp<'a> {
   }
 }
 
-impl<'a> Spanned for MethodProp<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for MethodProp<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -13660,9 +14450,12 @@ impl<'a> Module<'a> {
   }
 }
 
-impl<'a> Spanned for Module<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for Module<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -13753,9 +14546,12 @@ impl<'a> NamedExport<'a> {
   }
 }
 
-impl<'a> Spanned for NamedExport<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for NamedExport<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -13857,9 +14653,12 @@ impl<'a> NewExpr<'a> {
   }
 }
 
-impl<'a> Spanned for NewExpr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for NewExpr<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -13958,9 +14757,12 @@ impl<'a> Null<'a> {
   }
 }
 
-impl<'a> Spanned for Null<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for Null<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -14053,9 +14855,12 @@ impl<'a> Number<'a> {
   }
 }
 
-impl<'a> Spanned for Number<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for Number<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -14127,9 +14932,12 @@ impl<'a> ObjectLit<'a> {
   }
 }
 
-impl<'a> Spanned for ObjectLit<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ObjectLit<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -14215,9 +15023,12 @@ impl<'a> ObjectPat<'a> {
   }
 }
 
-impl<'a> Spanned for ObjectPat<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ObjectPat<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -14309,9 +15120,12 @@ impl<'a> OptCall<'a> {
   }
 }
 
-impl<'a> Spanned for OptCall<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for OptCall<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -14408,9 +15222,12 @@ impl<'a> OptChainExpr<'a> {
   }
 }
 
-impl<'a> Spanned for OptChainExpr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for OptChainExpr<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -14487,9 +15304,12 @@ impl<'a> Param<'a> {
   }
 }
 
-impl<'a> Spanned for Param<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for Param<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -14572,9 +15392,12 @@ impl<'a> ParenExpr<'a> {
   }
 }
 
-impl<'a> Spanned for ParenExpr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ParenExpr<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -14677,9 +15500,12 @@ impl<'a> PrivateMethod<'a> {
   }
 }
 
-impl<'a> Spanned for PrivateMethod<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for PrivateMethod<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -14758,9 +15584,12 @@ impl<'a> PrivateName<'a> {
   }
 }
 
-impl<'a> Spanned for PrivateName<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for PrivateName<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -14864,9 +15693,12 @@ impl<'a> PrivateProp<'a> {
   }
 }
 
-impl<'a> Spanned for PrivateProp<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for PrivateProp<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -14976,9 +15808,12 @@ impl<'a> Regex<'a> {
   }
 }
 
-impl<'a> Spanned for Regex<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for Regex<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -15055,9 +15890,12 @@ impl<'a> RestPat<'a> {
   }
 }
 
-impl<'a> Spanned for RestPat<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for RestPat<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -15143,9 +15981,12 @@ impl<'a> ReturnStmt<'a> {
   }
 }
 
-impl<'a> Spanned for ReturnStmt<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ReturnStmt<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -15230,9 +16071,12 @@ impl<'a> Script<'a> {
   }
 }
 
-impl<'a> Spanned for Script<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for Script<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -15315,9 +16159,12 @@ impl<'a> SeqExpr<'a> {
   }
 }
 
-impl<'a> Spanned for SeqExpr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for SeqExpr<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -15399,9 +16246,12 @@ impl<'a> SetterProp<'a> {
   }
 }
 
-impl<'a> Spanned for SetterProp<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for SetterProp<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -15494,9 +16344,12 @@ impl<'a> SpreadElement<'a> {
   }
 }
 
-impl<'a> Spanned for SpreadElement<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for SpreadElement<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -15572,9 +16425,12 @@ impl<'a> StaticBlock<'a> {
   }
 }
 
-impl<'a> Spanned for StaticBlock<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for StaticBlock<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -15660,9 +16516,12 @@ impl<'a> Str<'a> {
   }
 }
 
-impl<'a> Spanned for Str<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for Str<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -15732,9 +16591,12 @@ impl<'a> Super<'a> {
   }
 }
 
-impl<'a> Spanned for Super<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for Super<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -15806,9 +16668,12 @@ impl<'a> SuperPropExpr<'a> {
   }
 }
 
-impl<'a> Spanned for SuperPropExpr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for SuperPropExpr<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -15889,9 +16754,12 @@ impl<'a> SwitchCase<'a> {
   }
 }
 
-impl<'a> Spanned for SwitchCase<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for SwitchCase<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -15982,9 +16850,12 @@ impl<'a> SwitchStmt<'a> {
   }
 }
 
-impl<'a> Spanned for SwitchStmt<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for SwitchStmt<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -16069,9 +16940,12 @@ impl<'a> TaggedTpl<'a> {
   }
 }
 
-impl<'a> Spanned for TaggedTpl<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TaggedTpl<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -16159,9 +17033,12 @@ impl<'a> ThisExpr<'a> {
   }
 }
 
-impl<'a> Spanned for ThisExpr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ThisExpr<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -16232,9 +17109,12 @@ impl<'a> ThrowStmt<'a> {
   }
 }
 
-impl<'a> Spanned for ThrowStmt<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for ThrowStmt<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -16311,9 +17191,12 @@ impl<'a> Tpl<'a> {
   }
 }
 
-impl<'a> Spanned for Tpl<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for Tpl<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -16416,9 +17299,12 @@ impl<'a> TplElement<'a> {
   }
 }
 
-impl<'a> Spanned for TplElement<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TplElement<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -16491,9 +17377,12 @@ impl<'a> TryStmt<'a> {
   }
 }
 
-impl<'a> Spanned for TryStmt<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TryStmt<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -16589,9 +17478,12 @@ impl<'a> TsArrayType<'a> {
   }
 }
 
-impl<'a> Spanned for TsArrayType<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsArrayType<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -16668,9 +17560,12 @@ impl<'a> TsAsExpr<'a> {
   }
 }
 
-impl<'a> Spanned for TsAsExpr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsAsExpr<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -16751,9 +17646,12 @@ impl<'a> TsCallSignatureDecl<'a> {
   }
 }
 
-impl<'a> Spanned for TsCallSignatureDecl<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsCallSignatureDecl<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -16856,9 +17754,12 @@ impl<'a> TsConditionalType<'a> {
   }
 }
 
-impl<'a> Spanned for TsConditionalType<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsConditionalType<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -16943,9 +17844,12 @@ impl<'a> TsConstAssertion<'a> {
   }
 }
 
-impl<'a> Spanned for TsConstAssertion<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsConstAssertion<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -17023,9 +17927,12 @@ impl<'a> TsConstructSignatureDecl<'a> {
   }
 }
 
-impl<'a> Spanned for TsConstructSignatureDecl<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsConstructSignatureDecl<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -17131,9 +18038,12 @@ impl<'a> TsConstructorType<'a> {
   }
 }
 
-impl<'a> Spanned for TsConstructorType<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsConstructorType<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -17235,9 +18145,12 @@ impl<'a> TsEnumDecl<'a> {
   }
 }
 
-impl<'a> Spanned for TsEnumDecl<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsEnumDecl<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -17321,9 +18234,12 @@ impl<'a> TsEnumMember<'a> {
   }
 }
 
-impl<'a> Spanned for TsEnumMember<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsEnumMember<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -17412,9 +18328,12 @@ impl<'a> TsExportAssignment<'a> {
   }
 }
 
-impl<'a> Spanned for TsExportAssignment<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsExportAssignment<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -17491,9 +18410,12 @@ impl<'a> TsExprWithTypeArgs<'a> {
   }
 }
 
-impl<'a> Spanned for TsExprWithTypeArgs<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsExprWithTypeArgs<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -17579,9 +18501,12 @@ impl<'a> TsExternalModuleRef<'a> {
   }
 }
 
-impl<'a> Spanned for TsExternalModuleRef<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsExternalModuleRef<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -17659,9 +18584,12 @@ impl<'a> TsFnType<'a> {
   }
 }
 
-impl<'a> Spanned for TsFnType<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsFnType<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -17767,9 +18695,12 @@ impl<'a> TsGetterSignature<'a> {
   }
 }
 
-impl<'a> Spanned for TsGetterSignature<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsGetterSignature<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -17868,9 +18799,12 @@ impl<'a> TsImportEqualsDecl<'a> {
   }
 }
 
-impl<'a> Spanned for TsImportEqualsDecl<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsImportEqualsDecl<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -17951,9 +18885,12 @@ impl<'a> TsImportType<'a> {
   }
 }
 
-impl<'a> Spanned for TsImportType<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsImportType<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -18058,9 +18995,12 @@ impl<'a> TsIndexSignature<'a> {
   }
 }
 
-impl<'a> Spanned for TsIndexSignature<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsIndexSignature<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -18155,9 +19095,12 @@ impl<'a> TsIndexedAccessType<'a> {
   }
 }
 
-impl<'a> Spanned for TsIndexedAccessType<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsIndexedAccessType<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -18236,9 +19179,12 @@ impl<'a> TsInferType<'a> {
   }
 }
 
-impl<'a> Spanned for TsInferType<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsInferType<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -18315,9 +19261,12 @@ impl<'a> TsInstantiation<'a> {
   }
 }
 
-impl<'a> Spanned for TsInstantiation<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsInstantiation<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -18396,9 +19345,12 @@ impl<'a> TsInterfaceBody<'a> {
   }
 }
 
-impl<'a> Spanned for TsInterfaceBody<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsInterfaceBody<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -18485,9 +19437,12 @@ impl<'a> TsInterfaceDecl<'a> {
   }
 }
 
-impl<'a> Spanned for TsInterfaceDecl<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsInterfaceDecl<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -18583,9 +19538,12 @@ impl<'a> TsIntersectionType<'a> {
   }
 }
 
-impl<'a> Spanned for TsIntersectionType<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsIntersectionType<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -18668,9 +19626,12 @@ impl<'a> TsKeywordType<'a> {
   }
 }
 
-impl<'a> Spanned for TsKeywordType<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsKeywordType<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -18741,9 +19702,12 @@ impl<'a> TsLitType<'a> {
   }
 }
 
-impl<'a> Spanned for TsLitType<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsLitType<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -18829,9 +19793,12 @@ impl<'a> TsMappedType<'a> {
   }
 }
 
-impl<'a> Spanned for TsMappedType<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsMappedType<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -18942,9 +19909,12 @@ impl<'a> TsMethodSignature<'a> {
   }
 }
 
-impl<'a> Spanned for TsMethodSignature<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsMethodSignature<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -19047,9 +20017,12 @@ impl<'a> TsModuleBlock<'a> {
   }
 }
 
-impl<'a> Spanned for TsModuleBlock<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsModuleBlock<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -19139,9 +20112,12 @@ impl<'a> TsModuleDecl<'a> {
   }
 }
 
-impl<'a> Spanned for TsModuleDecl<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsModuleDecl<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -19237,9 +20213,12 @@ impl<'a> TsNamespaceDecl<'a> {
   }
 }
 
-impl<'a> Spanned for TsNamespaceDecl<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsNamespaceDecl<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -19318,9 +20297,12 @@ impl<'a> TsNamespaceExportDecl<'a> {
   }
 }
 
-impl<'a> Spanned for TsNamespaceExportDecl<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsNamespaceExportDecl<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -19396,9 +20378,12 @@ impl<'a> TsNonNullExpr<'a> {
   }
 }
 
-impl<'a> Spanned for TsNonNullExpr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsNonNullExpr<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -19474,9 +20459,12 @@ impl<'a> TsOptionalType<'a> {
   }
 }
 
-impl<'a> Spanned for TsOptionalType<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsOptionalType<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -19566,9 +20554,12 @@ impl<'a> TsParamProp<'a> {
   }
 }
 
-impl<'a> Spanned for TsParamProp<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsParamProp<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -19651,9 +20642,12 @@ impl<'a> TsParenthesizedType<'a> {
   }
 }
 
-impl<'a> Spanned for TsParenthesizedType<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsParenthesizedType<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -19745,9 +20739,12 @@ impl<'a> TsPropertySignature<'a> {
   }
 }
 
-impl<'a> Spanned for TsPropertySignature<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsPropertySignature<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -19861,9 +20858,12 @@ impl<'a> TsQualifiedName<'a> {
   }
 }
 
-impl<'a> Spanned for TsQualifiedName<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsQualifiedName<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -19942,9 +20942,12 @@ impl<'a> TsRestType<'a> {
   }
 }
 
-impl<'a> Spanned for TsRestType<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsRestType<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -20033,9 +21036,12 @@ impl<'a> TsSetterSignature<'a> {
   }
 }
 
-impl<'a> Spanned for TsSetterSignature<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsSetterSignature<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -20113,9 +21119,12 @@ impl<'a> TsThisType<'a> {
   }
 }
 
-impl<'a> Spanned for TsThisType<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsThisType<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -20187,9 +21196,12 @@ impl<'a> TsTplLitType<'a> {
   }
 }
 
-impl<'a> Spanned for TsTplLitType<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsTplLitType<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -20278,9 +21290,12 @@ impl<'a> TsTupleElement<'a> {
   }
 }
 
-impl<'a> Spanned for TsTupleElement<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsTupleElement<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -20366,9 +21381,12 @@ impl<'a> TsTupleType<'a> {
   }
 }
 
-impl<'a> Spanned for TsTupleType<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsTupleType<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -20454,9 +21472,12 @@ impl<'a> TsTypeAliasDecl<'a> {
   }
 }
 
-impl<'a> Spanned for TsTypeAliasDecl<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsTypeAliasDecl<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -20545,9 +21566,12 @@ impl<'a> TsTypeAnn<'a> {
   }
 }
 
-impl<'a> Spanned for TsTypeAnn<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsTypeAnn<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -20624,9 +21648,12 @@ impl<'a> TsTypeAssertion<'a> {
   }
 }
 
-impl<'a> Spanned for TsTypeAssertion<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsTypeAssertion<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -20705,9 +21732,12 @@ impl<'a> TsTypeLit<'a> {
   }
 }
 
-impl<'a> Spanned for TsTypeLit<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsTypeLit<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -20791,9 +21821,12 @@ impl<'a> TsTypeOperator<'a> {
   }
 }
 
-impl<'a> Spanned for TsTypeOperator<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsTypeOperator<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -20879,9 +21912,12 @@ impl<'a> TsTypeParam<'a> {
   }
 }
 
-impl<'a> Spanned for TsTypeParam<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsTypeParam<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -20977,9 +22013,12 @@ impl<'a> TsTypeParamDecl<'a> {
   }
 }
 
-impl<'a> Spanned for TsTypeParamDecl<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsTypeParamDecl<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -21059,9 +22098,12 @@ impl<'a> TsTypeParamInstantiation<'a> {
   }
 }
 
-impl<'a> Spanned for TsTypeParamInstantiation<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsTypeParamInstantiation<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -21146,9 +22188,12 @@ impl<'a> TsTypePredicate<'a> {
   }
 }
 
-impl<'a> Spanned for TsTypePredicate<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsTypePredicate<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -21236,9 +22281,12 @@ impl<'a> TsTypeQuery<'a> {
   }
 }
 
-impl<'a> Spanned for TsTypeQuery<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsTypeQuery<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -21325,9 +22373,12 @@ impl<'a> TsTypeRef<'a> {
   }
 }
 
-impl<'a> Spanned for TsTypeRef<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsTypeRef<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -21413,9 +22464,12 @@ impl<'a> TsUnionType<'a> {
   }
 }
 
-impl<'a> Spanned for TsUnionType<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for TsUnionType<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -21499,9 +22553,12 @@ impl<'a> UnaryExpr<'a> {
   }
 }
 
-impl<'a> Spanned for UnaryExpr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for UnaryExpr<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -21585,9 +22642,12 @@ impl<'a> UpdateExpr<'a> {
   }
 }
 
-impl<'a> Spanned for UpdateExpr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for UpdateExpr<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -21671,9 +22731,12 @@ impl<'a> VarDecl<'a> {
   }
 }
 
-impl<'a> Spanned for VarDecl<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for VarDecl<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -21760,9 +22823,12 @@ impl<'a> VarDeclarator<'a> {
   }
 }
 
-impl<'a> Spanned for VarDeclarator<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for VarDeclarator<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -21849,9 +22915,12 @@ impl<'a> WhileStmt<'a> {
   }
 }
 
-impl<'a> Spanned for WhileStmt<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for WhileStmt<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -21931,9 +23000,12 @@ impl<'a> WithStmt<'a> {
   }
 }
 
-impl<'a> Spanned for WithStmt<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for WithStmt<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -22016,9 +23088,12 @@ impl<'a> YieldExpr<'a> {
   }
 }
 
-impl<'a> Spanned for YieldExpr<'a> {
-  fn span(&self) -> Span {
-    self.inner.span()
+impl<'a> SourceRanged for YieldExpr<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 

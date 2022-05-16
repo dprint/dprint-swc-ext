@@ -1,19 +1,24 @@
+use std::fmt::Display;
+
 use crate::comments::*;
 use crate::generated::*;
 use crate::source_file::SourceFile;
 use crate::tokens::*;
 use swc_common::comments::SingleThreadedCommentsMapInner;
-use swc_common::{BytePos, Span, Spanned};
+use swc_common::BytePos;
+use swc_common::Span;
+use swc_common::Spanned;
 use swc_ecmascript::ast as swc_ast;
+use swc_ecmascript::parser::token::Token;
 use swc_ecmascript::parser::token::TokenAndSpan;
 
 pub enum NodeOrToken<'a> {
   Node(Node<'a>),
-  Token(&'a TokenAndSpan),
+  Token(&'a TokenAndRange),
 }
 
 impl<'a> NodeOrToken<'a> {
-  pub fn unwrap_token(&self) -> &'a TokenAndSpan {
+  pub fn unwrap_token(&self) -> &'a TokenAndRange {
     match self {
       NodeOrToken::Token(token) => token,
       NodeOrToken::Node(node) => panic!(
@@ -34,11 +39,18 @@ impl<'a> NodeOrToken<'a> {
   }
 }
 
-impl<'a> Spanned for NodeOrToken<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for NodeOrToken<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      NodeOrToken::Node(node) => node.span(),
-      NodeOrToken::Token(token) => token.span(),
+      NodeOrToken::Node(node) => node.start(),
+      NodeOrToken::Token(token) => token.start(),
+    }
+  }
+
+  fn end(&self) -> SourcePos {
+    match self {
+      NodeOrToken::Node(node) => node.end(),
+      NodeOrToken::Token(token) => token.end(),
     }
   }
 }
@@ -49,7 +61,7 @@ pub trait RootNode<'a> {
   fn token_container(&self) -> Option<&'a TokenContainer<'a>>;
   fn comment_container(&self) -> Option<&'a CommentContainer<'a>>;
 
-  fn token_at_index(&self, index: usize) -> Option<&'a TokenAndSpan> {
+  fn token_at_index(&self, index: usize) -> Option<&'a TokenAndRange> {
     let token_container = self.token_container();
     let token_container = token_container
       .as_ref()
@@ -88,11 +100,18 @@ pub enum Program<'a> {
   Script(&'a Script<'a>),
 }
 
-impl<'a> Spanned for Program<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for Program<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      Program::Module(node) => node.span(),
-      Program::Script(node) => node.span(),
+      Program::Module(node) => node.start(),
+      Program::Script(node) => node.start(),
+    }
+  }
+
+  fn end(&self) -> SourcePos {
+    match self {
+      Program::Module(node) => node.end(),
+      Program::Script(node) => node.end(),
     }
   }
 }
@@ -165,114 +184,259 @@ impl<'a> RootNode<'a> for Program<'a> {
   }
 }
 
-pub trait SpannedExt {
-  fn lo(&self) -> BytePos;
-  fn hi(&self) -> BytePos;
-  fn start_line_fast(&self, program: &dyn RootNode) -> usize;
-  fn end_line_fast(&self, program: &dyn RootNode) -> usize;
-  fn start_column_fast(&self, program: &dyn RootNode) -> usize;
-  fn end_column_fast(&self, program: &dyn RootNode) -> usize;
-  fn width_fast(&self, program: &dyn RootNode) -> usize;
-  fn tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndSpan];
-  fn text_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a str;
-  fn leading_comments_fast<'a>(&self, program: &dyn RootNode<'a>) -> CommentsIterator<'a>;
-  fn trailing_comments_fast<'a>(&self, program: &dyn RootNode<'a>) -> CommentsIterator<'a>;
+/// A token with its position.
+#[derive(Debug, Clone, PartialEq)]
+pub struct TokenAndRange {
+  pub token: Token,
+  pub range: SourceRange,
+}
 
-  fn previous_token_fast<'a>(&self, program: &dyn RootNode<'a>) -> Option<&'a TokenAndSpan> {
+impl TokenAndRange {
+  pub fn token_index(&self, program: &dyn RootNode) -> usize {
     let token_container = root_node_to_token_container(program);
-    token_container.get_previous_token(self.lo())
+    token_container
+      .get_token_index_at_start(self.range.start)
+      .unwrap()
+  }
+}
+
+impl From<TokenAndSpan> for TokenAndRange {
+  fn from(value: TokenAndSpan) -> Self {
+    TokenAndRange {
+      token: value.token,
+      range: value.span.into(),
+    }
+  }
+}
+
+impl SourceRanged for TokenAndRange {
+  fn start(&self) -> SourcePos {
+    self.range.start
   }
 
-  fn next_token_fast<'a>(&self, program: &dyn RootNode<'a>) -> Option<&'a TokenAndSpan> {
-    let token_container = root_node_to_token_container(program);
-    token_container.get_next_token(self.hi())
+  fn end(&self) -> SourcePos {
+    self.range.end
+  }
+}
+
+/// Swc unfortunately uses `BytePos(0)` as a magic value. This means
+/// that we can't have byte positions of nodes line up with the text.
+/// To get around this, we have created our own `SourcePos` wrapper
+/// that exposes a 0-indexed value, but hides the underlying swc
+/// byte position which is not 0-indexed.
+///
+/// When using this type, you MUST parse files in swc using
+/// `SourcePos::START_BYTE_POS` otherwise bad things will happen.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct SourcePos(BytePos);
+
+impl SourcePos {
+  /// Use this value as the start byte position when parsing.
+  pub const START_BYTE_POS: BytePos = BytePos(1_000);
+
+  pub fn new(index: usize) -> Self {
+    Self(BytePos(index as u32) + SourcePos::START_BYTE_POS)
   }
 
-  fn previous_tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndSpan] {
+  pub fn from_byte_pos(byte_pos: BytePos) -> Self {
+    #[cfg(debug_assertions)]
+    if byte_pos < SourcePos::START_BYTE_POS {
+      panic!(concat!(
+        "The provided byte position was less than the start byte position. ",
+        "Ensure the source file is parsed starting at SourcePos::START_BYTE_POS."
+      ))
+    }
+    Self(byte_pos)
+  }
+
+  pub fn as_byte_pos(&self) -> BytePos {
+    self.0
+  }
+
+  pub fn as_usize(&self) -> usize {
+    (self.0 - SourcePos::START_BYTE_POS).0 as usize
+  }
+}
+
+impl std::fmt::Debug for SourcePos {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    f.debug_tuple("SourcePos").field(&self.as_usize()).finish()
+  }
+}
+
+impl Display for SourcePos {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    f.write_str(&self.as_usize().to_string())
+  }
+}
+
+impl std::ops::Add<usize> for SourcePos {
+  type Output = SourcePos;
+
+  fn add(self, rhs: usize) -> Self::Output {
+    SourcePos(BytePos(self.0.0 + rhs as u32))
+  }
+}
+
+impl std::ops::Sub<usize> for SourcePos {
+  type Output = SourcePos;
+
+  fn sub(self, rhs: usize) -> Self::Output {
+    SourcePos(BytePos(self.0.0 - rhs as u32))
+  }
+}
+
+impl std::ops::Sub<SourcePos> for SourcePos {
+  type Output = usize;
+
+  fn sub(self, rhs: SourcePos) -> Self::Output {
+    self.as_usize() - rhs.as_usize()
+  }
+}
+
+impl SourceRanged for SourcePos {
+  fn start(&self) -> SourcePos {
+    *self
+  }
+
+  fn end(&self) -> SourcePos {
+    *self
+  }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SourceRange {
+  pub start: SourcePos,
+  pub end: SourcePos,
+}
+
+impl SourceRange {
+  pub fn new(start: SourcePos, end: SourcePos)  -> Self{
+    Self { start, end }
+  }
+}
+
+impl From<Span> for SourceRange {
+  fn from(value: Span) -> Self {
+    SourceRange {
+      start: SourcePos::from_byte_pos(value.lo),
+      end: SourcePos::from_byte_pos(value.hi),
+    }
+  }
+}
+
+pub trait SourceRanged {
+  fn start(&self) -> SourcePos;
+  fn end(&self) -> SourcePos;
+
+  fn range(&self) -> SourceRange {
+    SourceRange {
+      start: self.start(),
+      end: self.end(),
+    }
+  }
+
+  fn start_line_fast(&self, program: &dyn RootNode) -> usize {
+    root_node_to_source_file(program).line_index(self.start())
+  }
+
+  fn end_line_fast(&self, program: &dyn RootNode) -> usize {
+    root_node_to_source_file(program).line_index(self.end())
+  }
+
+  fn start_column_fast(&self, program: &dyn RootNode) -> usize {
+    get_column_at_pos(program, self.start())
+  }
+
+  fn end_column_fast(&self, program: &dyn RootNode) -> usize {
+    get_column_at_pos(program, self.end())
+  }
+
+  fn char_width_fast(&self, program: &dyn RootNode) -> usize {
+    self.text_fast(program).chars().count()
+  }
+
+  fn tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndRange] {
+    let token_container = root_node_to_token_container(program);
+    token_container.get_tokens_in_range(self.start(), self.end())
+  }
+
+  fn text_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a str {
+    let source_file = root_node_to_source_file(program);
+    &source_file.text()[self.byte_range()]
+  }
+
+  fn leading_comments_fast<'a>(&self, program: &dyn RootNode<'a>) -> CommentsIterator<'a> {
+    root_node_to_comment_container(program).leading_comments(self.start())
+  }
+
+  fn trailing_comments_fast<'a>(&self, program: &dyn RootNode<'a>) -> CommentsIterator<'a> {
+    root_node_to_comment_container(program).trailing_comments(self.end())
+  }
+
+  fn byte_width(&self) -> usize {
+    self.end().as_usize() - self.start().as_usize()
+  }
+
+  fn byte_range(&self) -> std::ops::Range<usize> {
+    self.start().as_usize()..self.end().as_usize()
+  }
+
+  fn previous_token_fast<'a>(&self, program: &dyn RootNode<'a>) -> Option<&'a TokenAndRange> {
+    let token_container = root_node_to_token_container(program);
+    token_container.get_previous_token(self.start())
+  }
+
+  fn next_token_fast<'a>(&self, program: &dyn RootNode<'a>) -> Option<&'a TokenAndRange> {
+    let token_container = root_node_to_token_container(program);
+    token_container.get_next_token(self.end())
+  }
+
+  fn previous_tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndRange] {
     let token_container = root_node_to_token_container(program);
     let index = token_container
-      .get_token_index_at_lo(self.lo())
+      .get_token_index_at_start(self.start())
       // fallback
-      .or_else(|| token_container.get_token_index_at_hi(self.lo()))
+      .or_else(|| token_container.get_token_index_at_end(self.start()))
       .unwrap_or_else(|| {
         panic!(
-          "The specified lo position ({}) did not have a token index.",
-          self.lo().0
+          "The specified start position ({}) did not have a token index.",
+          self.start()
         )
       });
     &token_container.tokens[0..index]
   }
 
-  fn next_tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndSpan] {
+  fn next_tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndRange] {
     let token_container = root_node_to_token_container(program);
     let index = token_container
-      .get_token_index_at_hi(self.hi())
+      .get_token_index_at_end(self.end())
       // fallback
-      .or_else(|| token_container.get_token_index_at_lo(self.hi()))
+      .or_else(|| token_container.get_token_index_at_start(self.end()))
       .unwrap_or_else(|| {
         panic!(
-          "The specified hi position ({}) did not have a token index.",
-          self.hi().0
+          "The specified end position ({}) did not have a token index.",
+          self.end()
         )
       });
     &token_container.tokens[index + 1..]
   }
 }
 
-impl<T> SpannedExt for T
+impl<T> SourceRanged for T
 where
   T: Spanned,
 {
-  fn lo(&self) -> BytePos {
-    self.span().lo
+  fn start(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.span().lo)
   }
 
-  fn hi(&self) -> BytePos {
-    self.span().hi
-  }
-
-  fn start_line_fast(&self, program: &dyn RootNode) -> usize {
-    root_node_to_source_file(program).line_index(self.lo())
-  }
-
-  fn end_line_fast(&self, program: &dyn RootNode) -> usize {
-    root_node_to_source_file(program).line_index(self.hi())
-  }
-
-  fn start_column_fast(&self, program: &dyn RootNode) -> usize {
-    get_column_at_pos(program, self.lo())
-  }
-
-  fn end_column_fast(&self, program: &dyn RootNode) -> usize {
-    get_column_at_pos(program, self.hi())
-  }
-
-  fn width_fast(&self, program: &dyn RootNode) -> usize {
-    self.text_fast(program).chars().count()
-  }
-
-  fn tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndSpan] {
-    let span = self.span();
-    let token_container = root_node_to_token_container(program);
-    token_container.get_tokens_in_range(span.lo, span.hi)
-  }
-
-  fn text_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a str {
-    let span = self.span();
-    let source_file = root_node_to_source_file(program);
-    &source_file.text()[(span.lo.0 as usize)..(span.hi.0 as usize)]
-  }
-
-  fn leading_comments_fast<'a>(&self, program: &dyn RootNode<'a>) -> CommentsIterator<'a> {
-    root_node_to_comment_container(program).leading_comments(self.lo())
-  }
-
-  fn trailing_comments_fast<'a>(&self, program: &dyn RootNode<'a>) -> CommentsIterator<'a> {
-    root_node_to_comment_container(program).trailing_comments(self.hi())
+  fn end(&self) -> SourcePos {
+    SourcePos::from_byte_pos(self.span().hi)
   }
 }
 
-pub trait NodeTrait<'a>: SpannedExt {
+pub trait NodeTrait<'a>: SourceRanged {
   fn parent(&self) -> Option<Node<'a>>;
   fn children(&self) -> Vec<Node<'a>>;
   fn as_node(&self) -> Node<'a>;
@@ -298,15 +462,15 @@ pub trait NodeTrait<'a>: SpannedExt {
     self.end_column_fast(&self.program())
   }
 
-  fn width(&self) -> usize {
-    self.width_fast(&self.program())
+  fn char_width(&self) -> usize {
+    self.char_width_fast(&self.program())
   }
 
   fn child_index(&self) -> usize {
     if let Some(parent) = self.parent() {
-      let lo = self.lo();
+      let start_pos = self.start();
       for (i, child) in parent.children().iter().enumerate() {
-        if child.span().lo == lo {
+        if child.start() == start_pos {
           return i;
         }
       }
@@ -375,7 +539,7 @@ pub trait NodeTrait<'a>: SpannedExt {
     }
   }
 
-  fn tokens(&self) -> &'a [TokenAndSpan] {
+  fn tokens(&self) -> &'a [TokenAndRange] {
     self.tokens_fast(&self.program())
   }
 
@@ -390,11 +554,11 @@ pub trait NodeTrait<'a>: SpannedExt {
     let mut tokens_index = 0;
 
     for child in children {
-      let child_span = child.span();
+      let child_range = child.range();
 
       // get the tokens before the current child
       for token in &tokens[tokens_index..] {
-        if token.span.lo() < child_span.lo {
+        if token.start() < child_range.start {
           result.push(NodeOrToken::Token(token));
           tokens_index += 1;
         } else {
@@ -407,7 +571,7 @@ pub trait NodeTrait<'a>: SpannedExt {
 
       // skip past all the tokens within the token
       for token in &tokens[tokens_index..] {
-        if token.span.hi() <= child_span.hi {
+        if token.range.end <= child_range.end {
           tokens_index += 1;
         } else {
           break;
@@ -473,33 +637,22 @@ pub trait NodeTrait<'a>: SpannedExt {
     self.text_fast(&self.program())
   }
 
-  fn previous_token(&self) -> Option<&'a TokenAndSpan> {
+  fn previous_token(&self) -> Option<&'a TokenAndRange> {
     self.previous_token_fast(&self.program())
   }
 
-  fn next_token(&self) -> Option<&'a TokenAndSpan> {
+  fn next_token(&self) -> Option<&'a TokenAndRange> {
     self.next_token_fast(&self.program())
   }
 
   /// Gets the previous tokens in the order they appear in the file.
-  fn previous_tokens(&self) -> &'a [TokenAndSpan] {
+  fn previous_tokens(&self) -> &'a [TokenAndRange] {
     self.previous_tokens_fast(&self.program())
   }
 
   /// Gets the next tokens in the order they appear in the file.
-  fn next_tokens(&self) -> &'a [TokenAndSpan] {
+  fn next_tokens(&self) -> &'a [TokenAndRange] {
     self.next_tokens_fast(&self.program())
-  }
-}
-
-pub trait TokenExt {
-  fn token_index(&self, program: &dyn RootNode) -> usize;
-}
-
-impl TokenExt for TokenAndSpan {
-  fn token_index(&self, program: &dyn RootNode) -> usize {
-    let token_container = root_node_to_token_container(program);
-    token_container.get_token_index_at_lo(self.span.lo).unwrap()
   }
 }
 
@@ -523,10 +676,10 @@ fn root_node_to_comment_container<'a>(root_node: &dyn RootNode<'a>) -> &'a Comme
     .expect("The comments must be provided to `with_view` in order to use this method.")
 }
 
-fn get_column_at_pos(program: &dyn RootNode, pos: BytePos) -> usize {
+fn get_column_at_pos(program: &dyn RootNode, pos: SourcePos) -> usize {
   let source_file = root_node_to_source_file(program);
   let text_bytes = source_file.text().as_bytes();
-  let pos = pos.0 as usize;
+  let pos = pos.as_usize();
   let mut line_start = 0;
   for i in (0..pos).rev() {
     if text_bytes[i] == b'\n' {
@@ -578,11 +731,18 @@ impl<'a> From<&'a swc_ast::Script> for ProgramRef<'a> {
   }
 }
 
-impl<'a> Spanned for ProgramRef<'a> {
-  fn span(&self) -> Span {
+impl<'a> SourceRanged for ProgramRef<'a> {
+  fn start(&self) -> SourcePos {
     match self {
-      ProgramRef::Module(node) => node.span(),
-      ProgramRef::Script(node) => node.span(),
+      ProgramRef::Module(node) => node.start(),
+      ProgramRef::Script(node) => node.start(),
+    }
+  }
+
+  fn end(&self) -> SourcePos {
+    match self {
+      ProgramRef::Module(node) => node.end(),
+      ProgramRef::Script(node) => node.end(),
     }
   }
 }
@@ -591,7 +751,7 @@ impl<'a> Spanned for ProgramRef<'a> {
 pub struct ProgramInfo<'a> {
   pub program: ProgramRef<'a>,
   pub source_file: Option<&'a dyn SourceFile>,
-  pub tokens: Option<&'a [TokenAndSpan]>,
+  pub tokens: Option<&'a [TokenAndRange]>,
   pub comments: Option<Comments<'a>>,
 }
 
@@ -599,7 +759,7 @@ pub struct ProgramInfo<'a> {
 pub struct ModuleInfo<'a> {
   pub module: &'a swc_ast::Module,
   pub source_file: Option<&'a dyn SourceFile>,
-  pub tokens: Option<&'a [TokenAndSpan]>,
+  pub tokens: Option<&'a [TokenAndRange]>,
   pub comments: Option<Comments<'a>>,
 }
 
@@ -607,7 +767,7 @@ pub struct ModuleInfo<'a> {
 pub struct ScriptInfo<'a> {
   pub script: &'a swc_ast::Script,
   pub source_file: Option<&'a dyn SourceFile>,
-  pub tokens: Option<&'a [TokenAndSpan]>,
+  pub tokens: Option<&'a [TokenAndRange]>,
   pub comments: Option<Comments<'a>>,
 }
 

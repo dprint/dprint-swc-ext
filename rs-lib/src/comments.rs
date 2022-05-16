@@ -1,8 +1,8 @@
-use crate::{tokens::*, SourceFile};
-use swc_common::{
-  comments::{Comment, SingleThreadedCommentsMapInner},
-  BytePos,
-};
+use crate::tokens::*;
+use crate::SourceFile;
+use crate::SourcePos;
+use swc_common::comments::Comment;
+use swc_common::comments::SingleThreadedCommentsMapInner;
 
 pub struct CommentContainer<'a> {
   pub leading: &'a SingleThreadedCommentsMapInner,
@@ -34,12 +34,12 @@ impl<'a> CommentContainer<'a> {
     CommentsIterator::new(v)
   }
 
-  pub fn leading_comments(&'a self, lo: BytePos) -> CommentsIterator<'a> {
-    let previous_token_hi = self.tokens.get_token_index_at_lo(lo).map(|index| {
+  pub fn leading_comments(&'a self, lo: SourcePos) -> CommentsIterator<'a> {
+    let previous_token_hi = self.tokens.get_token_index_at_start(lo).map(|index| {
       if index == 0 {
-        BytePos(0)
+        SourcePos::new(0)
       } else {
-        self.tokens.get_token_at_index(index - 1).unwrap().span.hi
+        self.tokens.get_token_at_index(index - 1).unwrap().range.end
       }
     });
     let leading = self.get_leading(lo);
@@ -53,15 +53,15 @@ impl<'a> CommentContainer<'a> {
     }
   }
 
-  pub fn trailing_comments(&'a self, hi: BytePos) -> CommentsIterator<'a> {
-    let next_token_lo = self.tokens.get_token_index_at_hi(hi).map(|index| {
+  pub fn trailing_comments(&'a self, end: SourcePos) -> CommentsIterator<'a> {
+    let next_token_lo = self.tokens.get_token_index_at_end(end).map(|index| {
       self
         .tokens
         .get_token_at_index(index + 1)
-        .map(|t| t.span.lo)
-        .unwrap_or_else(|| self.source_file.span().hi())
+        .map(|t| t.range.start)
+        .unwrap_or_else(|| self.source_file.range().end)
     });
-    let trailing = self.get_trailing(hi);
+    let trailing = self.get_trailing(end);
     if let Some(next_token_lo) = next_token_lo {
       let leading = self.get_leading(next_token_lo);
       combine_comment_vecs(trailing, leading)
@@ -72,12 +72,12 @@ impl<'a> CommentContainer<'a> {
     }
   }
 
-  fn get_leading(&'a self, lo: BytePos) -> Option<&'a Vec<Comment>> {
-    self.leading.get(&lo)
+  fn get_leading(&'a self, start: SourcePos) -> Option<&'a Vec<Comment>> {
+    self.leading.get(&start.as_byte_pos())
   }
 
-  fn get_trailing(&'a self, hi: BytePos) -> Option<&'a Vec<Comment>> {
-    self.trailing.get(&hi)
+  fn get_trailing(&'a self, end: SourcePos) -> Option<&'a Vec<Comment>> {
+    self.trailing.get(&end.as_byte_pos())
   }
 }
 
@@ -204,24 +204,22 @@ impl<'a> DoubleEndedIterator for CommentsIterator<'a> {
     self
       .comment_vecs
       .get(self.outer_index_back)
-      .map(|inner| inner.get(self.inner_index_back))
-      .flatten()
+      .and_then(|inner| inner.get(self.inner_index_back))
   }
 }
 
 #[cfg(test)]
 mod test {
-  use swc_common::BytePos;
-
   use crate::test_helpers::*;
-  use crate::SpannedExt;
+  use crate::SourcePos;
+  use crate::SourceRanged;
 
   #[test]
   fn trailing_comments_start_of_file_no_match() {
     run_test(r#"5 // test"#, |program| {
       // previously there was a bug here where it would return the
       // comments after the token
-      let trailing_comments = BytePos(0).trailing_comments_fast(&program);
+      let trailing_comments = SourcePos::new(0).trailing_comments_fast(&program);
       assert!(trailing_comments.is_empty());
     });
   }

@@ -10,26 +10,27 @@ The library at `./rs-lib` is code generated from [swc_ecma_ast](https://crates.i
    - This is similar to a "red tree", but it creates it for every node. It's very fast to create these.
 2. Adds a `Node` enum type to allow referencing any kind of node.
 3. Adds many helper methods.
+4. Adds a `SourcePos` type to compensate for swc having `BytePos(0)` being a magical value.
 
 ## Helpers
 
-Spanned (All):
+SourceRanged (All):
 
-- `.lo(&self) -> BytePos`
-- `.hi(&self) -> BytePos`
+- `.start(&self) -> SourcePos`
+- `.end(&self) -> SourcePos`
 - `.text_fast(&self, root_node: &dyn RootNode) -> &'a str` -- Doesn't require going up the tree to the root node
 - `.start_line_fast(&self, root_node: &dyn RootNode) -> usize`
 - `.end_line_fast(&self, root_node: &dyn RootNode) -> usize`
 - `.start_column_fast(&self, root_node: &dyn RootNode) -> usize`
 - `.end_column_fast(&self, root_node: &dyn RootNode) -> usize`
 - `.width_fast(&self, root_node: &dyn RootNode) -> usize`
-- `.tokens_fast(&self, root_node: &dyn RootNode) -> &'a [TokenAndSpan]`
+- `.tokens_fast(&self, root_node: &dyn RootNode) -> &'a [TokenAndRange]`
 - `.leading_comments_fast(&self, root_node: &dyn RootNode) -> CommentsIterator<'a>`
 - `.trailing_comments_fast(&self, root_node: &dyn RootNode) -> CommentsIterator<'a>`
-- `.previous_token_fast(&self, root_node: &dyn RootNode) -> Option<&TokenAndSpan>`
-- `.next_token_fast(&self, root_node: &dyn RootNode) -> Option<&TokenAndSpan>`
-- `.previous_tokens_fast(&self, root_node: &dyn RootNode) -> &'a [TokenAndSpan]`
-- `.next_tokens_fast(&self, root_node: &dyn RootNode) -> &'a [TokenAndSpan]`
+- `.previous_token_fast(&self, root_node: &dyn RootNode) -> Option<&TokenAndRange>`
+- `.next_token_fast(&self, root_node: &dyn RootNode) -> Option<&TokenAndRange>`
+- `.previous_tokens_fast(&self, root_node: &dyn RootNode) -> &'a [TokenAndRange]`
+- `.next_tokens_fast(&self, root_node: &dyn RootNode) -> &'a [TokenAndRange]`
 
 Node/Enum Node/Nodes:
 
@@ -50,16 +51,16 @@ Node/Enum Node/Nodes:
 - `.start_column(&self) -> usize`
 - `.end_column(&self) -> usize`
 - `.width(&self) -> usize`
-- `.tokens(&self) -> &[TokenAndSpan]` - All the descendant tokens within the span of the node.
+- `.tokens(&self) -> &[TokenAndRange]` - All the descendant tokens within the span of the node.
 - `.children_with_tokens(&self) -> Vec<NodeOrToken<'a>>` - Gets the children with the tokens found between the children
 - `.children_with_tokens_fast(&self, root_node: &dyn RootNode) -> Vec<NodeOrToken<'a>>`
 - `.leading_comments(&self) -> CommentsIterator<'a>`
 - `.trailing_comments(&self) -> CommentsIterator<'a>`
 - `.kind(&self) -> NodeKind` - Gets the "node kind" enum variant associated with the node (ex. `NodeKind::ClassDecl`).
-- `.previous_token(&self) -> Option<&TokenAndSpan>`
-- `.next_token(&self) -> Option<&TokenAndSpan>`
-- `.previous_tokens(&self) -> &'a [TokenAndSpan]`
-- `.next_tokens(&self) -> &'a [TokenAndSpan]`
+- `.previous_token(&self) -> Option<&TokenAndRange>`
+- `.next_token(&self) -> Option<&TokenAndRange>`
+- `.previous_tokens(&self) -> &'a [TokenAndRange]`
+- `.next_tokens(&self) -> &'a [TokenAndRange]`
 
 Node/Enum Node:
 
@@ -67,13 +68,9 @@ Node/Enum Node:
 - `.expect::<NodeType>(&self) -> &NodeType`
 - `.is::<NodeType>(&self) -> bool`
 
-TokenAndSpan extensions:
-
-- `.token_index(&self, root_node: &dyn RootNode) -> usize` - Gets the token index of the specified module.
-
 Root Node (Program/Module/Script):
 
-- `token_at_index(&self, index: &usize) - Option<&TokenAndSpan>`
+- `token_at_index(&self, index: &usize) - Option<&TokenAndRange>`
 
 ## View Construction Functions
 
@@ -103,7 +100,7 @@ Code can be written like so:
 let source_file: swc_common::SourceFile = ...;
 let program: swc_ecmascript::ast::Program = ...;
 let comments: swc_common::comments::SingleThreadedComments = ...;
-let tokens: Vec<swc_ecmascript::parser::token::TokenAndSpan> = ...;
+let tokens: Vec<TokenAndRange> = ...; // use `.into()` on swc's TokenAndSpan
 
 // setup for creating a view
 let program_info = ProgramInfo {

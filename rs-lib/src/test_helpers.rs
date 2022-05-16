@@ -2,12 +2,12 @@ use std::path::Path;
 use swc_common::{
   comments::SingleThreadedComments,
   errors::{DiagnosticBuilder, Emitter, Handler},
-  BytePos, FileName, SourceFile,
+  FileName, SourceFile,
 };
 use swc_ecmascript::ast::{EsVersion, Module, Script};
-use swc_ecmascript::parser::{
-  lexer::Lexer, token::TokenAndSpan, Capturing, Parser, StringInput, Syntax,
-};
+use swc_ecmascript::parser::{lexer::Lexer, Capturing, Parser, StringInput, Syntax};
+
+use crate::{SourcePos, TokenAndRange};
 
 #[cfg(feature = "serialize")]
 use {super::*, std::path::PathBuf};
@@ -61,7 +61,7 @@ pub fn get_swc_module(
   file_text: &str,
 ) -> (
   Module,
-  Vec<TokenAndSpan>,
+  Vec<TokenAndRange>,
   SourceFile,
   SingleThreadedComments,
 ) {
@@ -72,7 +72,7 @@ pub fn get_swc_module(
     false,
     FileName::Custom(file_path.to_string_lossy().into()),
     file_text.into(),
-    BytePos(0),
+    SourcePos::START_BYTE_POS,
   );
 
   let comments: SingleThreadedComments = Default::default();
@@ -91,7 +91,12 @@ pub fn get_swc_module(
     let lexer = Capturing::new(lexer);
     let mut parser = Parser::new_from(lexer);
     let parse_module_result = parser.parse_module();
-    let tokens = parser.input().take();
+    let tokens = parser
+      .input()
+      .take()
+      .into_iter()
+      .map(|t| t.into())
+      .collect();
 
     match parse_module_result {
       Err(error) => {
@@ -112,7 +117,7 @@ pub fn get_swc_script(
   file_text: &str,
 ) -> (
   Script,
-  Vec<TokenAndSpan>,
+  Vec<TokenAndRange>,
   SourceFile,
   SingleThreadedComments,
 ) {
@@ -123,7 +128,7 @@ pub fn get_swc_script(
     false,
     FileName::Custom(file_path.to_string_lossy().into()),
     file_text.into(),
-    BytePos(0),
+    SourcePos::START_BYTE_POS,
   );
 
   let comments: SingleThreadedComments = Default::default();
@@ -142,7 +147,12 @@ pub fn get_swc_script(
     let lexer = Capturing::new(lexer);
     let mut parser = Parser::new_from(lexer);
     let parse_script_result = parser.parse_script();
-    let tokens = parser.input().take();
+    let tokens = parser
+      .input()
+      .take()
+      .into_iter()
+      .map(|t| t.into())
+      .collect();
 
     match parse_script_result {
       Err(error) => {

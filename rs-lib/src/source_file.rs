@@ -1,15 +1,17 @@
-use swc_common::{BytePos, Span};
 pub use text_lines::LineAndColumnIndex;
 pub use text_lines::TextLines;
 
+use crate::SourcePos;
+use crate::SourceRange;
+
 pub trait SourceFile {
   fn text(&self) -> &str;
-  fn span(&self) -> Span;
+  fn range(&self) -> SourceRange;
   fn lines_count(&self) -> usize;
-  fn line_index(&self, pos: BytePos) -> usize;
-  fn line_start(&self, line_index: usize) -> BytePos;
-  fn line_end(&self, line_index: usize) -> BytePos;
-  fn line_and_column_index(&self, pos: BytePos) -> LineAndColumnIndex;
+  fn line_index(&self, pos: SourcePos) -> usize;
+  fn line_start(&self, line_index: usize) -> SourcePos;
+  fn line_end(&self, line_index: usize) -> SourcePos;
+  fn line_and_column_index(&self, pos: SourcePos) -> LineAndColumnIndex;
 }
 
 impl SourceFile for swc_common::SourceFile {
@@ -17,23 +19,26 @@ impl SourceFile for swc_common::SourceFile {
     &self.src
   }
 
-  fn span(&self) -> Span {
-    Span::new(self.start_pos, self.end_pos, Default::default())
+  fn range(&self) -> SourceRange {
+    SourceRange::new(
+      SourcePos::from_byte_pos(self.start_pos),
+      SourcePos::from_byte_pos(self.end_pos),
+    )
   }
 
   fn lines_count(&self) -> usize {
     swc_common::SourceFile::count_lines(self)
   }
 
-  fn line_index(&self, pos: BytePos) -> usize {
-    if let Some(line_index) = swc_common::SourceFile::lookup_line(self, pos) {
+  fn line_index(&self, pos: SourcePos) -> usize {
+    if let Some(line_index) = swc_common::SourceFile::lookup_line(self, pos.as_byte_pos()) {
       line_index
     } else {
-      panic!("Could not find line index at pos {}.", pos.0)
+      panic!("Could not find line index at pos {}.", pos)
     }
   }
 
-  fn line_start(&self, line_index: usize) -> BytePos {
+  fn line_start(&self, line_index: usize) -> SourcePos {
     if line_index >= self.lines.len() {
       panic!(
         "The specified line index {} was greater or equal to the number of lines of {}.",
@@ -41,31 +46,31 @@ impl SourceFile for swc_common::SourceFile {
         self.lines.len()
       );
     }
-    self.lines[line_index]
+    SourcePos::from_byte_pos(self.lines[line_index])
   }
 
-  fn line_end(&self, line_index: usize) -> BytePos {
+  fn line_end(&self, line_index: usize) -> SourcePos {
     let lines_count = self.lines_count();
-    let start_pos = self.span().lo();
+    let start_pos = self.range().start;
     if line_index >= lines_count {
       panic!(
         "The specified line index {} was greater or equal to the number of lines of {}.",
         line_index, lines_count,
       );
     } else if line_index + 1 == lines_count {
-      start_pos + BytePos(self.text().len() as u32)
+      start_pos + self.text().len()
     } else {
       let text = self.text().as_bytes();
-      let next_line_start_index = (self.line_start(line_index + 1) - start_pos).0 as usize;
+      let next_line_start_index = self.line_start(line_index + 1) - start_pos;
       if next_line_start_index > 2 && text[next_line_start_index - 2] == b'\r' {
-        start_pos + BytePos(next_line_start_index as u32 - 2)
+        start_pos + next_line_start_index - 2
       } else {
-        start_pos + BytePos(next_line_start_index as u32 - 1)
+        start_pos + next_line_start_index - 1
       }
     }
   }
 
-  fn line_and_column_index(&self, pos: BytePos) -> LineAndColumnIndex {
+  fn line_and_column_index(&self, pos: SourcePos) -> LineAndColumnIndex {
     let line_index = SourceFile::line_index(self, pos);
     let line_begin = SourceFile::line_start(self, line_index);
     if pos == line_begin {
@@ -74,26 +79,24 @@ impl SourceFile for swc_common::SourceFile {
         column_index: 0,
       };
     }
-    let span = self.span();
+    let start_pos = self.range().start;
     let line_end = if line_index + 1 >= self.lines_count() {
-      span.lo() + BytePos(self.text().len() as u32)
+      start_pos + self.text().len()
     } else {
       // better to include the newline portion
       SourceFile::line_start(self, line_index + 1)
     };
-    let relative_line_begin = line_begin - span.lo();
-    let relative_line_end = line_end - span.lo();
+    let relative_line_begin = line_begin - start_pos;
+    let relative_line_end = line_end - start_pos;
 
     // ensure no panics will happen here in case someone is specifying a byte position in the middle of a char
-    let line_text = &self.text()[relative_line_begin.0 as usize..relative_line_end.0 as usize];
+    let line_text = &self.text()[relative_line_begin..relative_line_end];
     let column_index = if pos == line_end {
       line_text.chars().count()
     } else {
-      let line_begin_pos = line_begin.0 as usize;
-      let pos = pos.0 as usize;
       line_text
         .char_indices()
-        .take_while(|(c_pos, _)| line_begin_pos + c_pos <= pos)
+        .take_while(|(c_pos, _)| line_begin + *c_pos <= pos)
         .count()
         - 1
     };
@@ -106,17 +109,17 @@ impl SourceFile for swc_common::SourceFile {
 }
 
 pub struct SourceFileTextInfo {
-  start_pos: BytePos,
+  start_pos: SourcePos,
   text: String,
   text_lines: TextLines,
 }
 
 impl SourceFileTextInfo {
-  pub fn new(start_pos: BytePos, text: String) -> Self {
+  pub fn new(start_pos: SourcePos, text: String) -> Self {
     SourceFileTextInfo::with_indent_width(start_pos, text, 4)
   }
 
-  pub fn with_indent_width(start_pos: BytePos, text: String, indent_width: usize) -> Self {
+  pub fn with_indent_width(start_pos: SourcePos, text: String, indent_width: usize) -> Self {
     Self {
       start_pos,
       text_lines: TextLines::with_indent_width(&text, indent_width),
@@ -124,19 +127,17 @@ impl SourceFileTextInfo {
     }
   }
 
-  fn assert_pos(&self, pos: BytePos) {
-    let span = self.span();
-    if pos < span.lo() {
+  fn assert_pos(&self, pos: SourcePos) {
+    let range = self.range();
+    if pos < range.start {
       panic!(
         "The provided position {} was less than the start position {}.",
-        pos.0,
-        span.lo().0
+        pos, range.start,
       );
-    } else if pos > span.hi() {
+    } else if pos > range.end {
       panic!(
         "The provided position {} was greater than the end position {}.",
-        pos.0,
-        span.hi().0
+        pos, range.end,
       );
     }
   }
@@ -151,12 +152,12 @@ impl SourceFileTextInfo {
     }
   }
 
-  fn get_relative_index_from_pos(&self, pos: BytePos) -> usize {
-    (pos - self.start_pos).0 as usize
+  fn get_relative_index_from_pos(&self, pos: SourcePos) -> usize {
+    pos - self.start_pos
   }
 
-  fn get_pos_from_relative_index(&self, relative_index: usize) -> BytePos {
-    self.start_pos + BytePos(relative_index as u32)
+  fn get_pos_from_relative_index(&self, relative_index: usize) -> SourcePos {
+    self.start_pos + relative_index
   }
 }
 
@@ -174,37 +175,32 @@ impl SourceFile for SourceFileTextInfo {
     &self.text
   }
 
-  fn span(&self) -> Span {
-    let start = self.start_pos;
-    Span::new(
-      start,
-      start + BytePos(self.text.len() as u32),
-      Default::default(),
-    )
+  fn range(&self) -> SourceRange {
+    SourceRange::new(self.start_pos, self.start_pos + self.text.len())
   }
 
   fn lines_count(&self) -> usize {
     self.text_lines.lines_count()
   }
 
-  fn line_index(&self, pos: BytePos) -> usize {
+  fn line_index(&self, pos: SourcePos) -> usize {
     self.assert_pos(pos);
     self
       .text_lines
       .line_index(self.get_relative_index_from_pos(pos))
   }
 
-  fn line_start(&self, line_index: usize) -> BytePos {
+  fn line_start(&self, line_index: usize) -> SourcePos {
     self.assert_line_index(line_index);
     self.get_pos_from_relative_index(self.text_lines.line_start(line_index))
   }
 
-  fn line_end(&self, line_index: usize) -> BytePos {
+  fn line_end(&self, line_index: usize) -> SourcePos {
     self.assert_line_index(line_index);
     self.get_pos_from_relative_index(self.text_lines.line_end(line_index))
   }
 
-  fn line_and_column_index(&self, pos: BytePos) -> LineAndColumnIndex {
+  fn line_and_column_index(&self, pos: SourcePos) -> LineAndColumnIndex {
     self.assert_pos(pos);
     self
       .text_lines
@@ -222,11 +218,14 @@ mod test {
   fn line_and_column_index() {
     let text = "12\n3\r\nβ\n5";
     for i in 0..10 {
-      run_with_source_file(SourceFileTextInfo::new(BytePos(i), text.to_string()), i);
+      run_with_source_file(
+        SourceFileTextInfo::new(SourcePos::new(i), text.to_string()),
+        i,
+      );
       run_with_source_file(new_swc_source_file(i, text), i);
     }
 
-    fn run_with_source_file(source_file: impl SourceFile, i: u32) {
+    fn run_with_source_file(source_file: impl SourceFile, i: usize) {
       assert_pos_line_and_col(&source_file, i, 0, 0); // 1
       assert_pos_line_and_col(&source_file, 1 + i, 0, 1); // 2
       assert_pos_line_and_col(&source_file, 2 + i, 0, 2); // \n
@@ -243,12 +242,12 @@ mod test {
 
   fn assert_pos_line_and_col(
     source_file: &impl SourceFile,
-    pos: u32,
+    pos: usize,
     line_index: usize,
     column_index: usize,
   ) {
     assert_eq!(
-      source_file.line_and_column_index(BytePos(pos)),
+      source_file.line_and_column_index(SourcePos::new(pos)),
       LineAndColumnIndex {
         line_index,
         column_index,
@@ -259,35 +258,38 @@ mod test {
   #[test]
   #[should_panic(expected = "The provided position 0 was less than the start position 1.")]
   fn line_and_column_index_panic_less_than() {
-    let info = SourceFileTextInfo::new(BytePos(1), "test".to_string());
-    info.line_and_column_index(BytePos(0));
+    let info = SourceFileTextInfo::new(SourcePos::new(1), "test".to_string());
+    info.line_and_column_index(SourcePos::new(0));
   }
 
   #[test]
   #[should_panic(expected = "The provided position 6 was greater than the end position 5.")]
   fn line_and_column_index_panic_greater_than() {
-    let info = SourceFileTextInfo::new(BytePos(1), "test".to_string());
-    info.line_and_column_index(BytePos(6));
+    let info = SourceFileTextInfo::new(SourcePos::new(1), "test".to_string());
+    info.line_and_column_index(SourcePos::new(6));
   }
 
   #[test]
   fn line_start() {
     let text = "12\n3\r\n4\n5";
     for i in 0..10 {
-      run_with_source_file(SourceFileTextInfo::new(BytePos(i), text.to_string()), i);
+      run_with_source_file(
+        SourceFileTextInfo::new(SourcePos::new(i), text.to_string()),
+        i,
+      );
       run_with_source_file(new_swc_source_file(i, text), i);
     }
 
-    fn run_with_source_file(source_file: impl SourceFile, i: u32) {
-      assert_line_start(&source_file, 0, BytePos(i));
-      assert_line_start(&source_file, 1, BytePos(3 + i));
-      assert_line_start(&source_file, 2, BytePos(6 + i));
-      assert_line_start(&source_file, 3, BytePos(8 + i));
+    fn run_with_source_file(source_file: impl SourceFile, i: usize) {
+      assert_line_start(&source_file, 0, i);
+      assert_line_start(&source_file, 1, 3 + i);
+      assert_line_start(&source_file, 2, 6 + i);
+      assert_line_start(&source_file, 3, 8 + i);
     }
   }
 
-  fn assert_line_start(source_file: &impl SourceFile, line_index: usize, line_end: BytePos) {
-    assert_eq!(source_file.line_start(line_index), line_end,);
+  fn assert_line_start(source_file: &impl SourceFile, line_index: usize, line_end: usize) {
+    assert_eq!(source_file.line_start(line_index), SourcePos::new(line_end));
   }
 
   #[test]
@@ -295,7 +297,7 @@ mod test {
     expected = "The specified line index 1 was greater or equal to the number of lines of 1."
   )]
   fn line_start_equal_number_lines() {
-    let info = SourceFileTextInfo::new(BytePos(1), "test".to_string());
+    let info = SourceFileTextInfo::new(SourcePos::new(1), "test".to_string());
     info.line_start(1);
   }
 
@@ -303,20 +305,23 @@ mod test {
   fn line_end() {
     let text = "12\n3\r\n4\n5";
     for i in 0..10 {
-      run_with_source_file(SourceFileTextInfo::new(BytePos(i), text.to_string()), i);
+      run_with_source_file(
+        SourceFileTextInfo::new(SourcePos::new(i), text.to_string()),
+        i,
+      );
       run_with_source_file(new_swc_source_file(i, text), i);
     }
 
-    fn run_with_source_file(source_file: impl SourceFile, i: u32) {
-      assert_line_end(&source_file, 0, BytePos(2 + i));
-      assert_line_end(&source_file, 1, BytePos(4 + i));
-      assert_line_end(&source_file, 2, BytePos(7 + i));
-      assert_line_end(&source_file, 3, BytePos(9 + i));
+    fn run_with_source_file(source_file: impl SourceFile, i: usize) {
+      assert_line_end(&source_file, 0, 2 + i);
+      assert_line_end(&source_file, 1, 4 + i);
+      assert_line_end(&source_file, 2, 7 + i);
+      assert_line_end(&source_file, 3, 9 + i);
     }
   }
 
-  fn assert_line_end(source_file: &impl SourceFile, line_index: usize, line_end: BytePos) {
-    assert_eq!(source_file.line_end(line_index), line_end,);
+  fn assert_line_end(source_file: &impl SourceFile, line_index: usize, line_end: usize) {
+    assert_eq!(source_file.line_end(line_index), SourcePos::new(line_end));
   }
 
   #[test]
@@ -324,17 +329,17 @@ mod test {
     expected = "The specified line index 1 was greater or equal to the number of lines of 1."
   )]
   fn line_end_equal_number_lines() {
-    let info = SourceFileTextInfo::new(BytePos(1), "test".to_string());
+    let info = SourceFileTextInfo::new(SourcePos::new(1), "test".to_string());
     info.line_end(1);
   }
 
-  fn new_swc_source_file(start_pos: u32, text: &str) -> swc_common::SourceFile {
+  fn new_swc_source_file(start_pos: usize, text: &str) -> swc_common::SourceFile {
     swc_common::SourceFile::new(
       swc_common::FileName::Custom("test.ts".to_string()),
       false,
       swc_common::FileName::Custom("test.ts".to_string()),
       text.to_string(),
-      BytePos(start_pos),
+      SourcePos::START_BYTE_POS + BytePos(start_pos as u32),
     )
   }
 }

@@ -1,46 +1,47 @@
 use rustc_hash::FxHashMap;
-use swc_common::BytePos;
-use swc_ecmascript::parser::token::TokenAndSpan;
+
+use crate::SourcePos;
+use crate::TokenAndRange;
 
 pub struct TokenContainer<'a> {
-  pub tokens: &'a [TokenAndSpan],
+  pub tokens: &'a [TokenAndRange],
   // Uses an FxHashMap because it has faster lookups for u32 keys than the default hasher.
-  lo_to_index: FxHashMap<BytePos, usize>,
-  hi_to_index: FxHashMap<BytePos, usize>,
+  start_to_index: FxHashMap<SourcePos, usize>,
+  end_to_index: FxHashMap<SourcePos, usize>,
 }
 
 impl<'a> TokenContainer<'a> {
-  pub fn new(tokens: &'a [TokenAndSpan]) -> Self {
+  pub fn new(tokens: &'a [TokenAndRange]) -> Self {
     TokenContainer {
       tokens,
-      lo_to_index: tokens
+      start_to_index: tokens
         .iter()
         .enumerate()
-        .map(|(i, token)| (token.span.lo, i))
+        .map(|(i, token)| (token.range.start, i))
         .collect(),
-      hi_to_index: tokens
+      end_to_index: tokens
         .iter()
         .enumerate()
-        .map(|(i, token)| (token.span.hi, i))
+        .map(|(i, token)| (token.range.end, i))
         .collect(),
     }
   }
 
-  pub fn get_token_index_at_lo(&self, lo: BytePos) -> Option<usize> {
-    self.lo_to_index.get(&lo).copied()
+  pub fn get_token_index_at_start(&self, start: SourcePos) -> Option<usize> {
+    self.start_to_index.get(&start).copied()
   }
 
-  pub fn get_token_index_at_hi(&self, hi: BytePos) -> Option<usize> {
-    self.hi_to_index.get(&hi).copied()
+  pub fn get_token_index_at_end(&self, end: SourcePos) -> Option<usize> {
+    self.end_to_index.get(&end).copied()
   }
 
-  pub fn get_token_at_index(&self, index: usize) -> Option<&TokenAndSpan> {
+  pub fn get_token_at_index(&self, index: usize) -> Option<&TokenAndRange> {
     self.tokens.get(index)
   }
 
-  pub fn get_tokens_in_range(&self, lo: BytePos, hi: BytePos) -> &'a [TokenAndSpan] {
-    let start_index = self.get_leftmost_token_index(lo);
-    let end_index = self.get_rightmost_token_index(hi);
+  pub fn get_tokens_in_range(&self, start: SourcePos, end: SourcePos) -> &'a [TokenAndRange] {
+    let start_index = self.get_leftmost_token_index(start);
+    let end_index = self.get_rightmost_token_index(end);
 
     let start_index = start_index.unwrap_or_else(|| end_index.unwrap_or(0));
     let end_index = end_index.map(|i| i + 1).unwrap_or(start_index);
@@ -48,16 +49,16 @@ impl<'a> TokenContainer<'a> {
     &self.tokens[start_index..end_index]
   }
 
-  fn get_leftmost_token_index(&self, lo: BytePos) -> Option<usize> {
-    if let Some(&start_index) = self.lo_to_index.get(&lo) {
+  fn get_leftmost_token_index(&self, start: SourcePos) -> Option<usize> {
+    if let Some(&start_index) = self.start_to_index.get(&start) {
       Some(start_index)
     // fallback
-    } else if let Some(&start_index) = self.hi_to_index.get(&lo) {
+    } else if let Some(&start_index) = self.end_to_index.get(&start) {
       Some(start_index + 1)
     } else {
       // todo: binary search leftmost
       for (i, token) in self.tokens.iter().enumerate() {
-        if token.span.lo >= lo {
+        if token.range.start >= start {
           return Some(i);
         }
       }
@@ -66,11 +67,11 @@ impl<'a> TokenContainer<'a> {
     }
   }
 
-  fn get_rightmost_token_index(&self, hi: BytePos) -> Option<usize> {
-    if let Some(&end_index) = self.hi_to_index.get(&hi) {
+  fn get_rightmost_token_index(&self, end: SourcePos) -> Option<usize> {
+    if let Some(&end_index) = self.end_to_index.get(&end) {
       Some(end_index)
     // fallback
-    } else if let Some(&end_index) = self.lo_to_index.get(&hi) {
+    } else if let Some(&end_index) = self.start_to_index.get(&end) {
       if end_index > 0 {
         Some(end_index - 1)
       } else {
@@ -79,7 +80,7 @@ impl<'a> TokenContainer<'a> {
     } else {
       // todo: binary search rightmost
       for (i, token) in self.tokens.iter().enumerate().rev() {
-        if token.span.hi <= hi {
+        if token.range.end <= end {
           return Some(i);
         }
       }
@@ -88,8 +89,8 @@ impl<'a> TokenContainer<'a> {
     }
   }
 
-  pub fn get_previous_token(&self, lo: BytePos) -> Option<&TokenAndSpan> {
-    let index = self.lo_to_index.get(&lo);
+  pub fn get_previous_token(&self, start: SourcePos) -> Option<&TokenAndRange> {
+    let index = self.start_to_index.get(&start);
     if let Some(&index) = index {
       if index == 0 {
         None
@@ -100,7 +101,7 @@ impl<'a> TokenContainer<'a> {
       // todo: binary search leftmost
       let mut last_token = None;
       for token in self.tokens {
-        if token.span.hi > lo {
+        if token.range.end > start {
           return last_token;
         } else {
           last_token = Some(token);
@@ -111,13 +112,13 @@ impl<'a> TokenContainer<'a> {
     }
   }
 
-  pub fn get_next_token(&self, hi: BytePos) -> Option<&TokenAndSpan> {
-    if let Some(index) = self.hi_to_index.get(&hi) {
+  pub fn get_next_token(&self, end: SourcePos) -> Option<&TokenAndRange> {
+    if let Some(index) = self.end_to_index.get(&end) {
       self.tokens.get(index + 1)
     } else {
       // todo: binary search rightmost
       for token in self.tokens {
-        if token.span.lo > hi {
+        if token.range.start > end {
           return Some(token);
         }
       }
@@ -129,10 +130,9 @@ impl<'a> TokenContainer<'a> {
 
 #[cfg(test)]
 mod test {
-  use swc_common::BytePos;
-
   use crate::test_helpers::*;
   use crate::RootNode;
+  use crate::SourcePos;
 
   #[test]
   fn get_next_token() {
@@ -141,41 +141,41 @@ mod test {
       // low token of previous token
       assert_eq!(
         token_container
-          .get_next_token(BytePos(0))
+          .get_next_token(SourcePos::new(0))
           .unwrap()
-          .span
-          .lo(),
-        BytePos(12),
+          .range
+          .start,
+        SourcePos::new(12),
       );
       // hi of previous token
       assert_eq!(
         token_container
-          .get_next_token(BytePos(3))
+          .get_next_token(SourcePos::new(3))
           .unwrap()
-          .span
-          .lo(),
-        BytePos(12),
+          .range
+          .start,
+        SourcePos::new(12),
       );
       // in comment before token
       assert_eq!(
         token_container
-          .get_next_token(BytePos(5))
+          .get_next_token(SourcePos::new(5))
           .unwrap()
-          .span
-          .lo(),
-        BytePos(12),
+          .range
+          .start,
+        SourcePos::new(12),
       );
       // in whitespace before token
       assert_eq!(
         token_container
-          .get_next_token(BytePos(11))
+          .get_next_token(SourcePos::new(11))
           .unwrap()
-          .span
-          .lo(),
-        BytePos(12),
+          .range
+          .start,
+        SourcePos::new(12),
       );
       // at hi of last token
-      assert_eq!(token_container.get_next_token(BytePos(18)), None,);
+      assert_eq!(token_container.get_next_token(SourcePos::new(18)), None);
     });
   }
 }
