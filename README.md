@@ -10,7 +10,7 @@ The library at `./rs-lib` is code generated from [swc_ecma_ast](https://crates.i
    - This is similar to a "red tree", but it creates it for every node. It's very fast to create these.
 2. Adds a `Node` enum type to allow referencing any kind of node.
 3. Adds many helper methods.
-4. Adds a `SourcePos` type to compensate for swc having `BytePos(0)` being a magical value.
+4. Adds a `SourcePos` type to compensate for swc having `BytePos(0)` as a magical value.
 
 ## Helpers
 
