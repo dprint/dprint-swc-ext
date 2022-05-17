@@ -1,6 +1,6 @@
-# dprint-swc-exts
+# dprint-swc-ext
 
-[![](https://img.shields.io/crates/v/dprint-swc-exts.svg)](https://crates.io/crates/dprint-swc-exts) [![CI](https://github.com/dprint/dprint-swc-exts/workflows/CI/badge.svg)](https://github.com/dprint/dprint-swc-exts/actions?query=workflow%3ACI)
+[![](https://img.shields.io/crates/v/dprint-swc-ext.svg)](https://crates.io/crates/dprint-swc-ext) [![CI](https://github.com/dprint/dprint-swc-ext/workflows/CI/badge.svg)](https://github.com/dprint/dprint-swc-ext/actions?query=workflow%3ACI)
 
 The library at `./rs-lib` is code generated from [swc_ecma_ast](https://crates.io/crates/swc_ecma_ast) via the code in `./generation` to produce a more easily navigable immutable AST.
 

@@ -1,5 +1,5 @@
 [package]
-name = "dprint-swc-exts"
+name = "dprint-swc-ext"
 version = "0.1.0"
 authors = ["David Sherret <dsherret@gmail.com>"]
 edition = "2021"
