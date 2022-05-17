@@ -53,41 +53,52 @@ impl<'a> SourceRanged for NodeOrToken<'a> {
 
 /// A Module or Script node.
 pub trait RootNode<'a> {
-  fn text_info(&self) -> Option<&'a SourceTextInfo>;
-  fn token_container(&self) -> Option<&'a TokenContainer<'a>>;
-  fn comment_container(&self) -> Option<&'a CommentContainer<'a>>;
+  fn maybe_text_info(&self) -> Option<&'a SourceTextInfo>;
+  fn maybe_token_container(&self) -> Option<&'a TokenContainer<'a>>;
+  fn maybe_comment_container(&self) -> Option<&'a CommentContainer<'a>>;
 
   fn token_at_index(&self, index: usize) -> Option<&'a TokenAndRange> {
-    let token_container = self.token_container();
-    let token_container = token_container
+    self.token_container().get_token_at_index(index)
+  }
+
+  fn token_container(&self) -> &'a TokenContainer<'a> {
+    self
+      .maybe_token_container()
       .as_ref()
-      .expect("The tokens must be provided to `with_view` in order to use this method.");
-    token_container.get_token_at_index(index)
+      .expect("The tokens must be provided to `with_view` in order to use this method.")
+  }
+
+  fn comment_container(&self) -> &'a CommentContainer<'a> {
+    self
+      .maybe_comment_container()
+      .as_ref()
+      .expect("The comments must be provided to `with_view` in order to use this method.")
   }
 }
 
-macro_rules! implement_source_provider_for_root_node {
-  ($name:ty) => {
-    impl<'a> SourceTextInfoProvider<'a> for $name {
-      fn text_info(&self) -> &'a SourceTextInfo {
-        root_node_to_source_file(self)
-      }
-    }
-  };
+impl<'a, T> SourceTextInfoProvider<'a> for T
+where
+  T: RootNode<'a>,
+{
+  fn text_info(&self) -> &'a SourceTextInfo {
+    self
+      .maybe_text_info()
+      .expect("The source file must be provided to `with_view` in order to use this method.")
+  }
 }
 
 macro_rules! implement_root_node {
   ($name:ty) => {
     impl<'a> RootNode<'a> for $name {
-      fn text_info(&self) -> Option<&'a SourceTextInfo> {
+      fn maybe_text_info(&self) -> Option<&'a SourceTextInfo> {
         self.text_info
       }
 
-      fn token_container(&self) -> Option<&'a TokenContainer<'a>> {
+      fn maybe_token_container(&self) -> Option<&'a TokenContainer<'a>> {
         self.tokens
       }
 
-      fn comment_container(&self) -> Option<&'a CommentContainer<'a>> {
+      fn maybe_comment_container(&self) -> Option<&'a CommentContainer<'a>> {
         self.comments
       }
     }
@@ -95,10 +106,8 @@ macro_rules! implement_root_node {
 }
 
 implement_root_node!(Module<'a>);
-implement_source_provider_for_root_node!(Module<'a>);
 implement_root_node!(&Module<'a>);
 implement_root_node!(Script<'a>);
-implement_source_provider_for_root_node!(Script<'a>);
 implement_root_node!(&Script<'a>);
 
 /// A Module or Script node.
@@ -170,95 +179,25 @@ impl<'a> From<Program<'a>> for Node<'a> {
 }
 
 impl<'a> RootNode<'a> for Program<'a> {
-  fn text_info(&self) -> Option<&'a SourceTextInfo> {
+  fn maybe_text_info(&self) -> Option<&'a SourceTextInfo> {
     match self {
       Program::Module(module) => module.text_info,
       Program::Script(script) => script.text_info,
     }
   }
 
-  fn token_container(&self) -> Option<&'a TokenContainer<'a>> {
+  fn maybe_token_container(&self) -> Option<&'a TokenContainer<'a>> {
     match self {
       Program::Module(module) => module.tokens,
       Program::Script(script) => script.tokens,
     }
   }
 
-  fn comment_container(&self) -> Option<&'a CommentContainer<'a>> {
+  fn maybe_comment_container(&self) -> Option<&'a CommentContainer<'a>> {
     match self {
       Program::Module(module) => module.comments,
       Program::Script(script) => script.comments,
     }
-  }
-}
-
-implement_source_provider_for_root_node!(Program<'a>);
-
-pub trait SourceRangedExt {
-  fn tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndRange];
-  fn leading_comments_fast<'a>(&self, program: &dyn RootNode<'a>) -> CommentsIterator<'a>;
-  fn trailing_comments_fast<'a>(&self, program: &dyn RootNode<'a>) -> CommentsIterator<'a>;
-  fn previous_token_fast<'a>(&self, program: &dyn RootNode<'a>) -> Option<&'a TokenAndRange>;
-  fn next_token_fast<'a>(&self, program: &dyn RootNode<'a>) -> Option<&'a TokenAndRange>;
-  fn previous_tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndRange];
-  fn next_tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndRange];
-}
-
-impl<T> SourceRangedExt for T
-where
-  T: SourceRanged + Sized,
-{
-  fn tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndRange] {
-    let token_container = root_node_to_token_container(program);
-    token_container.get_tokens_in_range(self.start(), self.end())
-  }
-
-  fn leading_comments_fast<'a>(&self, program: &dyn RootNode<'a>) -> CommentsIterator<'a> {
-    root_node_to_comment_container(program).leading_comments(self.start())
-  }
-
-  fn trailing_comments_fast<'a>(&self, program: &dyn RootNode<'a>) -> CommentsIterator<'a> {
-    root_node_to_comment_container(program).trailing_comments(self.end())
-  }
-
-  fn previous_token_fast<'a>(&self, program: &dyn RootNode<'a>) -> Option<&'a TokenAndRange> {
-    let token_container = root_node_to_token_container(program);
-    token_container.get_previous_token(self.start())
-  }
-
-  fn next_token_fast<'a>(&self, program: &dyn RootNode<'a>) -> Option<&'a TokenAndRange> {
-    let token_container = root_node_to_token_container(program);
-    token_container.get_next_token(self.end())
-  }
-
-  fn previous_tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndRange] {
-    let token_container = root_node_to_token_container(program);
-    let index = token_container
-      .get_token_index_at_start(self.start())
-      // fallback
-      .or_else(|| token_container.get_token_index_at_end(self.start()))
-      .unwrap_or_else(|| {
-        panic!(
-          "The specified start position ({}) did not have a token index.",
-          self.start()
-        )
-      });
-    &token_container.tokens[0..index]
-  }
-
-  fn next_tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndRange] {
-    let token_container = root_node_to_token_container(program);
-    let index = token_container
-      .get_token_index_at_end(self.end())
-      // fallback
-      .or_else(|| token_container.get_token_index_at_start(self.end()))
-      .unwrap_or_else(|| {
-        panic!(
-          "The specified end position ({}) did not have a token index.",
-          self.end()
-        )
-      });
-    &token_container.tokens[index + 1..]
   }
 }
 
@@ -482,26 +421,6 @@ pub trait NodeTrait<'a>: SourceRanged + Sized {
   }
 }
 
-fn root_node_to_source_file<'a>(root_node: &dyn RootNode<'a>) -> &'a SourceTextInfo {
-  root_node
-    .text_info()
-    .expect("The source file must be provided to `with_view` in order to use this method.")
-}
-
-fn root_node_to_token_container<'a>(root_node: &dyn RootNode<'a>) -> &'a TokenContainer<'a> {
-  root_node
-    .token_container()
-    .as_ref()
-    .expect("The tokens must be provided to `with_view` in order to use this method.")
-}
-
-fn root_node_to_comment_container<'a>(root_node: &dyn RootNode<'a>) -> &'a CommentContainer<'a> {
-  root_node
-    .comment_container()
-    .as_ref()
-    .expect("The comments must be provided to `with_view` in order to use this method.")
-}
-
 pub trait CastableNode<'a> {
   fn to(node: &Node<'a>) -> Option<&'a Self>;
   fn kind() -> NodeKind;
@@ -614,8 +533,8 @@ pub struct TokenAndRange {
 
 impl TokenAndRange {
   pub fn token_index(&self, program: &dyn RootNode) -> usize {
-    let token_container = root_node_to_token_container(program);
-    token_container
+    program
+      .token_container()
       .get_token_index_at_start(self.range.start)
       .unwrap()
   }
@@ -679,7 +598,11 @@ function foo(name: /* inline comment */ string) {
 "#,
       |program| {
         assert_eq!(
-          program.comment_container().unwrap().all_comments().count(),
+          program
+            .maybe_comment_container()
+            .unwrap()
+            .all_comments()
+            .count(),
           6
         );
       },

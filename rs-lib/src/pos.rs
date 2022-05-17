@@ -1,7 +1,10 @@
 use swc_common::BytePos;
 use swc_common::Span;
 
+use crate::CommentsIterator;
+use crate::RootNode;
 use crate::SourceTextInfoProvider;
+use crate::TokenAndRange;
 
 /// Swc unfortunately uses `BytePos(0)` as a magic value. This means
 /// that we can't have byte positions of nodes line up with the text.
@@ -171,6 +174,57 @@ pub trait SourceRanged {
     let text_info = source.text_info();
     let byte_range = self.range() - text_info.range().start;
     &text_info.text_str()[byte_range]
+  }
+
+  fn tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndRange] {
+    let token_container = program.token_container();
+    token_container.get_tokens_in_range(self.start(), self.end())
+  }
+
+  fn leading_comments_fast<'a>(&self, program: &dyn RootNode<'a>) -> CommentsIterator<'a> {
+    program.comment_container().leading_comments(self.start())
+  }
+
+  fn trailing_comments_fast<'a>(&self, program: &dyn RootNode<'a>) -> CommentsIterator<'a> {
+    program.comment_container().trailing_comments(self.end())
+  }
+
+  fn previous_token_fast<'a>(&self, program: &dyn RootNode<'a>) -> Option<&'a TokenAndRange> {
+    program.token_container().get_previous_token(self.start())
+  }
+
+  fn next_token_fast<'a>(&self, program: &dyn RootNode<'a>) -> Option<&'a TokenAndRange> {
+    program.token_container().get_next_token(self.end())
+  }
+
+  fn previous_tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndRange] {
+    let token_container = program.token_container();
+    let index = token_container
+      .get_token_index_at_start(self.start())
+      // fallback
+      .or_else(|| token_container.get_token_index_at_end(self.start()))
+      .unwrap_or_else(|| {
+        panic!(
+          "The specified start position ({}) did not have a token index.",
+          self.start()
+        )
+      });
+    &token_container.tokens[0..index]
+  }
+
+  fn next_tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndRange] {
+    let token_container = program.token_container();
+    let index = token_container
+      .get_token_index_at_end(self.end())
+      // fallback
+      .or_else(|| token_container.get_token_index_at_start(self.end()))
+      .unwrap_or_else(|| {
+        panic!(
+          "The specified end position ({}) did not have a token index.",
+          self.end()
+        )
+      });
+    &token_container.tokens[index + 1..]
   }
 }
 

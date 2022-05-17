@@ -212,7 +212,7 @@ impl<'a> DoubleEndedIterator for CommentsIterator<'a> {
 mod test {
   use crate::test_helpers::*;
   use crate::SourcePos;
-  use crate::SourceRangedExt;
+  use crate::SourceRanged;
 
   #[test]
   fn trailing_comments_start_of_file_no_match() {

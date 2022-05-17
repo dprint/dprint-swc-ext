@@ -137,7 +137,7 @@ mod test {
   #[test]
   fn get_next_token() {
     run_test(r#"let /* a */ a = 5;"#, |program| {
-      let token_container = program.token_container().unwrap();
+      let token_container = program.maybe_token_container().unwrap();
       // low token of previous token
       assert_eq!(
         token_container
