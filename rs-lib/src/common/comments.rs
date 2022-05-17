@@ -39,7 +39,7 @@ impl<'a> CommentContainer<'a> {
       if index == 0 {
         self.text_info.range().start.as_source_pos()
       } else {
-        self.tokens.get_token_at_index(index - 1).unwrap().range.end
+        self.tokens.get_token_at_index(index - 1).unwrap().end()
       }
     });
     let leading = self.get_leading(lo);
@@ -56,7 +56,7 @@ impl<'a> CommentContainer<'a> {
       self
         .tokens
         .get_token_at_index(index + 1)
-        .map(|t| t.range.start)
+        .map(|t| t.start())
         .unwrap_or_else(|| self.text_info.range().end)
     });
     let trailing = self.get_trailing(end);

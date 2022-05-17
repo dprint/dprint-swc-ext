@@ -1,3 +1,5 @@
+use swc_ecmascript::parser::token::TokenAndSpan;
+
 use crate::swc::ast::{EsVersion, Module};
 use crate::swc::common::{
   comments::SingleThreadedComments,
@@ -6,9 +8,9 @@ use crate::swc::common::{
 use crate::swc::parser::{lexer::Lexer, Capturing, Parser, Syntax};
 use std::path::Path;
 
-use crate::common::{SourceTextInfo, TokenAndRange};
+use crate::common::SourceTextInfo;
 
-pub fn get_swc_module(file_path: &Path, file_text: &str) -> (Module, Vec<TokenAndRange>, SourceTextInfo, SingleThreadedComments) {
+pub fn get_swc_module(file_path: &Path, file_text: &str) -> (Module, Vec<TokenAndSpan>, SourceTextInfo, SingleThreadedComments) {
   // lifted from dprint-plugin-typescript
   let handler = Handler::with_emitter(false, false, Box::new(EmptyEmitter {}));
   let source_text_info = SourceTextInfo::from_string(file_text.to_string());
@@ -29,7 +31,7 @@ pub fn get_swc_module(file_path: &Path, file_text: &str) -> (Module, Vec<TokenAn
     let lexer = Capturing::new(lexer);
     let mut parser = Parser::new_from(lexer);
     let parse_module_result = parser.parse_module();
-    let tokens = parser.input().take().into_iter().map(|t| t.into()).collect();
+    let tokens = parser.input().take();
 
     match parse_module_result {
       Err(error) => {
@@ -46,7 +48,7 @@ pub fn get_swc_module(file_path: &Path, file_text: &str) -> (Module, Vec<TokenAn
 }
 
 #[cfg(feature = "view")]
-pub fn get_swc_script(file_path: &Path, file_text: &str) -> (crate::swc::ast::Script, Vec<TokenAndRange>, SourceTextInfo, SingleThreadedComments) {
+pub fn get_swc_script(file_path: &Path, file_text: &str) -> (crate::swc::ast::Script, Vec<TokenAndSpan>, SourceTextInfo, SingleThreadedComments) {
   // lifted from dprint-plugin-typescript
   let handler = Handler::with_emitter(false, false, Box::new(EmptyEmitter {}));
   let source_text_info = SourceTextInfo::from_string(file_text.to_string());
@@ -67,7 +69,7 @@ pub fn get_swc_script(file_path: &Path, file_text: &str) -> (crate::swc::ast::Sc
     let lexer = Capturing::new(lexer);
     let mut parser = Parser::new_from(lexer);
     let parse_script_result = parser.parse_script();
-    let tokens = parser.input().take().into_iter().map(|t| t.into()).collect();
+    let tokens = parser.input().take();
 
     match parse_script_result {
       Err(error) => {

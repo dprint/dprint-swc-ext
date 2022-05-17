@@ -1,5 +1,6 @@
-use swc_common::BytePos;
-use swc_common::Span;
+use crate::swc::common::BytePos;
+use crate::swc::common::Span;
+use crate::swc::parser::token::TokenAndSpan;
 
 use super::comments::*;
 use super::text_info::*;
@@ -289,7 +290,7 @@ macro_rules! source_ranged_trait {
       &text_info.text_str()[byte_range]
     }
 
-    fn tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndRange] {
+    fn tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndSpan] {
       let token_container = program.token_container();
       token_container.get_tokens_in_range(self.start(), self.end())
     }
@@ -302,15 +303,15 @@ macro_rules! source_ranged_trait {
       program.comment_container().trailing_comments(self.end())
     }
 
-    fn previous_token_fast<'a>(&self, program: &dyn RootNode<'a>) -> Option<&'a TokenAndRange> {
+    fn previous_token_fast<'a>(&self, program: &dyn RootNode<'a>) -> Option<&'a TokenAndSpan> {
       program.token_container().get_previous_token(self.start())
     }
 
-    fn next_token_fast<'a>(&self, program: &dyn RootNode<'a>) -> Option<&'a TokenAndRange> {
+    fn next_token_fast<'a>(&self, program: &dyn RootNode<'a>) -> Option<&'a TokenAndSpan> {
       program.token_container().get_next_token(self.end())
     }
 
-    fn previous_tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndRange] {
+    fn previous_tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndSpan] {
       let token_container = program.token_container();
       let index = token_container
         .get_token_index_at_start(self.start())
@@ -320,7 +321,7 @@ macro_rules! source_ranged_trait {
       &token_container.tokens[0..index]
     }
 
-    fn next_tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndRange] {
+    fn next_tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndSpan] {
       let token_container = program.token_container();
       let index = token_container
         .get_token_index_at_end(self.end())

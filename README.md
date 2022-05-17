@@ -24,13 +24,13 @@ All (`SourceRanged` trait):
 - `.start_column_fast(&self, root_node: &dyn RootNode) -> usize`
 - `.end_column_fast(&self, root_node: &dyn RootNode) -> usize`
 - `.width_fast(&self, root_node: &dyn RootNode) -> usize`
-- `.tokens_fast(&self, root_node: &dyn RootNode) -> &'a [TokenAndRange]`
+- `.tokens_fast(&self, root_node: &dyn RootNode) -> &'a [TokenAndSpan]`
 - `.leading_comments_fast(&self, root_node: &dyn RootNode) -> CommentsIterator<'a>`
 - `.trailing_comments_fast(&self, root_node: &dyn RootNode) -> CommentsIterator<'a>`
-- `.previous_token_fast(&self, root_node: &dyn RootNode) -> Option<&TokenAndRange>`
-- `.next_token_fast(&self, root_node: &dyn RootNode) -> Option<&TokenAndRange>`
-- `.previous_tokens_fast(&self, root_node: &dyn RootNode) -> &'a [TokenAndRange]`
-- `.next_tokens_fast(&self, root_node: &dyn RootNode) -> &'a [TokenAndRange]`
+- `.previous_token_fast(&self, root_node: &dyn RootNode) -> Option<&TokenAndSpan>`
+- `.next_token_fast(&self, root_node: &dyn RootNode) -> Option<&TokenAndSpan>`
+- `.previous_tokens_fast(&self, root_node: &dyn RootNode) -> &'a [TokenAndSpan]`
+- `.next_tokens_fast(&self, root_node: &dyn RootNode) -> &'a [TokenAndSpan]`
 
 Node/Enum Node/Nodes:
 
@@ -51,16 +51,16 @@ Node/Enum Node/Nodes:
 - `.start_column(&self) -> usize`
 - `.end_column(&self) -> usize`
 - `.width(&self) -> usize`
-- `.tokens(&self) -> &[TokenAndRange]` - All the descendant tokens within the span of the node.
+- `.tokens(&self) -> &[TokenAndSpan]` - All the descendant tokens within the span of the node.
 - `.children_with_tokens(&self) -> Vec<NodeOrToken<'a>>` - Gets the children with the tokens found between the children
 - `.children_with_tokens_fast(&self, root_node: &dyn RootNode) -> Vec<NodeOrToken<'a>>`
 - `.leading_comments(&self) -> CommentsIterator<'a>`
 - `.trailing_comments(&self) -> CommentsIterator<'a>`
 - `.kind(&self) -> NodeKind` - Gets the "node kind" enum variant associated with the node (ex. `NodeKind::ClassDecl`).
-- `.previous_token(&self) -> Option<&TokenAndRange>`
-- `.next_token(&self) -> Option<&TokenAndRange>`
-- `.previous_tokens(&self) -> &'a [TokenAndRange]`
-- `.next_tokens(&self) -> &'a [TokenAndRange]`
+- `.previous_token(&self) -> Option<&TokenAndSpan>`
+- `.next_token(&self) -> Option<&TokenAndSpan>`
+- `.previous_tokens(&self) -> &'a [TokenAndSpan]`
+- `.next_tokens(&self) -> &'a [TokenAndSpan]`
 
 Node/Enum Node:
 
@@ -68,13 +68,13 @@ Node/Enum Node:
 - `.expect::<NodeType>(&self) -> &NodeType`
 - `.is::<NodeType>(&self) -> bool`
 
-`TokenAndRange` methods:
+`TokenAndSpan`:
 
 - `.token_index(&self, root_node: &dyn RootNode) -> usize` - Gets the token index of the specified module.
 
 Root Node (Program/Module/Script):
 
-- `token_at_index(&self, index: &usize) - Option<&TokenAndRange>`
+- `token_at_index(&self, index: &usize) - Option<&TokenAndSpan>`
 
 ## View Construction Functions
 
@@ -104,7 +104,7 @@ Code can be written like so:
 let source_file: swc_common::SourceFile = ...;
 let program: swc_ecmascript::ast::Program = ...;
 let comments: swc_common::comments::SingleThreadedComments = ...;
-let tokens: Vec<TokenAndRange> = ...; // use `.into()` on swc's TokenAndSpan to get a TokenAndRange
+let tokens: Vec<TokenAndSpan> = ...;
 
 // setup for creating a view
 let program_info = ProgramInfo {

@@ -2,14 +2,15 @@ use super::generated::*;
 use crate::common::*;
 use crate::swc::ast as swc_ast;
 use crate::swc::common::comments::SingleThreadedCommentsMapInner;
+use crate::swc::parser::token::TokenAndSpan;
 
 pub enum NodeOrToken<'a> {
   Node(Node<'a>),
-  Token(&'a TokenAndRange),
+  Token(&'a TokenAndSpan),
 }
 
 impl<'a> NodeOrToken<'a> {
-  pub fn unwrap_token(&self) -> &'a TokenAndRange {
+  pub fn unwrap_token(&self) -> &'a TokenAndSpan {
     match self {
       NodeOrToken::Token(token) => token,
       NodeOrToken::Node(node) => panic!("Expected to unwrap a token, but it was a node of kind {}.", node.kind()),
@@ -257,7 +258,7 @@ pub trait NodeTrait<'a>: SourceRanged + Sized {
     }
   }
 
-  fn tokens(&self) -> &'a [TokenAndRange] {
+  fn tokens(&self) -> &'a [TokenAndSpan] {
     self.tokens_fast(&self.program())
   }
 
@@ -289,7 +290,7 @@ pub trait NodeTrait<'a>: SourceRanged + Sized {
 
       // skip past all the tokens within the token
       for token in &tokens[tokens_index..] {
-        if token.range.end <= child_range.end {
+        if token.end() <= child_range.end {
           tokens_index += 1;
         } else {
           break;
@@ -352,21 +353,21 @@ pub trait NodeTrait<'a>: SourceRanged + Sized {
     self.text_fast(&self.program())
   }
 
-  fn previous_token(&self) -> Option<&'a TokenAndRange> {
+  fn previous_token(&self) -> Option<&'a TokenAndSpan> {
     self.previous_token_fast(&self.program())
   }
 
-  fn next_token(&self) -> Option<&'a TokenAndRange> {
+  fn next_token(&self) -> Option<&'a TokenAndSpan> {
     self.next_token_fast(&self.program())
   }
 
   /// Gets the previous tokens in the order they appear in the file.
-  fn previous_tokens(&self) -> &'a [TokenAndRange] {
+  fn previous_tokens(&self) -> &'a [TokenAndSpan] {
     self.previous_tokens_fast(&self.program())
   }
 
   /// Gets the next tokens in the order they appear in the file.
-  fn next_tokens(&self) -> &'a [TokenAndRange] {
+  fn next_tokens(&self) -> &'a [TokenAndSpan] {
     self.next_tokens_fast(&self.program())
   }
 }
@@ -431,7 +432,7 @@ impl<'a> SourceRanged for ProgramRef<'a> {
 pub struct ProgramInfo<'a> {
   pub program: ProgramRef<'a>,
   pub text_info: Option<&'a SourceTextInfo>,
-  pub tokens: Option<&'a [TokenAndRange]>,
+  pub tokens: Option<&'a [TokenAndSpan]>,
   pub comments: Option<Comments<'a>>,
 }
 
@@ -439,7 +440,7 @@ pub struct ProgramInfo<'a> {
 pub struct ModuleInfo<'a> {
   pub module: &'a swc_ast::Module,
   pub text_info: Option<&'a SourceTextInfo>,
-  pub tokens: Option<&'a [TokenAndRange]>,
+  pub tokens: Option<&'a [TokenAndSpan]>,
   pub comments: Option<Comments<'a>>,
 }
 
@@ -447,7 +448,7 @@ pub struct ModuleInfo<'a> {
 pub struct ScriptInfo<'a> {
   pub script: &'a swc_ast::Script,
   pub text_info: Option<&'a SourceTextInfo>,
-  pub tokens: Option<&'a [TokenAndRange]>,
+  pub tokens: Option<&'a [TokenAndSpan]>,
   pub comments: Option<Comments<'a>>,
 }
 
@@ -474,9 +475,13 @@ impl<'a> Iterator for AncestorIterator<'a> {
   }
 }
 
-impl TokenAndRange {
-  pub fn token_index(&self, program: &dyn RootNode) -> usize {
-    program.token_container().get_token_index_at_start(self.range.start).unwrap()
+pub trait TokenExt {
+  fn token_index(&self, program: &dyn RootNode) -> usize;
+}
+
+impl TokenExt for TokenAndSpan {
+  fn token_index(&self, program: &dyn RootNode) -> usize {
+    program.token_container().get_token_index_at_start(self.start()).unwrap()
   }
 }
 
