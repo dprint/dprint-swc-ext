@@ -8,29 +8,26 @@ use super::text_info::*;
 /// Swc unfortunately uses `BytePos(0)` as a magic value. This means
 /// that we can't have byte positions of nodes line up with the text.
 /// To get around this, we have created our own `SourcePos` wrapper
-/// that exposes a 0-indexed value, but hides the underlying swc
-/// byte position which is not 0-indexed.
-///
-/// When using this type, you MUST parse files in swc using
-/// `SourcePos::START_BYTE_POS` otherwise bad things will happen.
+/// that hides the underlying swc byte position so it can't be used
+/// incorrectly.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct SourcePos(BytePos);
 
 impl SourcePos {
   /// Use this value as the start byte position when parsing.
-  pub const START_BYTE_POS: BytePos = BytePos(1_000);
+  pub const START_SOURCE_POS: SourcePos = SourcePos(BytePos(1_000));
 
   #[cfg(test)]
   pub fn new(index: usize) -> Self {
-    Self(BytePos(index as u32) + SourcePos::START_BYTE_POS)
+    Self(BytePos(index as u32) + SourcePos::START_SOURCE_POS.as_byte_pos())
   }
 
-  pub fn from_byte_pos(byte_pos: BytePos) -> Self {
+  pub(crate) fn from_byte_pos(byte_pos: BytePos) -> Self {
     #[cfg(debug_assertions)]
-    if byte_pos < SourcePos::START_BYTE_POS {
+    if byte_pos < SourcePos::START_SOURCE_POS.0 {
       panic!(concat!(
         "The provided byte position was less than the start byte position. ",
-        "Ensure the source file is parsed starting at SourcePos::START_BYTE_POS."
+        "Ensure the source file is parsed starting at SourcePos::START_SOURCE_POS."
       ))
     }
     Self(byte_pos)
@@ -41,7 +38,7 @@ impl SourcePos {
   }
 
   pub(crate) fn as_usize(&self) -> usize {
-    (self.0 - SourcePos::START_BYTE_POS).0 as usize
+    (self.0 - SourcePos::START_SOURCE_POS.0).0 as usize
   }
 }
 

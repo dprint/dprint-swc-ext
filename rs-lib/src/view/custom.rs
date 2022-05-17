@@ -1,13 +1,7 @@
 use super::generated::BindingIdent;
 use super::generated::Ident;
-use crate::swc::atoms::JsWord;
+use crate::swc::ast::Id;
 use crate::swc::common::SyntaxContext;
-
-/// Redeclaration of `swc_ecma_utils::Id`.
-/// Contains the name and scope of the identifier, but only
-/// when the tree has been resolved with an swc resolver
-/// such as ts_resolver.
-pub type Id = (JsWord, SyntaxContext);
 
 impl<'a> Ident<'a> {
   pub fn to_id(&self) -> Id {

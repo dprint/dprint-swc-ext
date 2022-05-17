@@ -24,7 +24,7 @@ pub struct SourceTextInfo {
 impl SourceTextInfo {
   /// Creates a new `SourceTextInfo` from the provided source text.
   pub fn new(text: Arc<str>) -> Self {
-    Self::new_with_pos(SourcePos::from_byte_pos(SourcePos::START_BYTE_POS), text)
+    Self::new_with_pos(SourcePos::START_SOURCE_POS, text)
   }
 
   /// Creates a new `SourceTextInfo` from the provided source start position
