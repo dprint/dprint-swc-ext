@@ -37,7 +37,7 @@ impl<'a> CommentContainer<'a> {
   pub fn leading_comments(&'a self, lo: SourcePos) -> CommentsIterator<'a> {
     let previous_token_hi = self.tokens.get_token_index_at_start(lo).map(|index| {
       if index == 0 {
-        SourcePos::new(0)
+        self.text_info.range().start
       } else {
         self.tokens.get_token_at_index(index - 1).unwrap().range.end
       }
@@ -205,22 +205,5 @@ impl<'a> DoubleEndedIterator for CommentsIterator<'a> {
       .comment_vecs
       .get(self.outer_index_back)
       .and_then(|inner| inner.get(self.inner_index_back))
-  }
-}
-
-#[cfg(test)]
-mod test {
-  use crate::test_helpers::*;
-  use crate::SourcePos;
-  use crate::SourceRanged;
-
-  #[test]
-  fn trailing_comments_start_of_file_no_match() {
-    run_test(r#"5 // test"#, |program| {
-      // previously there was a bug here where it would return the
-      // comments after the token
-      let trailing_comments = SourcePos::new(0).trailing_comments_fast(&program);
-      assert!(trailing_comments.is_empty());
-    });
   }
 }

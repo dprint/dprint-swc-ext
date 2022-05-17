@@ -6,6 +6,12 @@ edition = "2021"
 license = "MIT"
 description = "View of the swc AST that's easier to navigate."
 
+[package.metadata.docs.rs]
+all-features = true
+
+[features]
+view = []
+
 [dependencies]
 bumpalo = "3.9.1"
 num-bigint = "0.4"

@@ -1,10 +1,10 @@
 use swc_common::BytePos;
 use swc_common::Span;
 
-use crate::CommentsIterator;
-use crate::RootNode;
-use crate::SourceTextInfoProvider;
-use crate::TokenAndRange;
+use crate::comments::CommentsIterator;
+use crate::types::RootNode;
+use crate::text_info::SourceTextInfoProvider;
+use crate::types::TokenAndRange;
 
 /// Swc unfortunately uses `BytePos(0)` as a magic value. This means
 /// that we can't have byte positions of nodes line up with the text.
@@ -21,6 +21,7 @@ impl SourcePos {
   /// Use this value as the start byte position when parsing.
   pub const START_BYTE_POS: BytePos = BytePos(1_000);
 
+  #[cfg(test)]
   pub fn new(index: usize) -> Self {
     Self(BytePos(index as u32) + SourcePos::START_BYTE_POS)
   }
@@ -40,7 +41,7 @@ impl SourcePos {
     self.0
   }
 
-  pub fn as_usize(&self) -> usize {
+  pub(crate) fn as_usize(&self) -> usize {
     (self.0 - SourcePos::START_BYTE_POS).0 as usize
   }
 }

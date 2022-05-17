@@ -25,15 +25,14 @@ pub struct SourceTextInfo {
 impl SourceTextInfo {
   /// Creates a new `SourceTextInfo` from the provided source text.
   pub fn new(text: Arc<str>) -> Self {
-    Self::new_with_pos(SourcePos::new(0), text)
+    Self::new_with_pos(SourcePos::from_byte_pos(SourcePos::START_BYTE_POS), text)
   }
 
-  /// Creates a new `SourceTextInfo` from the provided byte position
+  /// Creates a new `SourceTextInfo` from the provided source start position
   /// and source text.
   ///
-  /// Generally, most files will have a start position of `SourcePos::new(0)`
-  /// and when in doubt use the `new` method instead, but SWC will not necessarily
-  /// start files with `SourcePos::new(0)` when bundling.
+  /// Note: When bundling swc will keep increasing the start position for
+  /// each source file.
   pub fn new_with_pos(start_pos: SourcePos, text: Arc<str>) -> Self {
     // The BOM should be stripped before it gets passed here
     // because it's a text encoding concern that should be

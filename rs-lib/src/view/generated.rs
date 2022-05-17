@@ -12,7 +12,7 @@ use crate::comments::*;
 use crate::pos::*;
 use crate::text_info::*;
 use crate::tokens::*;
-use crate::types::*;
+use crate::view::types::*;
 
 thread_local! {
   static LOCAL_BUMP_ALLOCATOR: RefCell<Bump> = RefCell::new(Bump::new());

@@ -51,7 +51,7 @@ export function generate(analysisResult: AnalysisResult): string {
     writer.writeLine("use crate::pos::*;");
     writer.writeLine("use crate::text_info::*;");
     writer.writeLine("use crate::tokens::*;");
-    writer.writeLine("use crate::types::*;");
+    writer.writeLine("use crate::view::types::*;");
     writer.blankLine();
   }
 

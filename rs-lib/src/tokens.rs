@@ -130,52 +130,53 @@ impl<'a> TokenContainer<'a> {
 
 #[cfg(test)]
 mod test {
+  use std::path::PathBuf;
+
+  use super::TokenContainer;
   use crate::test_helpers::*;
-  use crate::RootNode;
   use crate::SourcePos;
 
   #[test]
   fn get_next_token() {
-    run_test(r#"let /* a */ a = 5;"#, |program| {
-      let token_container = program.maybe_token_container().unwrap();
-      // low token of previous token
-      assert_eq!(
-        token_container
-          .get_next_token(SourcePos::new(0))
-          .unwrap()
-          .range
-          .start,
-        SourcePos::new(12),
-      );
-      // hi of previous token
-      assert_eq!(
-        token_container
-          .get_next_token(SourcePos::new(3))
-          .unwrap()
-          .range
-          .start,
-        SourcePos::new(12),
-      );
-      // in comment before token
-      assert_eq!(
-        token_container
-          .get_next_token(SourcePos::new(5))
-          .unwrap()
-          .range
-          .start,
-        SourcePos::new(12),
-      );
-      // in whitespace before token
-      assert_eq!(
-        token_container
-          .get_next_token(SourcePos::new(11))
-          .unwrap()
-          .range
-          .start,
-        SourcePos::new(12),
-      );
-      // at hi of last token
-      assert_eq!(token_container.get_next_token(SourcePos::new(18)), None);
-    });
+    let (_, tokens, _, _) = get_swc_module(&PathBuf::from("path.js"), r#"let /* a */ a = 5;"#);
+    let token_container = TokenContainer::new(&tokens);
+    // low token of previous token
+    assert_eq!(
+      token_container
+        .get_next_token(SourcePos::new(0))
+        .unwrap()
+        .range
+        .start,
+      SourcePos::new(12),
+    );
+    // hi of previous token
+    assert_eq!(
+      token_container
+        .get_next_token(SourcePos::new(3))
+        .unwrap()
+        .range
+        .start,
+      SourcePos::new(12),
+    );
+    // in comment before token
+    assert_eq!(
+      token_container
+        .get_next_token(SourcePos::new(5))
+        .unwrap()
+        .range
+        .start,
+      SourcePos::new(12),
+    );
+    // in whitespace before token
+    assert_eq!(
+      token_container
+        .get_next_token(SourcePos::new(11))
+        .unwrap()
+        .range
+        .start,
+      SourcePos::new(12),
+    );
+    // at hi of last token
+    assert_eq!(token_container.get_next_token(SourcePos::new(18)), None);
   }
 }

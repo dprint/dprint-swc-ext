@@ -1,7 +1,7 @@
+use super::generated::BindingIdent;
+use super::generated::Ident;
 use crate::swc::atoms::JsWord;
 use crate::swc::common::SyntaxContext;
-use crate::BindingIdent;
-use crate::Ident;
 
 /// Redeclaration of `swc_ecma_utils::Id`.
 /// Contains the name and scope of the identifier, but only
