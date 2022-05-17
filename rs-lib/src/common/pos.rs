@@ -108,6 +108,15 @@ impl StartSourcePos {
   }
 }
 
+// Only want Into and not From in order to prevent
+// people from creating one of these easily.
+#[allow(clippy::from_over_into)]
+impl Into<SourcePos> for StartSourcePos {
+  fn into(self) -> SourcePos {
+    self.as_source_pos()
+  }
+}
+
 impl std::fmt::Debug for StartSourcePos {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
     f.debug_tuple("StartSourcePos").field(&self.as_usize()).finish()
@@ -161,12 +170,12 @@ impl std::cmp::PartialOrd<StartSourcePos> for SourcePos {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SourceRange<T = SourcePos> {
+pub struct SourceRange<T = SourcePos> where T : Into<SourcePos> + Clone + Copy {
   pub start: T,
   pub end: SourcePos,
 }
 
-impl<T> SourceRange<T> {
+impl<T : Into<SourcePos> + Clone + Copy> SourceRange<T> {
   pub fn new(start: T, end: SourcePos)  -> Self{
     Self { start, end }
   }
@@ -186,6 +195,16 @@ impl SourceRange<StartSourcePos> {
   pub fn as_std_range(&self) -> std::ops::Range<usize> {
     let end = self.end - self.start;
     0..end
+  }
+}
+
+impl<T: Into<SourcePos> + Clone + Copy> SourceRanged for SourceRange<T> {
+  fn start(&self) -> SourcePos {
+    self.start.into()
+  }
+
+  fn end(&self) -> SourcePos {
+    self.end
   }
 }
 
