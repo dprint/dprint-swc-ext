@@ -8,10 +8,7 @@ use crate::swc::ast as swc_ast;
 use crate::swc::atoms as swc_atoms;
 pub use crate::swc::ast::{Accessibility, AssignOp, BinaryOp, EsVersion, MetaPropKind, MethodKind, TruePlusMinus, TsKeywordTypeKind, TsTypeOperatorOp, UnaryOp, UpdateOp, VarDeclKind};
 use crate::swc::common as swc_common;
-use crate::comments::*;
-use crate::pos::*;
-use crate::text_info::*;
-use crate::tokens::*;
+use crate::common::*;
 use crate::view::types::*;
 
 thread_local! {

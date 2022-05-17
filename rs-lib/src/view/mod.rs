@@ -14,8 +14,8 @@ pub use types::*;
 
 #[cfg(test)]
 mod test {
+  use crate::common::SourceRanged;
   use crate::view::test_helpers::*;
-  use crate::SourceRanged;
 
   #[test]
   fn trailing_comments_start_of_file_no_match() {

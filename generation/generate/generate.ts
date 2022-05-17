@@ -47,10 +47,7 @@ export function generate(analysisResult: AnalysisResult): string {
     writer.write(analysisResult.plainEnums.map(e => e.name).join(", "));
     writer.write("};").newLine();
     writer.writeLine("use crate::swc::common as swc_common;");
-    writer.writeLine("use crate::comments::*;");
-    writer.writeLine("use crate::pos::*;");
-    writer.writeLine("use crate::text_info::*;");
-    writer.writeLine("use crate::tokens::*;");
+    writer.writeLine("use crate::common::*;");
     writer.writeLine("use crate::view::types::*;");
     writer.blankLine();
   }

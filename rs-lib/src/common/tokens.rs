@@ -1,7 +1,7 @@
 use rustc_hash::FxHashMap;
 
-use crate::SourcePos;
-use crate::TokenAndRange;
+use super::pos::*;
+use super::types::*;
 
 pub struct TokenContainer<'a> {
   pub tokens: &'a [TokenAndRange],
@@ -132,9 +132,9 @@ impl<'a> TokenContainer<'a> {
 mod test {
   use std::path::PathBuf;
 
+  use super::super::pos::SourcePos;
   use super::TokenContainer;
   use crate::test_helpers::*;
-  use crate::SourcePos;
 
   #[test]
   fn get_next_token() {

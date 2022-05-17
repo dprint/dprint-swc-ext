@@ -49,14 +49,14 @@ jobs:
       run: cargo clippy --all-features
     - name: Test debug
       if: matrix.config.kind == 'test_debug'
-      run: cargo test
+      run: cargo test --all-features
 
     - name: Build release
       if: matrix.config.kind == 'test_release'
-      run: cargo build --release
+      run: cargo build --release --all-features
     - name: Test release
       if: matrix.config.kind == 'test_release'
-      run: cargo test --release
+      run: cargo test --release --all-features
 
     - name: Publish on version change
       env:

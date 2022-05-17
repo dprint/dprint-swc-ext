@@ -1,11 +1,7 @@
 use super::generated::*;
-use crate::comments::*;
-use crate::pos::*;
+use crate::common::*;
 use crate::swc::ast as swc_ast;
 use crate::swc::common::comments::SingleThreadedCommentsMapInner;
-use crate::text_info::*;
-use crate::tokens::*;
-use crate::types::*;
 
 pub enum NodeOrToken<'a> {
   Node(Node<'a>),
@@ -499,7 +495,8 @@ impl TokenAndRange {
 #[cfg(test)]
 mod test {
   use super::super::test_helpers::run_test;
-  use crate::*;
+  use crate::common::*;
+  use crate::view::*;
 
   #[test]
   fn it_should_get_children() {

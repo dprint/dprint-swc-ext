@@ -6,7 +6,7 @@ use crate::swc::common::{
 use crate::swc::parser::{lexer::Lexer, Capturing, Parser, Syntax};
 use std::path::Path;
 
-use crate::{SourceTextInfo, TokenAndRange};
+use crate::common::{SourceTextInfo, TokenAndRange};
 
 pub fn get_swc_module(
   file_path: &Path,

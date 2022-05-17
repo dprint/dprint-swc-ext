@@ -1,10 +1,9 @@
 use swc_common::BytePos;
 use swc_common::Span;
 
-use crate::comments::CommentsIterator;
-use crate::types::RootNode;
-use crate::text_info::SourceTextInfoProvider;
-use crate::types::TokenAndRange;
+use super::comments::*;
+use super::types::*;
+use super::text_info::*;
 
 /// Swc unfortunately uses `BytePos(0)` as a magic value. This means
 /// that we can't have byte positions of nodes line up with the text.

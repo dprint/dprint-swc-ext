@@ -1,8 +1,8 @@
+use super::pos::*;
+use super::text_info::*;
+use super::tokens::*;
 use crate::swc::common::comments::Comment;
 use crate::swc::common::comments::SingleThreadedCommentsMapInner;
-use crate::tokens::*;
-use crate::SourcePos;
-use crate::SourceTextInfo;
 
 pub struct CommentContainer<'a> {
   pub leading: &'a SingleThreadedCommentsMapInner,

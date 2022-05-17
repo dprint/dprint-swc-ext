@@ -4,9 +4,8 @@ use swc_common::input::StringInput;
 pub use text_lines::LineAndColumnIndex;
 pub use text_lines::TextLines;
 
-use crate::LineAndColumnDisplay;
-use crate::SourcePos;
-use crate::SourceRange;
+use super::pos::*;
+use super::LineAndColumnDisplay;
 
 const BOM_CHAR: char = '\u{FEFF}';
 

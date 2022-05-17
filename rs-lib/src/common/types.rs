@@ -1,10 +1,10 @@
-use crate::comments::CommentContainer;
 use crate::swc::parser::token::Token;
 use crate::swc::parser::token::TokenAndSpan;
 
-use crate::pos::*;
-use crate::text_info::*;
-use crate::tokens::TokenContainer;
+use super::comments::CommentContainer;
+use super::pos::*;
+use super::text_info::*;
+use super::tokens::TokenContainer;
 
 /// A token with its position.
 #[derive(Debug, Clone, PartialEq)]
