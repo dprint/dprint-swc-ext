@@ -10,6 +10,7 @@ description = "View of the swc AST that's easier to navigate."
 all-features = true
 
 [features]
+sourcemap = ["swc_common/sourcemap"]
 view = []
 
 [dependencies]
