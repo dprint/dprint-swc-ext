@@ -16,7 +16,7 @@ const BOM_CHAR: char = '\u{FEFF}';
 #[derive(Clone)]
 pub struct SourceTextInfo {
   // keep this struct cheap to clone
-  start_pos: SourcePos,
+  start_pos: StartSourcePos,
   text: Arc<str>,
   text_lines: Arc<TextLines>,
 }
@@ -24,7 +24,7 @@ pub struct SourceTextInfo {
 impl SourceTextInfo {
   /// Creates a new `SourceTextInfo` from the provided source text.
   pub fn new(text: Arc<str>) -> Self {
-    Self::new_with_pos(SourcePos::START_SOURCE_POS, text)
+    Self::new_with_pos(StartSourcePos::START_SOURCE_POS.as_source_pos(), text)
   }
 
   /// Creates a new `SourceTextInfo` from the provided source start position
@@ -51,7 +51,7 @@ impl SourceTextInfo {
   /// to match the default indentation used by `deno fmt`.
   pub fn new_with_indent_width(start_pos: SourcePos, text: Arc<str>, indent_width: usize) -> Self {
     Self {
-      start_pos,
+      start_pos: StartSourcePos(start_pos),
       text_lines: Arc::new(TextLines::with_indent_width(&text, indent_width)),
       text,
     }
@@ -87,7 +87,7 @@ impl SourceTextInfo {
   }
 
   /// Gets the range—start and end byte position—of the source text.
-  pub fn range(&self) -> SourceRange {
+  pub fn range(&self) -> SourceRange<StartSourcePos> {
     SourceRange::new(self.start_pos, self.start_pos + self.text.len())
   }
 

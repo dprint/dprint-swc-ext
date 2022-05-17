@@ -37,7 +37,7 @@ impl<'a> CommentContainer<'a> {
   pub fn leading_comments(&'a self, lo: SourcePos) -> CommentsIterator<'a> {
     let previous_token_hi = self.tokens.get_token_index_at_start(lo).map(|index| {
       if index == 0 {
-        self.text_info.range().start
+        self.text_info.range().start.as_source_pos()
       } else {
         self.tokens.get_token_at_index(index - 1).unwrap().range.end
       }

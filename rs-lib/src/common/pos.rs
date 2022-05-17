@@ -14,17 +14,14 @@ use super::text_info::*;
 pub struct SourcePos(BytePos);
 
 impl SourcePos {
-  /// Use this value as the start byte position when parsing.
-  pub const START_SOURCE_POS: SourcePos = SourcePos(BytePos(1_000));
-
   #[cfg(test)]
   pub fn new(index: usize) -> Self {
-    Self(BytePos(index as u32) + SourcePos::START_SOURCE_POS.as_byte_pos())
+    Self(StartSourcePos::START_SOURCE_POS.as_byte_pos() + BytePos(index as u32))
   }
 
   pub(crate) fn from_byte_pos(byte_pos: BytePos) -> Self {
     #[cfg(debug_assertions)]
-    if byte_pos < SourcePos::START_SOURCE_POS.0 {
+    if byte_pos < StartSourcePos::START_SOURCE_POS.as_byte_pos() {
       panic!(concat!(
         "The provided byte position was less than the start byte position. ",
         "Ensure the source file is parsed starting at SourcePos::START_SOURCE_POS."
@@ -38,7 +35,7 @@ impl SourcePos {
   }
 
   pub(crate) fn as_usize(&self) -> usize {
-    (self.0 - SourcePos::START_SOURCE_POS.0).0 as usize
+    (self.as_byte_pos() - StartSourcePos::START_SOURCE_POS.as_byte_pos()).0 as usize
   }
 }
 
@@ -88,29 +85,114 @@ impl SourceRanged for SourcePos {
   }
 }
 
+/// A special source pos that indicates the source start
+/// which functions can use as a parameter type in order
+/// to ensure someone doesn't provide the wrong position.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct StartSourcePos(pub(crate) SourcePos);
+
+impl StartSourcePos {
+  /// Use this value as the start byte position when parsing.
+  pub const START_SOURCE_POS: StartSourcePos = StartSourcePos(SourcePos(BytePos(1)));
+
+  pub fn as_byte_pos(&self) -> BytePos {
+    self.0.as_byte_pos()
+  }
+
+  pub fn as_source_pos(&self) -> SourcePos {
+    self.0
+  }
+
+  pub(crate) fn as_usize(&self) -> usize {
+    (self.as_byte_pos() - StartSourcePos::START_SOURCE_POS.as_byte_pos()).0 as usize
+  }
+}
+
+impl std::fmt::Debug for StartSourcePos {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    f.debug_tuple("StartSourcePos").field(&self.as_usize()).finish()
+  }
+}
+
+impl std::fmt::Display for StartSourcePos {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    f.write_str(&self.as_usize().to_string())
+  }
+}
+
+impl std::ops::Add<usize> for StartSourcePos {
+  type Output = SourcePos;
+
+  fn add(self, rhs: usize) -> Self::Output {
+    SourcePos(BytePos(self.0.0.0 + rhs as u32))
+  }
+}
+
+impl std::ops::Sub<StartSourcePos> for SourcePos {
+  type Output = usize;
+
+  fn sub(self, rhs: StartSourcePos) -> Self::Output {
+    (self.0 - rhs.0.0).0 as usize
+  }
+}
+
+impl std::cmp::PartialEq<SourcePos> for StartSourcePos {
+  fn eq(&self, other: &SourcePos) -> bool {
+    self.0 == *other
+  }
+}
+
+impl std::cmp::PartialOrd<SourcePos> for StartSourcePos {
+  fn partial_cmp(&self, other: &SourcePos) -> Option<std::cmp::Ordering> {
+    self.0.partial_cmp(other)
+  }
+}
+
+impl std::cmp::PartialEq<StartSourcePos> for SourcePos {
+  fn eq(&self, other: &StartSourcePos) -> bool {
+    *self == other.0
+  }
+}
+
+impl std::cmp::PartialOrd<StartSourcePos> for SourcePos {
+  fn partial_cmp(&self, other: &StartSourcePos) -> Option<std::cmp::Ordering> {
+    self.partial_cmp(&other.0)
+  }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SourceRange {
-  pub start: SourcePos,
+pub struct SourceRange<T = SourcePos> {
+  pub start: T,
   pub end: SourcePos,
 }
 
-impl SourceRange {
-  pub fn new(start: SourcePos, end: SourcePos)  -> Self{
+impl<T> SourceRange<T> {
+  pub fn new(start: T, end: SourcePos)  -> Self{
     Self { start, end }
   }
+}
 
+impl SourceRange<SourcePos> {
   /// Gets the relative byte range based on the source text's start position.
-  pub fn as_std_range(&self, root: &dyn SourceRanged) -> std::ops::Range<usize> {
-    let start = self.start - root.start();
-    let end = self.end - root.end();
+  pub fn as_std_range(&self, source_start: StartSourcePos) -> std::ops::Range<usize> {
+    let start = self.start - source_start;
+    let end = self.end - source_start;
     start..end
   }
 }
 
-impl std::ops::Sub<SourcePos> for SourceRange {
+impl SourceRange<StartSourcePos> {
+  /// Gets the relative byte range based on the source text's start position.
+  pub fn as_std_range(&self) -> std::ops::Range<usize> {
+    let end = self.end - self.start;
+    0..end
+  }
+}
+
+impl std::ops::Sub<StartSourcePos> for SourceRange {
   type Output = std::ops::Range<usize>;
 
-  fn sub(self, rhs: SourcePos) -> Self::Output {
+  fn sub(self, rhs: StartSourcePos) -> Self::Output {
     (self.start - rhs)..(self.end - rhs)
   }
 }
