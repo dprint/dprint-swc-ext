@@ -98,6 +98,13 @@ impl SourceRange {
   pub fn new(start: SourcePos, end: SourcePos)  -> Self{
     Self { start, end }
   }
+
+  /// Gets the relative byte range based on the source text's start position.
+  pub fn as_std_range(&self, root: &dyn SourceRanged) -> std::ops::Range<usize> {
+    let start = self.start - root.start();
+    let end = self.end - root.end();
+    start..end
+  }
 }
 
 impl std::ops::Sub<SourcePos> for SourceRange {
