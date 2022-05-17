@@ -169,7 +169,7 @@ impl std::cmp::PartialOrd<StartSourcePos> for SourcePos {
   }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct SourceRange<T = SourcePos>
 where
   T: Into<SourcePos> + Clone + Copy,
