@@ -1,6 +1,5 @@
 /target
-/crates/swc-common-ext/target
-/crates/swc-ecma-ast-view/target
+/rs-lib/target
 swc_ecma_ast.json
 /swc_ecma_ast
 swc_ecma_parser.json

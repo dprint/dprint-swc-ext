@@ -174,7 +174,6 @@ pub trait SourceRanged {
   }
 }
 
-
 impl<T> SourceRanged for T
 where
   T: swc_common::Spanned,

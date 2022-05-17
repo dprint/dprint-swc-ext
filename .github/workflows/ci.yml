@@ -66,4 +66,4 @@ jobs:
         github.repository == 'dprint/dprint-swc-ecma-ast-view' &&
         github.ref == 'refs/heads/main' &&
         matrix.config.kind == 'test_release'
-      run: cd crates/swc-ecma-ast-view && deno run -A --no-check https://raw.githubusercontent.com/denoland/automation/0.4.0/tasks/release_on_crate_version_change.ts --publish
+      run: cd rs-lib && deno run -A --no-check https://raw.githubusercontent.com/denoland/automation/0.4.0/tasks/release_on_crate_version_change.ts --publish

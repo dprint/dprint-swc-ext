@@ -1,5 +1,21 @@
+mod comments;
+mod custom;
 mod pos;
 mod text_info;
+mod tokens;
+mod types;
+
+#[allow(clippy::all)]
+#[rustfmt::skip]
+mod generated;
+
+#[cfg(test)]
+mod test_helpers;
+
+pub use comments::CommentsIterator;
+pub use custom::*;
+pub use generated::*;
+pub use types::*;
 
 pub use pos::*;
 pub use text_info::*;

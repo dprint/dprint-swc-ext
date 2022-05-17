@@ -149,20 +149,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0e25ea47919b1560c4e3b7fe0aaab9becf5b84a10325ddf7db0f0ba5e1026499"
 
 [[package]]
-name = "dprint-swc-ecma-ast-view"
-version = "0.56.0"
+name = "dprint-swc-exts"
+version = "0.1.0"
 dependencies = [
  "bumpalo",
- "dprint-swc-ext",
  "num-bigint",
  "pretty_assertions",
  "rustc-hash",
-]
-
-[[package]]
-name = "dprint-swc-ext"
-version = "0.1.0"
-dependencies = [
  "swc_atoms",
  "swc_common",
  "swc_ecmascript",

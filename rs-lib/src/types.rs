@@ -1,12 +1,11 @@
-use dprint_swc_ext::swc::ast as swc_ast;
-use dprint_swc_ext::swc::common::comments::SingleThreadedCommentsMapInner;
-use dprint_swc_ext::swc::parser::token::Token;
-use dprint_swc_ext::swc::parser::token::TokenAndSpan;
-
-pub use dprint_swc_ext::*;
-
 use crate::comments::*;
 use crate::generated::*;
+use crate::pos::*;
+use crate::swc::ast as swc_ast;
+use crate::swc::common::comments::SingleThreadedCommentsMapInner;
+use crate::swc::parser::token::Token;
+use crate::swc::parser::token::TokenAndSpan;
+use crate::text_info::*;
 use crate::tokens::*;
 
 pub enum NodeOrToken<'a> {

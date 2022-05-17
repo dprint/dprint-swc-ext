@@ -1,5 +1,3 @@
-use dprint_swc_ext::SourceTextInfo;
-
 use crate::swc::ast::{EsVersion, Module, Script};
 use crate::swc::common::{
   comments::SingleThreadedComments,
@@ -8,7 +6,7 @@ use crate::swc::common::{
 use crate::swc::parser::{lexer::Lexer, Capturing, Parser, StringInput, Syntax};
 use std::path::Path;
 
-use crate::{SourcePos, TokenAndRange};
+use crate::{SourcePos, SourceTextInfo, TokenAndRange};
 
 #[cfg(feature = "serialize")]
 use {super::*, std::path::PathBuf};
