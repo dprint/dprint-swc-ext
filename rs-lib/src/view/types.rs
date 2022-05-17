@@ -498,7 +498,7 @@ impl TokenAndRange {
 
 #[cfg(test)]
 mod test {
-  use crate::view_test_helpers::run_test;
+  use super::super::test_helpers::run_test;
   use crate::*;
 
   #[test]

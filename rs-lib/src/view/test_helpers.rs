@@ -1,13 +1,6 @@
 use std::path::Path;
 
-use crate::swc::ast::{EsVersion, Module, Script};
-use crate::swc::common::{
-  comments::SingleThreadedComments,
-  errors::{DiagnosticBuilder, Emitter, Handler},
-};
-use crate::swc::parser::{lexer::Lexer, Capturing, Parser, Syntax};
 use crate::test_helpers::{get_swc_module, get_swc_script};
-use crate::{SourceTextInfo, TokenAndRange};
 
 pub fn run_test(file_text: &str, run_test: impl Fn(super::Program)) {
   let file_path = Path::new("test.ts");

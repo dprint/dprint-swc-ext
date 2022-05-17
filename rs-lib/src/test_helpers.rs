@@ -1,4 +1,4 @@
-use crate::swc::ast::{EsVersion, Module, Script};
+use crate::swc::ast::{EsVersion, Module};
 use crate::swc::common::{
   comments::SingleThreadedComments,
   errors::{DiagnosticBuilder, Emitter, Handler},
@@ -58,11 +58,12 @@ pub fn get_swc_module(
   .unwrap();
 }
 
+#[cfg(feature = "view")]
 pub fn get_swc_script(
   file_path: &Path,
   file_text: &str,
 ) -> (
-  Script,
+  crate::swc::ast::Script,
   Vec<TokenAndRange>,
   SourceTextInfo,
   SingleThreadedComments,
