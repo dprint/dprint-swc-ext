@@ -2,8 +2,8 @@ use swc_common::BytePos;
 use swc_common::Span;
 
 use super::comments::*;
-use super::types::*;
 use super::text_info::*;
+use super::types::*;
 
 /// Swc unfortunately uses `BytePos(0)` as a magic value. This means
 /// that we can't have byte positions of nodes line up with the text.
@@ -55,7 +55,7 @@ impl std::ops::Add<usize> for SourcePos {
   type Output = SourcePos;
 
   fn add(self, rhs: usize) -> Self::Output {
-    SourcePos(BytePos(self.0.0 + rhs as u32))
+    SourcePos(BytePos(self.0 .0 + rhs as u32))
   }
 }
 
@@ -63,7 +63,7 @@ impl std::ops::Sub<usize> for SourcePos {
   type Output = SourcePos;
 
   fn sub(self, rhs: usize) -> Self::Output {
-    SourcePos(BytePos(self.0.0 - rhs as u32))
+    SourcePos(BytePos(self.0 .0 - rhs as u32))
   }
 }
 
@@ -133,7 +133,7 @@ impl std::ops::Add<usize> for StartSourcePos {
   type Output = SourcePos;
 
   fn add(self, rhs: usize) -> Self::Output {
-    SourcePos(BytePos(self.0.0.0 + rhs as u32))
+    SourcePos(BytePos(self.0 .0 .0 + rhs as u32))
   }
 }
 
@@ -141,7 +141,7 @@ impl std::ops::Sub<StartSourcePos> for SourcePos {
   type Output = usize;
 
   fn sub(self, rhs: StartSourcePos) -> Self::Output {
-    (self.0 - rhs.0.0).0 as usize
+    (self.0 - rhs.0 .0).0 as usize
   }
 }
 
@@ -169,15 +169,25 @@ impl std::cmp::PartialOrd<StartSourcePos> for SourcePos {
   }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SourceRange<T = SourcePos> where T : Into<SourcePos> + Clone + Copy {
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SourceRange<T = SourcePos>
+where
+  T: Into<SourcePos> + Clone + Copy,
+{
   pub start: T,
   pub end: SourcePos,
 }
 
-impl<T : Into<SourcePos> + Clone + Copy> SourceRange<T> {
-  pub fn new(start: T, end: SourcePos)  -> Self{
+impl<T: Into<SourcePos> + Clone + Copy> SourceRange<T> {
+  pub fn new(start: T, end: SourcePos) -> Self {
     Self { start, end }
+  }
+
+  /// Gets if the source range contains the other source range inclusive.
+  pub fn contains<U: Into<SourcePos> + Clone + Copy>(&self, other: &SourceRange<U>) -> bool {
+    let start: SourcePos = self.start.into();
+    let other_start: SourcePos = other.start.into();
+    start <= other_start && self.end >= other.end
   }
 }
 
@@ -225,123 +235,161 @@ impl From<Span> for SourceRange {
   }
 }
 
+macro_rules! source_ranged_trait {
+  () => {
+    fn range(&self) -> SourceRange {
+      SourceRange {
+        start: self.start(),
+        end: self.end(),
+      }
+    }
+
+    fn byte_width(&self) -> usize {
+      self.end() - self.start()
+    }
+
+    fn start_line_fast(&self, source: &dyn SourceTextInfoProvider) -> usize {
+      source.text_info().line_index(self.start())
+    }
+
+    fn end_line_fast(&self, source: &dyn SourceTextInfoProvider) -> usize {
+      source.text_info().line_index(self.end())
+    }
+
+    fn start_column_fast(&self, source: &dyn SourceTextInfoProvider) -> usize {
+      self.column_at_pos(source, self.start())
+    }
+
+    fn end_column_fast(&self, source: &dyn SourceTextInfoProvider) -> usize {
+      self.column_at_pos(source, self.end())
+    }
+
+    fn column_at_pos(&self, source: &dyn SourceTextInfoProvider, pos: SourcePos) -> usize {
+      let text_info = source.text_info();
+      let text_bytes = text_info.text_str().as_bytes();
+      let pos = pos - text_info.range().start;
+      let mut line_start = 0;
+      for i in (0..pos).rev() {
+        if text_bytes[i] == b'\n' {
+          line_start = i + 1;
+          break;
+        }
+      }
+      let text_slice = &text_info.text_str()[line_start..pos];
+      text_slice.chars().count()
+    }
+
+    fn char_width_fast(&self, source: &dyn SourceTextInfoProvider) -> usize {
+      self.text_fast(source).chars().count()
+    }
+
+    fn text_fast<'a>(&self, source: &dyn SourceTextInfoProvider<'a>) -> &'a str {
+      let text_info = source.text_info();
+      let byte_range = self.range() - text_info.range().start;
+      &text_info.text_str()[byte_range]
+    }
+
+    fn tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndRange] {
+      let token_container = program.token_container();
+      token_container.get_tokens_in_range(self.start(), self.end())
+    }
+
+    fn leading_comments_fast<'a>(&self, program: &dyn RootNode<'a>) -> CommentsIterator<'a> {
+      program.comment_container().leading_comments(self.start())
+    }
+
+    fn trailing_comments_fast<'a>(&self, program: &dyn RootNode<'a>) -> CommentsIterator<'a> {
+      program.comment_container().trailing_comments(self.end())
+    }
+
+    fn previous_token_fast<'a>(&self, program: &dyn RootNode<'a>) -> Option<&'a TokenAndRange> {
+      program.token_container().get_previous_token(self.start())
+    }
+
+    fn next_token_fast<'a>(&self, program: &dyn RootNode<'a>) -> Option<&'a TokenAndRange> {
+      program.token_container().get_next_token(self.end())
+    }
+
+    fn previous_tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndRange] {
+      let token_container = program.token_container();
+      let index = token_container
+        .get_token_index_at_start(self.start())
+        // fallback
+        .or_else(|| token_container.get_token_index_at_end(self.start()))
+        .unwrap_or_else(|| panic!("The specified start position ({}) did not have a token index.", self.start()));
+      &token_container.tokens[0..index]
+    }
+
+    fn next_tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndRange] {
+      let token_container = program.token_container();
+      let index = token_container
+        .get_token_index_at_end(self.end())
+        // fallback
+        .or_else(|| token_container.get_token_index_at_start(self.end()))
+        .unwrap_or_else(|| panic!("The specified end position ({}) did not have a token index.", self.end()));
+      &token_container.tokens[index + 1..]
+    }
+  };
+}
+
 pub trait SourceRanged {
   fn start(&self) -> SourcePos;
   fn end(&self) -> SourcePos;
 
-  fn range(&self) -> SourceRange {
-    SourceRange {
-      start: self.start(),
-      end: self.end(),
-    }
+  source_ranged_trait!();
+}
+
+impl<'a, S> SourceRanged for &'a S
+where
+  S: ?Sized + SourceRanged + 'a,
+{
+  fn start(&self) -> SourcePos {
+    <S as SourceRanged>::start(*self)
   }
 
-  fn byte_width(&self) -> usize {
-    self.end() - self.start()
-  }
-
-  fn start_line_fast(&self, source: &dyn SourceTextInfoProvider) -> usize {
-    source.text_info().line_index(self.start())
-  }
-
-  fn end_line_fast(&self, source: &dyn SourceTextInfoProvider) -> usize {
-    source.text_info().line_index(self.end())
-  }
-
-  fn start_column_fast(&self, source: &dyn SourceTextInfoProvider) -> usize {
-    self.column_at_pos(source, self.start())
-  }
-
-  fn end_column_fast(&self, source: &dyn SourceTextInfoProvider) -> usize {
-    self.column_at_pos(source, self.end())
-  }
-
-  fn column_at_pos(&self, source: &dyn SourceTextInfoProvider, pos: SourcePos) -> usize {
-    let text_info = source.text_info();
-    let text_bytes = text_info.text_str().as_bytes();
-    let pos = pos - self.start();
-    let mut line_start = 0;
-    for i in (0..pos).rev() {
-      if text_bytes[i] == b'\n' {
-        line_start = i + 1;
-        break;
-      }
-    }
-    let text_slice = &text_info.text_str()[line_start..pos];
-    text_slice.chars().count()
-  }
-
-  fn char_width_fast(&self, source: &dyn SourceTextInfoProvider) -> usize {
-    self.text_fast(source).chars().count()
-  }
-
-  fn text_fast<'a>(&self, source: &dyn SourceTextInfoProvider<'a>) -> &'a str {
-    let text_info = source.text_info();
-    let byte_range = self.range() - text_info.range().start;
-    &text_info.text_str()[byte_range]
-  }
-
-  fn tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndRange] {
-    let token_container = program.token_container();
-    token_container.get_tokens_in_range(self.start(), self.end())
-  }
-
-  fn leading_comments_fast<'a>(&self, program: &dyn RootNode<'a>) -> CommentsIterator<'a> {
-    program.comment_container().leading_comments(self.start())
-  }
-
-  fn trailing_comments_fast<'a>(&self, program: &dyn RootNode<'a>) -> CommentsIterator<'a> {
-    program.comment_container().trailing_comments(self.end())
-  }
-
-  fn previous_token_fast<'a>(&self, program: &dyn RootNode<'a>) -> Option<&'a TokenAndRange> {
-    program.token_container().get_previous_token(self.start())
-  }
-
-  fn next_token_fast<'a>(&self, program: &dyn RootNode<'a>) -> Option<&'a TokenAndRange> {
-    program.token_container().get_next_token(self.end())
-  }
-
-  fn previous_tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndRange] {
-    let token_container = program.token_container();
-    let index = token_container
-      .get_token_index_at_start(self.start())
-      // fallback
-      .or_else(|| token_container.get_token_index_at_end(self.start()))
-      .unwrap_or_else(|| {
-        panic!(
-          "The specified start position ({}) did not have a token index.",
-          self.start()
-        )
-      });
-    &token_container.tokens[0..index]
-  }
-
-  fn next_tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndRange] {
-    let token_container = program.token_container();
-    let index = token_container
-      .get_token_index_at_end(self.end())
-      // fallback
-      .or_else(|| token_container.get_token_index_at_start(self.end()))
-      .unwrap_or_else(|| {
-        panic!(
-          "The specified end position ({}) did not have a token index.",
-          self.end()
-        )
-      });
-    &token_container.tokens[index + 1..]
+  fn end(&self) -> SourcePos {
+    <S as SourceRanged>::end(*self)
   }
 }
 
-impl<T> SourceRanged for T
+/// Adds source position helper methods for swc types that implement
+/// `swc_common::Spanned`.
+///
+/// There were conflicts with implementing `SourceRanged` for `&SourceRanged`
+/// with swc's Spanned implementation, so this needed to be a separate trait
+/// unfortunately and I couldn't figure out how to combine it with `SourceRanged`
+pub trait SwcSourceRanged {
+  fn start(&self) -> SourcePos;
+  fn end(&self) -> SourcePos;
+
+  source_ranged_trait!();
+}
+
+impl<T> SwcSourceRanged for T
 where
   T: swc_common::Spanned,
 {
   fn start(&self) -> SourcePos {
     SourcePos::from_byte_pos(self.span().lo)
   }
-
   fn end(&self) -> SourcePos {
     SourcePos::from_byte_pos(self.span().hi)
+  }
+}
+
+#[cfg(test)]
+mod test {
+  use super::*;
+
+  #[test]
+  fn source_range_contains() {
+    let start_pos = StartSourcePos::START_SOURCE_POS;
+    assert!(SourceRange::new(start_pos, start_pos + 5).contains(&SourceRange::new(start_pos + 1, start_pos + 2)));
+    assert!(SourceRange::new(start_pos + 1, start_pos + 5).contains(&SourceRange::new(start_pos + 1, start_pos + 2)));
+    assert!(!SourceRange::new(start_pos + 2, start_pos + 5).contains(&SourceRange::new(start_pos + 1, start_pos + 2)));
+
+    assert!(SourceRange::new(start_pos + 1, start_pos + 3).contains(&SourceRange::new(start_pos + 1, start_pos + 2)));
+    assert!(SourceRange::new(start_pos + 1, start_pos + 2).contains(&SourceRange::new(start_pos + 1, start_pos + 2)));
+    assert!(!SourceRange::new(start_pos + 1, start_pos + 1).contains(&SourceRange::new(start_pos + 1, start_pos + 2)));
   }
 }

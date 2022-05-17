@@ -12,20 +12,14 @@ impl<'a> NodeOrToken<'a> {
   pub fn unwrap_token(&self) -> &'a TokenAndRange {
     match self {
       NodeOrToken::Token(token) => token,
-      NodeOrToken::Node(node) => panic!(
-        "Expected to unwrap a token, but it was a node of kind {}.",
-        node.kind()
-      ),
+      NodeOrToken::Node(node) => panic!("Expected to unwrap a token, but it was a node of kind {}.", node.kind()),
     }
   }
 
   pub fn unwrap_node(&self) -> &Node<'a> {
     match self {
       NodeOrToken::Node(node) => node,
-      NodeOrToken::Token(token) => panic!(
-        "Expected to unwrap a node, but it was a token with text '{:?}'.",
-        token.token
-      ),
+      NodeOrToken::Token(token) => panic!("Expected to unwrap a node, but it was a token with text '{:?}'.", token.token),
     }
   }
 }
@@ -330,10 +324,7 @@ pub trait NodeTrait<'a>: SourceRanged + Sized {
     match current {
       Node::Module(module) => Program::Module(module),
       Node::Script(script) => Program::Script(script),
-      _ => panic!(
-        "Expected the root node to be a Module or Script, but it was a {}.",
-        current.kind()
-      ),
+      _ => panic!("Expected the root node to be a Module or Script, but it was a {}.", current.kind()),
     }
   }
 
@@ -423,15 +414,15 @@ impl<'a> From<&'a swc_ast::Script> for ProgramRef<'a> {
 impl<'a> SourceRanged for ProgramRef<'a> {
   fn start(&self) -> SourcePos {
     match self {
-      ProgramRef::Module(node) => node.start(),
-      ProgramRef::Script(node) => node.start(),
+      ProgramRef::Module(node) => node.range().start,
+      ProgramRef::Script(node) => node.range().start,
     }
   }
 
   fn end(&self) -> SourcePos {
     match self {
-      ProgramRef::Module(node) => node.end(),
-      ProgramRef::Script(node) => node.end(),
+      ProgramRef::Module(node) => node.range().end,
+      ProgramRef::Script(node) => node.range().end,
     }
   }
 }
@@ -485,10 +476,7 @@ impl<'a> Iterator for AncestorIterator<'a> {
 
 impl TokenAndRange {
   pub fn token_index(&self, program: &dyn RootNode) -> usize {
-    program
-      .token_container()
-      .get_token_index_at_start(self.range.start)
-      .unwrap()
+    program.token_container().get_token_index_at_start(self.range.start).unwrap()
   }
 }
 
@@ -531,14 +519,7 @@ function foo(name: /* inline comment */ string) {
 // trailing comment
 "#,
       |program| {
-        assert_eq!(
-          program
-            .maybe_comment_container()
-            .unwrap()
-            .all_comments()
-            .count(),
-          6
-        );
+        assert_eq!(program.maybe_comment_container().unwrap().all_comments().count(), 6);
       },
     );
   }

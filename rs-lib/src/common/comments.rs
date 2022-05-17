@@ -47,9 +47,7 @@ impl<'a> CommentContainer<'a> {
       let trailing = self.get_trailing(previous_token_hi);
       combine_comment_vecs(trailing, leading)
     } else {
-      leading
-        .map(|l| CommentsIterator::new(vec![l]))
-        .unwrap_or_default()
+      leading.map(|l| CommentsIterator::new(vec![l])).unwrap_or_default()
     }
   }
 
@@ -66,9 +64,7 @@ impl<'a> CommentContainer<'a> {
       let leading = self.get_leading(next_token_lo);
       combine_comment_vecs(trailing, leading)
     } else {
-      trailing
-        .map(|t| CommentsIterator::new(vec![t]))
-        .unwrap_or_default()
+      trailing.map(|t| CommentsIterator::new(vec![t])).unwrap_or_default()
     }
   }
 
@@ -81,10 +77,7 @@ impl<'a> CommentContainer<'a> {
   }
 }
 
-fn combine_comment_vecs<'a>(
-  a: Option<&'a Vec<Comment>>,
-  b: Option<&'a Vec<Comment>>,
-) -> CommentsIterator<'a> {
+fn combine_comment_vecs<'a>(a: Option<&'a Vec<Comment>>, b: Option<&'a Vec<Comment>>) -> CommentsIterator<'a> {
   let length = if a.is_some() { 1 } else { 0 } + if b.is_some() { 1 } else { 0 };
   let mut comment_vecs = Vec::with_capacity(length);
   if let Some(a) = a {
@@ -201,9 +194,6 @@ impl<'a> DoubleEndedIterator for CommentsIterator<'a> {
       self.inner_index_back -= 1;
     }
 
-    self
-      .comment_vecs
-      .get(self.outer_index_back)
-      .and_then(|inner| inner.get(self.inner_index_back))
+    self.comment_vecs.get(self.outer_index_back).and_then(|inner| inner.get(self.inner_index_back))
   }
 }

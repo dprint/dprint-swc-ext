@@ -69,11 +69,7 @@ impl SourceTextInfo {
   /// used with parsing.
   pub fn as_string_input(&self) -> StringInput {
     let range = self.range();
-    StringInput::new(
-      self.text_str(),
-      range.start.as_byte_pos(),
-      range.end.as_byte_pos(),
-    )
+    StringInput::new(self.text_str(), range.start.as_byte_pos(), range.end.as_byte_pos())
   }
 
   /// Gets the source text.
@@ -102,9 +98,7 @@ impl SourceTextInfo {
   /// the range of the source text.
   pub fn line_index(&self, pos: SourcePos) -> usize {
     self.assert_pos(pos);
-    self
-      .text_lines
-      .line_index(self.get_relative_index_from_pos(pos))
+    self.text_lines.line_index(self.get_relative_index_from_pos(pos))
   }
 
   /// Gets the line start byte position of the provided 0-indexed line index.
@@ -131,9 +125,7 @@ impl SourceTextInfo {
   /// the range of the source text.
   pub fn line_and_column_index(&self, pos: SourcePos) -> LineAndColumnIndex {
     self.assert_pos(pos);
-    self
-      .text_lines
-      .line_and_column_index(self.get_relative_index_from_pos(pos))
+    self.text_lines.line_and_column_index(self.get_relative_index_from_pos(pos))
   }
 
   /// Gets the 1-indexed line and column index of the provided byte position
@@ -143,9 +135,7 @@ impl SourceTextInfo {
   /// the range of the source text.
   pub fn line_and_column_display(&self, pos: SourcePos) -> LineAndColumnDisplay {
     self.assert_pos(pos);
-    self
-      .text_lines
-      .line_and_column_display(self.get_relative_index_from_pos(pos))
+    self.text_lines.line_and_column_display(self.get_relative_index_from_pos(pos))
   }
 
   /// Gets the 1-indexed line and column index of the provided byte position
@@ -153,16 +143,11 @@ impl SourceTextInfo {
   ///
   /// Note that this will panic when providing a byte position outside
   /// the range of the source text.
-  pub fn line_and_column_display_with_indent_width(
-    &self,
-    pos: SourcePos,
-    indent_width: usize,
-  ) -> LineAndColumnDisplay {
+  pub fn line_and_column_display_with_indent_width(&self, pos: SourcePos, indent_width: usize) -> LineAndColumnDisplay {
     self.assert_pos(pos);
-    self.text_lines.line_and_column_display_with_indent_width(
-      self.get_relative_index_from_pos(pos),
-      indent_width,
-    )
+    self
+      .text_lines
+      .line_and_column_display_with_indent_width(self.get_relative_index_from_pos(pos), indent_width)
   }
 
   /// Gets the byte position of the provided line and column index.
@@ -198,15 +183,9 @@ impl SourceTextInfo {
   fn assert_pos(&self, pos: SourcePos) {
     let range = self.range();
     if pos < range.start {
-      panic!(
-        "The provided position {} was less than the start position {}.",
-        pos, range.start,
-      );
+      panic!("The provided position {} was less than the start position {}.", pos, range.start,);
     } else if pos > range.end {
-      panic!(
-        "The provided position {} was greater than the end position {}.",
-        pos, range.end,
-      );
+      panic!("The provided position {} was greater than the end position {}.", pos, range.end,);
     }
   }
 
@@ -256,10 +235,7 @@ mod test {
   fn line_and_column_index() {
     let text = "12\n3\r\nβ\n5";
     for i in 0..10 {
-      run_with_text_info(
-        SourceTextInfo::new_with_pos(SourcePos::new(i), text.to_string().into()),
-        i,
-      );
+      run_with_text_info(SourceTextInfo::new_with_pos(SourcePos::new(i), text.to_string().into()), i);
     }
 
     fn run_with_text_info(text_info: SourceTextInfo, i: usize) {
@@ -277,18 +253,10 @@ mod test {
     }
   }
 
-  fn assert_pos_line_and_col(
-    text_info: &SourceTextInfo,
-    pos: usize,
-    line_index: usize,
-    column_index: usize,
-  ) {
+  fn assert_pos_line_and_col(text_info: &SourceTextInfo, pos: usize, line_index: usize, column_index: usize) {
     assert_eq!(
       text_info.line_and_column_index(SourcePos::new(pos)),
-      LineAndColumnIndex {
-        line_index,
-        column_index,
-      }
+      LineAndColumnIndex { line_index, column_index }
     );
   }
 
@@ -310,10 +278,7 @@ mod test {
   fn line_start() {
     let text = "12\n3\r\n4\n5";
     for i in 0..10 {
-      run_with_text_info(
-        SourceTextInfo::new_with_pos(SourcePos::new(i), text.to_string().into()),
-        i,
-      );
+      run_with_text_info(SourceTextInfo::new_with_pos(SourcePos::new(i), text.to_string().into()), i);
     }
 
     fn run_with_text_info(text_info: SourceTextInfo, i: usize) {
@@ -329,9 +294,7 @@ mod test {
   }
 
   #[test]
-  #[should_panic(
-    expected = "The specified line index 1 was greater or equal to the number of lines of 1."
-  )]
+  #[should_panic(expected = "The specified line index 1 was greater or equal to the number of lines of 1.")]
   fn line_start_equal_number_lines() {
     let info = SourceTextInfo::new_with_pos(SourcePos::new(1), "test".to_string().into());
     info.line_start(1);
@@ -341,10 +304,7 @@ mod test {
   fn line_end() {
     let text = "12\n3\r\n4\n5";
     for i in 0..10 {
-      run_with_text_info(
-        SourceTextInfo::new_with_pos(SourcePos::new(i), text.to_string().into()),
-        i,
-      );
+      run_with_text_info(SourceTextInfo::new_with_pos(SourcePos::new(i), text.to_string().into()), i);
     }
 
     fn run_with_text_info(text_info: SourceTextInfo, i: usize) {
@@ -360,9 +320,7 @@ mod test {
   }
 
   #[test]
-  #[should_panic(
-    expected = "The specified line index 1 was greater or equal to the number of lines of 1."
-  )]
+  #[should_panic(expected = "The specified line index 1 was greater or equal to the number of lines of 1.")]
   fn line_end_equal_number_lines() {
     let info = SourceTextInfo::new_with_pos(SourcePos::new(1), "test".to_string().into());
     info.line_end(1);

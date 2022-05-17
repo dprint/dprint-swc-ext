@@ -14,16 +14,8 @@ impl<'a> TokenContainer<'a> {
   pub fn new(tokens: &'a [TokenAndRange]) -> Self {
     TokenContainer {
       tokens,
-      start_to_index: tokens
-        .iter()
-        .enumerate()
-        .map(|(i, token)| (token.range.start, i))
-        .collect(),
-      end_to_index: tokens
-        .iter()
-        .enumerate()
-        .map(|(i, token)| (token.range.end, i))
-        .collect(),
+      start_to_index: tokens.iter().enumerate().map(|(i, token)| (token.range.start, i)).collect(),
+      end_to_index: tokens.iter().enumerate().map(|(i, token)| (token.range.end, i)).collect(),
     }
   }
 
@@ -141,41 +133,13 @@ mod test {
     let (_, tokens, _, _) = get_swc_module(&PathBuf::from("path.js"), r#"let /* a */ a = 5;"#);
     let token_container = TokenContainer::new(&tokens);
     // low token of previous token
-    assert_eq!(
-      token_container
-        .get_next_token(SourcePos::new(0))
-        .unwrap()
-        .range
-        .start,
-      SourcePos::new(12),
-    );
+    assert_eq!(token_container.get_next_token(SourcePos::new(0)).unwrap().range.start, SourcePos::new(12),);
     // hi of previous token
-    assert_eq!(
-      token_container
-        .get_next_token(SourcePos::new(3))
-        .unwrap()
-        .range
-        .start,
-      SourcePos::new(12),
-    );
+    assert_eq!(token_container.get_next_token(SourcePos::new(3)).unwrap().range.start, SourcePos::new(12),);
     // in comment before token
-    assert_eq!(
-      token_container
-        .get_next_token(SourcePos::new(5))
-        .unwrap()
-        .range
-        .start,
-      SourcePos::new(12),
-    );
+    assert_eq!(token_container.get_next_token(SourcePos::new(5)).unwrap().range.start, SourcePos::new(12),);
     // in whitespace before token
-    assert_eq!(
-      token_container
-        .get_next_token(SourcePos::new(11))
-        .unwrap()
-        .range
-        .start,
-      SourcePos::new(12),
-    );
+    assert_eq!(token_container.get_next_token(SourcePos::new(11)).unwrap().range.start, SourcePos::new(12),);
     // at hi of last token
     assert_eq!(token_container.get_next_token(SourcePos::new(18)), None);
   }

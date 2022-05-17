@@ -8,15 +8,7 @@ use std::path::Path;
 
 use crate::common::{SourceTextInfo, TokenAndRange};
 
-pub fn get_swc_module(
-  file_path: &Path,
-  file_text: &str,
-) -> (
-  Module,
-  Vec<TokenAndRange>,
-  SourceTextInfo,
-  SingleThreadedComments,
-) {
+pub fn get_swc_module(file_path: &Path, file_text: &str) -> (Module, Vec<TokenAndRange>, SourceTextInfo, SingleThreadedComments) {
   // lifted from dprint-plugin-typescript
   let handler = Handler::with_emitter(false, false, Box::new(EmptyEmitter {}));
   let source_text_info = SourceTextInfo::from_string(file_text.to_string());
@@ -37,12 +29,7 @@ pub fn get_swc_module(
     let lexer = Capturing::new(lexer);
     let mut parser = Parser::new_from(lexer);
     let parse_module_result = parser.parse_module();
-    let tokens = parser
-      .input()
-      .take()
-      .into_iter()
-      .map(|t| t.into())
-      .collect();
+    let tokens = parser.input().take().into_iter().map(|t| t.into()).collect();
 
     match parse_module_result {
       Err(error) => {
@@ -59,15 +46,7 @@ pub fn get_swc_module(
 }
 
 #[cfg(feature = "view")]
-pub fn get_swc_script(
-  file_path: &Path,
-  file_text: &str,
-) -> (
-  crate::swc::ast::Script,
-  Vec<TokenAndRange>,
-  SourceTextInfo,
-  SingleThreadedComments,
-) {
+pub fn get_swc_script(file_path: &Path, file_text: &str) -> (crate::swc::ast::Script, Vec<TokenAndRange>, SourceTextInfo, SingleThreadedComments) {
   // lifted from dprint-plugin-typescript
   let handler = Handler::with_emitter(false, false, Box::new(EmptyEmitter {}));
   let source_text_info = SourceTextInfo::from_string(file_text.to_string());
@@ -88,12 +67,7 @@ pub fn get_swc_script(
     let lexer = Capturing::new(lexer);
     let mut parser = Parser::new_from(lexer);
     let parse_script_result = parser.parse_script();
-    let tokens = parser
-      .input()
-      .take()
-      .into_iter()
-      .map(|t| t.into())
-      .collect();
+    let tokens = parser.input().take().into_iter().map(|t| t.into()).collect();
 
     match parse_script_result {
       Err(error) => {
@@ -117,10 +91,7 @@ fn should_parse_as_jsx(file_path: &Path) -> bool {
 }
 
 fn get_lowercase_extension(file_path: &Path) -> Option<String> {
-  file_path
-    .extension()
-    .and_then(|e| e.to_str())
-    .map(|f| f.to_lowercase())
+  file_path.extension().and_then(|e| e.to_str()).map(|f| f.to_lowercase())
 }
 
 pub struct EmptyEmitter {}

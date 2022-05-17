@@ -1,3 +1,4 @@
 tab_spaces = 2
 newline_style = "Unix"
 edition = "2021"
+max_width = 160

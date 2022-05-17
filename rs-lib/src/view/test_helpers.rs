@@ -4,12 +4,8 @@ use crate::test_helpers::{get_swc_module, get_swc_script};
 
 pub fn run_test(file_text: &str, run_test: impl Fn(super::Program)) {
   let file_path = Path::new("test.ts");
-  run_test_with_module(file_path, file_text, |module| {
-    run_test(super::Program::Module(module))
-  });
-  run_test_with_script(file_path, file_text, |script| {
-    run_test(super::Program::Script(script))
-  });
+  run_test_with_module(file_path, file_text, |module| run_test(super::Program::Module(module)));
+  run_test_with_script(file_path, file_text, |script| run_test(super::Program::Script(script)));
 }
 
 pub fn run_test_with_module(file_path: &Path, file_text: &str, run_test: impl Fn(&super::Module)) {
