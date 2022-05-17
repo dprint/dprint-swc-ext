@@ -658,7 +658,7 @@ export function generate(analysisResult: AnalysisResult): string {
             writer.write("parent: None,").newLine();
           }
           if (struct.name === "Module" || struct.name === "Script") {
-            writer.write("source_file: source_file_info.text_info,").newLine();
+            writer.write("text_info: source_file_info.text_info,").newLine();
             writer.write("tokens,").newLine();
             writer.write("comments,").newLine();
           }

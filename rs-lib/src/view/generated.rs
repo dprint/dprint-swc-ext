@@ -14512,7 +14512,7 @@ fn get_view_for_module<'a>(source_file_info: &'a ModuleInfo<'a>, bump: &'a Bump)
     c.leading,
     c.trailing,
     tokens.expect("Tokens must be provided when using comments."),
-    source_file_info.text_info.expect("Source file must be provided when using comments"),
+    source_file_info.text_info.expect("Text info must be provided when using comments"),
   )));
   let node = bump.alloc(Module {
     inner,
@@ -16133,7 +16133,7 @@ fn get_view_for_script<'a>(source_file_info: &'a ScriptInfo<'a>, bump: &'a Bump)
     c.leading,
     c.trailing,
     tokens.expect("Tokens must be provided when using comments."),
-    source_file_info.text_info.expect("Source file must be provided when using comments"),
+    source_file_info.text_info.expect("Text info must be provided when using comments"),
   )));
   let node = bump.alloc(Script {
     inner,
