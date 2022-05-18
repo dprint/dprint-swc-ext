@@ -20,17 +20,6 @@ impl SourcePos {
     Self(StartSourcePos::START_SOURCE_POS.as_byte_pos() + BytePos(index as u32))
   }
 
-  pub(crate) fn from_byte_pos(byte_pos: BytePos) -> Self {
-    #[cfg(debug_assertions)]
-    if byte_pos < StartSourcePos::START_SOURCE_POS.as_byte_pos() {
-      panic!(concat!(
-        "The provided byte position was less than the start byte position. ",
-        "Ensure the source file is parsed starting at SourcePos::START_SOURCE_POS."
-      ))
-    }
-    Self(byte_pos)
-  }
-
   pub fn as_byte_pos(&self) -> BytePos {
     self.0
   }
@@ -83,6 +72,19 @@ impl SourceRanged for SourcePos {
 
   fn end(&self) -> SourcePos {
     *self
+  }
+}
+
+impl From<BytePos> for SourcePos {
+  fn from(value: BytePos) -> Self {
+    #[cfg(debug_assertions)]
+    if value < StartSourcePos::START_SOURCE_POS.as_byte_pos() {
+      panic!(concat!(
+        "The provided byte position was less than the start byte position. ",
+        "Ensure the source file is parsed starting at SourcePos::START_SOURCE_POS."
+      ))
+    }
+    Self(value)
   }
 }
 
@@ -170,7 +172,7 @@ impl std::cmp::PartialOrd<StartSourcePos> for SourcePos {
   }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct SourceRange<T = SourcePos>
 where
   T: Into<SourcePos> + Clone + Copy,
@@ -230,9 +232,15 @@ impl std::ops::Sub<StartSourcePos> for SourceRange {
 impl From<Span> for SourceRange {
   fn from(value: Span) -> Self {
     SourceRange {
-      start: SourcePos::from_byte_pos(value.lo),
-      end: SourcePos::from_byte_pos(value.hi),
+      start: value.lo.into(),
+      end: value.hi.into(),
     }
+  }
+}
+
+impl From<SourceRange> for Span {
+  fn from(value: SourceRange) -> Self {
+    Span::new(value.start.as_byte_pos(), value.end.as_byte_pos(), Default::default())
   }
 }
 
@@ -371,10 +379,10 @@ where
   T: swc_common::Spanned,
 {
   fn start(&self) -> SourcePos {
-    SourcePos::from_byte_pos(self.span().lo)
+    self.span().lo.into()
   }
   fn end(&self) -> SourcePos {
-    SourcePos::from_byte_pos(self.span().hi)
+    self.span().hi.into()
   }
 }
 

@@ -34,15 +34,15 @@ impl<'a> CommentContainer<'a> {
     CommentsIterator::new(v)
   }
 
-  pub fn leading_comments(&'a self, lo: SourcePos) -> CommentsIterator<'a> {
-    let previous_token_hi = self.tokens.get_token_index_at_start(lo).map(|index| {
+  pub fn leading_comments(&'a self, start: SourcePos) -> CommentsIterator<'a> {
+    let previous_token_hi = self.tokens.get_token_index_at_start(start).map(|index| {
       if index == 0 {
         self.text_info.range().start.as_source_pos()
       } else {
         self.tokens.get_token_at_index(index - 1).unwrap().end()
       }
     });
-    let leading = self.get_leading(lo);
+    let leading = self.get_leading(start);
     if let Some(previous_token_hi) = previous_token_hi {
       let trailing = self.get_trailing(previous_token_hi);
       combine_comment_vecs(trailing, leading)
