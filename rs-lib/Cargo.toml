@@ -1,18 +1,25 @@
 [package]
-name = "dprint-swc-ecma-ast-view"
-version = "0.56.0"
+name = "dprint-swc-ext"
+version = "0.1.1"
 authors = ["David Sherret <dsherret@gmail.com>"]
 edition = "2021"
 license = "MIT"
-description = "View of the swc AST that's easier to navigate."
+description = "Functionality to make swc easier to work with."
+
+[package.metadata.docs.rs]
+all-features = true
+
+[features]
+sourcemap = ["swc_common/sourcemap"]
+view = []
 
 [dependencies]
 bumpalo = "3.9.1"
 num-bigint = "0.4"
 rustc-hash = "1.1.0"
 swc_atoms = "0.2.11"
-swc_common = "0.17.25"
-swc_ecmascript = { version = "0.154.0", features = ["parser"] }
+swc_common = "0.18.3"
+swc_ecmascript = { version = "0.157.0", features = ["parser"] }
 text_lines = "0.4.1"
 
 [dev-dependencies]

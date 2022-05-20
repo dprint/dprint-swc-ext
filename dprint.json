@@ -3,6 +3,10 @@
   "typescript": {
     "lineWidth": 160
   },
+  "exec": {
+    "associations": "**/*.rs",
+    "rustfmt": "rustfmt"
+  },
   "includes": ["**/*.{ts,tsx,js,jsx,json,md,rs,toml}"],
   "excludes": [
     "**/node_modules",
@@ -12,7 +16,7 @@
     "./swc_ecma_ast.json",
     "./swc_ecma_parser.json",
     "**/*.generated.ts",
-    "./rs-lib/src/**/*generated.rs",
+    "**/*generated.rs",
     "**/testdata",
     "**/target"
   ],
@@ -21,6 +25,6 @@
     "https://plugins.dprint.dev/json-0.15.2.wasm",
     "https://plugins.dprint.dev/toml-0.5.4.wasm",
     "https://plugins.dprint.dev/markdown-0.13.2.wasm",
-    "https://plugins.dprint.dev/rustfmt-0.3.0.wasm"
+    "https://plugins.dprint.dev/exec-0.3.0.json@8b9b02f2d5e54597c3644163fe0f2e66452207635edfbf03cc531d627b016158"
   ]
 }

@@ -1,0 +1,8 @@
+[workspace]
+members = [
+  "rs-lib",
+]
+exclude = [
+  "swc_ecma_ast",
+  "swc_ecma_parser",
+]
