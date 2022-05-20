@@ -2,15 +2,19 @@
 
 [![](https://img.shields.io/crates/v/dprint-swc-ext.svg)](https://crates.io/crates/dprint-swc-ext) [![CI](https://github.com/dprint/dprint-swc-ext/workflows/CI/badge.svg)](https://github.com/dprint/dprint-swc-ext/actions?query=workflow%3ACI)
 
-The library at `./rs-lib` is code generated from [swc_ecma_ast](https://crates.io/crates/swc_ecma_ast) via the code in `./generation` to produce a more easily navigable immutable AST.
+Extensions for swc used in dprint-plugin-typescript and Deno.
 
 ## What does this do?
 
+1. Adds a `SourcePos` and `SourceRange` type to compensate for swc having `BytePos(0)` as a magical value.
+1. Adds many helper methods.
+
+With the `view` cargo feature enabled:
+
 1. Creates a wrapper AST around [swc](https://github.com/swc-project/swc)'s AST that stores the node parents.
    - This is similar to a "red tree", but it creates it for every node. It's very fast to create these.
-2. Adds a `Node` enum type to allow referencing any kind of node.
-3. Adds many helper methods.
-4. Adds a `SourcePos` type to compensate for swc having `BytePos(0)` as a magical value.
+   - Most of this code is code generated.
+1. Adds a `Node` enum type to allow referencing any kind of node.
 
 ## Helpers
 
@@ -18,19 +22,19 @@ All (`SourceRanged` trait):
 
 - `.start(&self) -> SourcePos`
 - `.end(&self) -> SourcePos`
-- `.text_fast(&self, root_node: &dyn RootNode) -> &'a str` -- Doesn't require going up the tree to the root node
-- `.start_line_fast(&self, root_node: &dyn RootNode) -> usize`
-- `.end_line_fast(&self, root_node: &dyn RootNode) -> usize`
-- `.start_column_fast(&self, root_node: &dyn RootNode) -> usize`
-- `.end_column_fast(&self, root_node: &dyn RootNode) -> usize`
-- `.width_fast(&self, root_node: &dyn RootNode) -> usize`
-- `.tokens_fast(&self, root_node: &dyn RootNode) -> &'a [TokenAndSpan]`
-- `.leading_comments_fast(&self, root_node: &dyn RootNode) -> CommentsIterator<'a>`
-- `.trailing_comments_fast(&self, root_node: &dyn RootNode) -> CommentsIterator<'a>`
-- `.previous_token_fast(&self, root_node: &dyn RootNode) -> Option<&TokenAndSpan>`
-- `.next_token_fast(&self, root_node: &dyn RootNode) -> Option<&TokenAndSpan>`
-- `.previous_tokens_fast(&self, root_node: &dyn RootNode) -> &'a [TokenAndSpan]`
-- `.next_tokens_fast(&self, root_node: &dyn RootNode) -> &'a [TokenAndSpan]`
+- `.text_fast(&self, root_node: &dyn SourceTextInfoProvider) -> &'a str` -- Doesn't require going up the tree to the root node
+- `.start_line_fast(&self, root_node: &dyn SourceTextInfoProvider) -> usize`
+- `.end_line_fast(&self, root_node: &dyn SourceTextInfoProvider) -> usize`
+- `.start_column_fast(&self, root_node: &dyn SourceTextInfoProvider) -> usize`
+- `.end_column_fast(&self, root_node: &dyn SourceTextInfoProvider) -> usize`
+- `.width_fast(&self, root_node: &dyn SourceTextInfoProvider) -> usize`
+- `.tokens_fast(&self, root_node: &dyn SourceTextInfoProvider) -> &'a [TokenAndSpan]`
+- `.leading_comments_fast(&self, root_node: &dyn SourceTextInfoProvider) -> CommentsIterator<'a>`
+- `.trailing_comments_fast(&self, root_node: &dyn SourceTextInfoProvider) -> CommentsIterator<'a>`
+- `.previous_token_fast(&self, root_node: &dyn SourceTextInfoProvider) -> Option<&TokenAndSpan>`
+- `.next_token_fast(&self, root_node: &dyn SourceTextInfoProvider) -> Option<&TokenAndSpan>`
+- `.previous_tokens_fast(&self, root_node: &dyn SourceTextInfoProvider) -> &'a [TokenAndSpan]`
+- `.next_tokens_fast(&self, root_node: &dyn SourceTextInfoProvider) -> &'a [TokenAndSpan]`
 
 Node/Enum Node/Nodes:
 
