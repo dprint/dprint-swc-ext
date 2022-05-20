@@ -36,7 +36,7 @@ All (`SourceRanged` trait):
 - `.previous_tokens_fast(&self, root_node: &dyn RootNode) -> &'a [TokenAndSpan]`
 - `.next_tokens_fast(&self, root_node: &dyn RootNode) -> &'a [TokenAndSpan]`
 
-Node/Enum Node/Nodes:
+Node/Enum Node/Nodes (`view` cargo feature only):
 
 - `.module(&self) -> &'a Module` - Gets the root node if the view was created from a `Module`. Otherwise panics.
 - `.script(&self) -> &'a Script` - Gets the root node if the view was created from a `Script`. Otherwise panics.
@@ -66,7 +66,7 @@ Node/Enum Node/Nodes:
 - `.previous_tokens(&self) -> &'a [TokenAndSpan]`
 - `.next_tokens(&self) -> &'a [TokenAndSpan]`
 
-Node/Enum Node:
+Node/Enum Node (`view` cargo feature only):
 
 - `.to::<NodeType>(&self) -> Option<&NodeType>`
 - `.expect::<NodeType>(&self) -> &NodeType`
