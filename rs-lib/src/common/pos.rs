@@ -24,6 +24,30 @@ impl SourcePos {
     self.0
   }
 
+  pub fn as_byte_index(&self, start_pos: StartSourcePos) -> usize {
+    *self - start_pos
+  }
+
+  /// Do not use this except when receiving an swc byte position
+  /// from swc and needing to convert it to a source position.
+  /// If you need to create a `SourcePos` then you should get
+  /// the text info's start position and add to it in order to
+  /// get a new source position.
+  pub fn unsafely_from_byte_pos(byte_pos: BytePos) -> Self {
+    Self::from_byte_pos(byte_pos)
+  }
+
+  pub(crate) fn from_byte_pos(byte_pos: BytePos) -> Self {
+    #[cfg(debug_assertions)]
+    if byte_pos < StartSourcePos::START_SOURCE_POS.as_byte_pos() {
+      panic!(concat!(
+        "The provided byte position was less than the start byte position. ",
+        "Ensure the source file is parsed starting at SourcePos::START_SOURCE_POS."
+      ))
+    }
+    Self(byte_pos)
+  }
+
   pub(crate) fn as_usize(&self) -> usize {
     (self.as_byte_pos() - StartSourcePos::START_SOURCE_POS.as_byte_pos()).0 as usize
   }
@@ -72,19 +96,6 @@ impl SourceRanged for SourcePos {
 
   fn end(&self) -> SourcePos {
     *self
-  }
-}
-
-impl From<BytePos> for SourcePos {
-  fn from(value: BytePos) -> Self {
-    #[cfg(debug_assertions)]
-    if value < StartSourcePos::START_SOURCE_POS.as_byte_pos() {
-      panic!(concat!(
-        "The provided byte position was less than the start byte position. ",
-        "Ensure the source file is parsed starting at SourcePos::START_SOURCE_POS."
-      ))
-    }
-    Self(value)
   }
 }
 
@@ -201,6 +212,13 @@ impl SourceRange<SourcePos> {
     let end = self.end - source_start;
     start..end
   }
+
+  /// Do not use this except when receiving an swc span
+  /// from swc and needing to convert it to a source position.
+  /// Generally, prefer using the `.range()` method.
+  pub fn unsafely_from_span(span: Span) -> Self {
+    SourceRange::new(SourcePos::from_byte_pos(span.lo), SourcePos::from_byte_pos(span.hi))
+  }
 }
 
 impl SourceRange<StartSourcePos> {
@@ -221,26 +239,12 @@ impl<T: Into<SourcePos> + Clone + Copy> SourceRanged for SourceRange<T> {
   }
 }
 
-impl std::ops::Sub<StartSourcePos> for SourceRange {
-  type Output = std::ops::Range<usize>;
-
-  fn sub(self, rhs: StartSourcePos) -> Self::Output {
-    (self.start - rhs)..(self.end - rhs)
-  }
-}
-
-impl From<Span> for SourceRange {
-  fn from(value: Span) -> Self {
-    SourceRange {
-      start: value.lo.into(),
-      end: value.hi.into(),
-    }
-  }
-}
-
-impl From<SourceRange> for Span {
-  fn from(value: SourceRange) -> Self {
-    Span::new(value.start.as_byte_pos(), value.end.as_byte_pos(), Default::default())
+// Only want Into and not From in order to prevent
+// people from creating one of these easily.
+#[allow(clippy::from_over_into)]
+impl Into<Span> for SourceRange {
+  fn into(self) -> Span {
+    Span::new(self.start.as_byte_pos(), self.end.as_byte_pos(), Default::default())
   }
 }
 
@@ -379,10 +383,11 @@ where
   T: swc_common::Spanned,
 {
   fn start(&self) -> SourcePos {
-    self.span().lo.into()
+    SourcePos::from_byte_pos(self.span().lo)
   }
+
   fn end(&self) -> SourcePos {
-    self.span().hi.into()
+    SourcePos::from_byte_pos(self.span().hi)
   }
 }
 

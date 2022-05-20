@@ -7849,10 +7849,10 @@ impl<'a> ArrayLit<'a> {
 
 impl<'a> SourceRanged for ArrayLit<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -7947,10 +7947,10 @@ impl<'a> ArrayPat<'a> {
 
 impl<'a> SourceRanged for ArrayPat<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -8060,10 +8060,10 @@ impl<'a> ArrowExpr<'a> {
 
 impl<'a> SourceRanged for ArrowExpr<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -8173,10 +8173,10 @@ impl<'a> AssignExpr<'a> {
 
 impl<'a> SourceRanged for AssignExpr<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -8259,10 +8259,10 @@ impl<'a> AssignPat<'a> {
 
 impl<'a> SourceRanged for AssignPat<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -8355,10 +8355,10 @@ impl<'a> AssignPatProp<'a> {
 
 impl<'a> SourceRanged for AssignPatProp<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -8447,10 +8447,10 @@ impl<'a> AssignProp<'a> {
 
 impl<'a> SourceRanged for AssignProp<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -8531,10 +8531,10 @@ impl<'a> AwaitExpr<'a> {
 
 impl<'a> SourceRanged for AwaitExpr<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -8621,10 +8621,10 @@ impl<'a> BigInt<'a> {
 
 impl<'a> SourceRanged for BigInt<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -8702,10 +8702,10 @@ impl<'a> BinExpr<'a> {
 
 impl<'a> SourceRanged for BinExpr<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -8788,10 +8788,10 @@ impl<'a> BindingIdent<'a> {
 
 impl<'a> SourceRanged for BindingIdent<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -8880,10 +8880,10 @@ impl<'a> BlockStmt<'a> {
 
 impl<'a> SourceRanged for BlockStmt<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -8977,10 +8977,10 @@ impl<'a> Bool<'a> {
 
 impl<'a> SourceRanged for Bool<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -9053,10 +9053,10 @@ impl<'a> BreakStmt<'a> {
 
 impl<'a> SourceRanged for BreakStmt<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -9143,10 +9143,10 @@ impl<'a> CallExpr<'a> {
 
 impl<'a> SourceRanged for CallExpr<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -9246,10 +9246,10 @@ impl<'a> CatchClause<'a> {
 
 impl<'a> SourceRanged for CatchClause<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -9347,10 +9347,10 @@ impl<'a> Class<'a> {
 
 impl<'a> SourceRanged for Class<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -9481,10 +9481,10 @@ impl<'a> ClassDecl<'a> {
 
 impl<'a> SourceRanged for ClassDecl<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -9567,10 +9567,10 @@ impl<'a> ClassExpr<'a> {
 
 impl<'a> SourceRanged for ClassExpr<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -9685,10 +9685,10 @@ impl<'a> ClassMethod<'a> {
 
 impl<'a> SourceRanged for ClassMethod<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -9806,10 +9806,10 @@ impl<'a> ClassProp<'a> {
 
 impl<'a> SourceRanged for ClassProp<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -9914,10 +9914,10 @@ impl<'a> ComputedPropName<'a> {
 
 impl<'a> SourceRanged for ComputedPropName<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -9997,10 +9997,10 @@ impl<'a> CondExpr<'a> {
 
 impl<'a> SourceRanged for CondExpr<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -10094,10 +10094,10 @@ impl<'a> Constructor<'a> {
 
 impl<'a> SourceRanged for Constructor<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -10192,10 +10192,10 @@ impl<'a> ContinueStmt<'a> {
 
 impl<'a> SourceRanged for ContinueStmt<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -10279,10 +10279,10 @@ impl<'a> DebuggerStmt<'a> {
 
 impl<'a> SourceRanged for DebuggerStmt<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -10355,10 +10355,10 @@ impl<'a> Decorator<'a> {
 
 impl<'a> SourceRanged for Decorator<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -10437,10 +10437,10 @@ impl<'a> DoWhileStmt<'a> {
 
 impl<'a> SourceRanged for DoWhileStmt<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -10520,10 +10520,10 @@ impl<'a> EmptyStmt<'a> {
 
 impl<'a> SourceRanged for EmptyStmt<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -10598,10 +10598,10 @@ impl<'a> ExportAll<'a> {
 
 impl<'a> SourceRanged for ExportAll<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -10689,10 +10689,10 @@ impl<'a> ExportDecl<'a> {
 
 impl<'a> SourceRanged for ExportDecl<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -10770,10 +10770,10 @@ impl<'a> ExportDefaultDecl<'a> {
 
 impl<'a> SourceRanged for ExportDefaultDecl<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -10851,10 +10851,10 @@ impl<'a> ExportDefaultExpr<'a> {
 
 impl<'a> SourceRanged for ExportDefaultExpr<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -10932,10 +10932,10 @@ impl<'a> ExportDefaultSpecifier<'a> {
 
 impl<'a> SourceRanged for ExportDefaultSpecifier<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -11021,10 +11021,10 @@ impl<'a> ExportNamedSpecifier<'a> {
 
 impl<'a> SourceRanged for ExportNamedSpecifier<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -11113,10 +11113,10 @@ impl<'a> ExportNamespaceSpecifier<'a> {
 
 impl<'a> SourceRanged for ExportNamespaceSpecifier<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -11198,10 +11198,10 @@ impl<'a> ExprOrSpread<'a> {
 
 impl<'a> SourceRanged for ExprOrSpread<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -11279,10 +11279,10 @@ impl<'a> ExprStmt<'a> {
 
 impl<'a> SourceRanged for ExprStmt<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -11365,10 +11365,10 @@ impl<'a> FnDecl<'a> {
 
 impl<'a> SourceRanged for FnDecl<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -11451,10 +11451,10 @@ impl<'a> FnExpr<'a> {
 
 impl<'a> SourceRanged for FnExpr<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -11544,10 +11544,10 @@ impl<'a> ForInStmt<'a> {
 
 impl<'a> SourceRanged for ForInStmt<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -11642,10 +11642,10 @@ impl<'a> ForOfStmt<'a> {
 
 impl<'a> SourceRanged for ForOfStmt<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -11732,10 +11732,10 @@ impl<'a> ForStmt<'a> {
 
 impl<'a> SourceRanged for ForStmt<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -11858,10 +11858,10 @@ impl<'a> Function<'a> {
 
 impl<'a> SourceRanged for Function<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -11982,10 +11982,10 @@ impl<'a> GetterProp<'a> {
 
 impl<'a> SourceRanged for GetterProp<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -12141,10 +12141,10 @@ impl<'a> Ident<'a> {
 
 impl<'a> SourceRanged for Ident<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -12219,10 +12219,10 @@ impl<'a> IfStmt<'a> {
 
 impl<'a> SourceRanged for IfStmt<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -12312,10 +12312,10 @@ impl<'a> Import<'a> {
 
 impl<'a> SourceRanged for Import<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -12394,10 +12394,10 @@ impl<'a> ImportDecl<'a> {
 
 impl<'a> SourceRanged for ImportDecl<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -12493,10 +12493,10 @@ impl<'a> ImportDefaultSpecifier<'a> {
 
 impl<'a> SourceRanged for ImportDefaultSpecifier<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -12582,10 +12582,10 @@ impl<'a> ImportNamedSpecifier<'a> {
 
 impl<'a> SourceRanged for ImportNamedSpecifier<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -12674,10 +12674,10 @@ impl<'a> ImportStarAsSpecifier<'a> {
 
 impl<'a> SourceRanged for ImportStarAsSpecifier<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -12755,10 +12755,10 @@ impl<'a> Invalid<'a> {
 
 impl<'a> SourceRanged for Invalid<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -12833,10 +12833,10 @@ impl<'a> JSXAttr<'a> {
 
 impl<'a> SourceRanged for JSXAttr<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -12924,10 +12924,10 @@ impl<'a> JSXClosingElement<'a> {
 
 impl<'a> SourceRanged for JSXClosingElement<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -13004,10 +13004,10 @@ impl<'a> JSXClosingFragment<'a> {
 
 impl<'a> SourceRanged for JSXClosingFragment<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -13082,10 +13082,10 @@ impl<'a> JSXElement<'a> {
 
 impl<'a> SourceRanged for JSXElement<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -13179,10 +13179,10 @@ impl<'a> JSXEmptyExpr<'a> {
 
 impl<'a> SourceRanged for JSXEmptyExpr<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -13255,10 +13255,10 @@ impl<'a> JSXExprContainer<'a> {
 
 impl<'a> SourceRanged for JSXExprContainer<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -13338,10 +13338,10 @@ impl<'a> JSXFragment<'a> {
 
 impl<'a> SourceRanged for JSXFragment<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -13430,10 +13430,10 @@ impl<'a> JSXMemberExpr<'a> {
 
 impl<'a> SourceRanged for JSXMemberExpr<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -13516,10 +13516,10 @@ impl<'a> JSXNamespacedName<'a> {
 
 impl<'a> SourceRanged for JSXNamespacedName<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -13608,10 +13608,10 @@ impl<'a> JSXOpeningElement<'a> {
 
 impl<'a> SourceRanged for JSXOpeningElement<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -13705,10 +13705,10 @@ impl<'a> JSXOpeningFragment<'a> {
 
 impl<'a> SourceRanged for JSXOpeningFragment<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -13781,10 +13781,10 @@ impl<'a> JSXSpreadChild<'a> {
 
 impl<'a> SourceRanged for JSXSpreadChild<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -13869,10 +13869,10 @@ impl<'a> JSXText<'a> {
 
 impl<'a> SourceRanged for JSXText<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -13947,10 +13947,10 @@ impl<'a> KeyValuePatProp<'a> {
 
 impl<'a> SourceRanged for KeyValuePatProp<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -14032,10 +14032,10 @@ impl<'a> KeyValueProp<'a> {
 
 impl<'a> SourceRanged for KeyValueProp<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -14117,10 +14117,10 @@ impl<'a> LabeledStmt<'a> {
 
 impl<'a> SourceRanged for LabeledStmt<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -14202,10 +14202,10 @@ impl<'a> MemberExpr<'a> {
 
 impl<'a> SourceRanged for MemberExpr<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -14289,10 +14289,10 @@ impl<'a> MetaPropExpr<'a> {
 
 impl<'a> SourceRanged for MetaPropExpr<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -14366,10 +14366,10 @@ impl<'a> MethodProp<'a> {
 
 impl<'a> SourceRanged for MethodProp<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -14452,10 +14452,10 @@ impl<'a> Module<'a> {
 
 impl<'a> SourceRanged for Module<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -14548,10 +14548,10 @@ impl<'a> NamedExport<'a> {
 
 impl<'a> SourceRanged for NamedExport<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -14655,10 +14655,10 @@ impl<'a> NewExpr<'a> {
 
 impl<'a> SourceRanged for NewExpr<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -14759,10 +14759,10 @@ impl<'a> Null<'a> {
 
 impl<'a> SourceRanged for Null<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -14857,10 +14857,10 @@ impl<'a> Number<'a> {
 
 impl<'a> SourceRanged for Number<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -14934,10 +14934,10 @@ impl<'a> ObjectLit<'a> {
 
 impl<'a> SourceRanged for ObjectLit<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -15025,10 +15025,10 @@ impl<'a> ObjectPat<'a> {
 
 impl<'a> SourceRanged for ObjectPat<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -15122,10 +15122,10 @@ impl<'a> OptCall<'a> {
 
 impl<'a> SourceRanged for OptCall<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -15224,10 +15224,10 @@ impl<'a> OptChainExpr<'a> {
 
 impl<'a> SourceRanged for OptChainExpr<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -15306,10 +15306,10 @@ impl<'a> Param<'a> {
 
 impl<'a> SourceRanged for Param<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -15394,10 +15394,10 @@ impl<'a> ParenExpr<'a> {
 
 impl<'a> SourceRanged for ParenExpr<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -15502,10 +15502,10 @@ impl<'a> PrivateMethod<'a> {
 
 impl<'a> SourceRanged for PrivateMethod<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -15586,10 +15586,10 @@ impl<'a> PrivateName<'a> {
 
 impl<'a> SourceRanged for PrivateName<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -15695,10 +15695,10 @@ impl<'a> PrivateProp<'a> {
 
 impl<'a> SourceRanged for PrivateProp<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -15810,10 +15810,10 @@ impl<'a> Regex<'a> {
 
 impl<'a> SourceRanged for Regex<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -15892,10 +15892,10 @@ impl<'a> RestPat<'a> {
 
 impl<'a> SourceRanged for RestPat<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -15983,10 +15983,10 @@ impl<'a> ReturnStmt<'a> {
 
 impl<'a> SourceRanged for ReturnStmt<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -16073,10 +16073,10 @@ impl<'a> Script<'a> {
 
 impl<'a> SourceRanged for Script<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -16161,10 +16161,10 @@ impl<'a> SeqExpr<'a> {
 
 impl<'a> SourceRanged for SeqExpr<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -16248,10 +16248,10 @@ impl<'a> SetterProp<'a> {
 
 impl<'a> SourceRanged for SetterProp<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -16346,10 +16346,10 @@ impl<'a> SpreadElement<'a> {
 
 impl<'a> SourceRanged for SpreadElement<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -16427,10 +16427,10 @@ impl<'a> StaticBlock<'a> {
 
 impl<'a> SourceRanged for StaticBlock<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -16518,10 +16518,10 @@ impl<'a> Str<'a> {
 
 impl<'a> SourceRanged for Str<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -16593,10 +16593,10 @@ impl<'a> Super<'a> {
 
 impl<'a> SourceRanged for Super<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -16670,10 +16670,10 @@ impl<'a> SuperPropExpr<'a> {
 
 impl<'a> SourceRanged for SuperPropExpr<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -16756,10 +16756,10 @@ impl<'a> SwitchCase<'a> {
 
 impl<'a> SourceRanged for SwitchCase<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -16852,10 +16852,10 @@ impl<'a> SwitchStmt<'a> {
 
 impl<'a> SourceRanged for SwitchStmt<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -16942,10 +16942,10 @@ impl<'a> TaggedTpl<'a> {
 
 impl<'a> SourceRanged for TaggedTpl<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -17035,10 +17035,10 @@ impl<'a> ThisExpr<'a> {
 
 impl<'a> SourceRanged for ThisExpr<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -17111,10 +17111,10 @@ impl<'a> ThrowStmt<'a> {
 
 impl<'a> SourceRanged for ThrowStmt<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -17193,10 +17193,10 @@ impl<'a> Tpl<'a> {
 
 impl<'a> SourceRanged for Tpl<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -17301,10 +17301,10 @@ impl<'a> TplElement<'a> {
 
 impl<'a> SourceRanged for TplElement<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -17379,10 +17379,10 @@ impl<'a> TryStmt<'a> {
 
 impl<'a> SourceRanged for TryStmt<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -17480,10 +17480,10 @@ impl<'a> TsArrayType<'a> {
 
 impl<'a> SourceRanged for TsArrayType<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -17562,10 +17562,10 @@ impl<'a> TsAsExpr<'a> {
 
 impl<'a> SourceRanged for TsAsExpr<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -17648,10 +17648,10 @@ impl<'a> TsCallSignatureDecl<'a> {
 
 impl<'a> SourceRanged for TsCallSignatureDecl<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -17756,10 +17756,10 @@ impl<'a> TsConditionalType<'a> {
 
 impl<'a> SourceRanged for TsConditionalType<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -17846,10 +17846,10 @@ impl<'a> TsConstAssertion<'a> {
 
 impl<'a> SourceRanged for TsConstAssertion<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -17929,10 +17929,10 @@ impl<'a> TsConstructSignatureDecl<'a> {
 
 impl<'a> SourceRanged for TsConstructSignatureDecl<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -18040,10 +18040,10 @@ impl<'a> TsConstructorType<'a> {
 
 impl<'a> SourceRanged for TsConstructorType<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -18147,10 +18147,10 @@ impl<'a> TsEnumDecl<'a> {
 
 impl<'a> SourceRanged for TsEnumDecl<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -18236,10 +18236,10 @@ impl<'a> TsEnumMember<'a> {
 
 impl<'a> SourceRanged for TsEnumMember<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -18330,10 +18330,10 @@ impl<'a> TsExportAssignment<'a> {
 
 impl<'a> SourceRanged for TsExportAssignment<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -18412,10 +18412,10 @@ impl<'a> TsExprWithTypeArgs<'a> {
 
 impl<'a> SourceRanged for TsExprWithTypeArgs<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -18503,10 +18503,10 @@ impl<'a> TsExternalModuleRef<'a> {
 
 impl<'a> SourceRanged for TsExternalModuleRef<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -18586,10 +18586,10 @@ impl<'a> TsFnType<'a> {
 
 impl<'a> SourceRanged for TsFnType<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -18697,10 +18697,10 @@ impl<'a> TsGetterSignature<'a> {
 
 impl<'a> SourceRanged for TsGetterSignature<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -18801,10 +18801,10 @@ impl<'a> TsImportEqualsDecl<'a> {
 
 impl<'a> SourceRanged for TsImportEqualsDecl<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -18887,10 +18887,10 @@ impl<'a> TsImportType<'a> {
 
 impl<'a> SourceRanged for TsImportType<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -18997,10 +18997,10 @@ impl<'a> TsIndexSignature<'a> {
 
 impl<'a> SourceRanged for TsIndexSignature<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -19097,10 +19097,10 @@ impl<'a> TsIndexedAccessType<'a> {
 
 impl<'a> SourceRanged for TsIndexedAccessType<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -19181,10 +19181,10 @@ impl<'a> TsInferType<'a> {
 
 impl<'a> SourceRanged for TsInferType<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -19263,10 +19263,10 @@ impl<'a> TsInstantiation<'a> {
 
 impl<'a> SourceRanged for TsInstantiation<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -19347,10 +19347,10 @@ impl<'a> TsInterfaceBody<'a> {
 
 impl<'a> SourceRanged for TsInterfaceBody<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -19439,10 +19439,10 @@ impl<'a> TsInterfaceDecl<'a> {
 
 impl<'a> SourceRanged for TsInterfaceDecl<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -19540,10 +19540,10 @@ impl<'a> TsIntersectionType<'a> {
 
 impl<'a> SourceRanged for TsIntersectionType<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -19628,10 +19628,10 @@ impl<'a> TsKeywordType<'a> {
 
 impl<'a> SourceRanged for TsKeywordType<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -19704,10 +19704,10 @@ impl<'a> TsLitType<'a> {
 
 impl<'a> SourceRanged for TsLitType<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -19795,10 +19795,10 @@ impl<'a> TsMappedType<'a> {
 
 impl<'a> SourceRanged for TsMappedType<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -19911,10 +19911,10 @@ impl<'a> TsMethodSignature<'a> {
 
 impl<'a> SourceRanged for TsMethodSignature<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -20019,10 +20019,10 @@ impl<'a> TsModuleBlock<'a> {
 
 impl<'a> SourceRanged for TsModuleBlock<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -20114,10 +20114,10 @@ impl<'a> TsModuleDecl<'a> {
 
 impl<'a> SourceRanged for TsModuleDecl<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -20215,10 +20215,10 @@ impl<'a> TsNamespaceDecl<'a> {
 
 impl<'a> SourceRanged for TsNamespaceDecl<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -20299,10 +20299,10 @@ impl<'a> TsNamespaceExportDecl<'a> {
 
 impl<'a> SourceRanged for TsNamespaceExportDecl<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -20380,10 +20380,10 @@ impl<'a> TsNonNullExpr<'a> {
 
 impl<'a> SourceRanged for TsNonNullExpr<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -20461,10 +20461,10 @@ impl<'a> TsOptionalType<'a> {
 
 impl<'a> SourceRanged for TsOptionalType<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -20556,10 +20556,10 @@ impl<'a> TsParamProp<'a> {
 
 impl<'a> SourceRanged for TsParamProp<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -20644,10 +20644,10 @@ impl<'a> TsParenthesizedType<'a> {
 
 impl<'a> SourceRanged for TsParenthesizedType<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -20741,10 +20741,10 @@ impl<'a> TsPropertySignature<'a> {
 
 impl<'a> SourceRanged for TsPropertySignature<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -20860,10 +20860,10 @@ impl<'a> TsQualifiedName<'a> {
 
 impl<'a> SourceRanged for TsQualifiedName<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -20944,10 +20944,10 @@ impl<'a> TsRestType<'a> {
 
 impl<'a> SourceRanged for TsRestType<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -21038,10 +21038,10 @@ impl<'a> TsSetterSignature<'a> {
 
 impl<'a> SourceRanged for TsSetterSignature<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -21121,10 +21121,10 @@ impl<'a> TsThisType<'a> {
 
 impl<'a> SourceRanged for TsThisType<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -21198,10 +21198,10 @@ impl<'a> TsTplLitType<'a> {
 
 impl<'a> SourceRanged for TsTplLitType<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -21292,10 +21292,10 @@ impl<'a> TsTupleElement<'a> {
 
 impl<'a> SourceRanged for TsTupleElement<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -21383,10 +21383,10 @@ impl<'a> TsTupleType<'a> {
 
 impl<'a> SourceRanged for TsTupleType<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -21474,10 +21474,10 @@ impl<'a> TsTypeAliasDecl<'a> {
 
 impl<'a> SourceRanged for TsTypeAliasDecl<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -21568,10 +21568,10 @@ impl<'a> TsTypeAnn<'a> {
 
 impl<'a> SourceRanged for TsTypeAnn<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -21650,10 +21650,10 @@ impl<'a> TsTypeAssertion<'a> {
 
 impl<'a> SourceRanged for TsTypeAssertion<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -21734,10 +21734,10 @@ impl<'a> TsTypeLit<'a> {
 
 impl<'a> SourceRanged for TsTypeLit<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -21823,10 +21823,10 @@ impl<'a> TsTypeOperator<'a> {
 
 impl<'a> SourceRanged for TsTypeOperator<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -21914,10 +21914,10 @@ impl<'a> TsTypeParam<'a> {
 
 impl<'a> SourceRanged for TsTypeParam<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -22015,10 +22015,10 @@ impl<'a> TsTypeParamDecl<'a> {
 
 impl<'a> SourceRanged for TsTypeParamDecl<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -22100,10 +22100,10 @@ impl<'a> TsTypeParamInstantiation<'a> {
 
 impl<'a> SourceRanged for TsTypeParamInstantiation<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -22190,10 +22190,10 @@ impl<'a> TsTypePredicate<'a> {
 
 impl<'a> SourceRanged for TsTypePredicate<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -22283,10 +22283,10 @@ impl<'a> TsTypeQuery<'a> {
 
 impl<'a> SourceRanged for TsTypeQuery<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -22375,10 +22375,10 @@ impl<'a> TsTypeRef<'a> {
 
 impl<'a> SourceRanged for TsTypeRef<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -22466,10 +22466,10 @@ impl<'a> TsUnionType<'a> {
 
 impl<'a> SourceRanged for TsUnionType<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -22555,10 +22555,10 @@ impl<'a> UnaryExpr<'a> {
 
 impl<'a> SourceRanged for UnaryExpr<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -22644,10 +22644,10 @@ impl<'a> UpdateExpr<'a> {
 
 impl<'a> SourceRanged for UpdateExpr<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -22733,10 +22733,10 @@ impl<'a> VarDecl<'a> {
 
 impl<'a> SourceRanged for VarDecl<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -22825,10 +22825,10 @@ impl<'a> VarDeclarator<'a> {
 
 impl<'a> SourceRanged for VarDeclarator<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -22917,10 +22917,10 @@ impl<'a> WhileStmt<'a> {
 
 impl<'a> SourceRanged for WhileStmt<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -23002,10 +23002,10 @@ impl<'a> WithStmt<'a> {
 
 impl<'a> SourceRanged for WithStmt<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 
@@ -23090,10 +23090,10 @@ impl<'a> YieldExpr<'a> {
 
 impl<'a> SourceRanged for YieldExpr<'a> {
   fn start(&self) -> SourcePos {
-    self.inner.span().lo.into()
+    SourcePos::from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.inner.span().hi.into()
+    SourcePos::from_byte_pos(self.inner.span().hi)
   }
 }
 

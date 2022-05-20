@@ -36,7 +36,7 @@ impl SourceTextInfo {
     // The BOM should be stripped before it gets passed here
     // because it's a text encoding concern that should be
     // stripped when the file is read.
-    debug_assert!(!text.starts_with(BOM_CHAR));
+    assert!(!text.starts_with(BOM_CHAR), "BOM should be stripped before creating a SourceTextInfo.");
 
     Self::new_with_indent_width(start_pos, text, 2)
   }
@@ -150,12 +150,12 @@ impl SourceTextInfo {
       .line_and_column_display_with_indent_width(self.get_relative_index_from_pos(pos), indent_width)
   }
 
-  /// Gets the byte position of the provided line and column index.
+  /// Gets the source position of the provided line and column index.
   ///
   /// Note that this will panic if providing a line index outside the
   /// bounds of the number of lines, but will clip the the line end byte index
   /// when exceeding the line length.
-  pub fn byte_index(&self, line_and_column_index: LineAndColumnIndex) -> SourcePos {
+  pub fn loc_to_source_pos(&self, line_and_column_index: LineAndColumnIndex) -> SourcePos {
     self.assert_line_index(line_and_column_index.line_index);
     self.get_pos_from_relative_index(self.text_lines.byte_index(line_and_column_index))
   }
