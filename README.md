@@ -28,13 +28,13 @@ All (`SourceRanged` trait):
 - `.start_column_fast(&self, root_node: &dyn SourceTextInfoProvider) -> usize`
 - `.end_column_fast(&self, root_node: &dyn SourceTextInfoProvider) -> usize`
 - `.width_fast(&self, root_node: &dyn SourceTextInfoProvider) -> usize`
-- `.tokens_fast(&self, root_node: &dyn SourceTextInfoProvider) -> &'a [TokenAndSpan]`
-- `.leading_comments_fast(&self, root_node: &dyn SourceTextInfoProvider) -> CommentsIterator<'a>`
-- `.trailing_comments_fast(&self, root_node: &dyn SourceTextInfoProvider) -> CommentsIterator<'a>`
-- `.previous_token_fast(&self, root_node: &dyn SourceTextInfoProvider) -> Option<&TokenAndSpan>`
-- `.next_token_fast(&self, root_node: &dyn SourceTextInfoProvider) -> Option<&TokenAndSpan>`
-- `.previous_tokens_fast(&self, root_node: &dyn SourceTextInfoProvider) -> &'a [TokenAndSpan]`
-- `.next_tokens_fast(&self, root_node: &dyn SourceTextInfoProvider) -> &'a [TokenAndSpan]`
+- `.tokens_fast(&self, root_node: &dyn RootNode) -> &'a [TokenAndSpan]`
+- `.leading_comments_fast(&self, root_node: &dyn RootNode) -> CommentsIterator<'a>`
+- `.trailing_comments_fast(&self, root_node: &dyn RootNode) -> CommentsIterator<'a>`
+- `.previous_token_fast(&self, root_node: &dyn RootNode) -> Option<&TokenAndSpan>`
+- `.next_token_fast(&self, root_node: &dyn RootNode) -> Option<&TokenAndSpan>`
+- `.previous_tokens_fast(&self, root_node: &dyn RootNode) -> &'a [TokenAndSpan]`
+- `.next_tokens_fast(&self, root_node: &dyn RootNode) -> &'a [TokenAndSpan]`
 
 Node/Enum Node/Nodes:
 
