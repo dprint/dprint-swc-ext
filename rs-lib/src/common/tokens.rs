@@ -126,7 +126,7 @@ mod test {
 
   use super::super::pos::SourcePos;
   use super::TokenContainer;
-  use crate::common::SwcSourceRanged;
+  use crate::common::SourceRangedForSpanned;
   use crate::test_helpers::*;
 
   #[test]

@@ -371,14 +371,14 @@ where
 /// There were conflicts with implementing `SourceRanged` for `&SourceRanged`
 /// with swc's Spanned implementation, so this needed to be a separate trait
 /// unfortunately and I couldn't figure out how to combine it with `SourceRanged`
-pub trait SwcSourceRanged {
+pub trait SourceRangedForSpanned {
   fn start(&self) -> SourcePos;
   fn end(&self) -> SourcePos;
 
   source_ranged_trait!();
 }
 
-impl<T> SwcSourceRanged for T
+impl<T> SourceRangedForSpanned for T
 where
   T: swc_common::Spanned,
 {
