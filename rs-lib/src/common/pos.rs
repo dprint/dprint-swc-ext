@@ -34,10 +34,6 @@ impl SourcePos {
   /// the text info's start position and add to it in order to
   /// get a new source position.
   pub fn unsafely_from_byte_pos(byte_pos: BytePos) -> Self {
-    Self::from_byte_pos(byte_pos)
-  }
-
-  pub(crate) fn from_byte_pos(byte_pos: BytePos) -> Self {
     #[cfg(debug_assertions)]
     if byte_pos < StartSourcePos::START_SOURCE_POS.as_byte_pos() {
       panic!(concat!(
@@ -217,7 +213,7 @@ impl SourceRange<SourcePos> {
   /// from swc and needing to convert it to a source position.
   /// Generally, prefer using the `.range()` method.
   pub fn unsafely_from_span(span: Span) -> Self {
-    SourceRange::new(SourcePos::from_byte_pos(span.lo), SourcePos::from_byte_pos(span.hi))
+    SourceRange::new(SourcePos::unsafely_from_byte_pos(span.lo), SourcePos::unsafely_from_byte_pos(span.hi))
   }
 }
 
@@ -383,11 +379,11 @@ where
   T: swc_common::Spanned,
 {
   fn start(&self) -> SourcePos {
-    SourcePos::from_byte_pos(self.span().lo)
+    SourcePos::unsafely_from_byte_pos(self.span().lo)
   }
 
   fn end(&self) -> SourcePos {
-    SourcePos::from_byte_pos(self.span().hi)
+    SourcePos::unsafely_from_byte_pos(self.span().hi)
   }
 }
 

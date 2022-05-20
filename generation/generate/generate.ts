@@ -461,11 +461,11 @@ export function generate(analysisResult: AnalysisResult): string {
       writer.blankLineIfLastNot();
       writeTrait("SourceRanged", `${struct.name}<'a>`, () => {
         writer.write("fn start(&self) -> SourcePos").block(() => {
-          writer.writeLine("self.inner.span().lo.into()");
+          writer.writeLine("SourcePos::unsafely_from_byte_pos(self.inner.span().lo)");
         });
 
         writer.write("fn end(&self) -> SourcePos").block(() => {
-          writer.writeLine("self.inner.span().hi.into()");
+          writer.writeLine("SourcePos::unsafely_from_byte_pos(self.inner.span().hi)");
         });
       });
 
