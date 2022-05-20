@@ -92,7 +92,7 @@ Root Node (Program/Module/Script):
   collection of source files (should be easy).
 - Unit tests
 
-## Example
+## `view` - Example
 
 Given the following parsed input code:
 
@@ -105,7 +105,7 @@ Code can be written like so:
 
 ```rust
 // setup swc (parse an AST and optionally get the comments and tokens)
-let source_file: swc_common::SourceFile = ...;
+let text_info = SourceTextInfo::new(...);
 let program: swc_ecmascript::ast::Program = ...;
 let comments: swc_common::comments::SingleThreadedComments = ...;
 let tokens: Vec<TokenAndSpan> = ...;
@@ -113,9 +113,7 @@ let tokens: Vec<TokenAndSpan> = ...;
 // setup for creating a view
 let program_info = ProgramInfo {
   program: &program,
-  // optionally provide the swc_common::SourceFile or an implementation
-  // of the `SourceFile` trait for using text related methods
-  source_file: Some(&source_file),
+  text_info: Some(&text_info),
   // optionally provide the comments for comment related methods
   comments: Some(&comments)
   // optionally provide the tokens for token related methods

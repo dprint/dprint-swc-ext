@@ -5,9 +5,9 @@ pub use text_lines::LineAndColumnIndex;
 pub use text_lines::TextLines;
 
 use super::pos::*;
+use super::text_encoding::strip_bom_mut;
+use super::text_encoding::BOM_CHAR;
 use super::LineAndColumnDisplay;
-
-const BOM_CHAR: char = '\u{FEFF}';
 
 /// Stores the source text along with other data such as where all the lines
 /// occur in the text.
@@ -36,7 +36,17 @@ impl SourceTextInfo {
     // The BOM should be stripped before it gets passed here
     // because it's a text encoding concern that should be
     // stripped when the file is read.
-    assert!(!text.starts_with(BOM_CHAR), "BOM should be stripped before creating a SourceTextInfo.");
+    // todo(dsherret): re-enable after removing the below
+    // assert!(!text.starts_with(BOM_CHAR), "BOM should be stripped before creating a SourceTextInfo.");
+
+    // todo(dsherret): remove this once handled downstream
+    let text = if text.starts_with(BOM_CHAR) {
+      let mut text = text.to_string();
+      strip_bom_mut(&mut text);
+      text.into()
+    } else {
+      text
+    };
 
     Self::new_with_indent_width(start_pos, text, 2)
   }

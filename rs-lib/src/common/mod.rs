@@ -1,5 +1,6 @@
 mod comments;
 mod pos;
+mod text_encoding;
 mod text_info;
 mod tokens;
 mod types;

@@ -1,10 +1,10 @@
 [package]
 name = "dprint-swc-ext"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["David Sherret <dsherret@gmail.com>"]
 edition = "2021"
 license = "MIT"
-description = "View of the swc AST that's easier to navigate."
+description = "Functionality to make swc easier to work with."
 
 [package.metadata.docs.rs]
 all-features = true
