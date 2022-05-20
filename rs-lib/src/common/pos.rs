@@ -207,7 +207,7 @@ impl<T: Into<SourcePos> + Clone + Copy> SourceRange<T> {
 
 impl SourceRange<SourcePos> {
   /// Gets the relative byte range based on the source text's start position.
-  pub fn as_std_range(&self, source_start: StartSourcePos) -> std::ops::Range<usize> {
+  pub fn as_byte_range(&self, source_start: StartSourcePos) -> std::ops::Range<usize> {
     let start = self.start - source_start;
     let end = self.end - source_start;
     start..end
@@ -223,7 +223,7 @@ impl SourceRange<SourcePos> {
 
 impl SourceRange<StartSourcePos> {
   /// Gets the relative byte range based on the source text's start position.
-  pub fn as_std_range(&self) -> std::ops::Range<usize> {
+  pub fn as_byte_range(&self) -> std::ops::Range<usize> {
     let end = self.end - self.start;
     0..end
   }
@@ -298,7 +298,7 @@ macro_rules! source_ranged_trait {
 
     fn text_fast<'a>(&self, source: &dyn SourceTextInfoProvider<'a>) -> &'a str {
       let text_info = source.text_info();
-      let byte_range = self.range() - text_info.range().start;
+      let byte_range = self.range().as_byte_range(text_info.range().start);
       &text_info.text_str()[byte_range]
     }
 
