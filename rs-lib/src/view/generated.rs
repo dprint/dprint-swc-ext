@@ -131,6 +131,7 @@ pub enum Node<'a> {
   KeyValuePatProp(&'a KeyValuePatProp<'a>),
   KeyValueProp(&'a KeyValueProp<'a>),
   LabeledStmt(&'a LabeledStmt<'a>),
+  ListFormat(&'a ListFormat<'a>),
   MemberExpr(&'a MemberExpr<'a>),
   MetaPropExpr(&'a MetaPropExpr<'a>),
   MethodProp(&'a MethodProp<'a>),
@@ -321,6 +322,7 @@ impl<'a> SourceRanged for Node<'a> {
       Node::KeyValuePatProp(node) => node.start(),
       Node::KeyValueProp(node) => node.start(),
       Node::LabeledStmt(node) => node.start(),
+      Node::ListFormat(node) => node.start(),
       Node::MemberExpr(node) => node.start(),
       Node::MetaPropExpr(node) => node.start(),
       Node::MethodProp(node) => node.start(),
@@ -492,6 +494,7 @@ impl<'a> SourceRanged for Node<'a> {
       Node::KeyValuePatProp(node) => node.end(),
       Node::KeyValueProp(node) => node.end(),
       Node::LabeledStmt(node) => node.end(),
+      Node::ListFormat(node) => node.end(),
       Node::MemberExpr(node) => node.end(),
       Node::MetaPropExpr(node) => node.end(),
       Node::MethodProp(node) => node.end(),
@@ -666,6 +669,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::KeyValuePatProp(node) => NodeTrait::parent(*node),
       Node::KeyValueProp(node) => NodeTrait::parent(*node),
       Node::LabeledStmt(node) => NodeTrait::parent(*node),
+      Node::ListFormat(node) => NodeTrait::parent(*node),
       Node::MemberExpr(node) => NodeTrait::parent(*node),
       Node::MetaPropExpr(node) => NodeTrait::parent(*node),
       Node::MethodProp(node) => NodeTrait::parent(*node),
@@ -838,6 +842,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::KeyValuePatProp(node) => node.children(),
       Node::KeyValueProp(node) => node.children(),
       Node::LabeledStmt(node) => node.children(),
+      Node::ListFormat(node) => node.children(),
       Node::MemberExpr(node) => node.children(),
       Node::MetaPropExpr(node) => node.children(),
       Node::MethodProp(node) => node.children(),
@@ -1010,6 +1015,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::KeyValuePatProp(node) => node.as_node(),
       Node::KeyValueProp(node) => node.as_node(),
       Node::LabeledStmt(node) => node.as_node(),
+      Node::ListFormat(node) => node.as_node(),
       Node::MemberExpr(node) => node.as_node(),
       Node::MetaPropExpr(node) => node.as_node(),
       Node::MethodProp(node) => node.as_node(),
@@ -1182,6 +1188,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::KeyValuePatProp(_) => NodeKind::KeyValuePatProp,
       Node::KeyValueProp(_) => NodeKind::KeyValueProp,
       Node::LabeledStmt(_) => NodeKind::LabeledStmt,
+      Node::ListFormat(_) => NodeKind::ListFormat,
       Node::MemberExpr(_) => NodeKind::MemberExpr,
       Node::MetaPropExpr(_) => NodeKind::MetaPropExpr,
       Node::MethodProp(_) => NodeKind::MethodProp,
@@ -1355,6 +1362,7 @@ pub enum NodeKind {
   KeyValuePatProp,
   KeyValueProp,
   LabeledStmt,
+  ListFormat,
   MemberExpr,
   MetaPropExpr,
   MethodProp,
@@ -1527,6 +1535,7 @@ impl std::fmt::Display for NodeKind {
       NodeKind::KeyValuePatProp => "KeyValuePatProp",
       NodeKind::KeyValueProp => "KeyValueProp",
       NodeKind::LabeledStmt => "LabeledStmt",
+      NodeKind::ListFormat => "ListFormat",
       NodeKind::MemberExpr => "MemberExpr",
       NodeKind::MetaPropExpr => "MetaPropExpr",
       NodeKind::MethodProp => "MethodProp",
@@ -14184,6 +14193,66 @@ fn set_parent_for_labeled_stmt<'a>(node: &LabeledStmt<'a>, parent: Node<'a>) {
     let node_ptr = node as *const LabeledStmt<'a> as *mut LabeledStmt<'a>;
     (*node_ptr).parent.replace(parent);
   }
+}
+
+#[derive(Clone)]
+pub struct ListFormat<'a> {
+  pub inner: &'a swc_ast::ListFormat,
+}
+
+impl<'a> SourceRanged for ListFormat<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::unsafely_from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::unsafely_from_byte_pos(self.inner.span().hi)
+  }
+}
+
+impl<'a> From<&ListFormat<'a>> for Node<'a> {
+  fn from(node: &ListFormat<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&ListFormat<'a>, &'a ListFormat<'a>>(node) };
+    Node::ListFormat(node)
+  }
+}
+
+impl<'a> NodeTrait<'a> for ListFormat<'a> {
+  fn parent(&self) -> Option<Node<'a>> {
+    None
+  }
+
+  fn children(&self) -> Vec<Node<'a>> {
+    Vec::with_capacity(0)
+  }
+
+  fn as_node(&self) -> Node<'a> {
+    self.into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::ListFormat
+  }
+}
+
+impl<'a> CastableNode<'a> for ListFormat<'a> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
+    if let Node::ListFormat(node) = node {
+      Some(node)
+    } else {
+      None
+    }
+  }
+
+  fn kind() -> NodeKind {
+    NodeKind::ListFormat
+  }
+}
+
+fn get_view_for_list_format<'a>(inner: &'a swc_ast::ListFormat, bump: &'a Bump) -> &'a ListFormat<'a> {
+  let node = bump.alloc(ListFormat {
+    inner,
+  });
+  node
 }
 
 #[derive(Clone)]
