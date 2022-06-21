@@ -156,7 +156,7 @@ checksum = "0e25ea47919b1560c4e3b7fe0aaab9becf5b84a10325ddf7db0f0ba5e1026499"
 
 [[package]]
 name = "dprint-swc-ext"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "bumpalo",
  "num-bigint",
