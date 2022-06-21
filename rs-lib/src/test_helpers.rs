@@ -1,10 +1,9 @@
-use swc_ecmascript::parser::token::TokenAndSpan;
-
 use crate::swc::ast::{EsVersion, Module};
 use crate::swc::common::{
   comments::SingleThreadedComments,
   errors::{DiagnosticBuilder, Emitter, Handler},
 };
+use crate::swc::parser::token::TokenAndSpan;
 use crate::swc::parser::{lexer::Lexer, Capturing, Parser, Syntax};
 use std::path::Path;
 
