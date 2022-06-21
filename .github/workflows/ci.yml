@@ -63,7 +63,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_TOKEN }}
       if: |
-        github.repository == 'dprint/dprint-swc-ecma-ast-view' &&
+        github.repository == 'dprint/dprint-swc-ext' &&
         github.ref == 'refs/heads/main' &&
         matrix.config.kind == 'test_release'
       run: cd rs-lib && deno run -A --no-check https://raw.githubusercontent.com/denoland/automation/0.4.0/tasks/release_on_crate_version_change.ts --publish
