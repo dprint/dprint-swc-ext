@@ -27,13 +27,11 @@ jobs:
     - name: Cache cargo
       uses: Swatinem/rust-cache@v1
 
-    - name: Install bvm binaries
-      uses: bvm/gh-action@v1.1.0
+    - uses: denoland/setup-deno@v1
 
     - name: Ensure code generation same
       if: matrix.config.kind == 'test_debug'
       run: |
-        . $BVM_INSTALL_DIR/bin/bvm-init
         cargo install cargo-clone
         rustup toolchain install nightly
         chmod +x ./scripts/generate.sh
