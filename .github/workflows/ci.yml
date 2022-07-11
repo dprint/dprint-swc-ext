@@ -34,8 +34,8 @@ jobs:
       run: |
         cargo install cargo-clone
         rustup toolchain install nightly
-        chmod +x ./scripts/generate.sh
-        ./scripts/generate.sh
+        chmod +x ./scripts/generate.ts
+        ./scripts/generate.ts
         echo Checking for git changes...
         git diff --no-ext-diff --exit-code
 
