@@ -1,16 +1,16 @@
 #!/usr/bin/env -S deno run -A
-import $ from "https://deno.land/x/dax@0.3.0/mod.ts";
+import $ from "https://deno.land/x/dax@0.4.1/mod.ts";
 
 if (!Deno.args.some(a => a === "--quick")) {
   const swcVersions = await getSwcVersions();
-  $.logTitle("Setting", "up crates. Note: Provide --quick to just code generate.");
-  $.logTitle("Setting", `up swc_ecma_ast ${swcVersions.swcEcmaAst}...`);
+  $.logTitle("Setting up crates. Note: Provide --quick to just code generate.");
+  $.logTitle(`Setting up swc_ecma_ast ${swcVersions.swcEcmaAst}...`);
   await $.fs.emptyDir("swc_ecma_ast");
   await $`cargo clone swc_ecma_ast@${swcVersions.swcEcmaAst}`;
   await $`cd swc_ecma_ast ; cargo +nightly rustdoc -- --output-format json -Z unstable-options`;
   await $`cp swc_ecma_ast/target/doc/swc_ecma_ast.json swc_ecma_ast.json`;
 
-  $.logTitle("Setting", `up swc_ecma_parser ${swcVersions.swcEcmaParser}...`);
+  $.logTitle(`Setting up swc_ecma_parser ${swcVersions.swcEcmaParser}...`);
   await $.fs.emptyDir("swc_ecma_parser");
   await $`cargo clone swc_ecma_parser@${swcVersions.swcEcmaParser}`;
   // generate these files to make cargo happy
