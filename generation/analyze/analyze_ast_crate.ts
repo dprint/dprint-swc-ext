@@ -31,7 +31,7 @@ export function analyzeAstCrate() {
     const structs = Object.keys(crate.index).map(key => crate.index[key])
       .filter(item => item.kind === "struct");
     for (const struct of structs) {
-      if (struct.visibility !== "public" || struct.name === "ListFormat") {
+      if (struct.visibility !== "public" || struct.name === "ListFormat" || struct.name === "ReservedUnused") {
         continue;
       }
 

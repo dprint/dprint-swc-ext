@@ -1,9 +1,5 @@
 # Contributing
 
-## Windows
-
-If you're on Windows, use WSL.
-
 ## Setup
 
 1. Install [cargo-clone](https://crates.io/crates/cargo-clone): `cargo install cargo-clone`
