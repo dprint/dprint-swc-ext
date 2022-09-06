@@ -750,9 +750,9 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 
 [[package]]
 name = "swc_atoms"
-version = "0.4.9"
+version = "0.4.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b7219da611532657c2cbc0671920295e60dc00be98169bf4487cb7290e5ce495"
+checksum = "8fb43a79c8affc20f5d52b7db093399585ce87674427adc60843dbc8ec242608"
 dependencies = [
  "once_cell",
  "rustc-hash",
@@ -791,9 +791,9 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_ast"
-version = "0.90.15"
+version = "0.90.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "571989e199094be58d107e032c0b868f7b04a59a238e0a31bc9df8faf537dcd3"
+checksum = "41e78ceea39b1dacef1e7cda29488131677224bf6111ed5e853791d81c8a36da"
 dependencies = [
  "bitflags",
  "is-macro",
@@ -808,9 +808,9 @@ dependencies = [
 
 [[package]]
 name = "swc_ecma_parser"
-version = "0.118.3"
+version = "0.118.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3a2979c92eb41ce535a40844af70f0e89aed9093485c51563907d0c4c07cd17c"
+checksum = "b993963c284a2cadf46213ba0f4faa8a5153cfb02437f07ef21ebd90e598cae7"
 dependencies = [
  "either",
  "enum_kind",
