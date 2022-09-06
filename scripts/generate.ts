@@ -7,7 +7,7 @@ if (!Deno.args.some(a => a === "--quick")) {
   $.logStep(`Setting up swc_ecma_ast ${swcVersions.swcEcmaAst}...`);
   await $.fs.emptyDir("swc_ecma_ast");
   await $`cargo clone swc_ecma_ast@${swcVersions.swcEcmaAst}`;
-  await $`cd swc_ecma_ast ; cargo +nightly rustdoc -- --output-format json -Z unstable-options`;
+  await $`cd swc_ecma_ast ; cargo rustdoc -- --output-format json -Z unstable-options`;
   await $.fs.copy("swc_ecma_ast/target/doc/swc_ecma_ast.json", "swc_ecma_ast.json", { overwrite: true });
 
   $.logStep(`Setting up swc_ecma_parser ${swcVersions.swcEcmaParser}...`);
@@ -17,7 +17,7 @@ if (!Deno.args.some(a => a === "--quick")) {
   await $.fs.ensureFile("swc_ecma_parser/benches/compare/main.rs");
   await $.fs.ensureFile("swc_ecma_parser/benches/parser/main.rs");
   await $.fs.ensureFile("swc_ecma_parser/benches/lexer/main.rs");
-  await $`cd swc_ecma_parser ; cargo +nightly rustdoc -- --output-format json -Z unstable-options`;
+  await $`cd swc_ecma_parser ; cargo rustdoc -- --output-format json -Z unstable-options`;
   await $.fs.copy("swc_ecma_parser/target/doc/swc_ecma_parser.json", "swc_ecma_parser.json", { overwrite: true });
 }
 
