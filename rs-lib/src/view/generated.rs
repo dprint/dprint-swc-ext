@@ -8614,7 +8614,7 @@ impl<'a> BigInt<'a> {
 
   /// Use `None` value only for transformations to avoid recalculate
   /// characters in big integer
-  pub fn raw(&self) -> &Option<swc_atoms::JsWord> {
+  pub fn raw(&self) -> &Option<swc_atoms::Atom> {
     &self.inner.raw
   }
 }
@@ -13858,11 +13858,11 @@ impl<'a> JSXText<'a> {
     self.parent.unwrap()
   }
 
-  pub fn value(&self) -> &swc_atoms::JsWord {
+  pub fn value(&self) -> &swc_atoms::Atom {
     &self.inner.value
   }
 
-  pub fn raw(&self) -> &swc_atoms::JsWord {
+  pub fn raw(&self) -> &swc_atoms::Atom {
     &self.inner.raw
   }
 }
@@ -14445,7 +14445,7 @@ pub struct Module<'a> {
 }
 
 impl<'a> Module<'a> {
-  pub fn shebang(&self) -> &Option<swc_atoms::JsWord> {
+  pub fn shebang(&self) -> &Option<swc_atoms::Atom> {
     &self.inner.shebang
   }
 }
@@ -14850,7 +14850,7 @@ impl<'a> Number<'a> {
 
   /// Use `None` value only for transformations to avoid recalculate
   /// characters in number literal
-  pub fn raw(&self) -> &Option<swc_atoms::JsWord> {
+  pub fn raw(&self) -> &Option<swc_atoms::Atom> {
     &self.inner.raw
   }
 }
@@ -15799,11 +15799,11 @@ impl<'a> Regex<'a> {
     self.parent.unwrap()
   }
 
-  pub fn exp(&self) -> &swc_atoms::JsWord {
+  pub fn exp(&self) -> &swc_atoms::Atom {
     &self.inner.exp
   }
 
-  pub fn flags(&self) -> &swc_atoms::JsWord {
+  pub fn flags(&self) -> &swc_atoms::Atom {
     &self.inner.flags
   }
 }
@@ -16066,7 +16066,7 @@ pub struct Script<'a> {
 }
 
 impl<'a> Script<'a> {
-  pub fn shebang(&self) -> &Option<swc_atoms::JsWord> {
+  pub fn shebang(&self) -> &Option<swc_atoms::Atom> {
     &self.inner.shebang
   }
 }
@@ -16511,7 +16511,7 @@ impl<'a> Str<'a> {
 
   /// Use `None` value only for transformations to avoid recalculate escaped
   /// characters in strings
-  pub fn raw(&self) -> &Option<swc_atoms::JsWord> {
+  pub fn raw(&self) -> &Option<swc_atoms::Atom> {
     &self.inner.raw
   }
 }
@@ -17290,11 +17290,11 @@ impl<'a> TplElement<'a> {
   ///
   /// If you are going to use codegen right after creating a [TplElement], you
   /// don't have to worry about this value.
-  pub fn cooked(&self) -> &Option<swc_atoms::JsWord> {
+  pub fn cooked(&self) -> &Option<swc_atoms::Atom> {
     &self.inner.cooked
   }
 
-  pub fn raw(&self) -> &swc_atoms::JsWord {
+  pub fn raw(&self) -> &swc_atoms::Atom {
     &self.inner.raw
   }
 }

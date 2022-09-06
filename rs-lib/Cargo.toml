@@ -1,6 +1,6 @@
 [package]
 name = "dprint-swc-ext"
-version = "0.3.0"
+version = "0.4.0"
 authors = ["David Sherret <dsherret@gmail.com>"]
 edition = "2021"
 license = "MIT"
@@ -17,11 +17,11 @@ view = []
 bumpalo = "3.10.0"
 num-bigint = "0.4"
 rustc-hash = "1.1.0"
-swc_atoms = "0.2.13"
-swc_common = "0.23.0"
-swc_ecma_ast = "0.84.0"
-swc_ecma_parser = "0.111.0"
-text_lines = "0.4.1"
+swc_atoms = "0.4.10"
+swc_common = "0.27.13"
+swc_ecma_ast = "0.90.17"
+swc_ecma_parser = "0.118.7"
+text_lines = "0.6.0"
 
 [dev-dependencies]
 pretty_assertions = "1.0.0"

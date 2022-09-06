@@ -13,6 +13,10 @@ export function getTypeDefinition(crate: Crate, type: TypeInner): TypeDefinition
   switch (type.kind) {
     case "resolved_path":
       const itemSummary = crate.paths[type.inner.id];
+      if (itemSummary == null) {
+        console.error(type);
+        throw new Error(`Did not find item summary for ${type.inner.id}`);
+      }
       const path = getPath(itemSummary);
 
       // we don't care about Boxed types because the result will use an arena

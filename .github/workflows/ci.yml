@@ -24,6 +24,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - uses: dtolnay/rust-toolchain@stable
     - name: Cache cargo
       uses: Swatinem/rust-cache@v1
 
@@ -33,7 +34,6 @@ jobs:
       if: matrix.config.kind == 'test_debug'
       run: |
         cargo install cargo-clone
-        rustup toolchain install nightly
         chmod +x ./scripts/generate.ts
         ./scripts/generate.ts
         echo Checking for git changes...
