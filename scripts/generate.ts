@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run -A
-import $ from "https://deno.land/x/dax@0.11.0/mod.ts";
+import $ from "https://deno.land/x/dax@0.15.0/mod.ts";
 
 if (!Deno.args.some(a => a === "--quick")) {
   const swcVersions = await getSwcVersions();
