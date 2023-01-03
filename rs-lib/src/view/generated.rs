@@ -205,7 +205,7 @@ pub enum Node<'a> {
   TsPropertySignature(&'a TsPropertySignature<'a>),
   TsQualifiedName(&'a TsQualifiedName<'a>),
   TsRestType(&'a TsRestType<'a>),
-  TsSatisfactionExpr(&'a TsSatisfactionExpr<'a>),
+  TsSatisfiesExpr(&'a TsSatisfiesExpr<'a>),
   TsSetterSignature(&'a TsSetterSignature<'a>),
   TsThisType(&'a TsThisType<'a>),
   TsTplLitType(&'a TsTplLitType<'a>),
@@ -396,7 +396,7 @@ impl<'a> SourceRanged for Node<'a> {
       Node::TsPropertySignature(node) => node.start(),
       Node::TsQualifiedName(node) => node.start(),
       Node::TsRestType(node) => node.start(),
-      Node::TsSatisfactionExpr(node) => node.start(),
+      Node::TsSatisfiesExpr(node) => node.start(),
       Node::TsSetterSignature(node) => node.start(),
       Node::TsThisType(node) => node.start(),
       Node::TsTplLitType(node) => node.start(),
@@ -568,7 +568,7 @@ impl<'a> SourceRanged for Node<'a> {
       Node::TsPropertySignature(node) => node.end(),
       Node::TsQualifiedName(node) => node.end(),
       Node::TsRestType(node) => node.end(),
-      Node::TsSatisfactionExpr(node) => node.end(),
+      Node::TsSatisfiesExpr(node) => node.end(),
       Node::TsSetterSignature(node) => node.end(),
       Node::TsThisType(node) => node.end(),
       Node::TsTplLitType(node) => node.end(),
@@ -743,7 +743,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsPropertySignature(node) => NodeTrait::parent(*node),
       Node::TsQualifiedName(node) => NodeTrait::parent(*node),
       Node::TsRestType(node) => NodeTrait::parent(*node),
-      Node::TsSatisfactionExpr(node) => NodeTrait::parent(*node),
+      Node::TsSatisfiesExpr(node) => NodeTrait::parent(*node),
       Node::TsSetterSignature(node) => NodeTrait::parent(*node),
       Node::TsThisType(node) => NodeTrait::parent(*node),
       Node::TsTplLitType(node) => NodeTrait::parent(*node),
@@ -916,7 +916,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsPropertySignature(node) => node.children(),
       Node::TsQualifiedName(node) => node.children(),
       Node::TsRestType(node) => node.children(),
-      Node::TsSatisfactionExpr(node) => node.children(),
+      Node::TsSatisfiesExpr(node) => node.children(),
       Node::TsSetterSignature(node) => node.children(),
       Node::TsThisType(node) => node.children(),
       Node::TsTplLitType(node) => node.children(),
@@ -1089,7 +1089,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsPropertySignature(node) => node.as_node(),
       Node::TsQualifiedName(node) => node.as_node(),
       Node::TsRestType(node) => node.as_node(),
-      Node::TsSatisfactionExpr(node) => node.as_node(),
+      Node::TsSatisfiesExpr(node) => node.as_node(),
       Node::TsSetterSignature(node) => node.as_node(),
       Node::TsThisType(node) => node.as_node(),
       Node::TsTplLitType(node) => node.as_node(),
@@ -1262,7 +1262,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsPropertySignature(_) => NodeKind::TsPropertySignature,
       Node::TsQualifiedName(_) => NodeKind::TsQualifiedName,
       Node::TsRestType(_) => NodeKind::TsRestType,
-      Node::TsSatisfactionExpr(_) => NodeKind::TsSatisfactionExpr,
+      Node::TsSatisfiesExpr(_) => NodeKind::TsSatisfiesExpr,
       Node::TsSetterSignature(_) => NodeKind::TsSetterSignature,
       Node::TsThisType(_) => NodeKind::TsThisType,
       Node::TsTplLitType(_) => NodeKind::TsTplLitType,
@@ -1436,7 +1436,7 @@ pub enum NodeKind {
   TsPropertySignature,
   TsQualifiedName,
   TsRestType,
-  TsSatisfactionExpr,
+  TsSatisfiesExpr,
   TsSetterSignature,
   TsThisType,
   TsTplLitType,
@@ -1609,7 +1609,7 @@ impl std::fmt::Display for NodeKind {
       NodeKind::TsPropertySignature => "TsPropertySignature",
       NodeKind::TsQualifiedName => "TsQualifiedName",
       NodeKind::TsRestType => "TsRestType",
-      NodeKind::TsSatisfactionExpr => "TsSatisfactionExpr",
+      NodeKind::TsSatisfiesExpr => "TsSatisfiesExpr",
       NodeKind::TsSetterSignature => "TsSetterSignature",
       NodeKind::TsThisType => "TsThisType",
       NodeKind::TsTplLitType => "TsTplLitType",
@@ -2461,7 +2461,7 @@ pub enum Expr<'a> {
   TsNonNull(&'a TsNonNullExpr<'a>),
   TsAs(&'a TsAsExpr<'a>),
   TsInstantiation(&'a TsInstantiation<'a>),
-  TsSatisfaction(&'a TsSatisfactionExpr<'a>),
+  TsSatisfies(&'a TsSatisfiesExpr<'a>),
   PrivateName(&'a PrivateName<'a>),
   OptChain(&'a OptChainExpr<'a>),
   Invalid(&'a Invalid<'a>),
@@ -2523,7 +2523,7 @@ impl<'a> SourceRanged for Expr<'a> {
       Expr::TsNonNull(node) => node.start(),
       Expr::TsAs(node) => node.start(),
       Expr::TsInstantiation(node) => node.start(),
-      Expr::TsSatisfaction(node) => node.start(),
+      Expr::TsSatisfies(node) => node.start(),
       Expr::PrivateName(node) => node.start(),
       Expr::OptChain(node) => node.start(),
       Expr::Invalid(node) => node.start(),
@@ -2565,7 +2565,7 @@ impl<'a> SourceRanged for Expr<'a> {
       Expr::TsNonNull(node) => node.end(),
       Expr::TsAs(node) => node.end(),
       Expr::TsInstantiation(node) => node.end(),
-      Expr::TsSatisfaction(node) => node.end(),
+      Expr::TsSatisfies(node) => node.end(),
       Expr::PrivateName(node) => node.end(),
       Expr::OptChain(node) => node.end(),
       Expr::Invalid(node) => node.end(),
@@ -2610,7 +2610,7 @@ impl<'a> NodeTrait<'a> for Expr<'a> {
       Expr::TsNonNull(node) => NodeTrait::parent(*node),
       Expr::TsAs(node) => NodeTrait::parent(*node),
       Expr::TsInstantiation(node) => NodeTrait::parent(*node),
-      Expr::TsSatisfaction(node) => NodeTrait::parent(*node),
+      Expr::TsSatisfies(node) => NodeTrait::parent(*node),
       Expr::PrivateName(node) => NodeTrait::parent(*node),
       Expr::OptChain(node) => NodeTrait::parent(*node),
       Expr::Invalid(node) => NodeTrait::parent(*node),
@@ -2653,7 +2653,7 @@ impl<'a> NodeTrait<'a> for Expr<'a> {
       Expr::TsNonNull(node) => node.children(),
       Expr::TsAs(node) => node.children(),
       Expr::TsInstantiation(node) => node.children(),
-      Expr::TsSatisfaction(node) => node.children(),
+      Expr::TsSatisfies(node) => node.children(),
       Expr::PrivateName(node) => node.children(),
       Expr::OptChain(node) => node.children(),
       Expr::Invalid(node) => node.children(),
@@ -2696,7 +2696,7 @@ impl<'a> NodeTrait<'a> for Expr<'a> {
       Expr::TsNonNull(node) => node.as_node(),
       Expr::TsAs(node) => node.as_node(),
       Expr::TsInstantiation(node) => node.as_node(),
-      Expr::TsSatisfaction(node) => node.as_node(),
+      Expr::TsSatisfies(node) => node.as_node(),
       Expr::PrivateName(node) => node.as_node(),
       Expr::OptChain(node) => node.as_node(),
       Expr::Invalid(node) => node.as_node(),
@@ -2739,7 +2739,7 @@ impl<'a> NodeTrait<'a> for Expr<'a> {
       Expr::TsNonNull(_) => NodeKind::TsNonNullExpr,
       Expr::TsAs(_) => NodeKind::TsAsExpr,
       Expr::TsInstantiation(_) => NodeKind::TsInstantiation,
-      Expr::TsSatisfaction(_) => NodeKind::TsSatisfactionExpr,
+      Expr::TsSatisfies(_) => NodeKind::TsSatisfiesExpr,
       Expr::PrivateName(_) => NodeKind::PrivateName,
       Expr::OptChain(_) => NodeKind::OptChainExpr,
       Expr::Invalid(_) => NodeKind::Invalid,
@@ -2784,7 +2784,7 @@ impl<'a> From<&Expr<'a>> for Node<'a> {
       Expr::TsNonNull(node) => (*node).into(),
       Expr::TsAs(node) => (*node).into(),
       Expr::TsInstantiation(node) => (*node).into(),
-      Expr::TsSatisfaction(node) => (*node).into(),
+      Expr::TsSatisfies(node) => (*node).into(),
       Expr::PrivateName(node) => (*node).into(),
       Expr::OptChain(node) => (*node).into(),
       Expr::Invalid(node) => (*node).into(),
@@ -2829,7 +2829,7 @@ impl<'a> From<Expr<'a>> for Node<'a> {
       Expr::TsNonNull(node) => node.into(),
       Expr::TsAs(node) => node.into(),
       Expr::TsInstantiation(node) => node.into(),
-      Expr::TsSatisfaction(node) => node.into(),
+      Expr::TsSatisfies(node) => node.into(),
       Expr::PrivateName(node) => node.into(),
       Expr::OptChain(node) => node.into(),
       Expr::Invalid(node) => node.into(),
@@ -2873,7 +2873,7 @@ fn get_view_for_expr<'a>(inner: &'a swc_ast::Expr, bump: &'a Bump) -> Expr<'a> {
     swc_ast::Expr::TsNonNull(value) => Expr::TsNonNull(get_view_for_ts_non_null_expr(value, bump)),
     swc_ast::Expr::TsAs(value) => Expr::TsAs(get_view_for_ts_as_expr(value, bump)),
     swc_ast::Expr::TsInstantiation(value) => Expr::TsInstantiation(get_view_for_ts_instantiation(value, bump)),
-    swc_ast::Expr::TsSatisfaction(value) => Expr::TsSatisfaction(get_view_for_ts_satisfaction_expr(value, bump)),
+    swc_ast::Expr::TsSatisfies(value) => Expr::TsSatisfies(get_view_for_ts_satisfies_expr(value, bump)),
     swc_ast::Expr::PrivateName(value) => Expr::PrivateName(get_view_for_private_name(value, bump)),
     swc_ast::Expr::OptChain(value) => Expr::OptChain(get_view_for_opt_chain_expr(value, bump)),
     swc_ast::Expr::Invalid(value) => Expr::Invalid(get_view_for_invalid(value, bump)),
@@ -2916,7 +2916,7 @@ fn set_parent_for_expr<'a>(node: &Expr<'a>, parent: Node<'a>) {
     Expr::TsNonNull(value) => set_parent_for_ts_non_null_expr(value, parent),
     Expr::TsAs(value) => set_parent_for_ts_as_expr(value, parent),
     Expr::TsInstantiation(value) => set_parent_for_ts_instantiation(value, parent),
-    Expr::TsSatisfaction(value) => set_parent_for_ts_satisfaction_expr(value, parent),
+    Expr::TsSatisfies(value) => set_parent_for_ts_satisfies_expr(value, parent),
     Expr::PrivateName(value) => set_parent_for_private_name(value, parent),
     Expr::OptChain(value) => set_parent_for_opt_chain_expr(value, parent),
     Expr::Invalid(value) => set_parent_for_invalid(value, parent),
@@ -21031,20 +21031,20 @@ fn set_parent_for_ts_rest_type<'a>(node: &TsRestType<'a>, parent: Node<'a>) {
 }
 
 #[derive(Clone)]
-pub struct TsSatisfactionExpr<'a> {
+pub struct TsSatisfiesExpr<'a> {
   parent: Option<Node<'a>>,
-  pub inner: &'a swc_ast::TsSatisfactionExpr,
+  pub inner: &'a swc_ast::TsSatisfiesExpr,
   pub expr: Expr<'a>,
   pub type_ann: TsType<'a>,
 }
 
-impl<'a> TsSatisfactionExpr<'a> {
+impl<'a> TsSatisfiesExpr<'a> {
   pub fn parent(&self) -> Node<'a> {
     self.parent.unwrap()
   }
 }
 
-impl<'a> SourceRanged for TsSatisfactionExpr<'a> {
+impl<'a> SourceRanged for TsSatisfiesExpr<'a> {
   fn start(&self) -> SourcePos {
     SourcePos::unsafely_from_byte_pos(self.inner.span().lo)
   }
@@ -21053,14 +21053,14 @@ impl<'a> SourceRanged for TsSatisfactionExpr<'a> {
   }
 }
 
-impl<'a> From<&TsSatisfactionExpr<'a>> for Node<'a> {
-  fn from(node: &TsSatisfactionExpr<'a>) -> Node<'a> {
-    let node = unsafe { mem::transmute::<&TsSatisfactionExpr<'a>, &'a TsSatisfactionExpr<'a>>(node) };
-    Node::TsSatisfactionExpr(node)
+impl<'a> From<&TsSatisfiesExpr<'a>> for Node<'a> {
+  fn from(node: &TsSatisfiesExpr<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsSatisfiesExpr<'a>, &'a TsSatisfiesExpr<'a>>(node) };
+    Node::TsSatisfiesExpr(node)
   }
 }
 
-impl<'a> NodeTrait<'a> for TsSatisfactionExpr<'a> {
+impl<'a> NodeTrait<'a> for TsSatisfiesExpr<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     Some(self.parent.unwrap().clone())
   }
@@ -21077,13 +21077,13 @@ impl<'a> NodeTrait<'a> for TsSatisfactionExpr<'a> {
   }
 
   fn kind(&self) -> NodeKind {
-    NodeKind::TsSatisfactionExpr
+    NodeKind::TsSatisfiesExpr
   }
 }
 
-impl<'a> CastableNode<'a> for TsSatisfactionExpr<'a> {
+impl<'a> CastableNode<'a> for TsSatisfiesExpr<'a> {
   fn to(node: &Node<'a>) -> Option<&'a Self> {
-    if let Node::TsSatisfactionExpr(node) = node {
+    if let Node::TsSatisfiesExpr(node) = node {
       Some(node)
     } else {
       None
@@ -21091,12 +21091,12 @@ impl<'a> CastableNode<'a> for TsSatisfactionExpr<'a> {
   }
 
   fn kind() -> NodeKind {
-    NodeKind::TsSatisfactionExpr
+    NodeKind::TsSatisfiesExpr
   }
 }
 
-fn get_view_for_ts_satisfaction_expr<'a>(inner: &'a swc_ast::TsSatisfactionExpr, bump: &'a Bump) -> &'a TsSatisfactionExpr<'a> {
-  let node = bump.alloc(TsSatisfactionExpr {
+fn get_view_for_ts_satisfies_expr<'a>(inner: &'a swc_ast::TsSatisfiesExpr, bump: &'a Bump) -> &'a TsSatisfiesExpr<'a> {
+  let node = bump.alloc(TsSatisfiesExpr {
     inner,
     parent: None,
     expr: get_view_for_expr(&inner.expr, bump),
@@ -21108,9 +21108,9 @@ fn get_view_for_ts_satisfaction_expr<'a>(inner: &'a swc_ast::TsSatisfactionExpr,
   node
 }
 
-fn set_parent_for_ts_satisfaction_expr<'a>(node: &TsSatisfactionExpr<'a>, parent: Node<'a>) {
+fn set_parent_for_ts_satisfies_expr<'a>(node: &TsSatisfiesExpr<'a>, parent: Node<'a>) {
   unsafe {
-    let node_ptr = node as *const TsSatisfactionExpr<'a> as *mut TsSatisfactionExpr<'a>;
+    let node_ptr = node as *const TsSatisfiesExpr<'a> as *mut TsSatisfiesExpr<'a>;
     (*node_ptr).parent.replace(parent);
   }
 }
