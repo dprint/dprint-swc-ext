@@ -22015,6 +22015,10 @@ impl<'a> TsTypeParam<'a> {
   pub fn is_out(&self) -> bool {
     self.inner.is_out
   }
+
+  pub fn is_const(&self) -> bool {
+    self.inner.is_const
+  }
 }
 
 impl<'a> SourceRanged for TsTypeParam<'a> {
