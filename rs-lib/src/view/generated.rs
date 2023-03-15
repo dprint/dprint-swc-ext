@@ -69,6 +69,7 @@ pub enum Node<'a> {
   AssignPat(&'a AssignPat<'a>),
   AssignPatProp(&'a AssignPatProp<'a>),
   AssignProp(&'a AssignProp<'a>),
+  AutoAccessor(&'a AutoAccessor<'a>),
   AwaitExpr(&'a AwaitExpr<'a>),
   BigInt(&'a BigInt<'a>),
   BinExpr(&'a BinExpr<'a>),
@@ -260,6 +261,7 @@ impl<'a> SourceRanged for Node<'a> {
       Node::AssignPat(node) => node.start(),
       Node::AssignPatProp(node) => node.start(),
       Node::AssignProp(node) => node.start(),
+      Node::AutoAccessor(node) => node.start(),
       Node::AwaitExpr(node) => node.start(),
       Node::BigInt(node) => node.start(),
       Node::BinExpr(node) => node.start(),
@@ -432,6 +434,7 @@ impl<'a> SourceRanged for Node<'a> {
       Node::AssignPat(node) => node.end(),
       Node::AssignPatProp(node) => node.end(),
       Node::AssignProp(node) => node.end(),
+      Node::AutoAccessor(node) => node.end(),
       Node::AwaitExpr(node) => node.end(),
       Node::BigInt(node) => node.end(),
       Node::BinExpr(node) => node.end(),
@@ -607,6 +610,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::AssignPat(node) => NodeTrait::parent(*node),
       Node::AssignPatProp(node) => NodeTrait::parent(*node),
       Node::AssignProp(node) => NodeTrait::parent(*node),
+      Node::AutoAccessor(node) => NodeTrait::parent(*node),
       Node::AwaitExpr(node) => NodeTrait::parent(*node),
       Node::BigInt(node) => NodeTrait::parent(*node),
       Node::BinExpr(node) => NodeTrait::parent(*node),
@@ -780,6 +784,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::AssignPat(node) => node.children(),
       Node::AssignPatProp(node) => node.children(),
       Node::AssignProp(node) => node.children(),
+      Node::AutoAccessor(node) => node.children(),
       Node::AwaitExpr(node) => node.children(),
       Node::BigInt(node) => node.children(),
       Node::BinExpr(node) => node.children(),
@@ -953,6 +958,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::AssignPat(node) => node.as_node(),
       Node::AssignPatProp(node) => node.as_node(),
       Node::AssignProp(node) => node.as_node(),
+      Node::AutoAccessor(node) => node.as_node(),
       Node::AwaitExpr(node) => node.as_node(),
       Node::BigInt(node) => node.as_node(),
       Node::BinExpr(node) => node.as_node(),
@@ -1126,6 +1132,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::AssignPat(_) => NodeKind::AssignPat,
       Node::AssignPatProp(_) => NodeKind::AssignPatProp,
       Node::AssignProp(_) => NodeKind::AssignProp,
+      Node::AutoAccessor(_) => NodeKind::AutoAccessor,
       Node::AwaitExpr(_) => NodeKind::AwaitExpr,
       Node::BigInt(_) => NodeKind::BigInt,
       Node::BinExpr(_) => NodeKind::BinExpr,
@@ -1300,6 +1307,7 @@ pub enum NodeKind {
   AssignPat,
   AssignPatProp,
   AssignProp,
+  AutoAccessor,
   AwaitExpr,
   BigInt,
   BinExpr,
@@ -1473,6 +1481,7 @@ impl std::fmt::Display for NodeKind {
       NodeKind::AssignPat => "AssignPat",
       NodeKind::AssignPatProp => "AssignPatProp",
       NodeKind::AssignProp => "AssignProp",
+      NodeKind::AutoAccessor => "AutoAccessor",
       NodeKind::AwaitExpr => "AwaitExpr",
       NodeKind::BigInt => "BigInt",
       NodeKind::BinExpr => "BinExpr",
@@ -1864,7 +1873,10 @@ pub enum ClassMember<'a> {
   PrivateProp(&'a PrivateProp<'a>),
   TsIndexSignature(&'a TsIndexSignature<'a>),
   Empty(&'a EmptyStmt<'a>),
+  /// Stage 3
   StaticBlock(&'a StaticBlock<'a>),
+  /// Stage 3
+  AutoAccessor(&'a AutoAccessor<'a>),
 }
 
 impl<'a> ClassMember<'a> {
@@ -1900,6 +1912,7 @@ impl<'a> SourceRanged for ClassMember<'a> {
       ClassMember::TsIndexSignature(node) => node.start(),
       ClassMember::Empty(node) => node.start(),
       ClassMember::StaticBlock(node) => node.start(),
+      ClassMember::AutoAccessor(node) => node.start(),
     }
   }
   fn end(&self) -> SourcePos {
@@ -1912,6 +1925,7 @@ impl<'a> SourceRanged for ClassMember<'a> {
       ClassMember::TsIndexSignature(node) => node.end(),
       ClassMember::Empty(node) => node.end(),
       ClassMember::StaticBlock(node) => node.end(),
+      ClassMember::AutoAccessor(node) => node.end(),
     }
   }
 }
@@ -1927,6 +1941,7 @@ impl<'a> NodeTrait<'a> for ClassMember<'a> {
       ClassMember::TsIndexSignature(node) => NodeTrait::parent(*node),
       ClassMember::Empty(node) => NodeTrait::parent(*node),
       ClassMember::StaticBlock(node) => NodeTrait::parent(*node),
+      ClassMember::AutoAccessor(node) => NodeTrait::parent(*node),
     }
   }
 
@@ -1940,6 +1955,7 @@ impl<'a> NodeTrait<'a> for ClassMember<'a> {
       ClassMember::TsIndexSignature(node) => node.children(),
       ClassMember::Empty(node) => node.children(),
       ClassMember::StaticBlock(node) => node.children(),
+      ClassMember::AutoAccessor(node) => node.children(),
     }
   }
 
@@ -1953,6 +1969,7 @@ impl<'a> NodeTrait<'a> for ClassMember<'a> {
       ClassMember::TsIndexSignature(node) => node.as_node(),
       ClassMember::Empty(node) => node.as_node(),
       ClassMember::StaticBlock(node) => node.as_node(),
+      ClassMember::AutoAccessor(node) => node.as_node(),
     }
   }
 
@@ -1966,6 +1983,7 @@ impl<'a> NodeTrait<'a> for ClassMember<'a> {
       ClassMember::TsIndexSignature(_) => NodeKind::TsIndexSignature,
       ClassMember::Empty(_) => NodeKind::EmptyStmt,
       ClassMember::StaticBlock(_) => NodeKind::StaticBlock,
+      ClassMember::AutoAccessor(_) => NodeKind::AutoAccessor,
     }
   }
 }
@@ -1981,6 +1999,7 @@ impl<'a> From<&ClassMember<'a>> for Node<'a> {
       ClassMember::TsIndexSignature(node) => (*node).into(),
       ClassMember::Empty(node) => (*node).into(),
       ClassMember::StaticBlock(node) => (*node).into(),
+      ClassMember::AutoAccessor(node) => (*node).into(),
     }
   }
 }
@@ -1996,6 +2015,7 @@ impl<'a> From<ClassMember<'a>> for Node<'a> {
       ClassMember::TsIndexSignature(node) => node.into(),
       ClassMember::Empty(node) => node.into(),
       ClassMember::StaticBlock(node) => node.into(),
+      ClassMember::AutoAccessor(node) => node.into(),
     }
   }
 }
@@ -2010,6 +2030,7 @@ fn get_view_for_class_member<'a>(inner: &'a swc_ast::ClassMember, bump: &'a Bump
     swc_ast::ClassMember::TsIndexSignature(value) => ClassMember::TsIndexSignature(get_view_for_ts_index_signature(value, bump)),
     swc_ast::ClassMember::Empty(value) => ClassMember::Empty(get_view_for_empty_stmt(value, bump)),
     swc_ast::ClassMember::StaticBlock(value) => ClassMember::StaticBlock(get_view_for_static_block(value, bump)),
+    swc_ast::ClassMember::AutoAccessor(value) => ClassMember::AutoAccessor(get_view_for_auto_accessor(value, bump)),
   }
 }
 
@@ -2023,6 +2044,7 @@ fn set_parent_for_class_member<'a>(node: &ClassMember<'a>, parent: Node<'a>) {
     ClassMember::TsIndexSignature(value) => set_parent_for_ts_index_signature(value, parent),
     ClassMember::Empty(value) => set_parent_for_empty_stmt(value, parent),
     ClassMember::StaticBlock(value) => set_parent_for_static_block(value, parent),
+    ClassMember::AutoAccessor(value) => set_parent_for_auto_accessor(value, parent),
   }
 }
 
@@ -3832,6 +3854,109 @@ fn set_parent_for_jsxobject<'a>(node: &JSXObject<'a>, parent: Node<'a>) {
   match node {
     JSXObject::JSXMemberExpr(value) => set_parent_for_jsxmember_expr(value, parent),
     JSXObject::Ident(value) => set_parent_for_ident(value, parent),
+  }
+}
+
+/// Either a private name or a public name.
+#[derive(Copy, Clone)]
+pub enum Key<'a> {
+  Private(&'a PrivateName<'a>),
+  Public(PropName<'a>),
+}
+
+impl<'a> Key<'a> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+    T::to(&self.into())
+  }
+
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::to(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
+  }
+}
+
+impl<'a> SourceRanged for Key<'a> {
+  fn start(&self) -> SourcePos {
+    match self {
+      Key::Private(node) => node.start(),
+      Key::Public(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      Key::Private(node) => node.end(),
+      Key::Public(node) => node.end(),
+    }
+  }
+}
+
+impl<'a> NodeTrait<'a> for Key<'a> {
+  fn parent(&self) -> Option<Node<'a>> {
+    match self {
+      Key::Private(node) => NodeTrait::parent(*node),
+      Key::Public(node) => NodeTrait::parent(node),
+    }
+  }
+
+  fn children(&self) -> Vec<Node<'a>> {
+    match self {
+      Key::Private(node) => node.children(),
+      Key::Public(node) => node.children(),
+    }
+  }
+
+  fn as_node(&self) -> Node<'a> {
+    match self {
+      Key::Private(node) => node.as_node(),
+      Key::Public(node) => node.as_node(),
+    }
+  }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      Key::Private(_) => NodeKind::PrivateName,
+      Key::Public(node) => node.kind(),
+    }
+  }
+}
+
+impl<'a> From<&Key<'a>> for Node<'a> {
+  fn from(node: &Key<'a>) -> Node<'a> {
+    match node {
+      Key::Private(node) => (*node).into(),
+      Key::Public(node) => node.into(),
+    }
+  }
+}
+
+impl<'a> From<Key<'a>> for Node<'a> {
+  fn from(node: Key<'a>) -> Node<'a> {
+    match node {
+      Key::Private(node) => node.into(),
+      Key::Public(node) => node.into(),
+    }
+  }
+}
+
+fn get_view_for_key<'a>(inner: &'a swc_ast::Key, bump: &'a Bump) -> Key<'a> {
+  match inner {
+    swc_ast::Key::Private(value) => Key::Private(get_view_for_private_name(value, bump)),
+    swc_ast::Key::Public(value) => Key::Public(get_view_for_prop_name(value, bump)),
+  }
+}
+
+fn set_parent_for_key<'a>(node: &Key<'a>, parent: Node<'a>) {
+  match node {
+    Key::Private(value) => set_parent_for_private_name(value, parent),
+    Key::Public(value) => set_parent_for_prop_name(value, parent),
   }
 }
 
@@ -8059,6 +8184,7 @@ pub struct ArrowExpr<'a> {
   parent: Option<Node<'a>>,
   pub inner: &'a swc_ast::ArrowExpr,
   pub params: Vec<Pat<'a>>,
+  /// This is boxed to reduce the type size of [Expr].
   pub body: BlockStmtOrExpr<'a>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
   pub return_type: Option<&'a TsTypeAnn<'a>>,
@@ -8533,6 +8659,126 @@ fn set_parent_for_assign_prop<'a>(node: &AssignProp<'a>, parent: Node<'a>) {
   unsafe {
     let node_ptr = node as *const AssignProp<'a> as *mut AssignProp<'a>;
     (*node_ptr).parent.replace(parent.expect::<ObjectLit>());
+  }
+}
+
+#[derive(Clone)]
+pub struct AutoAccessor<'a> {
+  parent: Option<&'a Class<'a>>,
+  pub inner: &'a swc_ast::AutoAccessor,
+  pub key: Key<'a>,
+  pub value: Option<Expr<'a>>,
+  pub type_ann: Option<&'a TsTypeAnn<'a>>,
+  pub decorators: Vec<&'a Decorator<'a>>,
+}
+
+impl<'a> AutoAccessor<'a> {
+  pub fn parent(&self) -> &'a Class<'a> {
+    self.parent.unwrap()
+  }
+
+  pub fn is_static(&self) -> bool {
+    self.inner.is_static
+  }
+
+  /// Typescript extension.
+  pub fn accessibility(&self) -> Option<Accessibility> {
+    self.inner.accessibility
+  }
+}
+
+impl<'a> SourceRanged for AutoAccessor<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::unsafely_from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::unsafely_from_byte_pos(self.inner.span().hi)
+  }
+}
+
+impl<'a> From<&AutoAccessor<'a>> for Node<'a> {
+  fn from(node: &AutoAccessor<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&AutoAccessor<'a>, &'a AutoAccessor<'a>>(node) };
+    Node::AutoAccessor(node)
+  }
+}
+
+impl<'a> NodeTrait<'a> for AutoAccessor<'a> {
+  fn parent(&self) -> Option<Node<'a>> {
+    Some(self.parent.unwrap().into())
+  }
+
+  fn children(&self) -> Vec<Node<'a>> {
+    let mut children = Vec::with_capacity(1 + match &self.value { Some(_value) => 1, None => 0, } + match &self.type_ann { Some(_value) => 1, None => 0, } + self.decorators.len());
+    children.push((&self.key).into());
+    if let Some(child) = self.value.as_ref() {
+      children.push(child.into());
+    }
+    if let Some(child) = self.type_ann {
+      children.push(child.into());
+    }
+    for child in self.decorators.iter() {
+      children.push((*child).into());
+    }
+    children
+  }
+
+  fn as_node(&self) -> Node<'a> {
+    self.into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::AutoAccessor
+  }
+}
+
+impl<'a> CastableNode<'a> for AutoAccessor<'a> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
+    if let Node::AutoAccessor(node) = node {
+      Some(node)
+    } else {
+      None
+    }
+  }
+
+  fn kind() -> NodeKind {
+    NodeKind::AutoAccessor
+  }
+}
+
+fn get_view_for_auto_accessor<'a>(inner: &'a swc_ast::AutoAccessor, bump: &'a Bump) -> &'a AutoAccessor<'a> {
+  let node = bump.alloc(AutoAccessor {
+    inner,
+    parent: None,
+    key: get_view_for_key(&inner.key, bump),
+    value: match &inner.value {
+      Some(value) => Some(get_view_for_expr(value, bump)),
+      None => None,
+    },
+    type_ann: match &inner.type_ann {
+      Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
+      None => None,
+    },
+    decorators: inner.decorators.iter().map(|value| get_view_for_decorator(value, bump)).collect(),
+  });
+  let parent: Node<'a> = (&*node).into();
+  set_parent_for_key(&node.key, parent);
+  if let Some(value) = &node.value {
+    set_parent_for_expr(value, parent)
+  };
+  if let Some(value) = &node.type_ann {
+    set_parent_for_ts_type_ann(value, parent)
+  };
+  for value in node.decorators.iter() {
+    set_parent_for_decorator(value, parent)
+  }
+  node
+}
+
+fn set_parent_for_auto_accessor<'a>(node: &AutoAccessor<'a>, parent: Node<'a>) {
+  unsafe {
+    let node_ptr = node as *const AutoAccessor<'a> as *mut AutoAccessor<'a>;
+    (*node_ptr).parent.replace(parent.expect::<Class>());
   }
 }
 
@@ -10614,6 +10860,10 @@ impl<'a> ExportAll<'a> {
   pub fn parent(&self) -> Node<'a> {
     self.parent.unwrap()
   }
+
+  pub fn type_only(&self) -> bool {
+    self.inner.type_only
+  }
 }
 
 impl<'a> SourceRanged for ExportAll<'a> {
@@ -11655,8 +11905,8 @@ impl<'a> ForOfStmt<'a> {
   /// es2018
   ///
   /// for-await-of statements, e.g., `for await (const x of xs) {`
-  pub fn await_token(&self) -> &Option<swc_common::Span> {
-    &self.inner.await_token
+  pub fn is_await(&self) -> bool {
+    self.inner.is_await
   }
 }
 
@@ -15229,6 +15479,7 @@ fn set_parent_for_opt_call<'a>(node: &OptCall<'a>, parent: Node<'a>) {
 pub struct OptChainExpr<'a> {
   parent: Option<Node<'a>>,
   pub inner: &'a swc_ast::OptChainExpr,
+  /// This is boxed to reduce the type size of [Expr].
   pub base: OptChainBase<'a>,
 }
 
@@ -16951,6 +17202,7 @@ pub struct TaggedTpl<'a> {
   pub inner: &'a swc_ast::TaggedTpl,
   pub tag: Expr<'a>,
   pub type_params: Option<&'a TsTypeParamInstantiation<'a>>,
+  /// This is boxed to reduce the type size of [Expr].
   pub tpl: &'a Tpl<'a>,
 }
 
