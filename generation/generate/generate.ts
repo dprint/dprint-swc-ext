@@ -23,14 +23,16 @@ export function generate(analysisResult: AnalysisResult): string {
   writeNode();
 
   for (const enumDef of analysisResult.astEnums) {
-    writer.blankLine();
     writeEnum(enumDef);
+    writer.blankLine();
   }
 
   for (const struct of analysisResult.astStructs) {
-    writer.blankLine();
     handleStruct(struct);
+    writer.blankLine();
   }
+
+  writePrivateFunctionality();
 
   writer.newLineIfLastNot();
 
@@ -171,7 +173,7 @@ export function generate(analysisResult: AnalysisResult): string {
           }
         }).write(")");
       });
-    });
+    }).blankLine();
 
     function implementTraitMethod(
       methodName: string,
@@ -202,6 +204,39 @@ export function generate(analysisResult: AnalysisResult): string {
         });
       });
     }
+  }
+
+  function writePrivateFunctionality() {
+    writer.write("struct ParentOnceCell<T>").block(() => {
+      writer.writeLine("cell: std::cell::UnsafeCell<Option<T>>,");
+    }).blankLine();
+    writer.write("impl<T> ParentOnceCell<T>").block(() => {
+      writer.write("pub fn get(&self) -> &Option<T>").block(() => {
+        writer.writeLine("unsafe { &*self.cell.get() }");
+      }).blankLine();
+      writer.writeLine("#[cold]");
+      writer.write("pub fn set(&self, value: T)").block(() => {
+        writer.write("unsafe").block(() => {
+          writer.writeLine(`let inner = self.cell.get();`);
+          writer.writeLine("inner.replace(Some(value));");
+        });
+      });
+    }).blankLine();
+    writer.write("impl<T> Default for ParentOnceCell<T>").block(() => {
+      writer.write("fn default() -> Self").block(() => {
+        writer.write("Self").block(() => {
+          writer.writeLine("cell: std::cell::UnsafeCell::new(None),");
+        });
+      });
+    }).blankLine();
+    writer.write("impl<T: Clone> Clone for ParentOnceCell<T>").block(() => {
+      writer.write("fn clone(&self) -> Self").block(() => {
+        // this is ok because the cell is only used during initialization
+        writer.write("Self").block(() => {
+          writer.writeLine("cell: std::cell::UnsafeCell::new(self.get().clone()),");
+        });
+      });
+    }).blankLine();
   }
 
   function writeEnum(enumDef: AstEnumDefinition) {
@@ -401,9 +436,9 @@ export function generate(analysisResult: AnalysisResult): string {
       writer.write(`pub struct ${struct.name}<'a>`).block(() => {
         if (struct.parents.length > 0) {
           if (struct.parents.length === 1) {
-            writer.writeLine(`parent: Option<&'a ${struct.parents[0].name}<'a>>,`);
+            writer.writeLine(`parent: ParentOnceCell<&'a ${struct.parents[0].name}<'a>>,`);
           } else {
-            writer.writeLine(`parent: Option<Node<'a>>,`);
+            writer.writeLine(`parent: ParentOnceCell<Node<'a>>,`);
           }
         }
         if (struct.name === "Module" || struct.name === "Script") {
@@ -432,7 +467,7 @@ export function generate(analysisResult: AnalysisResult): string {
               writer.write(`Node<'a>`);
             }
             writer.block(() => {
-              writer.writeLine(`self.parent.unwrap()`);
+              writer.writeLine(`self.parent.get().unwrap()`);
             });
           }
 
@@ -485,9 +520,9 @@ export function generate(analysisResult: AnalysisResult): string {
             writer.write("None");
           } else {
             if (struct.parents.length === 1) {
-              writer.write("Some(self.parent.unwrap().into())");
+              writer.write("Some(self.parent.get().unwrap().into())");
             } else {
-              writer.write("Some(self.parent.unwrap().clone())");
+              writer.write("Some(self.parent.get().unwrap().clone())");
             }
           }
           writer.newLine();
@@ -652,7 +687,7 @@ export function generate(analysisResult: AnalysisResult): string {
         writer.write(`let node = bump.alloc(${struct.name} `).inlineBlock(() => {
           writer.write("inner,").newLine();
           if (struct.parents.length > 0) {
-            writer.write("parent: None,").newLine();
+            writer.write("parent: Default::default(),").newLine();
           }
           if (struct.name === "Module" || struct.name === "Script") {
             writer.write("text_info: source_file_info.text_info,").newLine();
@@ -691,20 +726,13 @@ export function generate(analysisResult: AnalysisResult): string {
         writer.write(`fn ${getSetParentForFunctionName(struct.name)}<'a>(`);
         writer.write(`node: &${struct.name}<'a>, `);
         writer.write(`parent: Node<'a>)`).block(() => {
-          // For some reason having a `Cell<Option<T>>` field for the parent in the struct
-          // was causing infering lifetimes to not work at all. The workaround here is to
-          // get rid of the cell and just do here what's done in an UnsafeCell...
-          // Seems to work, but not sure if it's ok to do...
-          writer.write("unsafe").block(() => {
-            writer.writeLine(`let node_ptr = node as *const ${struct.name}<'a> as *mut ${struct.name}<'a>;`);
-            writer.write(`(*node_ptr).parent.replace(`);
-            if (struct.parents.length === 1) {
-              writer.write(`parent.expect::<${struct.parents[0].name}>()`);
-            } else {
-              writer.write("parent");
-            }
-            writer.write(");");
-          });
+          writer.write("node.parent.set(");
+          if (struct.parents.length === 1) {
+            writer.write(`parent.expect::<${struct.parents[0].name}>()`);
+          } else {
+            writer.write("parent");
+          }
+          writer.write(");");
         });
       }
     }
