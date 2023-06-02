@@ -2,13 +2,13 @@ use std::path::Path;
 
 use crate::test_helpers::{get_swc_module, get_swc_script};
 
-pub fn run_test(file_text: &str, run_test: impl Fn(super::Program)) {
+pub fn run_test<'a>(file_text: &str, run_test: impl Fn(super::Program<'a>)) {
   let file_path = Path::new("test.ts");
   run_test_with_module(file_path, file_text, |module| run_test(super::Program::Module(module)));
   run_test_with_script(file_path, file_text, |script| run_test(super::Program::Script(script)));
 }
 
-pub fn run_test_with_module(file_path: &Path, file_text: &str, run_test: impl Fn(&super::Module)) {
+pub fn run_test_with_module<'a>(file_path: &Path, file_text: &str, run_test: impl Fn(&'a super::Module<'a>)) {
   let (module, tokens, text_info, comments) = get_swc_module(file_path, file_text);
   let (leading, trailing) = comments.borrow_all();
   let info = super::ModuleInfo {
@@ -25,7 +25,7 @@ pub fn run_test_with_module(file_path: &Path, file_text: &str, run_test: impl Fn
   });
 }
 
-pub fn run_test_with_script(file_path: &Path, file_text: &str, run_test: impl Fn(&super::Script)) {
+pub fn run_test_with_script<'a>(file_path: &Path, file_text: &str, run_test: impl Fn(&'a super::Script<'a>)) {
   let (script, tokens, text_info, comments) = get_swc_script(file_path, file_text);
   let (leading, trailing) = comments.borrow_all();
   let info = super::ScriptInfo {

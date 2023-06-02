@@ -226,6 +226,7 @@ pub enum Node<'a> {
   TsUnionType(&'a TsUnionType<'a>),
   UnaryExpr(&'a UnaryExpr<'a>),
   UpdateExpr(&'a UpdateExpr<'a>),
+  UsingDecl(&'a UsingDecl<'a>),
   VarDecl(&'a VarDecl<'a>),
   VarDeclarator(&'a VarDeclarator<'a>),
   WhileStmt(&'a WhileStmt<'a>),
@@ -418,6 +419,7 @@ impl<'a> SourceRanged for Node<'a> {
       Node::TsUnionType(node) => node.start(),
       Node::UnaryExpr(node) => node.start(),
       Node::UpdateExpr(node) => node.start(),
+      Node::UsingDecl(node) => node.start(),
       Node::VarDecl(node) => node.start(),
       Node::VarDeclarator(node) => node.start(),
       Node::WhileStmt(node) => node.start(),
@@ -591,6 +593,7 @@ impl<'a> SourceRanged for Node<'a> {
       Node::TsUnionType(node) => node.end(),
       Node::UnaryExpr(node) => node.end(),
       Node::UpdateExpr(node) => node.end(),
+      Node::UsingDecl(node) => node.end(),
       Node::VarDecl(node) => node.end(),
       Node::VarDeclarator(node) => node.end(),
       Node::WhileStmt(node) => node.end(),
@@ -767,6 +770,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsUnionType(node) => NodeTrait::parent(*node),
       Node::UnaryExpr(node) => NodeTrait::parent(*node),
       Node::UpdateExpr(node) => NodeTrait::parent(*node),
+      Node::UsingDecl(node) => NodeTrait::parent(*node),
       Node::VarDecl(node) => NodeTrait::parent(*node),
       Node::VarDeclarator(node) => NodeTrait::parent(*node),
       Node::WhileStmt(node) => NodeTrait::parent(*node),
@@ -941,6 +945,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsUnionType(node) => node.children(),
       Node::UnaryExpr(node) => node.children(),
       Node::UpdateExpr(node) => node.children(),
+      Node::UsingDecl(node) => node.children(),
       Node::VarDecl(node) => node.children(),
       Node::VarDeclarator(node) => node.children(),
       Node::WhileStmt(node) => node.children(),
@@ -1115,6 +1120,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsUnionType(node) => node.as_node(),
       Node::UnaryExpr(node) => node.as_node(),
       Node::UpdateExpr(node) => node.as_node(),
+      Node::UsingDecl(node) => node.as_node(),
       Node::VarDecl(node) => node.as_node(),
       Node::VarDeclarator(node) => node.as_node(),
       Node::WhileStmt(node) => node.as_node(),
@@ -1289,6 +1295,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsUnionType(_) => NodeKind::TsUnionType,
       Node::UnaryExpr(_) => NodeKind::UnaryExpr,
       Node::UpdateExpr(_) => NodeKind::UpdateExpr,
+      Node::UsingDecl(_) => NodeKind::UsingDecl,
       Node::VarDecl(_) => NodeKind::VarDecl,
       Node::VarDeclarator(_) => NodeKind::VarDeclarator,
       Node::WhileStmt(_) => NodeKind::WhileStmt,
@@ -1464,6 +1471,7 @@ pub enum NodeKind {
   TsUnionType,
   UnaryExpr,
   UpdateExpr,
+  UsingDecl,
   VarDecl,
   VarDeclarator,
   WhileStmt,
@@ -1638,6 +1646,7 @@ impl std::fmt::Display for NodeKind {
       NodeKind::TsUnionType => "TsUnionType",
       NodeKind::UnaryExpr => "UnaryExpr",
       NodeKind::UpdateExpr => "UpdateExpr",
+      NodeKind::UsingDecl => "UsingDecl",
       NodeKind::VarDecl => "VarDecl",
       NodeKind::VarDeclarator => "VarDeclarator",
       NodeKind::WhileStmt => "WhileStmt",
@@ -2053,6 +2062,7 @@ pub enum Decl<'a> {
   Class(&'a ClassDecl<'a>),
   Fn(&'a FnDecl<'a>),
   Var(&'a VarDecl<'a>),
+  Using(&'a UsingDecl<'a>),
   TsInterface(&'a TsInterfaceDecl<'a>),
   TsTypeAlias(&'a TsTypeAliasDecl<'a>),
   TsEnum(&'a TsEnumDecl<'a>),
@@ -2087,6 +2097,7 @@ impl<'a> SourceRanged for Decl<'a> {
       Decl::Class(node) => node.start(),
       Decl::Fn(node) => node.start(),
       Decl::Var(node) => node.start(),
+      Decl::Using(node) => node.start(),
       Decl::TsInterface(node) => node.start(),
       Decl::TsTypeAlias(node) => node.start(),
       Decl::TsEnum(node) => node.start(),
@@ -2098,6 +2109,7 @@ impl<'a> SourceRanged for Decl<'a> {
       Decl::Class(node) => node.end(),
       Decl::Fn(node) => node.end(),
       Decl::Var(node) => node.end(),
+      Decl::Using(node) => node.end(),
       Decl::TsInterface(node) => node.end(),
       Decl::TsTypeAlias(node) => node.end(),
       Decl::TsEnum(node) => node.end(),
@@ -2112,6 +2124,7 @@ impl<'a> NodeTrait<'a> for Decl<'a> {
       Decl::Class(node) => NodeTrait::parent(*node),
       Decl::Fn(node) => NodeTrait::parent(*node),
       Decl::Var(node) => NodeTrait::parent(*node),
+      Decl::Using(node) => NodeTrait::parent(*node),
       Decl::TsInterface(node) => NodeTrait::parent(*node),
       Decl::TsTypeAlias(node) => NodeTrait::parent(*node),
       Decl::TsEnum(node) => NodeTrait::parent(*node),
@@ -2124,6 +2137,7 @@ impl<'a> NodeTrait<'a> for Decl<'a> {
       Decl::Class(node) => node.children(),
       Decl::Fn(node) => node.children(),
       Decl::Var(node) => node.children(),
+      Decl::Using(node) => node.children(),
       Decl::TsInterface(node) => node.children(),
       Decl::TsTypeAlias(node) => node.children(),
       Decl::TsEnum(node) => node.children(),
@@ -2136,6 +2150,7 @@ impl<'a> NodeTrait<'a> for Decl<'a> {
       Decl::Class(node) => node.as_node(),
       Decl::Fn(node) => node.as_node(),
       Decl::Var(node) => node.as_node(),
+      Decl::Using(node) => node.as_node(),
       Decl::TsInterface(node) => node.as_node(),
       Decl::TsTypeAlias(node) => node.as_node(),
       Decl::TsEnum(node) => node.as_node(),
@@ -2148,6 +2163,7 @@ impl<'a> NodeTrait<'a> for Decl<'a> {
       Decl::Class(_) => NodeKind::ClassDecl,
       Decl::Fn(_) => NodeKind::FnDecl,
       Decl::Var(_) => NodeKind::VarDecl,
+      Decl::Using(_) => NodeKind::UsingDecl,
       Decl::TsInterface(_) => NodeKind::TsInterfaceDecl,
       Decl::TsTypeAlias(_) => NodeKind::TsTypeAliasDecl,
       Decl::TsEnum(_) => NodeKind::TsEnumDecl,
@@ -2162,6 +2178,7 @@ impl<'a> From<&Decl<'a>> for Node<'a> {
       Decl::Class(node) => (*node).into(),
       Decl::Fn(node) => (*node).into(),
       Decl::Var(node) => (*node).into(),
+      Decl::Using(node) => (*node).into(),
       Decl::TsInterface(node) => (*node).into(),
       Decl::TsTypeAlias(node) => (*node).into(),
       Decl::TsEnum(node) => (*node).into(),
@@ -2176,6 +2193,7 @@ impl<'a> From<Decl<'a>> for Node<'a> {
       Decl::Class(node) => node.into(),
       Decl::Fn(node) => node.into(),
       Decl::Var(node) => node.into(),
+      Decl::Using(node) => node.into(),
       Decl::TsInterface(node) => node.into(),
       Decl::TsTypeAlias(node) => node.into(),
       Decl::TsEnum(node) => node.into(),
@@ -2189,6 +2207,7 @@ fn get_view_for_decl<'a>(inner: &'a swc_ast::Decl, bump: &'a Bump) -> Decl<'a> {
     swc_ast::Decl::Class(value) => Decl::Class(get_view_for_class_decl(value, bump)),
     swc_ast::Decl::Fn(value) => Decl::Fn(get_view_for_fn_decl(value, bump)),
     swc_ast::Decl::Var(value) => Decl::Var(get_view_for_var_decl(value, bump)),
+    swc_ast::Decl::Using(value) => Decl::Using(get_view_for_using_decl(value, bump)),
     swc_ast::Decl::TsInterface(value) => Decl::TsInterface(get_view_for_ts_interface_decl(value, bump)),
     swc_ast::Decl::TsTypeAlias(value) => Decl::TsTypeAlias(get_view_for_ts_type_alias_decl(value, bump)),
     swc_ast::Decl::TsEnum(value) => Decl::TsEnum(get_view_for_ts_enum_decl(value, bump)),
@@ -2201,6 +2220,7 @@ fn set_parent_for_decl<'a>(node: &Decl<'a>, parent: Node<'a>) {
     Decl::Class(value) => set_parent_for_class_decl(value, parent),
     Decl::Fn(value) => set_parent_for_fn_decl(value, parent),
     Decl::Var(value) => set_parent_for_var_decl(value, parent),
+    Decl::Using(value) => set_parent_for_using_decl(value, parent),
     Decl::TsInterface(value) => set_parent_for_ts_interface_decl(value, parent),
     Decl::TsTypeAlias(value) => set_parent_for_ts_type_alias_decl(value, parent),
     Decl::TsEnum(value) => set_parent_for_ts_enum_decl(value, parent),
@@ -2942,6 +2962,120 @@ fn set_parent_for_expr<'a>(node: &Expr<'a>, parent: Node<'a>) {
     Expr::PrivateName(value) => set_parent_for_private_name(value, parent),
     Expr::OptChain(value) => set_parent_for_opt_chain_expr(value, parent),
     Expr::Invalid(value) => set_parent_for_invalid(value, parent),
+  }
+}
+
+/// A head for for-in and for-of loop.
+#[derive(Copy, Clone)]
+pub enum ForHead<'a> {
+  VarDecl(&'a VarDecl<'a>),
+  UsingDecl(&'a UsingDecl<'a>),
+  Pat(Pat<'a>),
+}
+
+impl<'a> ForHead<'a> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+    T::to(&self.into())
+  }
+
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::to(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
+  }
+}
+
+impl<'a> SourceRanged for ForHead<'a> {
+  fn start(&self) -> SourcePos {
+    match self {
+      ForHead::VarDecl(node) => node.start(),
+      ForHead::UsingDecl(node) => node.start(),
+      ForHead::Pat(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      ForHead::VarDecl(node) => node.end(),
+      ForHead::UsingDecl(node) => node.end(),
+      ForHead::Pat(node) => node.end(),
+    }
+  }
+}
+
+impl<'a> NodeTrait<'a> for ForHead<'a> {
+  fn parent(&self) -> Option<Node<'a>> {
+    match self {
+      ForHead::VarDecl(node) => NodeTrait::parent(*node),
+      ForHead::UsingDecl(node) => NodeTrait::parent(*node),
+      ForHead::Pat(node) => NodeTrait::parent(node),
+    }
+  }
+
+  fn children(&self) -> Vec<Node<'a>> {
+    match self {
+      ForHead::VarDecl(node) => node.children(),
+      ForHead::UsingDecl(node) => node.children(),
+      ForHead::Pat(node) => node.children(),
+    }
+  }
+
+  fn as_node(&self) -> Node<'a> {
+    match self {
+      ForHead::VarDecl(node) => node.as_node(),
+      ForHead::UsingDecl(node) => node.as_node(),
+      ForHead::Pat(node) => node.as_node(),
+    }
+  }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      ForHead::VarDecl(_) => NodeKind::VarDecl,
+      ForHead::UsingDecl(_) => NodeKind::UsingDecl,
+      ForHead::Pat(node) => node.kind(),
+    }
+  }
+}
+
+impl<'a> From<&ForHead<'a>> for Node<'a> {
+  fn from(node: &ForHead<'a>) -> Node<'a> {
+    match node {
+      ForHead::VarDecl(node) => (*node).into(),
+      ForHead::UsingDecl(node) => (*node).into(),
+      ForHead::Pat(node) => node.into(),
+    }
+  }
+}
+
+impl<'a> From<ForHead<'a>> for Node<'a> {
+  fn from(node: ForHead<'a>) -> Node<'a> {
+    match node {
+      ForHead::VarDecl(node) => node.into(),
+      ForHead::UsingDecl(node) => node.into(),
+      ForHead::Pat(node) => node.into(),
+    }
+  }
+}
+
+fn get_view_for_for_head<'a>(inner: &'a swc_ast::ForHead, bump: &'a Bump) -> ForHead<'a> {
+  match inner {
+    swc_ast::ForHead::VarDecl(value) => ForHead::VarDecl(get_view_for_var_decl(value, bump)),
+    swc_ast::ForHead::UsingDecl(value) => ForHead::UsingDecl(get_view_for_using_decl(value, bump)),
+    swc_ast::ForHead::Pat(value) => ForHead::Pat(get_view_for_pat(value, bump)),
+  }
+}
+
+fn set_parent_for_for_head<'a>(node: &ForHead<'a>, parent: Node<'a>) {
+  match node {
+    ForHead::VarDecl(value) => set_parent_for_var_decl(value, parent),
+    ForHead::UsingDecl(value) => set_parent_for_using_decl(value, parent),
+    ForHead::Pat(value) => set_parent_for_pat(value, parent),
   }
 }
 
@@ -7876,108 +8010,6 @@ fn set_parent_for_var_decl_or_expr<'a>(node: &VarDeclOrExpr<'a>, parent: Node<'a
   }
 }
 
-#[derive(Copy, Clone)]
-pub enum VarDeclOrPat<'a> {
-  VarDecl(&'a VarDecl<'a>),
-  Pat(Pat<'a>),
-}
-
-impl<'a> VarDeclOrPat<'a> {
-  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::to(&self.into())
-  }
-
-  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
-    let node: Node<'a> = self.into();
-    if let Some(result) = T::to(&node) {
-      result
-    } else {
-      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
-    }
-  }
-
-  pub fn is<T: CastableNode<'a>>(&self) -> bool {
-    self.kind() == T::kind()
-  }
-}
-
-impl<'a> SourceRanged for VarDeclOrPat<'a> {
-  fn start(&self) -> SourcePos {
-    match self {
-      VarDeclOrPat::VarDecl(node) => node.start(),
-      VarDeclOrPat::Pat(node) => node.start(),
-    }
-  }
-  fn end(&self) -> SourcePos {
-    match self {
-      VarDeclOrPat::VarDecl(node) => node.end(),
-      VarDeclOrPat::Pat(node) => node.end(),
-    }
-  }
-}
-
-impl<'a> NodeTrait<'a> for VarDeclOrPat<'a> {
-  fn parent(&self) -> Option<Node<'a>> {
-    match self {
-      VarDeclOrPat::VarDecl(node) => NodeTrait::parent(*node),
-      VarDeclOrPat::Pat(node) => NodeTrait::parent(node),
-    }
-  }
-
-  fn children(&self) -> Vec<Node<'a>> {
-    match self {
-      VarDeclOrPat::VarDecl(node) => node.children(),
-      VarDeclOrPat::Pat(node) => node.children(),
-    }
-  }
-
-  fn as_node(&self) -> Node<'a> {
-    match self {
-      VarDeclOrPat::VarDecl(node) => node.as_node(),
-      VarDeclOrPat::Pat(node) => node.as_node(),
-    }
-  }
-
-  fn kind(&self) -> NodeKind {
-    match self {
-      VarDeclOrPat::VarDecl(_) => NodeKind::VarDecl,
-      VarDeclOrPat::Pat(node) => node.kind(),
-    }
-  }
-}
-
-impl<'a> From<&VarDeclOrPat<'a>> for Node<'a> {
-  fn from(node: &VarDeclOrPat<'a>) -> Node<'a> {
-    match node {
-      VarDeclOrPat::VarDecl(node) => (*node).into(),
-      VarDeclOrPat::Pat(node) => node.into(),
-    }
-  }
-}
-
-impl<'a> From<VarDeclOrPat<'a>> for Node<'a> {
-  fn from(node: VarDeclOrPat<'a>) -> Node<'a> {
-    match node {
-      VarDeclOrPat::VarDecl(node) => node.into(),
-      VarDeclOrPat::Pat(node) => node.into(),
-    }
-  }
-}
-
-fn get_view_for_var_decl_or_pat<'a>(inner: &'a swc_ast::VarDeclOrPat, bump: &'a Bump) -> VarDeclOrPat<'a> {
-  match inner {
-    swc_ast::VarDeclOrPat::VarDecl(value) => VarDeclOrPat::VarDecl(get_view_for_var_decl(value, bump)),
-    swc_ast::VarDeclOrPat::Pat(value) => VarDeclOrPat::Pat(get_view_for_pat(value, bump)),
-  }
-}
-
-fn set_parent_for_var_decl_or_pat<'a>(node: &VarDeclOrPat<'a>, parent: Node<'a>) {
-  match node {
-    VarDeclOrPat::VarDecl(value) => set_parent_for_var_decl(value, parent),
-    VarDeclOrPat::Pat(value) => set_parent_for_pat(value, parent),
-  }
-}
-
 /// Array literal.
 #[derive(Clone)]
 pub struct ArrayLit<'a> {
@@ -11678,7 +11710,7 @@ fn set_parent_for_fn_expr<'a>(node: &FnExpr<'a>, parent: Node<'a>) {
 pub struct ForInStmt<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::ForInStmt,
-  pub left: VarDeclOrPat<'a>,
+  pub left: ForHead<'a>,
   pub right: Expr<'a>,
   pub body: Stmt<'a>,
 }
@@ -11745,12 +11777,12 @@ fn get_view_for_for_in_stmt<'a>(inner: &'a swc_ast::ForInStmt, bump: &'a Bump) -
   let node = bump.alloc(ForInStmt {
     inner,
     parent: Default::default(),
-    left: get_view_for_var_decl_or_pat(&inner.left, bump),
+    left: get_view_for_for_head(&inner.left, bump),
     right: get_view_for_expr(&inner.right, bump),
     body: get_view_for_stmt(&inner.body, bump),
   });
   let parent: Node<'a> = (&*node).into();
-  set_parent_for_var_decl_or_pat(&node.left, parent);
+  set_parent_for_for_head(&node.left, parent);
   set_parent_for_expr(&node.right, parent);
   set_parent_for_stmt(&node.body, parent);
   node
@@ -11764,7 +11796,7 @@ fn set_parent_for_for_in_stmt<'a>(node: &ForInStmt<'a>, parent: Node<'a>) {
 pub struct ForOfStmt<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::ForOfStmt,
-  pub left: VarDeclOrPat<'a>,
+  pub left: ForHead<'a>,
   pub right: Expr<'a>,
   pub body: Stmt<'a>,
 }
@@ -11840,12 +11872,12 @@ fn get_view_for_for_of_stmt<'a>(inner: &'a swc_ast::ForOfStmt, bump: &'a Bump) -
   let node = bump.alloc(ForOfStmt {
     inner,
     parent: Default::default(),
-    left: get_view_for_var_decl_or_pat(&inner.left, bump),
+    left: get_view_for_for_head(&inner.left, bump),
     right: get_view_for_expr(&inner.right, bump),
     body: get_view_for_stmt(&inner.body, bump),
   });
   let parent: Node<'a> = (&*node).into();
-  set_parent_for_var_decl_or_pat(&node.left, parent);
+  set_parent_for_for_head(&node.left, parent);
   set_parent_for_expr(&node.right, parent);
   set_parent_for_stmt(&node.body, parent);
   node
@@ -22586,6 +22618,88 @@ fn set_parent_for_update_expr<'a>(node: &UpdateExpr<'a>, parent: Node<'a>) {
 }
 
 #[derive(Clone)]
+pub struct UsingDecl<'a> {
+  parent: ParentOnceCell<Node<'a>>,
+  pub inner: &'a swc_ast::UsingDecl,
+  pub decls: Vec<&'a VarDeclarator<'a>>,
+}
+
+impl<'a> UsingDecl<'a> {
+  pub fn parent(&self) -> Node<'a> {
+    self.parent.get().unwrap()
+  }
+}
+
+impl<'a> SourceRanged for UsingDecl<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::unsafely_from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::unsafely_from_byte_pos(self.inner.span().hi)
+  }
+}
+
+impl<'a> From<&UsingDecl<'a>> for Node<'a> {
+  fn from(node: &UsingDecl<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&UsingDecl<'a>, &'a UsingDecl<'a>>(node) };
+    Node::UsingDecl(node)
+  }
+}
+
+impl<'a> NodeTrait<'a> for UsingDecl<'a> {
+  fn parent(&self) -> Option<Node<'a>> {
+    Some(self.parent.get().unwrap().clone())
+  }
+
+  fn children(&self) -> Vec<Node<'a>> {
+    let mut children = Vec::with_capacity(self.decls.len());
+    for child in self.decls.iter() {
+      children.push((*child).into());
+    }
+    children
+  }
+
+  fn as_node(&self) -> Node<'a> {
+    self.into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::UsingDecl
+  }
+}
+
+impl<'a> CastableNode<'a> for UsingDecl<'a> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
+    if let Node::UsingDecl(node) = node {
+      Some(node)
+    } else {
+      None
+    }
+  }
+
+  fn kind() -> NodeKind {
+    NodeKind::UsingDecl
+  }
+}
+
+fn get_view_for_using_decl<'a>(inner: &'a swc_ast::UsingDecl, bump: &'a Bump) -> &'a UsingDecl<'a> {
+  let node = bump.alloc(UsingDecl {
+    inner,
+    parent: Default::default(),
+    decls: inner.decls.iter().map(|value| get_view_for_var_declarator(value, bump)).collect(),
+  });
+  let parent: Node<'a> = (&*node).into();
+  for value in node.decls.iter() {
+    set_parent_for_var_declarator(value, parent)
+  }
+  node
+}
+
+fn set_parent_for_using_decl<'a>(node: &UsingDecl<'a>, parent: Node<'a>) {
+  node.parent.set(parent);
+}
+
+#[derive(Clone)]
 pub struct VarDecl<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::VarDecl,
@@ -22677,7 +22791,7 @@ fn set_parent_for_var_decl<'a>(node: &VarDecl<'a>, parent: Node<'a>) {
 
 #[derive(Clone)]
 pub struct VarDeclarator<'a> {
-  parent: ParentOnceCell<&'a VarDecl<'a>>,
+  parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::VarDeclarator,
   pub name: Pat<'a>,
   /// Initialization expression.
@@ -22685,7 +22799,7 @@ pub struct VarDeclarator<'a> {
 }
 
 impl<'a> VarDeclarator<'a> {
-  pub fn parent(&self) -> &'a VarDecl<'a> {
+  pub fn parent(&self) -> Node<'a> {
     self.parent.get().unwrap()
   }
 
@@ -22713,7 +22827,7 @@ impl<'a> From<&VarDeclarator<'a>> for Node<'a> {
 
 impl<'a> NodeTrait<'a> for VarDeclarator<'a> {
   fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.get().unwrap().into())
+    Some(self.parent.get().unwrap().clone())
   }
 
   fn children(&self) -> Vec<Node<'a>> {
@@ -22767,7 +22881,7 @@ fn get_view_for_var_declarator<'a>(inner: &'a swc_ast::VarDeclarator, bump: &'a 
 }
 
 fn set_parent_for_var_declarator<'a>(node: &VarDeclarator<'a>, parent: Node<'a>) {
-  node.parent.set(parent.expect::<VarDecl>());
+  node.parent.set(parent);
 }
 
 #[derive(Clone)]
