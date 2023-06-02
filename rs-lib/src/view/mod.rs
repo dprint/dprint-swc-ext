@@ -22,7 +22,7 @@ mod test {
     run_test(r#"5 // test"#, |program| {
       // previously there was a bug here where it would return the
       // comments after the token
-      let trailing_comments = program.range().start.trailing_comments_fast(&program);
+      let trailing_comments = program.range().start.trailing_comments_fast(program);
       assert!(trailing_comments.is_empty());
     });
   }

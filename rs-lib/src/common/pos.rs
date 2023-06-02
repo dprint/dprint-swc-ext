@@ -257,23 +257,23 @@ macro_rules! source_ranged_trait {
       self.end() - self.start()
     }
 
-    fn start_line_fast(&self, source: &dyn SourceTextInfoProvider) -> usize {
+    fn start_line_fast<'a, P: SourceTextInfoProvider<'a>>(&self, source: P) -> usize {
       source.text_info().line_index(self.start())
     }
 
-    fn end_line_fast(&self, source: &dyn SourceTextInfoProvider) -> usize {
+    fn end_line_fast<'a, P: SourceTextInfoProvider<'a>>(&self, source: P) -> usize {
       source.text_info().line_index(self.end())
     }
 
-    fn start_column_fast(&self, source: &dyn SourceTextInfoProvider) -> usize {
+    fn start_column_fast<'a, P: SourceTextInfoProvider<'a>>(&self, source: P) -> usize {
       self.column_at_pos(source, self.start())
     }
 
-    fn end_column_fast(&self, source: &dyn SourceTextInfoProvider) -> usize {
+    fn end_column_fast<'a, P: SourceTextInfoProvider<'a>>(&self, source: P) -> usize {
       self.column_at_pos(source, self.end())
     }
 
-    fn column_at_pos(&self, source: &dyn SourceTextInfoProvider, pos: SourcePos) -> usize {
+    fn column_at_pos<'a, P: SourceTextInfoProvider<'a>>(&self, source: P, pos: SourcePos) -> usize {
       let text_info = source.text_info();
       let text_bytes = text_info.text_str().as_bytes();
       let pos = pos - text_info.range().start;
@@ -288,38 +288,38 @@ macro_rules! source_ranged_trait {
       text_slice.chars().count()
     }
 
-    fn char_width_fast(&self, source: &dyn SourceTextInfoProvider) -> usize {
+    fn char_width_fast<'a, P: SourceTextInfoProvider<'a>>(&self, source: P) -> usize {
       self.text_fast(source).chars().count()
     }
 
-    fn text_fast<'a>(&self, source: &dyn SourceTextInfoProvider<'a>) -> &'a str {
+    fn text_fast<'a, P: SourceTextInfoProvider<'a>>(&self, source: P) -> &'a str {
       let text_info = source.text_info();
       let byte_range = self.range().as_byte_range(text_info.range().start);
       &text_info.text_str()[byte_range]
     }
 
-    fn tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndSpan] {
+    fn tokens_fast<'a>(&self, program: impl RootNode<'a>) -> &'a [TokenAndSpan] {
       let token_container = program.token_container();
       token_container.get_tokens_in_range(self.start(), self.end())
     }
 
-    fn leading_comments_fast<'a>(&self, program: &dyn RootNode<'a>) -> CommentsIterator<'a> {
+    fn leading_comments_fast<'a>(&self, program: impl RootNode<'a>) -> CommentsIterator<'a> {
       program.comment_container().leading_comments(self.start())
     }
 
-    fn trailing_comments_fast<'a>(&self, program: &dyn RootNode<'a>) -> CommentsIterator<'a> {
+    fn trailing_comments_fast<'a>(&self, program: impl RootNode<'a>) -> CommentsIterator<'a> {
       program.comment_container().trailing_comments(self.end())
     }
 
-    fn previous_token_fast<'a>(&self, program: &dyn RootNode<'a>) -> Option<&'a TokenAndSpan> {
+    fn previous_token_fast<'a>(&self, program: impl RootNode<'a>) -> Option<&'a TokenAndSpan> {
       program.token_container().get_previous_token(self.start())
     }
 
-    fn next_token_fast<'a>(&self, program: &dyn RootNode<'a>) -> Option<&'a TokenAndSpan> {
+    fn next_token_fast<'a>(&self, program: impl RootNode<'a>) -> Option<&'a TokenAndSpan> {
       program.token_container().get_next_token(self.end())
     }
 
-    fn previous_tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndSpan] {
+    fn previous_tokens_fast<'a>(&self, program: impl RootNode<'a>) -> &'a [TokenAndSpan] {
       let token_container = program.token_container();
       let index = token_container
         .get_token_index_at_start(self.start())
@@ -329,7 +329,7 @@ macro_rules! source_ranged_trait {
       &token_container.tokens[0..index]
     }
 
-    fn next_tokens_fast<'a>(&self, program: &dyn RootNode<'a>) -> &'a [TokenAndSpan] {
+    fn next_tokens_fast<'a>(&self, program: impl RootNode<'a>) -> &'a [TokenAndSpan] {
       let token_container = program.token_container();
       let index = token_container
         .get_token_index_at_end(self.end())
