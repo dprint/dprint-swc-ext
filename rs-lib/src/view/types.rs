@@ -166,23 +166,23 @@ pub trait NodeTrait<'a>: SourceRanged + Sized {
   }
 
   fn start_line(&self) -> usize {
-    self.start_line_fast(&self.program())
+    self.start_line_fast(self.program())
   }
 
   fn end_line(&self) -> usize {
-    self.end_line_fast(&self.program())
+    self.end_line_fast(self.program())
   }
 
   fn start_column(&self) -> usize {
-    self.start_column_fast(&self.program())
+    self.start_column_fast(self.program())
   }
 
   fn end_column(&self) -> usize {
-    self.end_column_fast(&self.program())
+    self.end_column_fast(self.program())
   }
 
   fn char_width(&self) -> usize {
-    self.char_width_fast(&self.program())
+    self.char_width_fast(self.program())
   }
 
   fn child_index(&self) -> usize {
@@ -259,14 +259,14 @@ pub trait NodeTrait<'a>: SourceRanged + Sized {
   }
 
   fn tokens(&self) -> &'a [TokenAndSpan] {
-    self.tokens_fast(&self.program())
+    self.tokens_fast(self.program())
   }
 
   fn children_with_tokens(&self) -> Vec<NodeOrToken<'a>> {
-    self.children_with_tokens_fast(&self.program())
+    self.children_with_tokens_fast(self.program())
   }
 
-  fn children_with_tokens_fast(&self, program: &dyn RootNode<'a>) -> Vec<NodeOrToken<'a>> {
+  fn children_with_tokens_fast(&self, program: impl RootNode<'a>) -> Vec<NodeOrToken<'a>> {
     let children = self.children();
     let tokens = self.tokens_fast(program);
     let mut result = Vec::new();
@@ -307,11 +307,11 @@ pub trait NodeTrait<'a>: SourceRanged + Sized {
   }
 
   fn leading_comments(&self) -> CommentsIterator<'a> {
-    self.leading_comments_fast(&self.program())
+    self.leading_comments_fast(self.program())
   }
 
   fn trailing_comments(&self) -> CommentsIterator<'a> {
-    self.trailing_comments_fast(&self.program())
+    self.trailing_comments_fast(self.program())
   }
 
   /// Gets the root node.
@@ -350,25 +350,25 @@ pub trait NodeTrait<'a>: SourceRanged + Sized {
   }
 
   fn text(&self) -> &'a str {
-    self.text_fast(&self.program())
+    self.text_fast(self.program())
   }
 
   fn previous_token(&self) -> Option<&'a TokenAndSpan> {
-    self.previous_token_fast(&self.program())
+    self.previous_token_fast(self.program())
   }
 
   fn next_token(&self) -> Option<&'a TokenAndSpan> {
-    self.next_token_fast(&self.program())
+    self.next_token_fast(self.program())
   }
 
   /// Gets the previous tokens in the order they appear in the file.
   fn previous_tokens(&self) -> &'a [TokenAndSpan] {
-    self.previous_tokens_fast(&self.program())
+    self.previous_tokens_fast(self.program())
   }
 
   /// Gets the next tokens in the order they appear in the file.
   fn next_tokens(&self) -> &'a [TokenAndSpan] {
-    self.next_tokens_fast(&self.program())
+    self.next_tokens_fast(self.program())
   }
 }
 
@@ -476,12 +476,12 @@ impl<'a> Iterator for AncestorIterator<'a> {
 }
 
 pub trait TokenExt {
-  fn token_index(&self, program: &dyn RootNode) -> usize;
+  fn token_index<'a, N: RootNode<'a>>(&self, root_node: N) -> usize;
 }
 
 impl TokenExt for TokenAndSpan {
-  fn token_index(&self, program: &dyn RootNode) -> usize {
-    program.token_container().get_token_index_at_start(self.start()).unwrap()
+  fn token_index<'a, N: RootNode<'a>>(&self, root_node: N) -> usize {
+    root_node.token_container().get_token_index_at_start(self.start()).unwrap()
   }
 }
 
