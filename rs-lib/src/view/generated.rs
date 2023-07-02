@@ -8414,7 +8414,6 @@ pub struct AssignPat<'a> {
   pub inner: &'a swc_ast::AssignPat,
   pub left: Pat<'a>,
   pub right: Expr<'a>,
-  pub type_ann: Option<&'a TsTypeAnn<'a>>,
 }
 
 impl<'a> AssignPat<'a> {
@@ -8445,12 +8444,9 @@ impl<'a> NodeTrait<'a> for AssignPat<'a> {
   }
 
   fn children(&self) -> Vec<Node<'a>> {
-    let mut children = Vec::with_capacity(2 + match &self.type_ann { Some(_value) => 1, None => 0, });
+    let mut children = Vec::with_capacity(2);
     children.push((&self.left).into());
     children.push((&self.right).into());
-    if let Some(child) = self.type_ann {
-      children.push(child.into());
-    }
     children
   }
 
@@ -8483,17 +8479,10 @@ fn get_view_for_assign_pat<'a>(inner: &'a swc_ast::AssignPat, bump: &'a Bump) ->
     parent: Default::default(),
     left: get_view_for_pat(&inner.left, bump),
     right: get_view_for_expr(&inner.right, bump),
-    type_ann: match &inner.type_ann {
-      Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
-      None => None,
-    },
   });
   let parent: Node<'a> = (&*node).into();
   set_parent_for_pat(&node.left, parent);
   set_parent_for_expr(&node.right, parent);
-  if let Some(value) = &node.type_ann {
-    set_parent_for_ts_type_ann(value, parent)
-  };
   node
 }
 
@@ -15280,8 +15269,8 @@ impl<'a> OptChainExpr<'a> {
     self.parent.get().unwrap()
   }
 
-  pub fn question_dot_token(&self) -> &swc_common::Span {
-    &self.inner.question_dot_token
+  pub fn optional(&self) -> bool {
+    self.inner.optional
   }
 }
 
@@ -18734,10 +18723,6 @@ pub struct TsImportEqualsDecl<'a> {
 impl<'a> TsImportEqualsDecl<'a> {
   pub fn parent(&self) -> Node<'a> {
     self.parent.get().unwrap()
-  }
-
-  pub fn declare(&self) -> bool {
-    self.inner.declare
   }
 
   pub fn is_export(&self) -> bool {
@@ -22627,6 +22612,10 @@ pub struct UsingDecl<'a> {
 impl<'a> UsingDecl<'a> {
   pub fn parent(&self) -> Node<'a> {
     self.parent.get().unwrap()
+  }
+
+  pub fn is_await(&self) -> bool {
+    self.inner.is_await
   }
 }
 
