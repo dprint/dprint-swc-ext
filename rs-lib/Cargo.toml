@@ -18,9 +18,9 @@ bumpalo = "3.13.0"
 num-bigint = "0.4"
 rustc-hash = "1.1.0"
 swc_atoms = "0.5.8"
-swc_common = "0.31.18"
-swc_ecma_ast = "0.107.4"
-swc_ecma_parser = "0.137.11"
+swc_common = "0.31.21"
+swc_ecma_ast = "0.107.7"
+swc_ecma_parser = "0.137.15"
 text_lines = "0.6.0"
 
 [dev-dependencies]
