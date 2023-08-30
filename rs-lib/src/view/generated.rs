@@ -10784,7 +10784,7 @@ pub struct ExportAll<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::ExportAll,
   pub src: &'a Str<'a>,
-  pub asserts: Option<&'a ObjectLit<'a>>,
+  pub with: Option<&'a ObjectLit<'a>>,
 }
 
 impl<'a> ExportAll<'a> {
@@ -10819,9 +10819,9 @@ impl<'a> NodeTrait<'a> for ExportAll<'a> {
   }
 
   fn children(&self) -> Vec<Node<'a>> {
-    let mut children = Vec::with_capacity(1 + match &self.asserts { Some(_value) => 1, None => 0, });
+    let mut children = Vec::with_capacity(1 + match &self.with { Some(_value) => 1, None => 0, });
     children.push(self.src.into());
-    if let Some(child) = self.asserts {
+    if let Some(child) = self.with {
       children.push(child.into());
     }
     children
@@ -10855,14 +10855,14 @@ fn get_view_for_export_all<'a>(inner: &'a swc_ast::ExportAll, bump: &'a Bump) ->
     inner,
     parent: Default::default(),
     src: get_view_for_str(&inner.src, bump),
-    asserts: match &inner.asserts {
+    with: match &inner.with {
       Some(value) => Some(get_view_for_object_lit(value, bump)),
       None => None,
     },
   });
   let parent: Node<'a> = (&*node).into();
   set_parent_for_str(&node.src, parent);
-  if let Some(value) = &node.asserts {
+  if let Some(value) = &node.with {
     set_parent_for_object_lit(value, parent)
   };
   node
@@ -12523,7 +12523,7 @@ pub struct ImportDecl<'a> {
   pub inner: &'a swc_ast::ImportDecl,
   pub specifiers: Vec<ImportSpecifier<'a>>,
   pub src: &'a Str<'a>,
-  pub asserts: Option<&'a ObjectLit<'a>>,
+  pub with: Option<&'a ObjectLit<'a>>,
 }
 
 impl<'a> ImportDecl<'a> {
@@ -12558,12 +12558,12 @@ impl<'a> NodeTrait<'a> for ImportDecl<'a> {
   }
 
   fn children(&self) -> Vec<Node<'a>> {
-    let mut children = Vec::with_capacity(1 + self.specifiers.len() + match &self.asserts { Some(_value) => 1, None => 0, });
+    let mut children = Vec::with_capacity(1 + self.specifiers.len() + match &self.with { Some(_value) => 1, None => 0, });
     for child in self.specifiers.iter() {
       children.push(child.into());
     }
     children.push(self.src.into());
-    if let Some(child) = self.asserts {
+    if let Some(child) = self.with {
       children.push(child.into());
     }
     children
@@ -12598,7 +12598,7 @@ fn get_view_for_import_decl<'a>(inner: &'a swc_ast::ImportDecl, bump: &'a Bump) 
     parent: Default::default(),
     specifiers: inner.specifiers.iter().map(|value| get_view_for_import_specifier(value, bump)).collect(),
     src: get_view_for_str(&inner.src, bump),
-    asserts: match &inner.asserts {
+    with: match &inner.with {
       Some(value) => Some(get_view_for_object_lit(value, bump)),
       None => None,
     },
@@ -12608,7 +12608,7 @@ fn get_view_for_import_decl<'a>(inner: &'a swc_ast::ImportDecl, bump: &'a Bump) 
     set_parent_for_import_specifier(value, parent)
   }
   set_parent_for_str(&node.src, parent);
-  if let Some(value) = &node.asserts {
+  if let Some(value) = &node.with {
     set_parent_for_object_lit(value, parent)
   };
   node
@@ -14605,7 +14605,7 @@ pub struct NamedExport<'a> {
   pub inner: &'a swc_ast::NamedExport,
   pub specifiers: Vec<ExportSpecifier<'a>>,
   pub src: Option<&'a Str<'a>>,
-  pub asserts: Option<&'a ObjectLit<'a>>,
+  pub with: Option<&'a ObjectLit<'a>>,
 }
 
 impl<'a> NamedExport<'a> {
@@ -14640,14 +14640,14 @@ impl<'a> NodeTrait<'a> for NamedExport<'a> {
   }
 
   fn children(&self) -> Vec<Node<'a>> {
-    let mut children = Vec::with_capacity(self.specifiers.len() + match &self.src { Some(_value) => 1, None => 0, } + match &self.asserts { Some(_value) => 1, None => 0, });
+    let mut children = Vec::with_capacity(self.specifiers.len() + match &self.src { Some(_value) => 1, None => 0, } + match &self.with { Some(_value) => 1, None => 0, });
     for child in self.specifiers.iter() {
       children.push(child.into());
     }
     if let Some(child) = self.src {
       children.push(child.into());
     }
-    if let Some(child) = self.asserts {
+    if let Some(child) = self.with {
       children.push(child.into());
     }
     children
@@ -14685,7 +14685,7 @@ fn get_view_for_named_export<'a>(inner: &'a swc_ast::NamedExport, bump: &'a Bump
       Some(value) => Some(get_view_for_str(value, bump)),
       None => None,
     },
-    asserts: match &inner.asserts {
+    with: match &inner.with {
       Some(value) => Some(get_view_for_object_lit(value, bump)),
       None => None,
     },
@@ -14697,7 +14697,7 @@ fn get_view_for_named_export<'a>(inner: &'a swc_ast::NamedExport, bump: &'a Bump
   if let Some(value) = &node.src {
     set_parent_for_str(value, parent)
   };
-  if let Some(value) = &node.asserts {
+  if let Some(value) = &node.with {
     set_parent_for_object_lit(value, parent)
   };
   node

@@ -1,6 +1,7 @@
 use std::path::Path;
 
-use crate::test_helpers::{get_swc_module, get_swc_script};
+use crate::test_helpers::get_swc_module;
+use crate::test_helpers::get_swc_script;
 
 pub fn run_test<'a>(file_text: &str, run_test: impl Fn(super::Program<'a>)) {
   let file_path = Path::new("test.ts");
