@@ -1,10 +1,14 @@
-use crate::swc::ast::{EsVersion, Module};
-use crate::swc::common::{
-  comments::SingleThreadedComments,
-  errors::{DiagnosticBuilder, Emitter, Handler},
-};
+use crate::swc::ast::EsVersion;
+use crate::swc::ast::Module;
+use crate::swc::common::comments::SingleThreadedComments;
+use crate::swc::common::errors::DiagnosticBuilder;
+use crate::swc::common::errors::Emitter;
+use crate::swc::common::errors::Handler;
+use crate::swc::parser::lexer::Lexer;
 use crate::swc::parser::token::TokenAndSpan;
-use crate::swc::parser::{lexer::Lexer, Capturing, Parser, Syntax};
+use crate::swc::parser::Capturing;
+use crate::swc::parser::Parser;
+use crate::swc::parser::Syntax;
 use std::path::Path;
 
 use crate::common::SourceTextInfo;
