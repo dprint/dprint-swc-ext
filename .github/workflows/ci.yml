@@ -35,7 +35,7 @@ jobs:
     - name: Ensure code generation same
       if: matrix.config.kind == 'test_debug'
       run: |
-        cargo install +stable cargo-clone
+        cargo install cargo-clone --version 1.1.0
         chmod +x ./scripts/generate.ts
         ./scripts/generate.ts
         echo Checking for git changes...
