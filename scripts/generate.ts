@@ -1,24 +1,39 @@
 #!/usr/bin/env -S deno run -A
-import $ from "https://deno.land/x/dax@0.21.0/mod.ts";
+import $ from "https://deno.land/x/dax@0.35.0/mod.ts";
+
+$.setPrintCommand(true);
+
+const root = $.path(import.meta).join("../../").resolve();
 
 if (!Deno.args.some(a => a === "--quick")) {
   const swcVersions = await getSwcVersions();
   $.logStep("Setting up crates. Note: Provide --quick to just code generate.");
   $.logStep(`Setting up swc_ecma_ast ${swcVersions.swcEcmaAst}...`);
-  await $.fs.emptyDir("swc_ecma_ast");
+  const astDir = root.join("swc_ecma_ast");
+  astDir.emptyDirSync();
+  await $`cargo clone --version`;
   await $`cargo clone swc_ecma_ast@${swcVersions.swcEcmaAst}`;
+  // force using an old version of the regex crate that works in Rust 1.65
+  const cargoFile = astDir.join("Cargo.toml");
+  cargoFile.writeTextSync(
+    cargoFile.readTextSync()
+      + "[dependencies.regex]\nversion = \"=1.5.5\"\n",
+  );
   await $`cd swc_ecma_ast ; cargo rustdoc -- --output-format json -Z unstable-options`;
-  await $.fs.copy("swc_ecma_ast/target/doc/swc_ecma_ast.json", "swc_ecma_ast.json", { overwrite: true });
+  astDir.join("target/doc/swc_ecma_ast.json")
+    .copyFileSync(root.join("swc_ecma_ast.json"));
 
   $.logStep(`Setting up swc_ecma_parser ${swcVersions.swcEcmaParser}...`);
-  await $.fs.emptyDir("swc_ecma_parser");
+  const parserDir = root.join("swc_ecma_parser");
+  parserDir.emptyDirSync();
   await $`cargo clone swc_ecma_parser@${swcVersions.swcEcmaParser}`;
   // generate these files to make cargo happy
-  await $.fs.ensureFile("swc_ecma_parser/benches/compare/main.rs");
-  await $.fs.ensureFile("swc_ecma_parser/benches/parser/main.rs");
-  await $.fs.ensureFile("swc_ecma_parser/benches/lexer/main.rs");
+  parserDir.join("benches/compare/main.rs").ensureFileSync();
+  parserDir.join("benches/parser/main.rs").ensureFileSync();
+  parserDir.join("benches/lexer/main.rs").ensureFileSync();
   await $`cd swc_ecma_parser ; cargo rustdoc -- --output-format json -Z unstable-options`;
-  await $.fs.copy("swc_ecma_parser/target/doc/swc_ecma_parser.json", "swc_ecma_parser.json", { overwrite: true });
+  parserDir.join("target/doc/swc_ecma_parser.json")
+    .copyFileSync(root.join("swc_ecma_parser.json"));
 }
 
 $.logStep("Generating", "code...");
