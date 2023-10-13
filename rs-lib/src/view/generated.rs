@@ -12224,7 +12224,7 @@ fn set_parent_for_getter_prop<'a>(node: &GetterProp<'a>, parent: Node<'a>) {
 /// A complete identifier with span.
 ///
 /// Identifier of swc consists of two parts. The first one is symbol, which is
-/// stored using an interned string, [JsWord] . The second
+/// stored using an interned string, [Atom] . The second
 /// one is [SyntaxContext][swc_common::SyntaxContext], which can be
 /// used to distinguish identifier with same symbol.
 ///
@@ -12257,7 +12257,7 @@ fn set_parent_for_getter_prop<'a>(node: &GetterProp<'a>, parent: Node<'a>) {
 ///
 /// Thanks to the `tag` we attached, we can now distinguish them.
 ///
-/// ([JsWord], [SyntaxContext])
+/// ([Atom], [SyntaxContext])
 ///
 /// See [Id], which is a type alias for this.
 ///
@@ -12282,7 +12282,7 @@ impl<'a> Ident<'a> {
     self.parent.get().unwrap()
   }
 
-  pub fn sym(&self) -> &swc_atoms::JsWord {
+  pub fn sym(&self) -> &swc_atoms::Atom {
     &self.inner.sym
   }
 
@@ -16518,7 +16518,7 @@ impl<'a> Str<'a> {
     self.parent.get().unwrap()
   }
 
-  pub fn value(&self) -> &swc_atoms::JsWord {
+  pub fn value(&self) -> &swc_atoms::Atom {
     &self.inner.value
   }
 
