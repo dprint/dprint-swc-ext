@@ -6,7 +6,7 @@ use bumpalo::Bump;
 use crate::swc::common::Spanned;
 use crate::swc::ast as swc_ast;
 use crate::swc::atoms as swc_atoms;
-pub use crate::swc::ast::{Accessibility, AssignOp, BinaryOp, EsVersion, MetaPropKind, MethodKind, TruePlusMinus, TsKeywordTypeKind, TsTypeOperatorOp, UnaryOp, UpdateOp, VarDeclKind};
+pub use crate::swc::ast::{Accessibility, AssignOp, BinaryOp, EsVersion, ImportPhase, MetaPropKind, MethodKind, TruePlusMinus, TsKeywordTypeKind, TsTypeOperatorOp, UnaryOp, UpdateOp, VarDeclKind};
 use crate::swc::common as swc_common;
 use crate::common::*;
 use crate::view::types::*;
@@ -1653,6 +1653,224 @@ impl std::fmt::Display for NodeKind {
       NodeKind::WithStmt => "WithStmt",
       NodeKind::YieldExpr => "YieldExpr",
     })
+  }
+}
+
+#[derive(Copy, Clone)]
+pub enum AssignTarget<'a> {
+  Simple(SimpleAssignTarget<'a>),
+  Pat(AssignTargetPat<'a>),
+}
+
+impl<'a> AssignTarget<'a> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+    T::to(&self.into())
+  }
+
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::to(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
+  }
+}
+
+impl<'a> SourceRanged for AssignTarget<'a> {
+  fn start(&self) -> SourcePos {
+    match self {
+      AssignTarget::Simple(node) => node.start(),
+      AssignTarget::Pat(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      AssignTarget::Simple(node) => node.end(),
+      AssignTarget::Pat(node) => node.end(),
+    }
+  }
+}
+
+impl<'a> NodeTrait<'a> for AssignTarget<'a> {
+  fn parent(&self) -> Option<Node<'a>> {
+    match self {
+      AssignTarget::Simple(node) => NodeTrait::parent(node),
+      AssignTarget::Pat(node) => NodeTrait::parent(node),
+    }
+  }
+
+  fn children(&self) -> Vec<Node<'a>> {
+    match self {
+      AssignTarget::Simple(node) => node.children(),
+      AssignTarget::Pat(node) => node.children(),
+    }
+  }
+
+  fn as_node(&self) -> Node<'a> {
+    match self {
+      AssignTarget::Simple(node) => node.as_node(),
+      AssignTarget::Pat(node) => node.as_node(),
+    }
+  }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      AssignTarget::Simple(node) => node.kind(),
+      AssignTarget::Pat(node) => node.kind(),
+    }
+  }
+}
+
+impl<'a> From<&AssignTarget<'a>> for Node<'a> {
+  fn from(node: &AssignTarget<'a>) -> Node<'a> {
+    match node {
+      AssignTarget::Simple(node) => node.into(),
+      AssignTarget::Pat(node) => node.into(),
+    }
+  }
+}
+
+impl<'a> From<AssignTarget<'a>> for Node<'a> {
+  fn from(node: AssignTarget<'a>) -> Node<'a> {
+    match node {
+      AssignTarget::Simple(node) => node.into(),
+      AssignTarget::Pat(node) => node.into(),
+    }
+  }
+}
+
+fn get_view_for_assign_target<'a>(inner: &'a swc_ast::AssignTarget, bump: &'a Bump) -> AssignTarget<'a> {
+  match inner {
+    swc_ast::AssignTarget::Simple(value) => AssignTarget::Simple(get_view_for_simple_assign_target(value, bump)),
+    swc_ast::AssignTarget::Pat(value) => AssignTarget::Pat(get_view_for_assign_target_pat(value, bump)),
+  }
+}
+
+fn set_parent_for_assign_target<'a>(node: &AssignTarget<'a>, parent: Node<'a>) {
+  match node {
+    AssignTarget::Simple(value) => set_parent_for_simple_assign_target(value, parent),
+    AssignTarget::Pat(value) => set_parent_for_assign_target_pat(value, parent),
+  }
+}
+
+#[derive(Copy, Clone)]
+pub enum AssignTargetPat<'a> {
+  Array(&'a ArrayPat<'a>),
+  Object(&'a ObjectPat<'a>),
+  Invalid(&'a Invalid<'a>),
+}
+
+impl<'a> AssignTargetPat<'a> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+    T::to(&self.into())
+  }
+
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::to(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
+  }
+  pub fn parent(&self) -> Node<'a> {
+    NodeTrait::parent(self).unwrap()
+  }
+}
+
+impl<'a> SourceRanged for AssignTargetPat<'a> {
+  fn start(&self) -> SourcePos {
+    match self {
+      AssignTargetPat::Array(node) => node.start(),
+      AssignTargetPat::Object(node) => node.start(),
+      AssignTargetPat::Invalid(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      AssignTargetPat::Array(node) => node.end(),
+      AssignTargetPat::Object(node) => node.end(),
+      AssignTargetPat::Invalid(node) => node.end(),
+    }
+  }
+}
+
+impl<'a> NodeTrait<'a> for AssignTargetPat<'a> {
+  fn parent(&self) -> Option<Node<'a>> {
+    match self {
+      AssignTargetPat::Array(node) => NodeTrait::parent(*node),
+      AssignTargetPat::Object(node) => NodeTrait::parent(*node),
+      AssignTargetPat::Invalid(node) => NodeTrait::parent(*node),
+    }
+  }
+
+  fn children(&self) -> Vec<Node<'a>> {
+    match self {
+      AssignTargetPat::Array(node) => node.children(),
+      AssignTargetPat::Object(node) => node.children(),
+      AssignTargetPat::Invalid(node) => node.children(),
+    }
+  }
+
+  fn as_node(&self) -> Node<'a> {
+    match self {
+      AssignTargetPat::Array(node) => node.as_node(),
+      AssignTargetPat::Object(node) => node.as_node(),
+      AssignTargetPat::Invalid(node) => node.as_node(),
+    }
+  }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      AssignTargetPat::Array(_) => NodeKind::ArrayPat,
+      AssignTargetPat::Object(_) => NodeKind::ObjectPat,
+      AssignTargetPat::Invalid(_) => NodeKind::Invalid,
+    }
+  }
+}
+
+impl<'a> From<&AssignTargetPat<'a>> for Node<'a> {
+  fn from(node: &AssignTargetPat<'a>) -> Node<'a> {
+    match node {
+      AssignTargetPat::Array(node) => (*node).into(),
+      AssignTargetPat::Object(node) => (*node).into(),
+      AssignTargetPat::Invalid(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<AssignTargetPat<'a>> for Node<'a> {
+  fn from(node: AssignTargetPat<'a>) -> Node<'a> {
+    match node {
+      AssignTargetPat::Array(node) => node.into(),
+      AssignTargetPat::Object(node) => node.into(),
+      AssignTargetPat::Invalid(node) => node.into(),
+    }
+  }
+}
+
+fn get_view_for_assign_target_pat<'a>(inner: &'a swc_ast::AssignTargetPat, bump: &'a Bump) -> AssignTargetPat<'a> {
+  match inner {
+    swc_ast::AssignTargetPat::Array(value) => AssignTargetPat::Array(get_view_for_array_pat(value, bump)),
+    swc_ast::AssignTargetPat::Object(value) => AssignTargetPat::Object(get_view_for_object_pat(value, bump)),
+    swc_ast::AssignTargetPat::Invalid(value) => AssignTargetPat::Invalid(get_view_for_invalid(value, bump)),
+  }
+}
+
+fn set_parent_for_assign_target_pat<'a>(node: &AssignTargetPat<'a>, parent: Node<'a>) {
+  match node {
+    AssignTargetPat::Array(value) => set_parent_for_array_pat(value, parent),
+    AssignTargetPat::Object(value) => set_parent_for_object_pat(value, parent),
+    AssignTargetPat::Invalid(value) => set_parent_for_invalid(value, parent),
   }
 }
 
@@ -5244,108 +5462,6 @@ fn set_parent_for_pat<'a>(node: &Pat<'a>, parent: Node<'a>) {
 }
 
 #[derive(Copy, Clone)]
-pub enum PatOrExpr<'a> {
-  Expr(Expr<'a>),
-  Pat(Pat<'a>),
-}
-
-impl<'a> PatOrExpr<'a> {
-  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::to(&self.into())
-  }
-
-  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
-    let node: Node<'a> = self.into();
-    if let Some(result) = T::to(&node) {
-      result
-    } else {
-      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
-    }
-  }
-
-  pub fn is<T: CastableNode<'a>>(&self) -> bool {
-    self.kind() == T::kind()
-  }
-}
-
-impl<'a> SourceRanged for PatOrExpr<'a> {
-  fn start(&self) -> SourcePos {
-    match self {
-      PatOrExpr::Expr(node) => node.start(),
-      PatOrExpr::Pat(node) => node.start(),
-    }
-  }
-  fn end(&self) -> SourcePos {
-    match self {
-      PatOrExpr::Expr(node) => node.end(),
-      PatOrExpr::Pat(node) => node.end(),
-    }
-  }
-}
-
-impl<'a> NodeTrait<'a> for PatOrExpr<'a> {
-  fn parent(&self) -> Option<Node<'a>> {
-    match self {
-      PatOrExpr::Expr(node) => NodeTrait::parent(node),
-      PatOrExpr::Pat(node) => NodeTrait::parent(node),
-    }
-  }
-
-  fn children(&self) -> Vec<Node<'a>> {
-    match self {
-      PatOrExpr::Expr(node) => node.children(),
-      PatOrExpr::Pat(node) => node.children(),
-    }
-  }
-
-  fn as_node(&self) -> Node<'a> {
-    match self {
-      PatOrExpr::Expr(node) => node.as_node(),
-      PatOrExpr::Pat(node) => node.as_node(),
-    }
-  }
-
-  fn kind(&self) -> NodeKind {
-    match self {
-      PatOrExpr::Expr(node) => node.kind(),
-      PatOrExpr::Pat(node) => node.kind(),
-    }
-  }
-}
-
-impl<'a> From<&PatOrExpr<'a>> for Node<'a> {
-  fn from(node: &PatOrExpr<'a>) -> Node<'a> {
-    match node {
-      PatOrExpr::Expr(node) => node.into(),
-      PatOrExpr::Pat(node) => node.into(),
-    }
-  }
-}
-
-impl<'a> From<PatOrExpr<'a>> for Node<'a> {
-  fn from(node: PatOrExpr<'a>) -> Node<'a> {
-    match node {
-      PatOrExpr::Expr(node) => node.into(),
-      PatOrExpr::Pat(node) => node.into(),
-    }
-  }
-}
-
-fn get_view_for_pat_or_expr<'a>(inner: &'a swc_ast::PatOrExpr, bump: &'a Bump) -> PatOrExpr<'a> {
-  match inner {
-    swc_ast::PatOrExpr::Expr(value) => PatOrExpr::Expr(get_view_for_expr(value, bump)),
-    swc_ast::PatOrExpr::Pat(value) => PatOrExpr::Pat(get_view_for_pat(value, bump)),
-  }
-}
-
-fn set_parent_for_pat_or_expr<'a>(node: &PatOrExpr<'a>, parent: Node<'a>) {
-  match node {
-    PatOrExpr::Expr(value) => set_parent_for_expr(value, parent),
-    PatOrExpr::Pat(value) => set_parent_for_pat(value, parent),
-  }
-}
-
-#[derive(Copy, Clone)]
 pub enum Prop<'a> {
   /// `a` in `{ a, }`
   Shorthand(&'a Ident<'a>),
@@ -5737,6 +5853,212 @@ fn set_parent_for_prop_or_spread<'a>(node: &PropOrSpread<'a>, parent: Node<'a>) 
   match node {
     PropOrSpread::Spread(value) => set_parent_for_spread_element(value, parent),
     PropOrSpread::Prop(value) => set_parent_for_prop(value, parent),
+  }
+}
+
+#[derive(Copy, Clone)]
+pub enum SimpleAssignTarget<'a> {
+  /// Note: This type is to help implementing visitor and the field `type_ann`
+  /// is always [None].
+  Ident(&'a BindingIdent<'a>),
+  Member(&'a MemberExpr<'a>),
+  SuperProp(&'a SuperPropExpr<'a>),
+  Paren(&'a ParenExpr<'a>),
+  OptChain(&'a OptChainExpr<'a>),
+  TsAs(&'a TsAsExpr<'a>),
+  TsSatisfies(&'a TsSatisfiesExpr<'a>),
+  TsNonNull(&'a TsNonNullExpr<'a>),
+  TsTypeAssertion(&'a TsTypeAssertion<'a>),
+  TsInstantiation(&'a TsInstantiation<'a>),
+  Invalid(&'a Invalid<'a>),
+}
+
+impl<'a> SimpleAssignTarget<'a> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+    T::to(&self.into())
+  }
+
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::to(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
+  }
+  pub fn parent(&self) -> Node<'a> {
+    NodeTrait::parent(self).unwrap()
+  }
+}
+
+impl<'a> SourceRanged for SimpleAssignTarget<'a> {
+  fn start(&self) -> SourcePos {
+    match self {
+      SimpleAssignTarget::Ident(node) => node.start(),
+      SimpleAssignTarget::Member(node) => node.start(),
+      SimpleAssignTarget::SuperProp(node) => node.start(),
+      SimpleAssignTarget::Paren(node) => node.start(),
+      SimpleAssignTarget::OptChain(node) => node.start(),
+      SimpleAssignTarget::TsAs(node) => node.start(),
+      SimpleAssignTarget::TsSatisfies(node) => node.start(),
+      SimpleAssignTarget::TsNonNull(node) => node.start(),
+      SimpleAssignTarget::TsTypeAssertion(node) => node.start(),
+      SimpleAssignTarget::TsInstantiation(node) => node.start(),
+      SimpleAssignTarget::Invalid(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      SimpleAssignTarget::Ident(node) => node.end(),
+      SimpleAssignTarget::Member(node) => node.end(),
+      SimpleAssignTarget::SuperProp(node) => node.end(),
+      SimpleAssignTarget::Paren(node) => node.end(),
+      SimpleAssignTarget::OptChain(node) => node.end(),
+      SimpleAssignTarget::TsAs(node) => node.end(),
+      SimpleAssignTarget::TsSatisfies(node) => node.end(),
+      SimpleAssignTarget::TsNonNull(node) => node.end(),
+      SimpleAssignTarget::TsTypeAssertion(node) => node.end(),
+      SimpleAssignTarget::TsInstantiation(node) => node.end(),
+      SimpleAssignTarget::Invalid(node) => node.end(),
+    }
+  }
+}
+
+impl<'a> NodeTrait<'a> for SimpleAssignTarget<'a> {
+  fn parent(&self) -> Option<Node<'a>> {
+    match self {
+      SimpleAssignTarget::Ident(node) => NodeTrait::parent(*node),
+      SimpleAssignTarget::Member(node) => NodeTrait::parent(*node),
+      SimpleAssignTarget::SuperProp(node) => NodeTrait::parent(*node),
+      SimpleAssignTarget::Paren(node) => NodeTrait::parent(*node),
+      SimpleAssignTarget::OptChain(node) => NodeTrait::parent(*node),
+      SimpleAssignTarget::TsAs(node) => NodeTrait::parent(*node),
+      SimpleAssignTarget::TsSatisfies(node) => NodeTrait::parent(*node),
+      SimpleAssignTarget::TsNonNull(node) => NodeTrait::parent(*node),
+      SimpleAssignTarget::TsTypeAssertion(node) => NodeTrait::parent(*node),
+      SimpleAssignTarget::TsInstantiation(node) => NodeTrait::parent(*node),
+      SimpleAssignTarget::Invalid(node) => NodeTrait::parent(*node),
+    }
+  }
+
+  fn children(&self) -> Vec<Node<'a>> {
+    match self {
+      SimpleAssignTarget::Ident(node) => node.children(),
+      SimpleAssignTarget::Member(node) => node.children(),
+      SimpleAssignTarget::SuperProp(node) => node.children(),
+      SimpleAssignTarget::Paren(node) => node.children(),
+      SimpleAssignTarget::OptChain(node) => node.children(),
+      SimpleAssignTarget::TsAs(node) => node.children(),
+      SimpleAssignTarget::TsSatisfies(node) => node.children(),
+      SimpleAssignTarget::TsNonNull(node) => node.children(),
+      SimpleAssignTarget::TsTypeAssertion(node) => node.children(),
+      SimpleAssignTarget::TsInstantiation(node) => node.children(),
+      SimpleAssignTarget::Invalid(node) => node.children(),
+    }
+  }
+
+  fn as_node(&self) -> Node<'a> {
+    match self {
+      SimpleAssignTarget::Ident(node) => node.as_node(),
+      SimpleAssignTarget::Member(node) => node.as_node(),
+      SimpleAssignTarget::SuperProp(node) => node.as_node(),
+      SimpleAssignTarget::Paren(node) => node.as_node(),
+      SimpleAssignTarget::OptChain(node) => node.as_node(),
+      SimpleAssignTarget::TsAs(node) => node.as_node(),
+      SimpleAssignTarget::TsSatisfies(node) => node.as_node(),
+      SimpleAssignTarget::TsNonNull(node) => node.as_node(),
+      SimpleAssignTarget::TsTypeAssertion(node) => node.as_node(),
+      SimpleAssignTarget::TsInstantiation(node) => node.as_node(),
+      SimpleAssignTarget::Invalid(node) => node.as_node(),
+    }
+  }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      SimpleAssignTarget::Ident(_) => NodeKind::BindingIdent,
+      SimpleAssignTarget::Member(_) => NodeKind::MemberExpr,
+      SimpleAssignTarget::SuperProp(_) => NodeKind::SuperPropExpr,
+      SimpleAssignTarget::Paren(_) => NodeKind::ParenExpr,
+      SimpleAssignTarget::OptChain(_) => NodeKind::OptChainExpr,
+      SimpleAssignTarget::TsAs(_) => NodeKind::TsAsExpr,
+      SimpleAssignTarget::TsSatisfies(_) => NodeKind::TsSatisfiesExpr,
+      SimpleAssignTarget::TsNonNull(_) => NodeKind::TsNonNullExpr,
+      SimpleAssignTarget::TsTypeAssertion(_) => NodeKind::TsTypeAssertion,
+      SimpleAssignTarget::TsInstantiation(_) => NodeKind::TsInstantiation,
+      SimpleAssignTarget::Invalid(_) => NodeKind::Invalid,
+    }
+  }
+}
+
+impl<'a> From<&SimpleAssignTarget<'a>> for Node<'a> {
+  fn from(node: &SimpleAssignTarget<'a>) -> Node<'a> {
+    match node {
+      SimpleAssignTarget::Ident(node) => (*node).into(),
+      SimpleAssignTarget::Member(node) => (*node).into(),
+      SimpleAssignTarget::SuperProp(node) => (*node).into(),
+      SimpleAssignTarget::Paren(node) => (*node).into(),
+      SimpleAssignTarget::OptChain(node) => (*node).into(),
+      SimpleAssignTarget::TsAs(node) => (*node).into(),
+      SimpleAssignTarget::TsSatisfies(node) => (*node).into(),
+      SimpleAssignTarget::TsNonNull(node) => (*node).into(),
+      SimpleAssignTarget::TsTypeAssertion(node) => (*node).into(),
+      SimpleAssignTarget::TsInstantiation(node) => (*node).into(),
+      SimpleAssignTarget::Invalid(node) => (*node).into(),
+    }
+  }
+}
+
+impl<'a> From<SimpleAssignTarget<'a>> for Node<'a> {
+  fn from(node: SimpleAssignTarget<'a>) -> Node<'a> {
+    match node {
+      SimpleAssignTarget::Ident(node) => node.into(),
+      SimpleAssignTarget::Member(node) => node.into(),
+      SimpleAssignTarget::SuperProp(node) => node.into(),
+      SimpleAssignTarget::Paren(node) => node.into(),
+      SimpleAssignTarget::OptChain(node) => node.into(),
+      SimpleAssignTarget::TsAs(node) => node.into(),
+      SimpleAssignTarget::TsSatisfies(node) => node.into(),
+      SimpleAssignTarget::TsNonNull(node) => node.into(),
+      SimpleAssignTarget::TsTypeAssertion(node) => node.into(),
+      SimpleAssignTarget::TsInstantiation(node) => node.into(),
+      SimpleAssignTarget::Invalid(node) => node.into(),
+    }
+  }
+}
+
+fn get_view_for_simple_assign_target<'a>(inner: &'a swc_ast::SimpleAssignTarget, bump: &'a Bump) -> SimpleAssignTarget<'a> {
+  match inner {
+    swc_ast::SimpleAssignTarget::Ident(value) => SimpleAssignTarget::Ident(get_view_for_binding_ident(value, bump)),
+    swc_ast::SimpleAssignTarget::Member(value) => SimpleAssignTarget::Member(get_view_for_member_expr(value, bump)),
+    swc_ast::SimpleAssignTarget::SuperProp(value) => SimpleAssignTarget::SuperProp(get_view_for_super_prop_expr(value, bump)),
+    swc_ast::SimpleAssignTarget::Paren(value) => SimpleAssignTarget::Paren(get_view_for_paren_expr(value, bump)),
+    swc_ast::SimpleAssignTarget::OptChain(value) => SimpleAssignTarget::OptChain(get_view_for_opt_chain_expr(value, bump)),
+    swc_ast::SimpleAssignTarget::TsAs(value) => SimpleAssignTarget::TsAs(get_view_for_ts_as_expr(value, bump)),
+    swc_ast::SimpleAssignTarget::TsSatisfies(value) => SimpleAssignTarget::TsSatisfies(get_view_for_ts_satisfies_expr(value, bump)),
+    swc_ast::SimpleAssignTarget::TsNonNull(value) => SimpleAssignTarget::TsNonNull(get_view_for_ts_non_null_expr(value, bump)),
+    swc_ast::SimpleAssignTarget::TsTypeAssertion(value) => SimpleAssignTarget::TsTypeAssertion(get_view_for_ts_type_assertion(value, bump)),
+    swc_ast::SimpleAssignTarget::TsInstantiation(value) => SimpleAssignTarget::TsInstantiation(get_view_for_ts_instantiation(value, bump)),
+    swc_ast::SimpleAssignTarget::Invalid(value) => SimpleAssignTarget::Invalid(get_view_for_invalid(value, bump)),
+  }
+}
+
+fn set_parent_for_simple_assign_target<'a>(node: &SimpleAssignTarget<'a>, parent: Node<'a>) {
+  match node {
+    SimpleAssignTarget::Ident(value) => set_parent_for_binding_ident(value, parent),
+    SimpleAssignTarget::Member(value) => set_parent_for_member_expr(value, parent),
+    SimpleAssignTarget::SuperProp(value) => set_parent_for_super_prop_expr(value, parent),
+    SimpleAssignTarget::Paren(value) => set_parent_for_paren_expr(value, parent),
+    SimpleAssignTarget::OptChain(value) => set_parent_for_opt_chain_expr(value, parent),
+    SimpleAssignTarget::TsAs(value) => set_parent_for_ts_as_expr(value, parent),
+    SimpleAssignTarget::TsSatisfies(value) => set_parent_for_ts_satisfies_expr(value, parent),
+    SimpleAssignTarget::TsNonNull(value) => set_parent_for_ts_non_null_expr(value, parent),
+    SimpleAssignTarget::TsTypeAssertion(value) => set_parent_for_ts_type_assertion(value, parent),
+    SimpleAssignTarget::TsInstantiation(value) => set_parent_for_ts_instantiation(value, parent),
+    SimpleAssignTarget::Invalid(value) => set_parent_for_invalid(value, parent),
   }
 }
 
@@ -8326,7 +8648,7 @@ fn set_parent_for_arrow_expr<'a>(node: &ArrowExpr<'a>, parent: Node<'a>) {
 pub struct AssignExpr<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::AssignExpr,
-  pub left: PatOrExpr<'a>,
+  pub left: AssignTarget<'a>,
   pub right: Expr<'a>,
 }
 
@@ -8395,11 +8717,11 @@ fn get_view_for_assign_expr<'a>(inner: &'a swc_ast::AssignExpr, bump: &'a Bump) 
   let node = bump.alloc(AssignExpr {
     inner,
     parent: Default::default(),
-    left: get_view_for_pat_or_expr(&inner.left, bump),
+    left: get_view_for_assign_target(&inner.left, bump),
     right: get_view_for_expr(&inner.right, bump),
   });
   let parent: Node<'a> = (&*node).into();
-  set_parent_for_pat_or_expr(&node.left, parent);
+  set_parent_for_assign_target(&node.left, parent);
   set_parent_for_expr(&node.right, parent);
   node
 }
@@ -8495,7 +8817,9 @@ fn set_parent_for_assign_pat<'a>(node: &AssignPat<'a>, parent: Node<'a>) {
 pub struct AssignPatProp<'a> {
   parent: ParentOnceCell<&'a ObjectPat<'a>>,
   pub inner: &'a swc_ast::AssignPatProp,
-  pub key: &'a Ident<'a>,
+  /// Note: This type is to help implementing visitor and the field `type_ann`
+  /// is always [None].
+  pub key: &'a BindingIdent<'a>,
   pub value: Option<Expr<'a>>,
 }
 
@@ -8562,14 +8886,14 @@ fn get_view_for_assign_pat_prop<'a>(inner: &'a swc_ast::AssignPatProp, bump: &'a
   let node = bump.alloc(AssignPatProp {
     inner,
     parent: Default::default(),
-    key: get_view_for_ident(&inner.key, bump),
+    key: get_view_for_binding_ident(&inner.key, bump),
     value: match &inner.value {
       Some(value) => Some(get_view_for_expr(value, bump)),
       None => None,
     },
   });
   let parent: Node<'a> = (&*node).into();
-  set_parent_for_ident(&node.key, parent);
+  set_parent_for_binding_ident(&node.key, parent);
   if let Some(value) = &node.value {
     set_parent_for_expr(value, parent)
   };
@@ -8684,6 +9008,14 @@ impl<'a> AutoAccessor<'a> {
   /// Typescript extension.
   pub fn accessibility(&self) -> Option<Accessibility> {
     self.inner.accessibility
+  }
+
+  pub fn is_override(&self) -> bool {
+    self.inner.is_override
+  }
+
+  pub fn definite(&self) -> bool {
+    self.inner.definite
   }
 }
 
@@ -12455,6 +12787,10 @@ impl<'a> Import<'a> {
   pub fn parent(&self) -> &'a CallExpr<'a> {
     self.parent.get().unwrap()
   }
+
+  pub fn phase(&self) -> ImportPhase {
+    self.inner.phase
+  }
 }
 
 impl<'a> SourceRanged for Import<'a> {
@@ -12533,6 +12869,10 @@ impl<'a> ImportDecl<'a> {
 
   pub fn type_only(&self) -> bool {
     self.inner.type_only
+  }
+
+  pub fn phase(&self) -> ImportPhase {
+    self.inner.phase
   }
 }
 
@@ -16258,6 +16598,7 @@ pub struct SetterProp<'a> {
   parent: ParentOnceCell<&'a ObjectLit<'a>>,
   pub inner: &'a swc_ast::SetterProp,
   pub key: PropName<'a>,
+  pub this_param: Option<Pat<'a>>,
   pub param: Pat<'a>,
   pub body: Option<&'a BlockStmt<'a>>,
 }
@@ -16290,8 +16631,11 @@ impl<'a> NodeTrait<'a> for SetterProp<'a> {
   }
 
   fn children(&self) -> Vec<Node<'a>> {
-    let mut children = Vec::with_capacity(2 + match &self.body { Some(_value) => 1, None => 0, });
+    let mut children = Vec::with_capacity(2 + match &self.this_param { Some(_value) => 1, None => 0, } + match &self.body { Some(_value) => 1, None => 0, });
     children.push((&self.key).into());
+    if let Some(child) = self.this_param.as_ref() {
+      children.push(child.into());
+    }
     children.push((&self.param).into());
     if let Some(child) = self.body {
       children.push(child.into());
@@ -16327,6 +16671,10 @@ fn get_view_for_setter_prop<'a>(inner: &'a swc_ast::SetterProp, bump: &'a Bump) 
     inner,
     parent: Default::default(),
     key: get_view_for_prop_name(&inner.key, bump),
+    this_param: match &inner.this_param {
+      Some(value) => Some(get_view_for_pat(value, bump)),
+      None => None,
+    },
     param: get_view_for_pat(&inner.param, bump),
     body: match &inner.body {
       Some(value) => Some(get_view_for_block_stmt(value, bump)),
@@ -16335,6 +16683,9 @@ fn get_view_for_setter_prop<'a>(inner: &'a swc_ast::SetterProp, bump: &'a Bump) 
   });
   let parent: Node<'a> = (&*node).into();
   set_parent_for_prop_name(&node.key, parent);
+  if let Some(value) = &node.this_param {
+    set_parent_for_pat(value, parent)
+  };
   set_parent_for_pat(&node.param, parent);
   if let Some(value) = &node.body {
     set_parent_for_block_stmt(value, parent)

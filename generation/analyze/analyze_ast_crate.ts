@@ -35,6 +35,10 @@ export function analyzeAstCrate() {
         continue;
       }
 
+      if (struct.name === "ImportWith" || struct.name === "ImportWithItem") {
+        continue;
+      }
+
       // console.log(struct);
       yield analyzeStruct(struct);
       // console.log(JSON.stringify(analyzeStruct(struct), null, 2));
