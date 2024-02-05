@@ -115,8 +115,6 @@ pub enum Node<'a> {
   ImportDefaultSpecifier(&'a ImportDefaultSpecifier<'a>),
   ImportNamedSpecifier(&'a ImportNamedSpecifier<'a>),
   ImportStarAsSpecifier(&'a ImportStarAsSpecifier<'a>),
-  ImportWith(&'a ImportWith<'a>),
-  ImportWithItem(&'a ImportWithItem<'a>),
   Invalid(&'a Invalid<'a>),
   JSXAttr(&'a JSXAttr<'a>),
   JSXClosingElement(&'a JSXClosingElement<'a>),
@@ -310,8 +308,6 @@ impl<'a> SourceRanged for Node<'a> {
       Node::ImportDefaultSpecifier(node) => node.start(),
       Node::ImportNamedSpecifier(node) => node.start(),
       Node::ImportStarAsSpecifier(node) => node.start(),
-      Node::ImportWith(node) => node.start(),
-      Node::ImportWithItem(node) => node.start(),
       Node::Invalid(node) => node.start(),
       Node::JSXAttr(node) => node.start(),
       Node::JSXClosingElement(node) => node.start(),
@@ -486,8 +482,6 @@ impl<'a> SourceRanged for Node<'a> {
       Node::ImportDefaultSpecifier(node) => node.end(),
       Node::ImportNamedSpecifier(node) => node.end(),
       Node::ImportStarAsSpecifier(node) => node.end(),
-      Node::ImportWith(node) => node.end(),
-      Node::ImportWithItem(node) => node.end(),
       Node::Invalid(node) => node.end(),
       Node::JSXAttr(node) => node.end(),
       Node::JSXClosingElement(node) => node.end(),
@@ -665,8 +659,6 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::ImportDefaultSpecifier(node) => NodeTrait::parent(*node),
       Node::ImportNamedSpecifier(node) => NodeTrait::parent(*node),
       Node::ImportStarAsSpecifier(node) => NodeTrait::parent(*node),
-      Node::ImportWith(node) => NodeTrait::parent(*node),
-      Node::ImportWithItem(node) => NodeTrait::parent(*node),
       Node::Invalid(node) => NodeTrait::parent(*node),
       Node::JSXAttr(node) => NodeTrait::parent(*node),
       Node::JSXClosingElement(node) => NodeTrait::parent(*node),
@@ -842,8 +834,6 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::ImportDefaultSpecifier(node) => node.children(),
       Node::ImportNamedSpecifier(node) => node.children(),
       Node::ImportStarAsSpecifier(node) => node.children(),
-      Node::ImportWith(node) => node.children(),
-      Node::ImportWithItem(node) => node.children(),
       Node::Invalid(node) => node.children(),
       Node::JSXAttr(node) => node.children(),
       Node::JSXClosingElement(node) => node.children(),
@@ -1019,8 +1009,6 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::ImportDefaultSpecifier(node) => node.as_node(),
       Node::ImportNamedSpecifier(node) => node.as_node(),
       Node::ImportStarAsSpecifier(node) => node.as_node(),
-      Node::ImportWith(node) => node.as_node(),
-      Node::ImportWithItem(node) => node.as_node(),
       Node::Invalid(node) => node.as_node(),
       Node::JSXAttr(node) => node.as_node(),
       Node::JSXClosingElement(node) => node.as_node(),
@@ -1196,8 +1184,6 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::ImportDefaultSpecifier(_) => NodeKind::ImportDefaultSpecifier,
       Node::ImportNamedSpecifier(_) => NodeKind::ImportNamedSpecifier,
       Node::ImportStarAsSpecifier(_) => NodeKind::ImportStarAsSpecifier,
-      Node::ImportWith(_) => NodeKind::ImportWith,
-      Node::ImportWithItem(_) => NodeKind::ImportWithItem,
       Node::Invalid(_) => NodeKind::Invalid,
       Node::JSXAttr(_) => NodeKind::JSXAttr,
       Node::JSXClosingElement(_) => NodeKind::JSXClosingElement,
@@ -1374,8 +1360,6 @@ pub enum NodeKind {
   ImportDefaultSpecifier,
   ImportNamedSpecifier,
   ImportStarAsSpecifier,
-  ImportWith,
-  ImportWithItem,
   Invalid,
   JSXAttr,
   JSXClosingElement,
@@ -1551,8 +1535,6 @@ impl std::fmt::Display for NodeKind {
       NodeKind::ImportDefaultSpecifier => "ImportDefaultSpecifier",
       NodeKind::ImportNamedSpecifier => "ImportNamedSpecifier",
       NodeKind::ImportStarAsSpecifier => "ImportStarAsSpecifier",
-      NodeKind::ImportWith => "ImportWith",
-      NodeKind::ImportWithItem => "ImportWithItem",
       NodeKind::Invalid => "Invalid",
       NodeKind::JSXAttr => "JSXAttr",
       NodeKind::JSXClosingElement => "JSXClosingElement",
@@ -13228,161 +13210,6 @@ fn get_view_for_import_star_as_specifier<'a>(inner: &'a swc_ast::ImportStarAsSpe
 
 fn set_parent_for_import_star_as_specifier<'a>(node: &ImportStarAsSpecifier<'a>, parent: Node<'a>) {
   node.parent.set(parent.expect::<ImportDecl>());
-}
-
-/// According to the current spec `with` of [crate::ImportDecl] can only have
-/// strings or idents as keys, can't be nested, can only have string literals as
-/// values:
-#[derive(Clone)]
-pub struct ImportWith<'a> {
-  pub inner: &'a swc_ast::ImportWith,
-  pub values: Vec<&'a ImportWithItem<'a>>,
-}
-
-impl<'a> SourceRanged for ImportWith<'a> {
-  fn start(&self) -> SourcePos {
-    SourcePos::unsafely_from_byte_pos(self.inner.span().lo)
-  }
-  fn end(&self) -> SourcePos {
-    SourcePos::unsafely_from_byte_pos(self.inner.span().hi)
-  }
-}
-
-impl<'a> From<&ImportWith<'a>> for Node<'a> {
-  fn from(node: &ImportWith<'a>) -> Node<'a> {
-    let node = unsafe { mem::transmute::<&ImportWith<'a>, &'a ImportWith<'a>>(node) };
-    Node::ImportWith(node)
-  }
-}
-
-impl<'a> NodeTrait<'a> for ImportWith<'a> {
-  fn parent(&self) -> Option<Node<'a>> {
-    None
-  }
-
-  fn children(&self) -> Vec<Node<'a>> {
-    let mut children = Vec::with_capacity(self.values.len());
-    for child in self.values.iter() {
-      children.push((*child).into());
-    }
-    children
-  }
-
-  fn as_node(&self) -> Node<'a> {
-    self.into()
-  }
-
-  fn kind(&self) -> NodeKind {
-    NodeKind::ImportWith
-  }
-}
-
-impl<'a> CastableNode<'a> for ImportWith<'a> {
-  fn to(node: &Node<'a>) -> Option<&'a Self> {
-    if let Node::ImportWith(node) = node {
-      Some(node)
-    } else {
-      None
-    }
-  }
-
-  fn kind() -> NodeKind {
-    NodeKind::ImportWith
-  }
-}
-
-fn get_view_for_import_with<'a>(inner: &'a swc_ast::ImportWith, bump: &'a Bump) -> &'a ImportWith<'a> {
-  let node = bump.alloc(ImportWith {
-    inner,
-    values: inner.values.iter().map(|value| get_view_for_import_with_item(value, bump)).collect(),
-  });
-  let parent: Node<'a> = (&*node).into();
-  for value in node.values.iter() {
-    set_parent_for_import_with_item(value, parent)
-  }
-  node
-}
-
-#[derive(Clone)]
-pub struct ImportWithItem<'a> {
-  parent: ParentOnceCell<&'a ImportWith<'a>>,
-  pub inner: &'a swc_ast::ImportWithItem,
-  pub key: &'a Ident<'a>,
-  pub value: &'a Str<'a>,
-}
-
-impl<'a> ImportWithItem<'a> {
-  pub fn parent(&self) -> &'a ImportWith<'a> {
-    self.parent.get().unwrap()
-  }
-}
-
-impl<'a> SourceRanged for ImportWithItem<'a> {
-  fn start(&self) -> SourcePos {
-    SourcePos::unsafely_from_byte_pos(self.inner.span().lo)
-  }
-  fn end(&self) -> SourcePos {
-    SourcePos::unsafely_from_byte_pos(self.inner.span().hi)
-  }
-}
-
-impl<'a> From<&ImportWithItem<'a>> for Node<'a> {
-  fn from(node: &ImportWithItem<'a>) -> Node<'a> {
-    let node = unsafe { mem::transmute::<&ImportWithItem<'a>, &'a ImportWithItem<'a>>(node) };
-    Node::ImportWithItem(node)
-  }
-}
-
-impl<'a> NodeTrait<'a> for ImportWithItem<'a> {
-  fn parent(&self) -> Option<Node<'a>> {
-    Some(self.parent.get().unwrap().into())
-  }
-
-  fn children(&self) -> Vec<Node<'a>> {
-    let mut children = Vec::with_capacity(2);
-    children.push(self.key.into());
-    children.push(self.value.into());
-    children
-  }
-
-  fn as_node(&self) -> Node<'a> {
-    self.into()
-  }
-
-  fn kind(&self) -> NodeKind {
-    NodeKind::ImportWithItem
-  }
-}
-
-impl<'a> CastableNode<'a> for ImportWithItem<'a> {
-  fn to(node: &Node<'a>) -> Option<&'a Self> {
-    if let Node::ImportWithItem(node) = node {
-      Some(node)
-    } else {
-      None
-    }
-  }
-
-  fn kind() -> NodeKind {
-    NodeKind::ImportWithItem
-  }
-}
-
-fn get_view_for_import_with_item<'a>(inner: &'a swc_ast::ImportWithItem, bump: &'a Bump) -> &'a ImportWithItem<'a> {
-  let node = bump.alloc(ImportWithItem {
-    inner,
-    parent: Default::default(),
-    key: get_view_for_ident(&inner.key, bump),
-    value: get_view_for_str(&inner.value, bump),
-  });
-  let parent: Node<'a> = (&*node).into();
-  set_parent_for_ident(&node.key, parent);
-  set_parent_for_str(&node.value, parent);
-  node
-}
-
-fn set_parent_for_import_with_item<'a>(node: &ImportWithItem<'a>, parent: Node<'a>) {
-  node.parent.set(parent.expect::<ImportWith>());
 }
 
 /// Represents a invalid node.
