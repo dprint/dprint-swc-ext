@@ -15,7 +15,7 @@ thread_local! {
   static LOCAL_BUMP_ALLOCATOR: RefCell<Bump> = RefCell::new(Bump::new());
 }
 
-pub fn with_ast_view<T>(info: ProgramInfo, with_view: impl FnOnce(Program) -> T) -> T {
+pub fn with_ast_view<'a, T>(info: ProgramInfo, with_view: impl FnOnce(Program<'a>) -> T) -> T {
   match info.program {
     ProgramRef::Module(module) => {
       with_ast_view_for_module(ModuleInfo {
@@ -23,7 +23,10 @@ pub fn with_ast_view<T>(info: ProgramInfo, with_view: impl FnOnce(Program) -> T)
         text_info: info.text_info,
         tokens: info.tokens,
         comments: info.comments,
-      }, |module| with_view(Program::Module(module)))
+      }, |module| {
+        let module = unsafe { mem::transmute::<&Module, &'a Module<'a>>(&module) };
+        with_view(Program::Module(module))
+      })
     }
     ProgramRef::Script(script) => {
       with_ast_view_for_script(ScriptInfo {
@@ -31,7 +34,10 @@ pub fn with_ast_view<T>(info: ProgramInfo, with_view: impl FnOnce(Program) -> T)
         text_info: info.text_info,
         tokens: info.tokens,
         comments: info.comments,
-      }, |script| with_view(Program::Script(script)))
+      }, |script| {
+        let script = unsafe { mem::transmute::<&Script, &'a Script<'a>>(&script) };
+        with_view(Program::Script(script))
+    })
     }
   }
 }
