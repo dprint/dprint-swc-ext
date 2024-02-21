@@ -48,10 +48,18 @@ export function writeType(writer: Writer, analysisResult: AnalysisResult, type: 
       writer.write(path);
       writer.write("<'a>");
     } else if (type.genericArgs.length > 0) {
-      writer.write(path);
-      writer.write("<");
+      if (path === "Vec") {
+        writer.write("&'a [");
+      } else {
+        writer.write(path);
+        writer.write("<");
+      }
       writer.write(type.genericArgs.map(type => writeType(writer, analysisResult, type, writeStructReference)).join(", "));
-      writer.write(">");
+      if (path === "Vec") {
+        writer.write("]");
+      } else {
+        writer.write(">");
+      }
     } else {
       writer.write(path);
     }
