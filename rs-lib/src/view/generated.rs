@@ -15,7 +15,7 @@ thread_local! {
   static LOCAL_BUMP_ALLOCATOR: RefCell<Bump> = RefCell::new(Bump::new());
 }
 
-pub fn with_ast_view<'a, T>(info: ProgramInfo, with_view: impl FnOnce(Program<'a>) -> T) -> T {
+pub fn with_ast_view<T>(info: ProgramInfo, with_view: impl FnOnce(Program) -> T) -> T {
   match info.program {
     ProgramRef::Module(module) => {
       with_ast_view_for_module(ModuleInfo {
@@ -36,24 +36,40 @@ pub fn with_ast_view<'a, T>(info: ProgramInfo, with_view: impl FnOnce(Program<'a
   }
 }
 
-pub fn with_ast_view_for_module<'a, T>(info: ModuleInfo, with_view: impl FnOnce(&'a Module<'a>) -> T) -> T {
+pub fn with_ast_view_for_module<T>(info: ModuleInfo, with_view: impl FnOnce(&Module<'_>) -> T) -> T {
   LOCAL_BUMP_ALLOCATOR.with(|bump_cell| {
     let mut bump_borrow = bump_cell.borrow_mut();
-    let bump_ref = unsafe { mem::transmute::<&Bump, &'a Bump>(&bump_borrow) };
-    let info_ref = unsafe { mem::transmute::<&ModuleInfo, &'a ModuleInfo<'a>>(&info) };
-    let ast_view = get_view_for_module(info_ref, bump_ref);
+    let bump_ref = &bump_borrow;
+    let info_ref = &info;
+    let tokens = info_ref.tokens.map(|t| TokenContainer::new(t));
+    let tokens_ref = tokens.as_ref();
+    let comments = info_ref.comments.as_ref().map(|c| CommentContainer::new(
+      c.leading,
+      c.trailing,
+      tokens_ref.expect("Tokens must be provided when using comments."),
+      info_ref.text_info.expect("Text info must be provided when using comments"),
+    ));
+    let ast_view = get_view_for_module(info_ref, tokens_ref, comments.as_ref(), bump_ref);
     let result = with_view(ast_view);
     bump_borrow.reset();
     result
   })
 }
 
-pub fn with_ast_view_for_script<'a, T>(info: ScriptInfo, with_view: impl FnOnce(&'a Script<'a>) -> T) -> T {
+pub fn with_ast_view_for_script<T>(info: ScriptInfo, with_view: impl FnOnce(&Script<'_>) -> T) -> T {
   LOCAL_BUMP_ALLOCATOR.with(|bump_cell| {
     let mut bump_borrow = bump_cell.borrow_mut();
-    let bump_ref = unsafe { mem::transmute::<&Bump, &'a Bump>(&bump_borrow) };
-    let info_ref = unsafe { mem::transmute::<&ScriptInfo, &'a ScriptInfo<'a>>(&info) };
-    let ast_view = get_view_for_script(info_ref, bump_ref);
+    let bump_ref = &bump_borrow;
+    let info_ref = &info;
+    let tokens = info_ref.tokens.map(|t| TokenContainer::new(t));
+    let tokens_ref = tokens.as_ref();
+    let comments = info_ref.comments.as_ref().map(|c| CommentContainer::new(
+      c.leading,
+      c.trailing,
+      tokens_ref.expect("Tokens must be provided when using comments."),
+      info_ref.text_info.expect("Text info must be provided when using comments"),
+    ));
+    let ast_view = get_view_for_script(info_ref, tokens_ref, comments.as_ref(), bump_ref);
     let result = with_view(ast_view);
     bump_borrow.reset();
     result
@@ -14914,15 +14930,13 @@ impl<'a> CastableNode<'a> for Module<'a> {
   }
 }
 
-fn get_view_for_module<'a>(source_file_info: &'a ModuleInfo<'a>, bump: &'a Bump) -> &'a Module<'a> {
+fn get_view_for_module<'a>(
+  source_file_info: &'a ModuleInfo<'a>,
+  tokens: Option<&'a TokenContainer<'a>>,
+  comments: Option<&'a CommentContainer<'a>>,
+  bump: &'a Bump,
+) -> &'a Module<'a> {
   let inner = source_file_info.module;
-  let tokens = source_file_info.tokens.map(|t| &*bump.alloc(TokenContainer::new(t)));
-  let comments = source_file_info.comments.map(|c| &*bump.alloc(CommentContainer::new(
-    c.leading,
-    c.trailing,
-    tokens.expect("Tokens must be provided when using comments."),
-    source_file_info.text_info.expect("Text info must be provided when using comments"),
-  )));
   let node = bump.alloc(Module {
     inner,
     text_info: source_file_info.text_info,
@@ -16488,15 +16502,12 @@ impl<'a> CastableNode<'a> for Script<'a> {
   }
 }
 
-fn get_view_for_script<'a>(source_file_info: &'a ScriptInfo<'a>, bump: &'a Bump) -> &'a Script<'a> {
+fn get_view_for_script<'a>(
+  source_file_info: &'a ScriptInfo<'a>,
+  tokens: Option<&'a TokenContainer<'a>>,
+  comments: Option<&'a CommentContainer<'a>>,
+  bump: &'a Bump) -> &'a Script<'a> {
   let inner = source_file_info.script;
-  let tokens = source_file_info.tokens.map(|t| &*bump.alloc(TokenContainer::new(t)));
-  let comments = source_file_info.comments.map(|c| &*bump.alloc(CommentContainer::new(
-    c.leading,
-    c.trailing,
-    tokens.expect("Tokens must be provided when using comments."),
-    source_file_info.text_info.expect("Text info must be provided when using comments"),
-  )));
   let node = bump.alloc(Script {
     inner,
     text_info: source_file_info.text_info,
