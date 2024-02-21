@@ -14,7 +14,8 @@ sourcemap = ["swc_common/sourcemap"]
 view = []
 
 [dependencies]
-bumpalo = "3.14.0"
+allocator-api2 = "0.2.16"
+bumpalo = { version = "3.14.0", features = ["collections", "allocator-api2"] }
 num-bigint = "0.4"
 rustc-hash = "1.1.0"
 swc_atoms = "0.6.5"

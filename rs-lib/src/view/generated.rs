@@ -41,7 +41,16 @@ pub fn with_ast_view_for_module<'a, T>(info: ModuleInfo, with_view: impl FnOnce(
     let mut bump_borrow = bump_cell.borrow_mut();
     let bump_ref = unsafe { mem::transmute::<&Bump, &'a Bump>(&bump_borrow) };
     let info_ref = unsafe { mem::transmute::<&ModuleInfo, &'a ModuleInfo<'a>>(&info) };
-    let ast_view = get_view_for_module(info_ref, bump_ref);
+    let tokens = info_ref.tokens.map(|t| TokenContainer::new(t));
+    let tokens_ref = tokens.as_ref().map(|t| unsafe { mem::transmute::<&TokenContainer, &'a TokenContainer<'a>>(t) });
+    let comments = info_ref.comments.map(|c| CommentContainer::new(
+      c.leading,
+      c.trailing,
+      tokens_ref.expect("Tokens must be provided when using comments."),
+      info_ref.text_info.expect("Text info must be provided when using comments"),
+    ));
+    let comments_ref = comments.as_ref().map(|t| unsafe { mem::transmute::<&CommentContainer, &'a CommentContainer<'a>>(t) });
+    let ast_view = get_view_for_module(info_ref, tokens_ref, comments_ref, bump_ref);
     let result = with_view(ast_view);
     bump_borrow.reset();
     result
@@ -53,7 +62,16 @@ pub fn with_ast_view_for_script<'a, T>(info: ScriptInfo, with_view: impl FnOnce(
     let mut bump_borrow = bump_cell.borrow_mut();
     let bump_ref = unsafe { mem::transmute::<&Bump, &'a Bump>(&bump_borrow) };
     let info_ref = unsafe { mem::transmute::<&ScriptInfo, &'a ScriptInfo<'a>>(&info) };
-    let ast_view = get_view_for_script(info_ref, bump_ref);
+    let tokens = info_ref.tokens.map(|t| TokenContainer::new(t));
+    let tokens_ref = tokens.as_ref().map(|t| unsafe { mem::transmute::<&TokenContainer, &'a TokenContainer<'a>>(t) });
+    let comments = info_ref.comments.map(|c| CommentContainer::new(
+      c.leading,
+      c.trailing,
+      tokens_ref.expect("Tokens must be provided when using comments."),
+      info_ref.text_info.expect("Text info must be provided when using comments"),
+    ));
+    let comments_ref = comments.as_ref().map(|t| unsafe { mem::transmute::<&CommentContainer, &'a CommentContainer<'a>>(t) });
+    let ast_view = get_view_for_script(info_ref, tokens_ref, comments_ref, bump_ref);
     let result = with_view(ast_view);
     bump_borrow.reset();
     result
@@ -8337,7 +8355,7 @@ fn set_parent_for_var_decl_or_expr<'a>(node: &VarDeclOrExpr<'a>, parent: Node<'a
 pub struct ArrayLit<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::ArrayLit,
-  pub elems: Vec<Option<&'a ExprOrSpread<'a>>>,
+  pub elems: &'a [Option<&'a ExprOrSpread<'a>>],
 }
 
 impl<'a> ArrayLit<'a> {
@@ -8404,10 +8422,10 @@ fn get_view_for_array_lit<'a>(inner: &'a swc_ast::ArrayLit, bump: &'a Bump) -> &
   let node = bump.alloc(ArrayLit {
     inner,
     parent: Default::default(),
-    elems: inner.elems.iter().map(|value| match value {
+    elems: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.elems.len(), bump);vec.extend(inner.elems.iter().map(|value| match value {
       Some(value) => Some(get_view_for_expr_or_spread(value, bump)),
       None => None,
-    }).collect(),
+    })); vec }),
   });
   let parent: Node<'a> = (&*node).into();
   for value in node.elems.iter() {
@@ -8426,7 +8444,7 @@ fn set_parent_for_array_lit<'a>(node: &ArrayLit<'a>, parent: Node<'a>) {
 pub struct ArrayPat<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::ArrayPat,
-  pub elems: Vec<Option<Pat<'a>>>,
+  pub elems: &'a [Option<Pat<'a>>],
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
 }
 
@@ -8502,10 +8520,10 @@ fn get_view_for_array_pat<'a>(inner: &'a swc_ast::ArrayPat, bump: &'a Bump) -> &
   let node = bump.alloc(ArrayPat {
     inner,
     parent: Default::default(),
-    elems: inner.elems.iter().map(|value| match value {
+    elems: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.elems.len(), bump);vec.extend(inner.elems.iter().map(|value| match value {
       Some(value) => Some(get_view_for_pat(value, bump)),
       None => None,
-    }).collect(),
+    })); vec }),
     type_ann: match &inner.type_ann {
       Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
       None => None,
@@ -8531,7 +8549,7 @@ fn set_parent_for_array_pat<'a>(node: &ArrayPat<'a>, parent: Node<'a>) {
 pub struct ArrowExpr<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::ArrowExpr,
-  pub params: Vec<Pat<'a>>,
+  pub params: &'a [Pat<'a>],
   /// This is boxed to reduce the type size of [Expr].
   pub body: BlockStmtOrExpr<'a>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
@@ -8615,7 +8633,7 @@ fn get_view_for_arrow_expr<'a>(inner: &'a swc_ast::ArrowExpr, bump: &'a Bump) ->
   let node = bump.alloc(ArrowExpr {
     inner,
     parent: Default::default(),
-    params: inner.params.iter().map(|value| get_view_for_pat(value, bump)).collect(),
+    params: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.params.len(), bump);vec.extend(inner.params.iter().map(|value| get_view_for_pat(value, bump))); vec }),
     body: get_view_for_block_stmt_or_expr(&inner.body, bump),
     type_params: match &inner.type_params {
       Some(value) => Some(get_view_for_ts_type_param_decl(value, bump)),
@@ -8993,7 +9011,7 @@ pub struct AutoAccessor<'a> {
   pub key: Key<'a>,
   pub value: Option<Expr<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
-  pub decorators: Vec<&'a Decorator<'a>>,
+  pub decorators: &'a [&'a Decorator<'a>],
 }
 
 impl<'a> AutoAccessor<'a> {
@@ -9091,7 +9109,7 @@ fn get_view_for_auto_accessor<'a>(inner: &'a swc_ast::AutoAccessor, bump: &'a Bu
       Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
       None => None,
     },
-    decorators: inner.decorators.iter().map(|value| get_view_for_decorator(value, bump)).collect(),
+    decorators: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.decorators.len(), bump);vec.extend(inner.decorators.iter().map(|value| get_view_for_decorator(value, bump))); vec }),
   });
   let parent: Node<'a> = (&*node).into();
   set_parent_for_key(&node.key, parent);
@@ -9452,7 +9470,7 @@ fn set_parent_for_binding_ident<'a>(node: &BindingIdent<'a>, parent: Node<'a>) {
 pub struct BlockStmt<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::BlockStmt,
-  pub stmts: Vec<Stmt<'a>>,
+  pub stmts: &'a [Stmt<'a>],
 }
 
 impl<'a> BlockStmt<'a> {
@@ -9517,7 +9535,7 @@ fn get_view_for_block_stmt<'a>(inner: &'a swc_ast::BlockStmt, bump: &'a Bump) ->
   let node = bump.alloc(BlockStmt {
     inner,
     parent: Default::default(),
-    stmts: inner.stmts.iter().map(|value| get_view_for_stmt(value, bump)).collect(),
+    stmts: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.stmts.len(), bump);vec.extend(inner.stmts.iter().map(|value| get_view_for_stmt(value, bump))); vec }),
   });
   let parent: Node<'a> = (&*node).into();
   for value in node.stmts.iter() {
@@ -9705,7 +9723,7 @@ pub struct CallExpr<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::CallExpr,
   pub callee: Callee<'a>,
-  pub args: Vec<&'a ExprOrSpread<'a>>,
+  pub args: &'a [&'a ExprOrSpread<'a>],
   pub type_args: Option<&'a TsTypeParamInstantiation<'a>>,
 }
 
@@ -9776,7 +9794,7 @@ fn get_view_for_call_expr<'a>(inner: &'a swc_ast::CallExpr, bump: &'a Bump) -> &
     inner,
     parent: Default::default(),
     callee: get_view_for_callee(&inner.callee, bump),
-    args: inner.args.iter().map(|value| get_view_for_expr_or_spread(value, bump)).collect(),
+    args: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.args.len(), bump);vec.extend(inner.args.iter().map(|value| get_view_for_expr_or_spread(value, bump))); vec }),
     type_args: match &inner.type_args {
       Some(value) => Some(get_view_for_ts_type_param_instantiation(value, bump)),
       None => None,
@@ -9894,13 +9912,13 @@ fn set_parent_for_catch_clause<'a>(node: &CatchClause<'a>, parent: Node<'a>) {
 pub struct Class<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::Class,
-  pub decorators: Vec<&'a Decorator<'a>>,
-  pub body: Vec<ClassMember<'a>>,
+  pub decorators: &'a [&'a Decorator<'a>],
+  pub body: &'a [ClassMember<'a>],
   pub super_class: Option<Expr<'a>>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
   pub super_type_params: Option<&'a TsTypeParamInstantiation<'a>>,
   /// Typescript extension.
-  pub implements: Vec<&'a TsExprWithTypeArgs<'a>>,
+  pub implements: &'a [&'a TsExprWithTypeArgs<'a>],
 }
 
 impl<'a> Class<'a> {
@@ -9984,8 +10002,8 @@ fn get_view_for_class<'a>(inner: &'a swc_ast::Class, bump: &'a Bump) -> &'a Clas
   let node = bump.alloc(Class {
     inner,
     parent: Default::default(),
-    decorators: inner.decorators.iter().map(|value| get_view_for_decorator(value, bump)).collect(),
-    body: inner.body.iter().map(|value| get_view_for_class_member(value, bump)).collect(),
+    decorators: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.decorators.len(), bump);vec.extend(inner.decorators.iter().map(|value| get_view_for_decorator(value, bump))); vec }),
+    body: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.body.len(), bump);vec.extend(inner.body.iter().map(|value| get_view_for_class_member(value, bump))); vec }),
     super_class: match &inner.super_class {
       Some(value) => Some(get_view_for_expr(value, bump)),
       None => None,
@@ -9998,7 +10016,7 @@ fn get_view_for_class<'a>(inner: &'a swc_ast::Class, bump: &'a Bump) -> &'a Clas
       Some(value) => Some(get_view_for_ts_type_param_instantiation(value, bump)),
       None => None,
     },
-    implements: inner.implements.iter().map(|value| get_view_for_ts_expr_with_type_args(value, bump)).collect(),
+    implements: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.implements.len(), bump);vec.extend(inner.implements.iter().map(|value| get_view_for_ts_expr_with_type_args(value, bump))); vec }),
   });
   let parent: Node<'a> = (&*node).into();
   for value in node.decorators.iter() {
@@ -10317,7 +10335,7 @@ pub struct ClassProp<'a> {
   pub key: PropName<'a>,
   pub value: Option<Expr<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
-  pub decorators: Vec<&'a Decorator<'a>>,
+  pub decorators: &'a [&'a Decorator<'a>],
 }
 
 impl<'a> ClassProp<'a> {
@@ -10432,7 +10450,7 @@ fn get_view_for_class_prop<'a>(inner: &'a swc_ast::ClassProp, bump: &'a Bump) ->
       Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
       None => None,
     },
-    decorators: inner.decorators.iter().map(|value| get_view_for_decorator(value, bump)).collect(),
+    decorators: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.decorators.len(), bump);vec.extend(inner.decorators.iter().map(|value| get_view_for_decorator(value, bump))); vec }),
   });
   let parent: Node<'a> = (&*node).into();
   set_parent_for_prop_name(&node.key, parent);
@@ -10621,7 +10639,7 @@ pub struct Constructor<'a> {
   parent: ParentOnceCell<&'a Class<'a>>,
   pub inner: &'a swc_ast::Constructor,
   pub key: PropName<'a>,
-  pub params: Vec<ParamOrTsParamProp<'a>>,
+  pub params: &'a [ParamOrTsParamProp<'a>],
   pub body: Option<&'a BlockStmt<'a>>,
 }
 
@@ -10700,7 +10718,7 @@ fn get_view_for_constructor<'a>(inner: &'a swc_ast::Constructor, bump: &'a Bump)
     inner,
     parent: Default::default(),
     key: get_view_for_prop_name(&inner.key, bump),
-    params: inner.params.iter().map(|value| get_view_for_param_or_ts_param_prop(value, bump)).collect(),
+    params: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.params.len(), bump);vec.extend(inner.params.iter().map(|value| get_view_for_param_or_ts_param_prop(value, bump))); vec }),
     body: match &inner.body {
       Some(value) => Some(get_view_for_block_stmt(value, bump)),
       None => None,
@@ -12324,8 +12342,8 @@ fn set_parent_for_for_stmt<'a>(node: &ForStmt<'a>, parent: Node<'a>) {
 pub struct Function<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::Function,
-  pub params: Vec<&'a Param<'a>>,
-  pub decorators: Vec<&'a Decorator<'a>>,
+  pub params: &'a [&'a Param<'a>],
+  pub decorators: &'a [&'a Decorator<'a>],
   pub body: Option<&'a BlockStmt<'a>>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
   pub return_type: Option<&'a TsTypeAnn<'a>>,
@@ -12415,8 +12433,8 @@ fn get_view_for_function<'a>(inner: &'a swc_ast::Function, bump: &'a Bump) -> &'
   let node = bump.alloc(Function {
     inner,
     parent: Default::default(),
-    params: inner.params.iter().map(|value| get_view_for_param(value, bump)).collect(),
-    decorators: inner.decorators.iter().map(|value| get_view_for_decorator(value, bump)).collect(),
+    params: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.params.len(), bump);vec.extend(inner.params.iter().map(|value| get_view_for_param(value, bump))); vec }),
+    decorators: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.decorators.len(), bump);vec.extend(inner.decorators.iter().map(|value| get_view_for_decorator(value, bump))); vec }),
     body: match &inner.body {
       Some(value) => Some(get_view_for_block_stmt(value, bump)),
       None => None,
@@ -12857,7 +12875,7 @@ fn set_parent_for_import<'a>(node: &Import<'a>, parent: Node<'a>) {
 pub struct ImportDecl<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::ImportDecl,
-  pub specifiers: Vec<ImportSpecifier<'a>>,
+  pub specifiers: &'a [ImportSpecifier<'a>],
   pub src: &'a Str<'a>,
   pub with: Option<&'a ObjectLit<'a>>,
 }
@@ -12936,7 +12954,7 @@ fn get_view_for_import_decl<'a>(inner: &'a swc_ast::ImportDecl, bump: &'a Bump) 
   let node = bump.alloc(ImportDecl {
     inner,
     parent: Default::default(),
-    specifiers: inner.specifiers.iter().map(|value| get_view_for_import_specifier(value, bump)).collect(),
+    specifiers: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.specifiers.len(), bump);vec.extend(inner.specifiers.iter().map(|value| get_view_for_import_specifier(value, bump))); vec }),
     src: get_view_for_str(&inner.src, bump),
     with: match &inner.with {
       Some(value) => Some(get_view_for_object_lit(value, bump)),
@@ -13530,7 +13548,7 @@ pub struct JSXElement<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::JSXElement,
   pub opening: &'a JSXOpeningElement<'a>,
-  pub children: Vec<JSXElementChild<'a>>,
+  pub children: &'a [JSXElementChild<'a>],
   pub closing: Option<&'a JSXClosingElement<'a>>,
 }
 
@@ -13601,7 +13619,7 @@ fn get_view_for_jsxelement<'a>(inner: &'a swc_ast::JSXElement, bump: &'a Bump) -
     inner,
     parent: Default::default(),
     opening: get_view_for_jsxopening_element(&inner.opening, bump),
-    children: inner.children.iter().map(|value| get_view_for_jsxelement_child(value, bump)).collect(),
+    children: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.children.len(), bump);vec.extend(inner.children.iter().map(|value| get_view_for_jsxelement_child(value, bump))); vec }),
     closing: match &inner.closing {
       Some(value) => Some(get_view_for_jsxclosing_element(value, bump)),
       None => None,
@@ -13777,7 +13795,7 @@ pub struct JSXFragment<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::JSXFragment,
   pub opening: &'a JSXOpeningFragment<'a>,
-  pub children: Vec<JSXElementChild<'a>>,
+  pub children: &'a [JSXElementChild<'a>],
   pub closing: &'a JSXClosingFragment<'a>,
 }
 
@@ -13846,7 +13864,7 @@ fn get_view_for_jsxfragment<'a>(inner: &'a swc_ast::JSXFragment, bump: &'a Bump)
     inner,
     parent: Default::default(),
     opening: get_view_for_jsxopening_fragment(&inner.opening, bump),
-    children: inner.children.iter().map(|value| get_view_for_jsxelement_child(value, bump)).collect(),
+    children: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.children.len(), bump);vec.extend(inner.children.iter().map(|value| get_view_for_jsxelement_child(value, bump))); vec }),
     closing: get_view_for_jsxclosing_fragment(&inner.closing, bump),
   });
   let parent: Node<'a> = (&*node).into();
@@ -14032,7 +14050,7 @@ pub struct JSXOpeningElement<'a> {
   parent: ParentOnceCell<&'a JSXElement<'a>>,
   pub inner: &'a swc_ast::JSXOpeningElement,
   pub name: JSXElementName<'a>,
-  pub attrs: Vec<JSXAttrOrSpread<'a>>,
+  pub attrs: &'a [JSXAttrOrSpread<'a>],
   /// Note: This field's name is different from one from babel because it is
   /// misleading
   pub type_args: Option<&'a TsTypeParamInstantiation<'a>>,
@@ -14109,7 +14127,7 @@ fn get_view_for_jsxopening_element<'a>(inner: &'a swc_ast::JSXOpeningElement, bu
     inner,
     parent: Default::default(),
     name: get_view_for_jsxelement_name(&inner.name, bump),
-    attrs: inner.attrs.iter().map(|value| get_view_for_jsxattr_or_spread(value, bump)).collect(),
+    attrs: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.attrs.len(), bump);vec.extend(inner.attrs.iter().map(|value| get_view_for_jsxattr_or_spread(value, bump))); vec }),
     type_args: match &inner.type_args {
       Some(value) => Some(get_view_for_ts_type_param_instantiation(value, bump)),
       None => None,
@@ -14853,7 +14871,7 @@ pub struct Module<'a> {
   pub tokens: Option<&'a TokenContainer<'a>>,
   pub comments: Option<&'a CommentContainer<'a>>,
   pub inner: &'a swc_ast::Module,
-  pub body: Vec<ModuleItem<'a>>,
+  pub body: &'a [ModuleItem<'a>],
 }
 
 impl<'a> Module<'a> {
@@ -14914,21 +14932,14 @@ impl<'a> CastableNode<'a> for Module<'a> {
   }
 }
 
-fn get_view_for_module<'a>(source_file_info: &'a ModuleInfo<'a>, bump: &'a Bump) -> &'a Module<'a> {
+fn get_view_for_module<'a>(source_file_info: &'a ModuleInfo<'a>, tokens: Option<&'a TokenContainer<'a>>, comments: Option<&'a CommentContainer<'a>>, bump: &'a Bump) -> &'a Module<'a> {
   let inner = source_file_info.module;
-  let tokens = source_file_info.tokens.map(|t| &*bump.alloc(TokenContainer::new(t)));
-  let comments = source_file_info.comments.map(|c| &*bump.alloc(CommentContainer::new(
-    c.leading,
-    c.trailing,
-    tokens.expect("Tokens must be provided when using comments."),
-    source_file_info.text_info.expect("Text info must be provided when using comments"),
-  )));
   let node = bump.alloc(Module {
     inner,
     text_info: source_file_info.text_info,
     tokens,
     comments,
-    body: inner.body.iter().map(|value| get_view_for_module_item(value, bump)).collect(),
+    body: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.body.len(), bump);vec.extend(inner.body.iter().map(|value| get_view_for_module_item(value, bump))); vec }),
   });
   let parent: Node<'a> = (&*node).into();
   for value in node.body.iter() {
@@ -14943,7 +14954,7 @@ fn get_view_for_module<'a>(source_file_info: &'a ModuleInfo<'a>, bump: &'a Bump)
 pub struct NamedExport<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::NamedExport,
-  pub specifiers: Vec<ExportSpecifier<'a>>,
+  pub specifiers: &'a [ExportSpecifier<'a>],
   pub src: Option<&'a Str<'a>>,
   pub with: Option<&'a ObjectLit<'a>>,
 }
@@ -15020,7 +15031,7 @@ fn get_view_for_named_export<'a>(inner: &'a swc_ast::NamedExport, bump: &'a Bump
   let node = bump.alloc(NamedExport {
     inner,
     parent: Default::default(),
-    specifiers: inner.specifiers.iter().map(|value| get_view_for_export_specifier(value, bump)).collect(),
+    specifiers: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.specifiers.len(), bump);vec.extend(inner.specifiers.iter().map(|value| get_view_for_export_specifier(value, bump))); vec }),
     src: match &inner.src {
       Some(value) => Some(get_view_for_str(value, bump)),
       None => None,
@@ -15052,7 +15063,7 @@ pub struct NewExpr<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::NewExpr,
   pub callee: Expr<'a>,
-  pub args: Option<Vec<&'a ExprOrSpread<'a>>>,
+  pub args: Option<&'a [&'a ExprOrSpread<'a>]>,
   pub type_args: Option<&'a TsTypeParamInstantiation<'a>>,
 }
 
@@ -15126,7 +15137,7 @@ fn get_view_for_new_expr<'a>(inner: &'a swc_ast::NewExpr, bump: &'a Bump) -> &'a
     parent: Default::default(),
     callee: get_view_for_expr(&inner.callee, bump),
     args: match &inner.args {
-      Some(value) => Some(value.iter().map(|value| get_view_for_expr_or_spread(value, bump)).collect()),
+      Some(value) => Some(bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(value.len(), bump);vec.extend(value.iter().map(|value| get_view_for_expr_or_spread(value, bump))); vec })),
       None => None,
     },
     type_args: match &inner.type_args {
@@ -15323,7 +15334,7 @@ fn set_parent_for_number<'a>(node: &Number<'a>, parent: Node<'a>) {
 pub struct ObjectLit<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::ObjectLit,
-  pub props: Vec<PropOrSpread<'a>>,
+  pub props: &'a [PropOrSpread<'a>],
 }
 
 impl<'a> ObjectLit<'a> {
@@ -15388,7 +15399,7 @@ fn get_view_for_object_lit<'a>(inner: &'a swc_ast::ObjectLit, bump: &'a Bump) ->
   let node = bump.alloc(ObjectLit {
     inner,
     parent: Default::default(),
-    props: inner.props.iter().map(|value| get_view_for_prop_or_spread(value, bump)).collect(),
+    props: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.props.len(), bump);vec.extend(inner.props.iter().map(|value| get_view_for_prop_or_spread(value, bump))); vec }),
   });
   let parent: Node<'a> = (&*node).into();
   for value in node.props.iter() {
@@ -15405,7 +15416,7 @@ fn set_parent_for_object_lit<'a>(node: &ObjectLit<'a>, parent: Node<'a>) {
 pub struct ObjectPat<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::ObjectPat,
-  pub props: Vec<ObjectPatProp<'a>>,
+  pub props: &'a [ObjectPatProp<'a>],
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
 }
 
@@ -15479,7 +15490,7 @@ fn get_view_for_object_pat<'a>(inner: &'a swc_ast::ObjectPat, bump: &'a Bump) ->
   let node = bump.alloc(ObjectPat {
     inner,
     parent: Default::default(),
-    props: inner.props.iter().map(|value| get_view_for_object_pat_prop(value, bump)).collect(),
+    props: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.props.len(), bump);vec.extend(inner.props.iter().map(|value| get_view_for_object_pat_prop(value, bump))); vec }),
     type_ann: match &inner.type_ann {
       Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
       None => None,
@@ -15504,7 +15515,7 @@ pub struct OptCall<'a> {
   parent: ParentOnceCell<&'a OptChainExpr<'a>>,
   pub inner: &'a swc_ast::OptCall,
   pub callee: Expr<'a>,
-  pub args: Vec<&'a ExprOrSpread<'a>>,
+  pub args: &'a [&'a ExprOrSpread<'a>],
   pub type_args: Option<&'a TsTypeParamInstantiation<'a>>,
 }
 
@@ -15575,7 +15586,7 @@ fn get_view_for_opt_call<'a>(inner: &'a swc_ast::OptCall, bump: &'a Bump) -> &'a
     inner,
     parent: Default::default(),
     callee: get_view_for_expr(&inner.callee, bump),
-    args: inner.args.iter().map(|value| get_view_for_expr_or_spread(value, bump)).collect(),
+    args: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.args.len(), bump);vec.extend(inner.args.iter().map(|value| get_view_for_expr_or_spread(value, bump))); vec }),
     type_args: match &inner.type_args {
       Some(value) => Some(get_view_for_ts_type_param_instantiation(value, bump)),
       None => None,
@@ -15683,7 +15694,7 @@ fn set_parent_for_opt_chain_expr<'a>(node: &OptChainExpr<'a>, parent: Node<'a>) 
 pub struct Param<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::Param,
-  pub decorators: Vec<&'a Decorator<'a>>,
+  pub decorators: &'a [&'a Decorator<'a>],
   pub pat: Pat<'a>,
 }
 
@@ -15750,7 +15761,7 @@ fn get_view_for_param<'a>(inner: &'a swc_ast::Param, bump: &'a Bump) -> &'a Para
   let node = bump.alloc(Param {
     inner,
     parent: Default::default(),
-    decorators: inner.decorators.iter().map(|value| get_view_for_decorator(value, bump)).collect(),
+    decorators: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.decorators.len(), bump);vec.extend(inner.decorators.iter().map(|value| get_view_for_decorator(value, bump))); vec }),
     pat: get_view_for_pat(&inner.pat, bump),
   });
   let parent: Node<'a> = (&*node).into();
@@ -16036,7 +16047,7 @@ pub struct PrivateProp<'a> {
   pub key: &'a PrivateName<'a>,
   pub value: Option<Expr<'a>>,
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
-  pub decorators: Vec<&'a Decorator<'a>>,
+  pub decorators: &'a [&'a Decorator<'a>],
 }
 
 impl<'a> PrivateProp<'a> {
@@ -16142,7 +16153,7 @@ fn get_view_for_private_prop<'a>(inner: &'a swc_ast::PrivateProp, bump: &'a Bump
       Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
       None => None,
     },
-    decorators: inner.decorators.iter().map(|value| get_view_for_decorator(value, bump)).collect(),
+    decorators: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.decorators.len(), bump);vec.extend(inner.decorators.iter().map(|value| get_view_for_decorator(value, bump))); vec }),
   });
   let parent: Node<'a> = (&*node).into();
   set_parent_for_private_name(&node.key, parent);
@@ -16427,7 +16438,7 @@ pub struct Script<'a> {
   pub tokens: Option<&'a TokenContainer<'a>>,
   pub comments: Option<&'a CommentContainer<'a>>,
   pub inner: &'a swc_ast::Script,
-  pub body: Vec<Stmt<'a>>,
+  pub body: &'a [Stmt<'a>],
 }
 
 impl<'a> Script<'a> {
@@ -16488,21 +16499,14 @@ impl<'a> CastableNode<'a> for Script<'a> {
   }
 }
 
-fn get_view_for_script<'a>(source_file_info: &'a ScriptInfo<'a>, bump: &'a Bump) -> &'a Script<'a> {
+fn get_view_for_script<'a>(source_file_info: &'a ScriptInfo<'a>, tokens: Option<&'a TokenContainer<'a>>, comments: Option<&'a CommentContainer<'a>>, bump: &'a Bump) -> &'a Script<'a> {
   let inner = source_file_info.script;
-  let tokens = source_file_info.tokens.map(|t| &*bump.alloc(TokenContainer::new(t)));
-  let comments = source_file_info.comments.map(|c| &*bump.alloc(CommentContainer::new(
-    c.leading,
-    c.trailing,
-    tokens.expect("Tokens must be provided when using comments."),
-    source_file_info.text_info.expect("Text info must be provided when using comments"),
-  )));
   let node = bump.alloc(Script {
     inner,
     text_info: source_file_info.text_info,
     tokens,
     comments,
-    body: inner.body.iter().map(|value| get_view_for_stmt(value, bump)).collect(),
+    body: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.body.len(), bump);vec.extend(inner.body.iter().map(|value| get_view_for_stmt(value, bump))); vec }),
   });
   let parent: Node<'a> = (&*node).into();
   for value in node.body.iter() {
@@ -16515,7 +16519,7 @@ fn get_view_for_script<'a>(source_file_info: &'a ScriptInfo<'a>, bump: &'a Bump)
 pub struct SeqExpr<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::SeqExpr,
-  pub exprs: Vec<Expr<'a>>,
+  pub exprs: &'a [Expr<'a>],
 }
 
 impl<'a> SeqExpr<'a> {
@@ -16580,7 +16584,7 @@ fn get_view_for_seq_expr<'a>(inner: &'a swc_ast::SeqExpr, bump: &'a Bump) -> &'a
   let node = bump.alloc(SeqExpr {
     inner,
     parent: Default::default(),
-    exprs: inner.exprs.iter().map(|value| get_view_for_expr(value, bump)).collect(),
+    exprs: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.exprs.len(), bump);vec.extend(inner.exprs.iter().map(|value| get_view_for_expr(value, bump))); vec }),
   });
   let parent: Node<'a> = (&*node).into();
   for value in node.exprs.iter() {
@@ -17100,7 +17104,7 @@ pub struct SwitchCase<'a> {
   pub inner: &'a swc_ast::SwitchCase,
   /// None for `default:`
   pub test: Option<Expr<'a>>,
-  pub cons: Vec<Stmt<'a>>,
+  pub cons: &'a [Stmt<'a>],
 }
 
 impl<'a> SwitchCase<'a> {
@@ -17172,7 +17176,7 @@ fn get_view_for_switch_case<'a>(inner: &'a swc_ast::SwitchCase, bump: &'a Bump) 
       Some(value) => Some(get_view_for_expr(value, bump)),
       None => None,
     },
-    cons: inner.cons.iter().map(|value| get_view_for_stmt(value, bump)).collect(),
+    cons: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.cons.len(), bump);vec.extend(inner.cons.iter().map(|value| get_view_for_stmt(value, bump))); vec }),
   });
   let parent: Node<'a> = (&*node).into();
   if let Some(value) = &node.test {
@@ -17193,7 +17197,7 @@ pub struct SwitchStmt<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::SwitchStmt,
   pub discriminant: Expr<'a>,
-  pub cases: Vec<&'a SwitchCase<'a>>,
+  pub cases: &'a [&'a SwitchCase<'a>],
 }
 
 impl<'a> SwitchStmt<'a> {
@@ -17260,7 +17264,7 @@ fn get_view_for_switch_stmt<'a>(inner: &'a swc_ast::SwitchStmt, bump: &'a Bump) 
     inner,
     parent: Default::default(),
     discriminant: get_view_for_expr(&inner.discriminant, bump),
-    cases: inner.cases.iter().map(|value| get_view_for_switch_case(value, bump)).collect(),
+    cases: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.cases.len(), bump);vec.extend(inner.cases.iter().map(|value| get_view_for_switch_case(value, bump))); vec }),
   });
   let parent: Node<'a> = (&*node).into();
   set_parent_for_expr(&node.discriminant, parent);
@@ -17522,8 +17526,8 @@ fn set_parent_for_throw_stmt<'a>(node: &ThrowStmt<'a>, parent: Node<'a>) {
 pub struct Tpl<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::Tpl,
-  pub exprs: Vec<Expr<'a>>,
-  pub quasis: Vec<&'a TplElement<'a>>,
+  pub exprs: &'a [Expr<'a>],
+  pub quasis: &'a [&'a TplElement<'a>],
 }
 
 impl<'a> Tpl<'a> {
@@ -17591,8 +17595,8 @@ fn get_view_for_tpl<'a>(inner: &'a swc_ast::Tpl, bump: &'a Bump) -> &'a Tpl<'a> 
   let node = bump.alloc(Tpl {
     inner,
     parent: Default::default(),
-    exprs: inner.exprs.iter().map(|value| get_view_for_expr(value, bump)).collect(),
-    quasis: inner.quasis.iter().map(|value| get_view_for_tpl_element(value, bump)).collect(),
+    exprs: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.exprs.len(), bump);vec.extend(inner.exprs.iter().map(|value| get_view_for_expr(value, bump))); vec }),
+    quasis: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.quasis.len(), bump);vec.extend(inner.quasis.iter().map(|value| get_view_for_tpl_element(value, bump))); vec }),
   });
   let parent: Node<'a> = (&*node).into();
   for value in node.exprs.iter() {
@@ -17961,7 +17965,7 @@ fn set_parent_for_ts_as_expr<'a>(node: &TsAsExpr<'a>, parent: Node<'a>) {
 pub struct TsCallSignatureDecl<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::TsCallSignatureDecl,
-  pub params: Vec<TsFnParam<'a>>,
+  pub params: &'a [TsFnParam<'a>],
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
 }
@@ -18034,7 +18038,7 @@ fn get_view_for_ts_call_signature_decl<'a>(inner: &'a swc_ast::TsCallSignatureDe
   let node = bump.alloc(TsCallSignatureDecl {
     inner,
     parent: Default::default(),
-    params: inner.params.iter().map(|value| get_view_for_ts_fn_param(value, bump)).collect(),
+    params: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.params.len(), bump);vec.extend(inner.params.iter().map(|value| get_view_for_ts_fn_param(value, bump))); vec }),
     type_ann: match &inner.type_ann {
       Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
       None => None,
@@ -18233,7 +18237,7 @@ fn set_parent_for_ts_const_assertion<'a>(node: &TsConstAssertion<'a>, parent: No
 pub struct TsConstructSignatureDecl<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::TsConstructSignatureDecl,
-  pub params: Vec<TsFnParam<'a>>,
+  pub params: &'a [TsFnParam<'a>],
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
 }
@@ -18306,7 +18310,7 @@ fn get_view_for_ts_construct_signature_decl<'a>(inner: &'a swc_ast::TsConstructS
   let node = bump.alloc(TsConstructSignatureDecl {
     inner,
     parent: Default::default(),
-    params: inner.params.iter().map(|value| get_view_for_ts_fn_param(value, bump)).collect(),
+    params: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.params.len(), bump);vec.extend(inner.params.iter().map(|value| get_view_for_ts_fn_param(value, bump))); vec }),
     type_ann: match &inner.type_ann {
       Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
       None => None,
@@ -18337,7 +18341,7 @@ fn set_parent_for_ts_construct_signature_decl<'a>(node: &TsConstructSignatureDec
 pub struct TsConstructorType<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::TsConstructorType,
-  pub params: Vec<TsFnParam<'a>>,
+  pub params: &'a [TsFnParam<'a>],
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
   pub type_ann: &'a TsTypeAnn<'a>,
 }
@@ -18412,7 +18416,7 @@ fn get_view_for_ts_constructor_type<'a>(inner: &'a swc_ast::TsConstructorType, b
   let node = bump.alloc(TsConstructorType {
     inner,
     parent: Default::default(),
-    params: inner.params.iter().map(|value| get_view_for_ts_fn_param(value, bump)).collect(),
+    params: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.params.len(), bump);vec.extend(inner.params.iter().map(|value| get_view_for_ts_fn_param(value, bump))); vec }),
     type_params: match &inner.type_params {
       Some(value) => Some(get_view_for_ts_type_param_decl(value, bump)),
       None => None,
@@ -18439,7 +18443,7 @@ pub struct TsEnumDecl<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::TsEnumDecl,
   pub id: &'a Ident<'a>,
-  pub members: Vec<&'a TsEnumMember<'a>>,
+  pub members: &'a [&'a TsEnumMember<'a>],
 }
 
 impl<'a> TsEnumDecl<'a> {
@@ -18514,7 +18518,7 @@ fn get_view_for_ts_enum_decl<'a>(inner: &'a swc_ast::TsEnumDecl, bump: &'a Bump)
     inner,
     parent: Default::default(),
     id: get_view_for_ident(&inner.id, bump),
-    members: inner.members.iter().map(|value| get_view_for_ts_enum_member(value, bump)).collect(),
+    members: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.members.len(), bump);vec.extend(inner.members.iter().map(|value| get_view_for_ts_enum_member(value, bump))); vec }),
   });
   let parent: Node<'a> = (&*node).into();
   set_parent_for_ident(&node.id, parent);
@@ -18869,7 +18873,7 @@ fn set_parent_for_ts_external_module_ref<'a>(node: &TsExternalModuleRef<'a>, par
 pub struct TsFnType<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::TsFnType,
-  pub params: Vec<TsFnParam<'a>>,
+  pub params: &'a [TsFnParam<'a>],
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
   pub type_ann: &'a TsTypeAnn<'a>,
 }
@@ -18940,7 +18944,7 @@ fn get_view_for_ts_fn_type<'a>(inner: &'a swc_ast::TsFnType, bump: &'a Bump) -> 
   let node = bump.alloc(TsFnType {
     inner,
     parent: Default::default(),
-    params: inner.params.iter().map(|value| get_view_for_ts_fn_param(value, bump)).collect(),
+    params: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.params.len(), bump);vec.extend(inner.params.iter().map(|value| get_view_for_ts_fn_param(value, bump))); vec }),
     type_params: match &inner.type_params {
       Some(value) => Some(get_view_for_ts_type_param_decl(value, bump)),
       None => None,
@@ -19257,7 +19261,7 @@ fn set_parent_for_ts_import_type<'a>(node: &TsImportType<'a>, parent: Node<'a>) 
 pub struct TsIndexSignature<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::TsIndexSignature,
-  pub params: Vec<TsFnParam<'a>>,
+  pub params: &'a [TsFnParam<'a>],
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
 }
 
@@ -19334,7 +19338,7 @@ fn get_view_for_ts_index_signature<'a>(inner: &'a swc_ast::TsIndexSignature, bum
   let node = bump.alloc(TsIndexSignature {
     inner,
     parent: Default::default(),
-    params: inner.params.iter().map(|value| get_view_for_ts_fn_param(value, bump)).collect(),
+    params: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.params.len(), bump);vec.extend(inner.params.iter().map(|value| get_view_for_ts_fn_param(value, bump))); vec }),
     type_ann: match &inner.type_ann {
       Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
       None => None,
@@ -19604,7 +19608,7 @@ fn set_parent_for_ts_instantiation<'a>(node: &TsInstantiation<'a>, parent: Node<
 pub struct TsInterfaceBody<'a> {
   parent: ParentOnceCell<&'a TsInterfaceDecl<'a>>,
   pub inner: &'a swc_ast::TsInterfaceBody,
-  pub body: Vec<TsTypeElement<'a>>,
+  pub body: &'a [TsTypeElement<'a>],
 }
 
 impl<'a> TsInterfaceBody<'a> {
@@ -19669,7 +19673,7 @@ fn get_view_for_ts_interface_body<'a>(inner: &'a swc_ast::TsInterfaceBody, bump:
   let node = bump.alloc(TsInterfaceBody {
     inner,
     parent: Default::default(),
-    body: inner.body.iter().map(|value| get_view_for_ts_type_element(value, bump)).collect(),
+    body: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.body.len(), bump);vec.extend(inner.body.iter().map(|value| get_view_for_ts_type_element(value, bump))); vec }),
   });
   let parent: Node<'a> = (&*node).into();
   for value in node.body.iter() {
@@ -19688,7 +19692,7 @@ pub struct TsInterfaceDecl<'a> {
   pub inner: &'a swc_ast::TsInterfaceDecl,
   pub id: &'a Ident<'a>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
-  pub extends: Vec<&'a TsExprWithTypeArgs<'a>>,
+  pub extends: &'a [&'a TsExprWithTypeArgs<'a>],
   pub body: &'a TsInterfaceBody<'a>,
 }
 
@@ -19768,7 +19772,7 @@ fn get_view_for_ts_interface_decl<'a>(inner: &'a swc_ast::TsInterfaceDecl, bump:
       Some(value) => Some(get_view_for_ts_type_param_decl(value, bump)),
       None => None,
     },
-    extends: inner.extends.iter().map(|value| get_view_for_ts_expr_with_type_args(value, bump)).collect(),
+    extends: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.extends.len(), bump);vec.extend(inner.extends.iter().map(|value| get_view_for_ts_expr_with_type_args(value, bump))); vec }),
     body: get_view_for_ts_interface_body(&inner.body, bump),
   });
   let parent: Node<'a> = (&*node).into();
@@ -19791,7 +19795,7 @@ fn set_parent_for_ts_interface_decl<'a>(node: &TsInterfaceDecl<'a>, parent: Node
 pub struct TsIntersectionType<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::TsIntersectionType,
-  pub types: Vec<TsType<'a>>,
+  pub types: &'a [TsType<'a>],
 }
 
 impl<'a> TsIntersectionType<'a> {
@@ -19856,7 +19860,7 @@ fn get_view_for_ts_intersection_type<'a>(inner: &'a swc_ast::TsIntersectionType,
   let node = bump.alloc(TsIntersectionType {
     inner,
     parent: Default::default(),
-    types: inner.types.iter().map(|value| get_view_for_ts_type(value, bump)).collect(),
+    types: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.types.len(), bump);vec.extend(inner.types.iter().map(|value| get_view_for_ts_type(value, bump))); vec }),
   });
   let parent: Node<'a> = (&*node).into();
   for value in node.types.iter() {
@@ -20136,7 +20140,7 @@ pub struct TsMethodSignature<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::TsMethodSignature,
   pub key: Expr<'a>,
-  pub params: Vec<TsFnParam<'a>>,
+  pub params: &'a [TsFnParam<'a>],
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
 }
@@ -20223,7 +20227,7 @@ fn get_view_for_ts_method_signature<'a>(inner: &'a swc_ast::TsMethodSignature, b
     inner,
     parent: Default::default(),
     key: get_view_for_expr(&inner.key, bump),
-    params: inner.params.iter().map(|value| get_view_for_ts_fn_param(value, bump)).collect(),
+    params: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.params.len(), bump);vec.extend(inner.params.iter().map(|value| get_view_for_ts_fn_param(value, bump))); vec }),
     type_ann: match &inner.type_ann {
       Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
       None => None,
@@ -20255,7 +20259,7 @@ fn set_parent_for_ts_method_signature<'a>(node: &TsMethodSignature<'a>, parent: 
 pub struct TsModuleBlock<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::TsModuleBlock,
-  pub body: Vec<ModuleItem<'a>>,
+  pub body: &'a [ModuleItem<'a>],
 }
 
 impl<'a> TsModuleBlock<'a> {
@@ -20320,7 +20324,7 @@ fn get_view_for_ts_module_block<'a>(inner: &'a swc_ast::TsModuleBlock, bump: &'a
   let node = bump.alloc(TsModuleBlock {
     inner,
     parent: Default::default(),
-    body: inner.body.iter().map(|value| get_view_for_module_item(value, bump)).collect(),
+    body: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.body.len(), bump);vec.extend(inner.body.iter().map(|value| get_view_for_module_item(value, bump))); vec }),
   });
   let parent: Node<'a> = (&*node).into();
   for value in node.body.iter() {
@@ -20760,7 +20764,7 @@ fn set_parent_for_ts_optional_type<'a>(node: &TsOptionalType<'a>, parent: Node<'
 pub struct TsParamProp<'a> {
   parent: ParentOnceCell<&'a Constructor<'a>>,
   pub inner: &'a swc_ast::TsParamProp,
-  pub decorators: Vec<&'a Decorator<'a>>,
+  pub decorators: &'a [&'a Decorator<'a>],
   pub param: TsParamPropParam<'a>,
 }
 
@@ -20840,7 +20844,7 @@ fn get_view_for_ts_param_prop<'a>(inner: &'a swc_ast::TsParamProp, bump: &'a Bum
   let node = bump.alloc(TsParamProp {
     inner,
     parent: Default::default(),
-    decorators: inner.decorators.iter().map(|value| get_view_for_decorator(value, bump)).collect(),
+    decorators: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.decorators.len(), bump);vec.extend(inner.decorators.iter().map(|value| get_view_for_decorator(value, bump))); vec }),
     param: get_view_for_ts_param_prop_param(&inner.param, bump),
   });
   let parent: Node<'a> = (&*node).into();
@@ -20939,7 +20943,7 @@ pub struct TsPropertySignature<'a> {
   pub inner: &'a swc_ast::TsPropertySignature,
   pub key: Expr<'a>,
   pub init: Option<Expr<'a>>,
-  pub params: Vec<TsFnParam<'a>>,
+  pub params: &'a [TsFnParam<'a>],
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
 }
@@ -21033,7 +21037,7 @@ fn get_view_for_ts_property_signature<'a>(inner: &'a swc_ast::TsPropertySignatur
       Some(value) => Some(get_view_for_expr(value, bump)),
       None => None,
     },
-    params: inner.params.iter().map(|value| get_view_for_ts_fn_param(value, bump)).collect(),
+    params: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.params.len(), bump);vec.extend(inner.params.iter().map(|value| get_view_for_ts_fn_param(value, bump))); vec }),
     type_ann: match &inner.type_ann {
       Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
       None => None,
@@ -21476,8 +21480,8 @@ fn set_parent_for_ts_this_type<'a>(node: &TsThisType<'a>, parent: Node<'a>) {
 pub struct TsTplLitType<'a> {
   parent: ParentOnceCell<&'a TsLitType<'a>>,
   pub inner: &'a swc_ast::TsTplLitType,
-  pub types: Vec<TsType<'a>>,
-  pub quasis: Vec<&'a TplElement<'a>>,
+  pub types: &'a [TsType<'a>],
+  pub quasis: &'a [&'a TplElement<'a>],
 }
 
 impl<'a> TsTplLitType<'a> {
@@ -21545,8 +21549,8 @@ fn get_view_for_ts_tpl_lit_type<'a>(inner: &'a swc_ast::TsTplLitType, bump: &'a 
   let node = bump.alloc(TsTplLitType {
     inner,
     parent: Default::default(),
-    types: inner.types.iter().map(|value| get_view_for_ts_type(value, bump)).collect(),
-    quasis: inner.quasis.iter().map(|value| get_view_for_tpl_element(value, bump)).collect(),
+    types: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.types.len(), bump);vec.extend(inner.types.iter().map(|value| get_view_for_ts_type(value, bump))); vec }),
+    quasis: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.quasis.len(), bump);vec.extend(inner.quasis.iter().map(|value| get_view_for_tpl_element(value, bump))); vec }),
   });
   let parent: Node<'a> = (&*node).into();
   for value in node.types.iter() {
@@ -21656,7 +21660,7 @@ fn set_parent_for_ts_tuple_element<'a>(node: &TsTupleElement<'a>, parent: Node<'
 pub struct TsTupleType<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::TsTupleType,
-  pub elem_types: Vec<&'a TsTupleElement<'a>>,
+  pub elem_types: &'a [&'a TsTupleElement<'a>],
 }
 
 impl<'a> TsTupleType<'a> {
@@ -21721,7 +21725,7 @@ fn get_view_for_ts_tuple_type<'a>(inner: &'a swc_ast::TsTupleType, bump: &'a Bum
   let node = bump.alloc(TsTupleType {
     inner,
     parent: Default::default(),
-    elem_types: inner.elem_types.iter().map(|value| get_view_for_ts_tuple_element(value, bump)).collect(),
+    elem_types: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.elem_types.len(), bump);vec.extend(inner.elem_types.iter().map(|value| get_view_for_ts_tuple_element(value, bump))); vec }),
   });
   let parent: Node<'a> = (&*node).into();
   for value in node.elem_types.iter() {
@@ -21995,7 +21999,7 @@ fn set_parent_for_ts_type_assertion<'a>(node: &TsTypeAssertion<'a>, parent: Node
 pub struct TsTypeLit<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::TsTypeLit,
-  pub members: Vec<TsTypeElement<'a>>,
+  pub members: &'a [TsTypeElement<'a>],
 }
 
 impl<'a> TsTypeLit<'a> {
@@ -22060,7 +22064,7 @@ fn get_view_for_ts_type_lit<'a>(inner: &'a swc_ast::TsTypeLit, bump: &'a Bump) -
   let node = bump.alloc(TsTypeLit {
     inner,
     parent: Default::default(),
-    members: inner.members.iter().map(|value| get_view_for_ts_type_element(value, bump)).collect(),
+    members: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.members.len(), bump);vec.extend(inner.members.iter().map(|value| get_view_for_ts_type_element(value, bump))); vec }),
   });
   let parent: Node<'a> = (&*node).into();
   for value in node.members.iter() {
@@ -22271,7 +22275,7 @@ fn set_parent_for_ts_type_param<'a>(node: &TsTypeParam<'a>, parent: Node<'a>) {
 pub struct TsTypeParamDecl<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::TsTypeParamDecl,
-  pub params: Vec<&'a TsTypeParam<'a>>,
+  pub params: &'a [&'a TsTypeParam<'a>],
 }
 
 impl<'a> TsTypeParamDecl<'a> {
@@ -22336,7 +22340,7 @@ fn get_view_for_ts_type_param_decl<'a>(inner: &'a swc_ast::TsTypeParamDecl, bump
   let node = bump.alloc(TsTypeParamDecl {
     inner,
     parent: Default::default(),
-    params: inner.params.iter().map(|value| get_view_for_ts_type_param(value, bump)).collect(),
+    params: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.params.len(), bump);vec.extend(inner.params.iter().map(|value| get_view_for_ts_type_param(value, bump))); vec }),
   });
   let parent: Node<'a> = (&*node).into();
   for value in node.params.iter() {
@@ -22353,7 +22357,7 @@ fn set_parent_for_ts_type_param_decl<'a>(node: &TsTypeParamDecl<'a>, parent: Nod
 pub struct TsTypeParamInstantiation<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::TsTypeParamInstantiation,
-  pub params: Vec<TsType<'a>>,
+  pub params: &'a [TsType<'a>],
 }
 
 impl<'a> TsTypeParamInstantiation<'a> {
@@ -22418,7 +22422,7 @@ fn get_view_for_ts_type_param_instantiation<'a>(inner: &'a swc_ast::TsTypeParamI
   let node = bump.alloc(TsTypeParamInstantiation {
     inner,
     parent: Default::default(),
-    params: inner.params.iter().map(|value| get_view_for_ts_type(value, bump)).collect(),
+    params: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.params.len(), bump);vec.extend(inner.params.iter().map(|value| get_view_for_ts_type(value, bump))); vec }),
   });
   let parent: Node<'a> = (&*node).into();
   for value in node.params.iter() {
@@ -22707,7 +22711,7 @@ fn set_parent_for_ts_type_ref<'a>(node: &TsTypeRef<'a>, parent: Node<'a>) {
 pub struct TsUnionType<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::TsUnionType,
-  pub types: Vec<TsType<'a>>,
+  pub types: &'a [TsType<'a>],
 }
 
 impl<'a> TsUnionType<'a> {
@@ -22772,7 +22776,7 @@ fn get_view_for_ts_union_type<'a>(inner: &'a swc_ast::TsUnionType, bump: &'a Bum
   let node = bump.alloc(TsUnionType {
     inner,
     parent: Default::default(),
-    types: inner.types.iter().map(|value| get_view_for_ts_type(value, bump)).collect(),
+    types: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.types.len(), bump);vec.extend(inner.types.iter().map(|value| get_view_for_ts_type(value, bump))); vec }),
   });
   let parent: Node<'a> = (&*node).into();
   for value in node.types.iter() {
@@ -22957,7 +22961,7 @@ fn set_parent_for_update_expr<'a>(node: &UpdateExpr<'a>, parent: Node<'a>) {
 pub struct UsingDecl<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::UsingDecl,
-  pub decls: Vec<&'a VarDeclarator<'a>>,
+  pub decls: &'a [&'a VarDeclarator<'a>],
 }
 
 impl<'a> UsingDecl<'a> {
@@ -23026,7 +23030,7 @@ fn get_view_for_using_decl<'a>(inner: &'a swc_ast::UsingDecl, bump: &'a Bump) ->
   let node = bump.alloc(UsingDecl {
     inner,
     parent: Default::default(),
-    decls: inner.decls.iter().map(|value| get_view_for_var_declarator(value, bump)).collect(),
+    decls: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.decls.len(), bump);vec.extend(inner.decls.iter().map(|value| get_view_for_var_declarator(value, bump))); vec }),
   });
   let parent: Node<'a> = (&*node).into();
   for value in node.decls.iter() {
@@ -23043,7 +23047,7 @@ fn set_parent_for_using_decl<'a>(node: &UsingDecl<'a>, parent: Node<'a>) {
 pub struct VarDecl<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::VarDecl,
-  pub decls: Vec<&'a VarDeclarator<'a>>,
+  pub decls: &'a [&'a VarDeclarator<'a>],
 }
 
 impl<'a> VarDecl<'a> {
@@ -23116,7 +23120,7 @@ fn get_view_for_var_decl<'a>(inner: &'a swc_ast::VarDecl, bump: &'a Bump) -> &'a
   let node = bump.alloc(VarDecl {
     inner,
     parent: Default::default(),
-    decls: inner.decls.iter().map(|value| get_view_for_var_declarator(value, bump)).collect(),
+    decls: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.decls.len(), bump);vec.extend(inner.decls.iter().map(|value| get_view_for_var_declarator(value, bump))); vec }),
   });
   let parent: Node<'a> = (&*node).into();
   for value in node.decls.iter() {

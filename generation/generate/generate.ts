@@ -89,7 +89,18 @@ export function generate(analysisResult: AnalysisResult): string {
         // hack to avoid yet another lifetime
         writer.writeLine("let bump_ref = unsafe { mem::transmute::<&Bump, &'a Bump>(&bump_borrow) };");
         writer.writeLine("let info_ref = unsafe { mem::transmute::<&ModuleInfo, &'a ModuleInfo<'a>>(&info) };");
-        writer.writeLine(`let ast_view = ${getViewForFunctionName("Module")}(info_ref, bump_ref);`);
+        writer.writeLine("let tokens = info_ref.tokens.map(|t| TokenContainer::new(t));");
+        writer.writeLine("let tokens_ref = tokens.as_ref().map(|t| unsafe { mem::transmute::<&TokenContainer, &'a TokenContainer<'a>>(t) });");
+        writer.write("let comments = info_ref.comments.map(|c| CommentContainer::new(");
+        writer.indent(() => {
+          writer.writeLine("c.leading,");
+          writer.writeLine("c.trailing,");
+          writer.writeLine(`tokens_ref.expect("Tokens must be provided when using comments."),`);
+          writer.writeLine(`info_ref.text_info.expect("Text info must be provided when using comments"),`);
+        });
+        writer.write("));").newLine();
+        writer.writeLine("let comments_ref = comments.as_ref().map(|t| unsafe { mem::transmute::<&CommentContainer, &'a CommentContainer<'a>>(t) });");
+        writer.writeLine(`let ast_view = ${getViewForFunctionName("Module")}(info_ref, tokens_ref, comments_ref, bump_ref);`);
         writer.writeLine(`let result = with_view(ast_view);`);
         writer.writeLine("bump_borrow.reset();");
         writer.writeLine("result");
@@ -102,7 +113,18 @@ export function generate(analysisResult: AnalysisResult): string {
         // hack to avoid yet another lifetime
         writer.writeLine("let bump_ref = unsafe { mem::transmute::<&Bump, &'a Bump>(&bump_borrow) };");
         writer.writeLine("let info_ref = unsafe { mem::transmute::<&ScriptInfo, &'a ScriptInfo<'a>>(&info) };");
-        writer.writeLine(`let ast_view = ${getViewForFunctionName("Script")}(info_ref, bump_ref);`);
+        writer.writeLine("let tokens = info_ref.tokens.map(|t| TokenContainer::new(t));");
+        writer.writeLine("let tokens_ref = tokens.as_ref().map(|t| unsafe { mem::transmute::<&TokenContainer, &'a TokenContainer<'a>>(t) });");
+        writer.write("let comments = info_ref.comments.map(|c| CommentContainer::new(");
+        writer.indent(() => {
+          writer.writeLine("c.leading,");
+          writer.writeLine("c.trailing,");
+          writer.writeLine(`tokens_ref.expect("Tokens must be provided when using comments."),`);
+          writer.writeLine(`info_ref.text_info.expect("Text info must be provided when using comments"),`);
+        });
+        writer.write("));").newLine();
+        writer.writeLine("let comments_ref = comments.as_ref().map(|t| unsafe { mem::transmute::<&CommentContainer, &'a CommentContainer<'a>>(t) });");
+        writer.writeLine(`let ast_view = ${getViewForFunctionName("Script")}(info_ref, tokens_ref, comments_ref, bump_ref);`);
         writer.writeLine(`let result = with_view(ast_view);`);
         writer.writeLine("bump_borrow.reset();");
         writer.writeLine("result");
@@ -655,9 +677,13 @@ export function generate(analysisResult: AnalysisResult): string {
     function writeStructFunctions() {
       writer.write(`fn ${getViewForFunctionName(struct.name)}<'a>(`);
       if (struct.name === "Module") {
-        writer.write(`source_file_info: &'a ModuleInfo<'a>`);
+        writer.write(`source_file_info: &'a ModuleInfo<'a>, `);
+        writer.write(`tokens: Option<&'a TokenContainer<'a>>, `);
+        writer.write(`comments: Option<&'a CommentContainer<'a>>`);
       } else if (struct.name === "Script") {
-        writer.write(`source_file_info: &'a ScriptInfo<'a>`);
+        writer.write(`source_file_info: &'a ScriptInfo<'a>, `);
+        writer.write(`tokens: Option<&'a TokenContainer<'a>>, `);
+        writer.write(`comments: Option<&'a CommentContainer<'a>>`);
       } else {
         writer.write(`inner: &'a swc_ast::${struct.name}`);
       }
@@ -668,19 +694,6 @@ export function generate(analysisResult: AnalysisResult): string {
           writer.writeLine("let inner = source_file_info.module;");
         } else if (struct.name === "Script") {
           writer.writeLine("let inner = source_file_info.script;");
-        }
-        if (struct.name === "Module" || struct.name === "Script") {
-          writer.writeLine("let tokens = source_file_info.tokens.map(|t| &*bump.alloc(TokenContainer::new(t)));");
-          writer.writeLine(
-            `let comments = source_file_info.comments.map(|c| &*bump.alloc(CommentContainer::new(`,
-          );
-          writer.indent(() => {
-            writer.writeLine("c.leading,");
-            writer.writeLine("c.trailing,");
-            writer.writeLine(`tokens.expect("Tokens must be provided when using comments."),`);
-            writer.writeLine(`source_file_info.text_info.expect("Text info must be provided when using comments"),`);
-          });
-          writer.writeLine(")));");
         }
         // writer.writeLine(`println!("Entered ${struct.name}");`);
 
@@ -696,10 +709,7 @@ export function generate(analysisResult: AnalysisResult): string {
           }
           for (const field of structFields) {
             writer.write(`${field.name}: `);
-            writeGetViewTypeExpression(field.type, `&inner.${field.name}`);
-            if (isVecType(field.type)) {
-              writer.write(".collect()");
-            }
+            writeMaybeVecCollect(field.type, `&inner.${field.name}`);
             writer.write(`,`).newLine();
           }
         }).write(");").newLine();
@@ -748,6 +758,18 @@ export function generate(analysisResult: AnalysisResult): string {
     });
   }
 
+  function writeMaybeVecCollect(type: TypeDefinition, name: string) {
+    if (isVecType(type)) {
+      writer.write("bump.alloc({");
+      writer.write(`let mut vec = allocator_api2::vec::Vec::with_capacity_in(${name.replace(/^&/, "")}.len(), bump);`);
+      writer.write("vec.extend(");
+    }
+    writeGetViewTypeExpression(type, name);
+    if (isVecType(type)) {
+      writer.write("); vec })");
+    }
+  }
+
   function writeGetViewTypeExpression(type: TypeDefinition, name: string) {
     if (type.kind === "Primitive") {
       throw new Error("Primitive types not handled here.");
@@ -756,10 +778,7 @@ export function generate(analysisResult: AnalysisResult): string {
     if (type.name === "Option") {
       writer.write(`match ${name} `).inlineBlock(() => {
         writer.write("Some(value) => Some(");
-        writeGetViewTypeExpression(type.genericArgs[0], "value");
-        if (isVecType(type.genericArgs[0])) {
-          writer.write(".collect()");
-        }
+        writeMaybeVecCollect(type.genericArgs[0], "value");
         writer.write("),").newLine();
         writer.writeLine("None => None,");
       });
