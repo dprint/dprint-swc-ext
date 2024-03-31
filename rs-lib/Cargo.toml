@@ -5,6 +5,7 @@ authors = ["David Sherret <dsherret@gmail.com>"]
 edition = "2021"
 license = "MIT"
 description = "Functionality to make swc easier to work with."
+repository = "https://github.com/dprint/dprint-swc-ext"
 
 [package.metadata.docs.rs]
 all-features = true
