@@ -9028,6 +9028,10 @@ impl<'a> AutoAccessor<'a> {
     self.inner.accessibility
   }
 
+  pub fn is_abstract(&self) -> bool {
+    self.inner.is_abstract
+  }
+
   pub fn is_override(&self) -> bool {
     self.inner.is_override
   }

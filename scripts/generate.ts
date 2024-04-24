@@ -37,7 +37,7 @@ if (!Deno.args.some(a => a === "--quick")) {
     parserCargoFile.readTextSync().replace(
       // remove because it uses regex
       `[dev-dependencies.testing]
-version = "0.35.17"`,
+version = "0.35.21"`,
       "",
     )
       + "[dependencies.regex]\nversion = \"=1.5.5\"\n",
