@@ -17640,6 +17640,8 @@ impl<'a> TplElement<'a> {
     &self.inner.cooked
   }
 
+  /// You may need to perform. `.replace("\r\n", "\n").replace('\r', "\n")` on
+  /// this value.
   pub fn raw(&self) -> &swc_atoms::Atom {
     &self.inner.raw
   }
@@ -18983,16 +18985,8 @@ impl<'a> TsGetterSignature<'a> {
     self.parent.get().unwrap()
   }
 
-  pub fn readonly(&self) -> bool {
-    self.inner.readonly
-  }
-
   pub fn computed(&self) -> bool {
     self.inner.computed
-  }
-
-  pub fn optional(&self) -> bool {
-    self.inner.optional
   }
 }
 
@@ -20154,10 +20148,6 @@ impl<'a> TsMethodSignature<'a> {
     self.parent.get().unwrap()
   }
 
-  pub fn readonly(&self) -> bool {
-    self.inner.readonly
-  }
-
   pub fn computed(&self) -> bool {
     self.inner.computed
   }
@@ -20946,10 +20936,7 @@ pub struct TsPropertySignature<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::TsPropertySignature,
   pub key: Expr<'a>,
-  pub init: Option<Expr<'a>>,
-  pub params: &'a [TsFnParam<'a>],
   pub type_ann: Option<&'a TsTypeAnn<'a>>,
-  pub type_params: Option<&'a TsTypeParamDecl<'a>>,
 }
 
 impl<'a> TsPropertySignature<'a> {
@@ -20992,18 +20979,9 @@ impl<'a> NodeTrait<'a> for TsPropertySignature<'a> {
   }
 
   fn children(&self) -> Vec<Node<'a>> {
-    let mut children = Vec::with_capacity(1 + match &self.init { Some(_value) => 1, None => 0, } + self.params.len() + match &self.type_ann { Some(_value) => 1, None => 0, } + match &self.type_params { Some(_value) => 1, None => 0, });
+    let mut children = Vec::with_capacity(1 + match &self.type_ann { Some(_value) => 1, None => 0, });
     children.push((&self.key).into());
-    if let Some(child) = self.init.as_ref() {
-      children.push(child.into());
-    }
-    for child in self.params.iter() {
-      children.push(child.into());
-    }
     if let Some(child) = self.type_ann {
-      children.push(child.into());
-    }
-    if let Some(child) = self.type_params {
       children.push(child.into());
     }
     children
@@ -21037,33 +21015,15 @@ fn get_view_for_ts_property_signature<'a>(inner: &'a swc_ast::TsPropertySignatur
     inner,
     parent: Default::default(),
     key: get_view_for_expr(&inner.key, bump),
-    init: match &inner.init {
-      Some(value) => Some(get_view_for_expr(value, bump)),
-      None => None,
-    },
-    params: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.params.len(), bump);vec.extend(inner.params.iter().map(|value| get_view_for_ts_fn_param(value, bump))); vec }),
     type_ann: match &inner.type_ann {
       Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
-      None => None,
-    },
-    type_params: match &inner.type_params {
-      Some(value) => Some(get_view_for_ts_type_param_decl(value, bump)),
       None => None,
     },
   });
   let parent: Node<'a> = (&*node).into();
   set_parent_for_expr(&node.key, parent);
-  if let Some(value) = &node.init {
-    set_parent_for_expr(value, parent)
-  };
-  for value in node.params.iter() {
-    set_parent_for_ts_fn_param(value, parent)
-  }
   if let Some(value) = &node.type_ann {
     set_parent_for_ts_type_ann(value, parent)
-  };
-  if let Some(value) = &node.type_params {
-    set_parent_for_ts_type_param_decl(value, parent)
   };
   node
 }
@@ -21327,16 +21287,8 @@ impl<'a> TsSetterSignature<'a> {
     self.parent.get().unwrap()
   }
 
-  pub fn readonly(&self) -> bool {
-    self.inner.readonly
-  }
-
   pub fn computed(&self) -> bool {
     self.inner.computed
-  }
-
-  pub fn optional(&self) -> bool {
-    self.inner.optional
   }
 }
 
