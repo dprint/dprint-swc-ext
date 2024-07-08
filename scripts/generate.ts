@@ -17,11 +17,12 @@ if (!Deno.args.some(a => a === "--quick")) {
   astDir.emptyDirSync();
   await $`cargo clone --version`;
   await $`cargo clone swc_ecma_ast@${swcVersions.swcEcmaAst}`;
-  // force using an old version of the regex crate that works in Rust 1.65
+  // force using an old version of the regex and triomphe crates that work in Rust 1.65
   const astCargoFile = astDir.join("Cargo.toml");
   astCargoFile.writeTextSync(
     astCargoFile.readTextSync()
-      + "[dependencies.regex]\nversion = \"=1.5.5\"\n",
+      + "[dependencies.regex]\nversion = \"=1.6.0\"\n"
+      + "[dependencies.triomphe]\nversion = \"=0.1.11\"\n",
   );
   await $`cd swc_ecma_ast ; rustup run ${rustVersion} cargo rustdoc -- --output-format json -Z unstable-options`;
   astDir.join("target/doc/swc_ecma_ast.json")
@@ -31,7 +32,7 @@ if (!Deno.args.some(a => a === "--quick")) {
   const parserDir = root.join("swc_ecma_parser");
   parserDir.emptyDirSync();
   await $`cargo clone swc_ecma_parser@${swcVersions.swcEcmaParser}`;
-  // force using an old version of the regex crate that works in Rust 1.65
+  // force using an old version of the regex and triomphe crates that work in Rust 1.65
   const parserCargoFile = parserDir.join("Cargo.toml");
   parserCargoFile.writeTextSync(
     parserCargoFile.readTextSync().replace(
@@ -40,7 +41,8 @@ if (!Deno.args.some(a => a === "--quick")) {
 version = "0.35.21"`,
       "",
     )
-      + "[dependencies.regex]\nversion = \"=1.5.5\"\n",
+      + "[dependencies.regex]\nversion = \"=1.6.0\"\n"
+      + "[dependencies.triomphe]\nversion = \"=0.1.11\"\n",
   );
   const parserLibFile = parserDir.join("src/lib.rs");
   parserLibFile.writeTextSync(
