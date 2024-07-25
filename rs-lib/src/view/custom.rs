@@ -11,10 +11,6 @@ impl<'a> Ident<'a> {
   pub fn to_id(&self) -> Id {
     (self.sym().clone(), self.ctxt())
   }
-
-  pub fn ctxt(&self) -> SyntaxContext {
-    self.inner.span.ctxt
-  }
 }
 
 impl<'a> BindingIdent<'a> {

@@ -37,7 +37,7 @@ export function writeType(writer: Writer, analysisResult: AnalysisResult, type: 
   }
 
   function writeReference(type: TypeReferenceDefinition) {
-    const path = type.path.join("::").replace(/^swc_ecma_ast::/, "");
+    const path = type.path.join("::").replace(/^swc_ecma_ast::/, "").replace("swc_common::syntax_pos::hygiene::SyntaxContext", "swc_common::SyntaxContext");
     if (
       type.path[0] === "swc_ecma_ast"
       && (analysisResult.astEnums.some(e => e.name === type.name) || analysisResult.astStructs.some(s => s.name === type.name))
@@ -75,6 +75,10 @@ export function getIsReferenceType(analysisResult: AnalysisResult, type: TypeDef
   }
   if (type.name === "Option") {
     return getIsReferenceType(analysisResult, type.genericArgs[0]);
+  }
+
+  if (type.name === "SyntaxContext") {
+    return false;
   }
 
   const isSwcPlainEnumType = type != null && type.kind === "Reference" && analysisResult.plainEnums.some(e => e.name === type.name);

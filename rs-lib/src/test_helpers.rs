@@ -20,7 +20,7 @@ pub fn get_swc_module(file_path: &Path, file_text: &str) -> (Module, Vec<TokenAn
 
   let comments: SingleThreadedComments = Default::default();
   return {
-    let ts_config = crate::swc::parser::TsConfig {
+    let ts_config = crate::swc::parser::TsSyntax {
       tsx: should_parse_as_jsx(file_path),
       decorators: true,
       ..Default::default()
