@@ -240,7 +240,7 @@ impl<T: Into<SourcePos> + Clone + Copy> SourceRanged for SourceRange<T> {
 #[allow(clippy::from_over_into)]
 impl Into<Span> for SourceRange {
   fn into(self) -> Span {
-    Span::new(self.start.as_byte_pos(), self.end.as_byte_pos(), Default::default())
+    Span::new(self.start.as_byte_pos(), self.end.as_byte_pos())
   }
 }
 

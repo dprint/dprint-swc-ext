@@ -127,6 +127,7 @@ pub enum Node<'a> {
   Function(&'a Function<'a>),
   GetterProp(&'a GetterProp<'a>),
   Ident(&'a Ident<'a>),
+  IdentName(&'a IdentName<'a>),
   IfStmt(&'a IfStmt<'a>),
   Import(&'a Import<'a>),
   ImportDecl(&'a ImportDecl<'a>),
@@ -320,6 +321,7 @@ impl<'a> SourceRanged for Node<'a> {
       Node::Function(node) => node.start(),
       Node::GetterProp(node) => node.start(),
       Node::Ident(node) => node.start(),
+      Node::IdentName(node) => node.start(),
       Node::IfStmt(node) => node.start(),
       Node::Import(node) => node.start(),
       Node::ImportDecl(node) => node.start(),
@@ -494,6 +496,7 @@ impl<'a> SourceRanged for Node<'a> {
       Node::Function(node) => node.end(),
       Node::GetterProp(node) => node.end(),
       Node::Ident(node) => node.end(),
+      Node::IdentName(node) => node.end(),
       Node::IfStmt(node) => node.end(),
       Node::Import(node) => node.end(),
       Node::ImportDecl(node) => node.end(),
@@ -671,6 +674,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::Function(node) => NodeTrait::parent(*node),
       Node::GetterProp(node) => NodeTrait::parent(*node),
       Node::Ident(node) => NodeTrait::parent(*node),
+      Node::IdentName(node) => NodeTrait::parent(*node),
       Node::IfStmt(node) => NodeTrait::parent(*node),
       Node::Import(node) => NodeTrait::parent(*node),
       Node::ImportDecl(node) => NodeTrait::parent(*node),
@@ -846,6 +850,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::Function(node) => node.children(),
       Node::GetterProp(node) => node.children(),
       Node::Ident(node) => node.children(),
+      Node::IdentName(node) => node.children(),
       Node::IfStmt(node) => node.children(),
       Node::Import(node) => node.children(),
       Node::ImportDecl(node) => node.children(),
@@ -1021,6 +1026,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::Function(node) => node.as_node(),
       Node::GetterProp(node) => node.as_node(),
       Node::Ident(node) => node.as_node(),
+      Node::IdentName(node) => node.as_node(),
       Node::IfStmt(node) => node.as_node(),
       Node::Import(node) => node.as_node(),
       Node::ImportDecl(node) => node.as_node(),
@@ -1196,6 +1202,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::Function(_) => NodeKind::Function,
       Node::GetterProp(_) => NodeKind::GetterProp,
       Node::Ident(_) => NodeKind::Ident,
+      Node::IdentName(_) => NodeKind::IdentName,
       Node::IfStmt(_) => NodeKind::IfStmt,
       Node::Import(_) => NodeKind::Import,
       Node::ImportDecl(_) => NodeKind::ImportDecl,
@@ -1372,6 +1379,7 @@ pub enum NodeKind {
   Function,
   GetterProp,
   Ident,
+  IdentName,
   IfStmt,
   Import,
   ImportDecl,
@@ -1547,6 +1555,7 @@ impl std::fmt::Display for NodeKind {
       NodeKind::Function => "Function",
       NodeKind::GetterProp => "GetterProp",
       NodeKind::Ident => "Ident",
+      NodeKind::IdentName => "IdentName",
       NodeKind::IfStmt => "IfStmt",
       NodeKind::Import => "Import",
       NodeKind::ImportDecl => "ImportDecl",
@@ -3433,7 +3442,7 @@ fn set_parent_for_import_specifier<'a>(node: &ImportSpecifier<'a>, parent: Node<
 
 #[derive(Copy, Clone)]
 pub enum JSXAttrName<'a> {
-  Ident(&'a Ident<'a>),
+  Ident(&'a IdentName<'a>),
   JSXNamespacedName(&'a JSXNamespacedName<'a>),
 }
 
@@ -3498,7 +3507,7 @@ impl<'a> NodeTrait<'a> for JSXAttrName<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      JSXAttrName::Ident(_) => NodeKind::Ident,
+      JSXAttrName::Ident(_) => NodeKind::IdentName,
       JSXAttrName::JSXNamespacedName(_) => NodeKind::JSXNamespacedName,
     }
   }
@@ -3524,14 +3533,14 @@ impl<'a> From<JSXAttrName<'a>> for Node<'a> {
 
 fn get_view_for_jsxattr_name<'a>(inner: &'a swc_ast::JSXAttrName, bump: &'a Bump) -> JSXAttrName<'a> {
   match inner {
-    swc_ast::JSXAttrName::Ident(value) => JSXAttrName::Ident(get_view_for_ident(value, bump)),
+    swc_ast::JSXAttrName::Ident(value) => JSXAttrName::Ident(get_view_for_ident_name(value, bump)),
     swc_ast::JSXAttrName::JSXNamespacedName(value) => JSXAttrName::JSXNamespacedName(get_view_for_jsxnamespaced_name(value, bump)),
   }
 }
 
 fn set_parent_for_jsxattr_name<'a>(node: &JSXAttrName<'a>, parent: Node<'a>) {
   match node {
-    JSXAttrName::Ident(value) => set_parent_for_ident(value, parent),
+    JSXAttrName::Ident(value) => set_parent_for_ident_name(value, parent),
     JSXAttrName::JSXNamespacedName(value) => set_parent_for_jsxnamespaced_name(value, parent),
   }
 }
@@ -4492,7 +4501,7 @@ fn set_parent_for_lit<'a>(node: &Lit<'a>, parent: Node<'a>) {
 
 #[derive(Copy, Clone)]
 pub enum MemberProp<'a> {
-  Ident(&'a Ident<'a>),
+  Ident(&'a IdentName<'a>),
   PrivateName(&'a PrivateName<'a>),
   Computed(&'a ComputedPropName<'a>),
 }
@@ -4563,7 +4572,7 @@ impl<'a> NodeTrait<'a> for MemberProp<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      MemberProp::Ident(_) => NodeKind::Ident,
+      MemberProp::Ident(_) => NodeKind::IdentName,
       MemberProp::PrivateName(_) => NodeKind::PrivateName,
       MemberProp::Computed(_) => NodeKind::ComputedPropName,
     }
@@ -4592,7 +4601,7 @@ impl<'a> From<MemberProp<'a>> for Node<'a> {
 
 fn get_view_for_member_prop<'a>(inner: &'a swc_ast::MemberProp, bump: &'a Bump) -> MemberProp<'a> {
   match inner {
-    swc_ast::MemberProp::Ident(value) => MemberProp::Ident(get_view_for_ident(value, bump)),
+    swc_ast::MemberProp::Ident(value) => MemberProp::Ident(get_view_for_ident_name(value, bump)),
     swc_ast::MemberProp::PrivateName(value) => MemberProp::PrivateName(get_view_for_private_name(value, bump)),
     swc_ast::MemberProp::Computed(value) => MemberProp::Computed(get_view_for_computed_prop_name(value, bump)),
   }
@@ -4600,7 +4609,7 @@ fn get_view_for_member_prop<'a>(inner: &'a swc_ast::MemberProp, bump: &'a Bump) 
 
 fn set_parent_for_member_prop<'a>(node: &MemberProp<'a>, parent: Node<'a>) {
   match node {
-    MemberProp::Ident(value) => set_parent_for_ident(value, parent),
+    MemberProp::Ident(value) => set_parent_for_ident_name(value, parent),
     MemberProp::PrivateName(value) => set_parent_for_private_name(value, parent),
     MemberProp::Computed(value) => set_parent_for_computed_prop_name(value, parent),
   }
@@ -5633,7 +5642,7 @@ fn set_parent_for_prop<'a>(node: &Prop<'a>, parent: Node<'a>) {
 
 #[derive(Copy, Clone)]
 pub enum PropName<'a> {
-  Ident(&'a Ident<'a>),
+  Ident(&'a IdentName<'a>),
   /// String literal.
   Str(&'a Str<'a>),
   /// Numeric literal.
@@ -5718,7 +5727,7 @@ impl<'a> NodeTrait<'a> for PropName<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      PropName::Ident(_) => NodeKind::Ident,
+      PropName::Ident(_) => NodeKind::IdentName,
       PropName::Str(_) => NodeKind::Str,
       PropName::Num(_) => NodeKind::Number,
       PropName::Computed(_) => NodeKind::ComputedPropName,
@@ -5753,7 +5762,7 @@ impl<'a> From<PropName<'a>> for Node<'a> {
 
 fn get_view_for_prop_name<'a>(inner: &'a swc_ast::PropName, bump: &'a Bump) -> PropName<'a> {
   match inner {
-    swc_ast::PropName::Ident(value) => PropName::Ident(get_view_for_ident(value, bump)),
+    swc_ast::PropName::Ident(value) => PropName::Ident(get_view_for_ident_name(value, bump)),
     swc_ast::PropName::Str(value) => PropName::Str(get_view_for_str(value, bump)),
     swc_ast::PropName::Num(value) => PropName::Num(get_view_for_number(value, bump)),
     swc_ast::PropName::Computed(value) => PropName::Computed(get_view_for_computed_prop_name(value, bump)),
@@ -5763,7 +5772,7 @@ fn get_view_for_prop_name<'a>(inner: &'a swc_ast::PropName, bump: &'a Bump) -> P
 
 fn set_parent_for_prop_name<'a>(node: &PropName<'a>, parent: Node<'a>) {
   match node {
-    PropName::Ident(value) => set_parent_for_ident(value, parent),
+    PropName::Ident(value) => set_parent_for_ident_name(value, parent),
     PropName::Str(value) => set_parent_for_str(value, parent),
     PropName::Num(value) => set_parent_for_number(value, parent),
     PropName::Computed(value) => set_parent_for_computed_prop_name(value, parent),
@@ -6372,7 +6381,7 @@ fn set_parent_for_stmt<'a>(node: &Stmt<'a>, parent: Node<'a>) {
 
 #[derive(Copy, Clone)]
 pub enum SuperProp<'a> {
-  Ident(&'a Ident<'a>),
+  Ident(&'a IdentName<'a>),
   Computed(&'a ComputedPropName<'a>),
 }
 
@@ -6437,7 +6446,7 @@ impl<'a> NodeTrait<'a> for SuperProp<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      SuperProp::Ident(_) => NodeKind::Ident,
+      SuperProp::Ident(_) => NodeKind::IdentName,
       SuperProp::Computed(_) => NodeKind::ComputedPropName,
     }
   }
@@ -6463,14 +6472,14 @@ impl<'a> From<SuperProp<'a>> for Node<'a> {
 
 fn get_view_for_super_prop<'a>(inner: &'a swc_ast::SuperProp, bump: &'a Bump) -> SuperProp<'a> {
   match inner {
-    swc_ast::SuperProp::Ident(value) => SuperProp::Ident(get_view_for_ident(value, bump)),
+    swc_ast::SuperProp::Ident(value) => SuperProp::Ident(get_view_for_ident_name(value, bump)),
     swc_ast::SuperProp::Computed(value) => SuperProp::Computed(get_view_for_computed_prop_name(value, bump)),
   }
 }
 
 fn set_parent_for_super_prop<'a>(node: &SuperProp<'a>, parent: Node<'a>) {
   match node {
-    SuperProp::Ident(value) => set_parent_for_ident(value, parent),
+    SuperProp::Ident(value) => set_parent_for_ident_name(value, parent),
     SuperProp::Computed(value) => set_parent_for_computed_prop_name(value, parent),
   }
 }
@@ -8561,6 +8570,10 @@ impl<'a> ArrowExpr<'a> {
     self.parent.get().unwrap()
   }
 
+  pub fn ctxt(&self) -> swc_common::SyntaxContext {
+    self.inner.ctxt
+  }
+
   pub fn is_async(&self) -> bool {
     self.inner.is_async
   }
@@ -9481,6 +9494,10 @@ impl<'a> BlockStmt<'a> {
   pub fn parent(&self) -> Node<'a> {
     self.parent.get().unwrap()
   }
+
+  pub fn ctxt(&self) -> swc_common::SyntaxContext {
+    self.inner.ctxt
+  }
 }
 
 impl<'a> SourceRanged for BlockStmt<'a> {
@@ -9735,6 +9752,10 @@ impl<'a> CallExpr<'a> {
   pub fn parent(&self) -> Node<'a> {
     self.parent.get().unwrap()
   }
+
+  pub fn ctxt(&self) -> swc_common::SyntaxContext {
+    self.inner.ctxt
+  }
 }
 
 impl<'a> SourceRanged for CallExpr<'a> {
@@ -9928,6 +9949,10 @@ pub struct Class<'a> {
 impl<'a> Class<'a> {
   pub fn parent(&self) -> Node<'a> {
     self.parent.get().unwrap()
+  }
+
+  pub fn ctxt(&self) -> swc_common::SyntaxContext {
+    self.inner.ctxt
   }
 
   pub fn is_abstract(&self) -> bool {
@@ -10650,6 +10675,10 @@ pub struct Constructor<'a> {
 impl<'a> Constructor<'a> {
   pub fn parent(&self) -> &'a Class<'a> {
     self.parent.get().unwrap()
+  }
+
+  pub fn ctxt(&self) -> swc_common::SyntaxContext {
+    self.inner.ctxt
   }
 
   pub fn accessibility(&self) -> Option<Accessibility> {
@@ -11382,6 +11411,25 @@ fn set_parent_for_export_default_decl<'a>(node: &ExportDefaultDecl<'a>, parent: 
   node.parent.set(parent);
 }
 
+/// Default exports other than **direct** function expression or class
+/// expression.
+///
+///
+/// # Note
+///
+/// ```ts
+/// export default function Foo() {
+/// }
+/// ```
+///
+/// is [`ExportDefaultDecl`] and it's hoisted.
+///
+/// ```ts
+/// export default (function Foo() {
+/// })
+/// ```
+///
+/// is [`ExportDefaultExpr`] and it's not hoisted.
 #[derive(Clone)]
 pub struct ExportDefaultExpr<'a> {
   parent: ParentOnceCell<Node<'a>>,
@@ -12358,6 +12406,10 @@ impl<'a> Function<'a> {
     self.parent.get().unwrap()
   }
 
+  pub fn ctxt(&self) -> swc_common::SyntaxContext {
+    self.inner.ctxt
+  }
+
   /// if it's a generator.
   pub fn is_generator(&self) -> bool {
     self.inner.is_generator
@@ -12636,6 +12688,10 @@ impl<'a> Ident<'a> {
     self.parent.get().unwrap()
   }
 
+  pub fn ctxt(&self) -> swc_common::SyntaxContext {
+    self.inner.ctxt
+  }
+
   pub fn sym(&self) -> &swc_atoms::Atom {
     &self.inner.sym
   }
@@ -12703,6 +12759,82 @@ fn get_view_for_ident<'a>(inner: &'a swc_ast::Ident, bump: &'a Bump) -> &'a Iden
 }
 
 fn set_parent_for_ident<'a>(node: &Ident<'a>, parent: Node<'a>) {
+  node.parent.set(parent);
+}
+
+#[derive(Clone)]
+pub struct IdentName<'a> {
+  parent: ParentOnceCell<Node<'a>>,
+  pub inner: &'a swc_ast::IdentName,
+}
+
+impl<'a> IdentName<'a> {
+  pub fn parent(&self) -> Node<'a> {
+    self.parent.get().unwrap()
+  }
+
+  pub fn sym(&self) -> &swc_atoms::Atom {
+    &self.inner.sym
+  }
+}
+
+impl<'a> SourceRanged for IdentName<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::unsafely_from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::unsafely_from_byte_pos(self.inner.span().hi)
+  }
+}
+
+impl<'a> From<&IdentName<'a>> for Node<'a> {
+  fn from(node: &IdentName<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&IdentName<'a>, &'a IdentName<'a>>(node) };
+    Node::IdentName(node)
+  }
+}
+
+impl<'a> NodeTrait<'a> for IdentName<'a> {
+  fn parent(&self) -> Option<Node<'a>> {
+    Some(self.parent.get().unwrap().clone())
+  }
+
+  fn children(&self) -> Vec<Node<'a>> {
+    Vec::with_capacity(0)
+  }
+
+  fn as_node(&self) -> Node<'a> {
+    self.into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::IdentName
+  }
+}
+
+impl<'a> CastableNode<'a> for IdentName<'a> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
+    if let Node::IdentName(node) = node {
+      Some(node)
+    } else {
+      None
+    }
+  }
+
+  fn kind() -> NodeKind {
+    NodeKind::IdentName
+  }
+}
+
+fn get_view_for_ident_name<'a>(inner: &'a swc_ast::IdentName, bump: &'a Bump) -> &'a IdentName<'a> {
+  let node = bump.alloc(IdentName {
+    inner,
+    parent: Default::default(),
+  });
+  node
+}
+
+fn set_parent_for_ident_name<'a>(node: &IdentName<'a>, parent: Node<'a>) {
   node.parent.set(parent);
 }
 
@@ -13889,7 +14021,7 @@ pub struct JSXMemberExpr<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::JSXMemberExpr,
   pub obj: JSXObject<'a>,
-  pub prop: &'a Ident<'a>,
+  pub prop: &'a IdentName<'a>,
 }
 
 impl<'a> JSXMemberExpr<'a> {
@@ -13954,11 +14086,11 @@ fn get_view_for_jsxmember_expr<'a>(inner: &'a swc_ast::JSXMemberExpr, bump: &'a 
     inner,
     parent: Default::default(),
     obj: get_view_for_jsxobject(&inner.obj, bump),
-    prop: get_view_for_ident(&inner.prop, bump),
+    prop: get_view_for_ident_name(&inner.prop, bump),
   });
   let parent: Node<'a> = (&*node).into();
   set_parent_for_jsxobject(&node.obj, parent);
-  set_parent_for_ident(&node.prop, parent);
+  set_parent_for_ident_name(&node.prop, parent);
   node
 }
 
@@ -13971,8 +14103,8 @@ fn set_parent_for_jsxmember_expr<'a>(node: &JSXMemberExpr<'a>, parent: Node<'a>)
 pub struct JSXNamespacedName<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::JSXNamespacedName,
-  pub ns: &'a Ident<'a>,
-  pub name: &'a Ident<'a>,
+  pub ns: &'a IdentName<'a>,
+  pub name: &'a IdentName<'a>,
 }
 
 impl<'a> JSXNamespacedName<'a> {
@@ -14036,12 +14168,12 @@ fn get_view_for_jsxnamespaced_name<'a>(inner: &'a swc_ast::JSXNamespacedName, bu
   let node = bump.alloc(JSXNamespacedName {
     inner,
     parent: Default::default(),
-    ns: get_view_for_ident(&inner.ns, bump),
-    name: get_view_for_ident(&inner.name, bump),
+    ns: get_view_for_ident_name(&inner.ns, bump),
+    name: get_view_for_ident_name(&inner.name, bump),
   });
   let parent: Node<'a> = (&*node).into();
-  set_parent_for_ident(&node.ns, parent);
-  set_parent_for_ident(&node.name, parent);
+  set_parent_for_ident_name(&node.ns, parent);
+  set_parent_for_ident_name(&node.name, parent);
   node
 }
 
@@ -15075,6 +15207,10 @@ impl<'a> NewExpr<'a> {
   pub fn parent(&self) -> Node<'a> {
     self.parent.get().unwrap()
   }
+
+  pub fn ctxt(&self) -> swc_common::SyntaxContext {
+    self.inner.ctxt
+  }
 }
 
 impl<'a> SourceRanged for NewExpr<'a> {
@@ -15527,6 +15663,10 @@ impl<'a> OptCall<'a> {
   pub fn parent(&self) -> &'a OptChainExpr<'a> {
     self.parent.get().unwrap()
   }
+
+  pub fn ctxt(&self) -> swc_common::SyntaxContext {
+    self.inner.ctxt
+  }
 }
 
 impl<'a> SourceRanged for OptCall<'a> {
@@ -15970,12 +16110,15 @@ fn set_parent_for_private_method<'a>(node: &PrivateMethod<'a>, parent: Node<'a>)
 pub struct PrivateName<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::PrivateName,
-  pub id: &'a Ident<'a>,
 }
 
 impl<'a> PrivateName<'a> {
   pub fn parent(&self) -> Node<'a> {
     self.parent.get().unwrap()
+  }
+
+  pub fn name(&self) -> &swc_atoms::Atom {
+    &self.inner.name
   }
 }
 
@@ -16001,9 +16144,7 @@ impl<'a> NodeTrait<'a> for PrivateName<'a> {
   }
 
   fn children(&self) -> Vec<Node<'a>> {
-    let mut children = Vec::with_capacity(1);
-    children.push(self.id.into());
-    children
+    Vec::with_capacity(0)
   }
 
   fn as_node(&self) -> Node<'a> {
@@ -16033,10 +16174,7 @@ fn get_view_for_private_name<'a>(inner: &'a swc_ast::PrivateName, bump: &'a Bump
   let node = bump.alloc(PrivateName {
     inner,
     parent: Default::default(),
-    id: get_view_for_ident(&inner.id, bump),
   });
-  let parent: Node<'a> = (&*node).into();
-  set_parent_for_ident(&node.id, parent);
   node
 }
 
@@ -16057,6 +16195,10 @@ pub struct PrivateProp<'a> {
 impl<'a> PrivateProp<'a> {
   pub fn parent(&self) -> &'a Class<'a> {
     self.parent.get().unwrap()
+  }
+
+  pub fn ctxt(&self) -> swc_common::SyntaxContext {
+    self.inner.ctxt
   }
 
   pub fn is_static(&self) -> bool {
@@ -17295,6 +17437,10 @@ pub struct TaggedTpl<'a> {
 impl<'a> TaggedTpl<'a> {
   pub fn parent(&self) -> Node<'a> {
     self.parent.get().unwrap()
+  }
+
+  pub fn ctxt(&self) -> swc_common::SyntaxContext {
+    self.inner.ctxt
   }
 }
 
@@ -21037,7 +21183,7 @@ pub struct TsQualifiedName<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::TsQualifiedName,
   pub left: TsEntityName<'a>,
-  pub right: &'a Ident<'a>,
+  pub right: &'a IdentName<'a>,
 }
 
 impl<'a> TsQualifiedName<'a> {
@@ -21102,11 +21248,11 @@ fn get_view_for_ts_qualified_name<'a>(inner: &'a swc_ast::TsQualifiedName, bump:
     inner,
     parent: Default::default(),
     left: get_view_for_ts_entity_name(&inner.left, bump),
-    right: get_view_for_ident(&inner.right, bump),
+    right: get_view_for_ident_name(&inner.right, bump),
   });
   let parent: Node<'a> = (&*node).into();
   set_parent_for_ts_entity_name(&node.left, parent);
-  set_parent_for_ident(&node.right, parent);
+  set_parent_for_ident_name(&node.right, parent);
   node
 }
 
@@ -23009,6 +23155,10 @@ pub struct VarDecl<'a> {
 impl<'a> VarDecl<'a> {
   pub fn parent(&self) -> Node<'a> {
     self.parent.get().unwrap()
+  }
+
+  pub fn ctxt(&self) -> swc_common::SyntaxContext {
+    self.inner.ctxt
   }
 
   pub fn decl_kind(&self) -> VarDeclKind {
