@@ -1,5 +1,5 @@
 import type { EnumDefinition, EnumVariantDefinition } from "./analysis_types.ts";
-import type { Crate, EnumVariantInner, Item, TypeInner } from "./doc_types.ts";
+import type { Crate, Item, TypeInner } from "./doc_types.ts";
 import { getEnumVariants, getTypeDefinition, sortNamedDefinitions } from "./helpers.ts";
 
 export function analyzeParserCrate() {
@@ -15,7 +15,7 @@ export function analyzeParserCrate() {
   function* getEnums() {
     const allowedEnums = new Set(["Token", "BinOpToken", "Word", "Keyword"]);
     const enums = Object.keys(crate.index).map(key => crate.index[key])
-      .filter(item => item.kind === "enum");
+      .filter(item => item.inner.enum != null);
     for (const enumDec of enums) {
       if (enumDec.visibility !== "public") {
         continue;
@@ -31,19 +31,19 @@ export function analyzeParserCrate() {
   function analyzeEnum(item: Item): EnumDefinition {
     return {
       name: item.name,
-      docs: item.docs,
+      docs: item.docs ?? undefined,
       variants: Array.from(getVariants()),
     };
 
     function* getVariants(): Iterable<EnumVariantDefinition> {
       for (const variantItem of getEnumVariants(crate, item)) {
-        const inner = variantItem.inner as EnumVariantInner;
+        const inner = variantItem.inner.variant!;
         switch (inner.variant_kind) {
           case "tuple":
             yield {
               kind: "Tuple",
               name: variantItem.name,
-              docs: variantItem.docs,
+              docs: variantItem.docs ?? undefined,
               tupleArgs: inner.variant_inner!.map(t => getTypeDefinition(crate, t)),
             };
             break;
@@ -51,11 +51,11 @@ export function analyzeParserCrate() {
             yield {
               kind: "Struct",
               name: variantItem.name,
-              docs: variantItem.docs,
+              docs: variantItem.docs ?? undefined,
               fields: inner.variant_inner.map(id => {
                 const item = crate.index[id];
                 return {
-                  docs: item.docs,
+                  docs: item.docs ?? undefined,
                   name: item.name,
                   type: getTypeDefinition(crate, item.inner as TypeInner),
                 };
@@ -66,7 +66,7 @@ export function analyzeParserCrate() {
             yield {
               kind: "Plain",
               name: variantItem.name,
-              docs: variantItem.docs,
+              docs: variantItem.docs ?? undefined,
             };
             break;
         }

@@ -29,7 +29,7 @@ export function analyzeAstCrate() {
 
   function* getAstStructs() {
     const structs = Object.keys(crate.index).map(key => crate.index[key])
-      .filter(item => item.kind === "struct");
+      .filter(item => item.inner.struct != null);
     for (const struct of structs) {
       if (struct.visibility !== "public" || struct.name === "ListFormat" || struct.name === "ReservedUnused") {
         continue;
@@ -39,24 +39,26 @@ export function analyzeAstCrate() {
         continue;
       }
 
-      // console.log(struct);
-      yield analyzeStruct(struct);
+      console.log("Raw", struct);
+      const definition = analyzeStruct(struct);
+      console.log("Definition", definition);
+      yield definition;
       // console.log(JSON.stringify(analyzeStruct(struct), null, 2));
     }
   }
 
   function analyzeStruct(item: Item): AstStructDefinition {
-    const inner = item.inner as StructInner;
+    const inner = item.inner.struct!;
 
     return {
       name: item.name,
-      docs: item.docs,
+      docs: item.docs ?? undefined,
       fields: Array.from(getFields()),
       parents: [],
     };
 
     function* getFields(): Iterable<AstStructFieldDefinition> {
-      for (const fieldId of inner.fields) {
+      for (const fieldId of inner.kind.plain.fields) {
         const item = crate.index[fieldId];
         if (item.visibility !== "public") {
           continue;
@@ -64,11 +66,15 @@ export function analyzeAstCrate() {
         if (item.name === "span") {
           continue;
         }
+        if (item.inner.struct_field == null) {
+          console.log(item);
+          throw new Error("Unexpected item with no struct_field.");
+        }
         yield {
           name: getNewFieldName(item.name),
           innerName: item.name,
-          docs: item.docs,
-          type: getTypeDefinition(crate, item.inner as TypeInner),
+          docs: item.docs ?? undefined,
+          type: getTypeDefinition(crate, item.inner.struct_field),
         };
       }
     }
@@ -102,7 +108,7 @@ export function analyzeAstCrate() {
     const plainEnums: PlainEnumDefinition[] = [];
 
     const enums = Object.keys(crate.index).map(key => crate.index[key])
-      .filter(item => item.kind === "enum");
+      .filter(item => item.inner.enum != null);
     for (const enumDec of enums) {
       if (enumDec.visibility !== "public") {
         continue;
@@ -125,7 +131,7 @@ export function analyzeAstCrate() {
   }
 
   function isAstEnum(item: Item) {
-    const inner = item.inner as EnumInner;
+    const inner = item.inner.enum!;
     const firstVariant = inner.variants[0];
     if (firstVariant == null) {
       return false;
@@ -137,7 +143,7 @@ export function analyzeAstCrate() {
   function analyzeAstEnum(item: Item): AstEnumDefinition {
     return {
       name: item.name,
-      docs: item.docs,
+      docs: item.docs ?? undefined,
       variants: Array.from(getVariants()),
     };
 
@@ -145,7 +151,7 @@ export function analyzeAstCrate() {
       for (const variantItem of getEnumVariants(crate, item)) {
         yield {
           name: variantItem.name,
-          docs: variantItem.docs,
+          docs: variantItem.docs ?? undefined,
           tupleArg: getTupleArg(variantItem),
         };
       }
@@ -171,7 +177,7 @@ export function analyzeAstCrate() {
   function analyzePlainEnum(item: Item): PlainEnumDefinition {
     return {
       name: item.name,
-      docs: item.docs,
+      docs: item.docs ?? undefined,
       variants: Array.from(getVariants()),
     };
 
@@ -180,7 +186,7 @@ export function analyzeAstCrate() {
         yield {
           kind: "Plain",
           name: variantItem.name,
-          docs: variantItem.docs,
+          docs: variantItem.docs ?? undefined,
         };
       }
     }

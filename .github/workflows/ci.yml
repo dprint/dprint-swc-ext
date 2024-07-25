@@ -24,7 +24,7 @@ jobs:
       RUST_BACKTRACE: full
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: dsherret/rust-toolchain-file@v1
     - uses: Swatinem/rust-cache@v2
       with:
@@ -32,15 +32,15 @@ jobs:
 
     - uses: denoland/setup-deno@v1
 
-    # - name: Ensure code generation same
-    #   if: matrix.config.kind == 'test_debug'
-    #   run: |
-    #     # lock this so it works on Rust 1.65
-    #     cargo install cargo-clone --version 1.1.0 --locked
-    #     chmod +x ./scripts/generate.ts
-    #     ./scripts/generate.ts
-    #     echo Checking for git changes...
-    #     git diff --no-ext-diff --exit-code
+    - name: Ensure code generation same
+      if: matrix.config.kind == 'test_debug'
+      run: |
+        # lock this so it works on Rust 1.65
+        cargo install cargo-clone --version 1.1.0 --locked
+        chmod +x ./scripts/generate.ts
+        ./scripts/generate.ts
+        echo Checking for git changes...
+        git diff --no-ext-diff --exit-code
 
     - name: Build debug
       if: matrix.config.kind == 'test_debug'

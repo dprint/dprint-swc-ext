@@ -1,8 +1,8 @@
 import { NamedDefinition, TypeDefinition } from "./analysis_types.ts";
-import { Crate, EnumInner, Item, ItemSummary, ResolvedPathTypeInner, TypeInner } from "./doc_types.ts";
+import { Crate, Item, ItemSummary, ResolvedPathTypeInner, TypeInner } from "./doc_types.ts";
 
 export function* getEnumVariants(crate: Crate, item: Item) {
-  const inner = item.inner as EnumInner;
+  const inner = item.inner.enum!;
 
   for (const variantId of inner.variants) {
     yield (crate.index[variantId]) as Item;
@@ -10,37 +10,46 @@ export function* getEnumVariants(crate: Crate, item: Item) {
 }
 
 export function getTypeDefinition(crate: Crate, type: TypeInner): TypeDefinition {
-  switch (type.kind) {
-    case "resolved_path":
-      const itemSummary = crate.paths[type.inner.id];
-      if (itemSummary == null) {
-        console.error(type);
-        throw new Error(`Did not find item summary for ${type.inner.id}`);
-      }
+  if (type.resolved_path != null) {
+    const inner = type.resolved_path;
+    const itemSummary = crate.paths[inner.id];
+    if (itemSummary != null) {
       const path = getPath(itemSummary);
 
       // we don't care about Boxed types because the result will use an arena
       if (path[0] === "Box") {
-        return getTypeDefinition(crate, type.inner.args.angle_bracketed.args[0].type);
+        return getTypeDefinition(crate, inner.args.angle_bracketed.args[0].type);
       }
 
       return {
         kind: "Reference",
-        name: type.inner.name,
+        name: inner.name,
         path,
-        genericArgs: getGenericArgs(type),
+        genericArgs: getGenericArgs(inner),
       };
-    case "primitive":
-      return {
-        kind: "Primitive",
-        text: type.inner,
-      };
-    default:
-      throw new Error("Unknown type: " + JSON.stringify(type));
+    }
+    const item = crate.index[inner.id];
+    if (item == null) {
+      console.error(type);
+      throw new Error(`Did not find path or item for ${inner.id}`);
+    }
+    return {
+      kind: "Reference",
+      name: item.name,
+      path: [item.name],
+      genericArgs: getGenericArgs(inner),
+    };
+  } else if (type.primitive != null) {
+    return {
+      kind: "Primitive",
+      text: type.primitive,
+    };
+  } else {
+    throw new Error("Unknown type: " + JSON.stringify(type));
   }
 
   function getGenericArgs(type: ResolvedPathTypeInner) {
-    return type.inner.args.angle_bracketed.args.map(a => getTypeDefinition(crate, a.type));
+    return type.args.angle_bracketed.args.map(a => getTypeDefinition(crate, a.type));
   }
 
   function getPath(itemSummary: ItemSummary) {

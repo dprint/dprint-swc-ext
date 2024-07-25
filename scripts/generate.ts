@@ -3,9 +3,7 @@ import $ from "https://deno.land/x/dax@0.35.0/mod.ts";
 
 $.setPrintCommand(true);
 
-// we rely on this for rustdoc unfortunately because newer
-// versions of cargo don't provide back as many details
-const rustVersion = "nightly-2022-07-15";
+const rustVersion = "nightly-2024-07-24";
 const root = $.path(import.meta).join("../../").resolve();
 
 if (!Deno.args.some(a => a === "--quick")) {
@@ -20,9 +18,7 @@ if (!Deno.args.some(a => a === "--quick")) {
   // force using an old version of the regex and triomphe crates that work in Rust 1.65
   const astCargoFile = astDir.join("Cargo.toml");
   astCargoFile.writeTextSync(
-    astCargoFile.readTextSync()
-      + "[dependencies.regex]\nversion = \"=1.6.0\"\n"
-      + "[dependencies.triomphe]\nversion = \"=0.1.11\"\n",
+    astCargoFile.readTextSync().replaceAll(`"swc_atoms/arbitrary",`, ""), // this feature doesn't exist
   );
   await $`cd swc_ecma_ast ; rustup run ${rustVersion} cargo rustdoc -- --output-format json -Z unstable-options`;
   astDir.join("target/doc/swc_ecma_ast.json")
@@ -34,16 +30,7 @@ if (!Deno.args.some(a => a === "--quick")) {
   await $`cargo clone swc_ecma_parser@${swcVersions.swcEcmaParser}`;
   // force using an old version of the regex and triomphe crates that work in Rust 1.65
   const parserCargoFile = parserDir.join("Cargo.toml");
-  parserCargoFile.writeTextSync(
-    parserCargoFile.readTextSync().replace(
-      // remove because it uses regex
-      `[dev-dependencies.testing]
-version = "0.35.21"`,
-      "",
-    )
-      + "[dependencies.regex]\nversion = \"=1.6.0\"\n"
-      + "[dependencies.triomphe]\nversion = \"=0.1.11\"\n",
-  );
+  parserCargoFile.writeTextSync(parserCargoFile.readTextSync());
   const parserLibFile = parserDir.join("src/lib.rs");
   parserLibFile.writeTextSync(
     // enable this feature to make our old cargo version happy
