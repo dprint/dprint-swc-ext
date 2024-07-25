@@ -8,16 +8,25 @@ export interface Item {
   crate_id: number;
   name: string;
   visibility: "default" | "public" | "crate";
-  docs: string;
-  kind: "struct" | "impl" | "method" | "struct_field" | "enum";
+  docs: string | undefined;
   attrs: string[];
-  inner: StructInner | EnumInner | EnumVariantInner | TypeInner;
+  inner: {
+    "struct"?: StructInner;
+    "struct_field"?: TypeInner;
+    enum?: EnumInner;
+    "variant"?: EnumVariantInner;
+    "type"?: TypeInner;
+  };
 }
 
 export interface StructInner {
   generics: Generics;
-  /** Identifiers. */
-  fields: string[];
+  kind: {
+    plain: {
+      /** Identifiers. */
+      fields: string[];
+    };
+  };
   /** Identifiers. */
   impls: string[];
 }
@@ -28,20 +37,13 @@ export interface EnumInner {
   variants: string[];
 }
 
-export type EnumVariantInner = PlainEnumVariantInner | TupleEnumVariantInner | StructEnumVariantInner;
-
-export interface PlainEnumVariantInner {
-  variant_kind: "plain";
-}
-
-export interface TupleEnumVariantInner {
-  variant_kind: "tuple";
-  variant_inner: TypeInner[];
-}
-
-export interface StructEnumVariantInner {
-  variant_kind: "struct";
-  variant_inner: string[];
+export interface EnumVariantInner {
+  "kind": {
+    "tuple": string[];
+    "struct": {
+      fields: string[];
+    };
+  } | "plain";
 }
 
 export interface Generics {
@@ -49,21 +51,16 @@ export interface Generics {
   where_predicates: string[];
 }
 
-export type TypeInner = ResolvedPathTypeInner | PrimitiveTypeInner;
-
-export interface PrimitiveTypeInner {
-  kind: "primitive";
-  inner: string;
+export interface TypeInner {
+  "resolved_path": ResolvedPathTypeInner;
+  "primitive": string;
 }
 
 export interface ResolvedPathTypeInner {
-  kind: "resolved_path";
-  inner: {
-    name: string;
-    args: GenericArgs;
-    id: string;
-    param_names: GenericBound[];
-  };
+  name: string;
+  args: GenericArgs;
+  id: string;
+  param_names: GenericBound[];
 }
 
 export interface GenericArgs {
@@ -93,5 +90,5 @@ export interface ItemSummary {
   crate_id: number;
   /** Fully qualified path. */
   path: string[];
-  kind: Item["kind"];
+  kind: keyof Item["inner"];
 }

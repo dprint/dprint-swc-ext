@@ -7,7 +7,7 @@ import type {
   PlainEnumVariantDefinition,
   TypeDefinition,
 } from "./analysis_types.ts";
-import type { Crate, EnumInner, EnumVariantInner, Item, StructInner, TupleEnumVariantInner, TypeInner } from "./doc_types.ts";
+import type { Crate, EnumInner, EnumVariantInner, Item, StructInner, TypeInner } from "./doc_types.ts";
 import { getEnumVariants, getTypeDefinition, sortNamedDefinitions } from "./helpers.ts";
 
 export function analyzeAstCrate() {
@@ -29,7 +29,7 @@ export function analyzeAstCrate() {
 
   function* getAstStructs() {
     const structs = Object.keys(crate.index).map(key => crate.index[key])
-      .filter(item => item.kind === "struct");
+      .filter(item => item.inner.struct != null);
     for (const struct of structs) {
       if (struct.visibility !== "public" || struct.name === "ListFormat" || struct.name === "ReservedUnused") {
         continue;
@@ -39,14 +39,14 @@ export function analyzeAstCrate() {
         continue;
       }
 
-      // console.log(struct);
-      yield analyzeStruct(struct);
+      const definition = analyzeStruct(struct);
+      yield definition;
       // console.log(JSON.stringify(analyzeStruct(struct), null, 2));
     }
   }
 
   function analyzeStruct(item: Item): AstStructDefinition {
-    const inner = item.inner as StructInner;
+    const inner = item.inner.struct!;
 
     return {
       name: item.name,
@@ -56,7 +56,7 @@ export function analyzeAstCrate() {
     };
 
     function* getFields(): Iterable<AstStructFieldDefinition> {
-      for (const fieldId of inner.fields) {
+      for (const fieldId of inner.kind.plain.fields) {
         const item = crate.index[fieldId];
         if (item.visibility !== "public") {
           continue;
@@ -64,11 +64,15 @@ export function analyzeAstCrate() {
         if (item.name === "span") {
           continue;
         }
+        if (item.inner.struct_field == null) {
+          console.log(item);
+          throw new Error("Unexpected item with no struct_field.");
+        }
         yield {
           name: getNewFieldName(item.name),
           innerName: item.name,
           docs: item.docs,
-          type: getTypeDefinition(crate, item.inner as TypeInner),
+          type: getTypeDefinition(crate, item.inner.struct_field),
         };
       }
     }
@@ -102,7 +106,7 @@ export function analyzeAstCrate() {
     const plainEnums: PlainEnumDefinition[] = [];
 
     const enums = Object.keys(crate.index).map(key => crate.index[key])
-      .filter(item => item.kind === "enum");
+      .filter(item => item.inner.enum != null);
     for (const enumDec of enums) {
       if (enumDec.visibility !== "public") {
         continue;
@@ -125,13 +129,17 @@ export function analyzeAstCrate() {
   }
 
   function isAstEnum(item: Item) {
-    const inner = item.inner as EnumInner;
+    const inner = item.inner.enum!;
     const firstVariant = inner.variants[0];
     if (firstVariant == null) {
       return false;
     }
-    const variantInner = crate.index[firstVariant].inner as EnumVariantInner;
-    return variantInner.variant_kind === "tuple";
+    const variantInner = crate.index[firstVariant].inner.variant;
+    const variantInnerKind = variantInner?.kind;
+    if (variantInnerKind == null || typeof variantInnerKind === "string") {
+      return false;
+    }
+    return variantInnerKind.tuple != null;
   }
 
   function analyzeAstEnum(item: Item): AstEnumDefinition {
@@ -151,15 +159,17 @@ export function analyzeAstCrate() {
       }
 
       function getTupleArg(variantItem: Item) {
-        const inner = variantItem.inner as TupleEnumVariantInner;
-        if (inner.variant_kind !== "tuple") {
+        const inner = variantItem.inner;
+        const variantKind = inner.variant?.kind;
+        if (typeof variantKind === "string" || variantKind?.tuple == null) {
           throw new Error("Unexpected scenario where the enum inner was not a tuple.");
         }
-        if (inner.variant_inner?.length !== 1) {
+        if (variantKind.tuple.length !== 1) {
           throw new Error("Unhandled scenario where the tuple did not have one variant.");
         }
 
-        const definition = getTypeDefinition(crate, inner.variant_inner[0]);
+        const item = crate.index[variantKind.tuple[0]];
+        const definition = getTypeDefinition(crate, item.inner.struct_field ?? item.inner as TypeInner);
         if (definition.kind !== "Reference") {
           throw new Error("Expected a reference type.");
         }
