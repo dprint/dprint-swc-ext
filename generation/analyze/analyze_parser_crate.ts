@@ -31,44 +31,50 @@ export function analyzeParserCrate() {
   function analyzeEnum(item: Item): EnumDefinition {
     return {
       name: item.name,
-      docs: item.docs ?? undefined,
+      docs: item.docs,
       variants: Array.from(getVariants()),
     };
 
     function* getVariants(): Iterable<EnumVariantDefinition> {
       for (const variantItem of getEnumVariants(crate, item)) {
         const inner = variantItem.inner.variant!;
-        switch (inner.variant_kind) {
-          case "tuple":
-            yield {
-              kind: "Tuple",
-              name: variantItem.name,
-              docs: variantItem.docs ?? undefined,
-              tupleArgs: inner.variant_inner!.map(t => getTypeDefinition(crate, t)),
-            };
-            break;
-          case "struct":
-            yield {
-              kind: "Struct",
-              name: variantItem.name,
-              docs: variantItem.docs ?? undefined,
-              fields: inner.variant_inner.map(id => {
-                const item = crate.index[id];
-                return {
-                  docs: item.docs ?? undefined,
-                  name: item.name,
-                  type: getTypeDefinition(crate, item.inner as TypeInner),
-                };
-              }),
-            };
-            break;
-          case "plain":
-            yield {
-              kind: "Plain",
-              name: variantItem.name,
-              docs: variantItem.docs ?? undefined,
-            };
-            break;
+        if (inner.kind == null) {
+          console.log("Variant", variantItem);
+          throw new Error("No kind for variant: " + variantItem.name);
+        } else if (inner.kind === "plain") {
+          yield {
+            kind: "Plain",
+            name: variantItem.name,
+            docs: variantItem.docs,
+          };
+        } else if (inner.kind.tuple != null) {
+          yield {
+            kind: "Tuple",
+            name: variantItem.name,
+            docs: variantItem.docs,
+            tupleArgs: inner.kind.tuple.map(id => {
+              const item = crate.index[id];
+              return getTypeDefinition(crate, item.inner.struct_field ?? item.inner as TypeInner);
+            }),
+          };
+        } else if (inner.kind.struct != null) {
+          yield {
+            kind: "Struct",
+            name: variantItem.name,
+            docs: variantItem.docs,
+            fields: inner.kind.struct.fields.map(id => {
+              const item = crate.index[id];
+              return {
+                docs: item.docs,
+                name: item.name,
+                type: getTypeDefinition(crate, item.inner.struct_field ?? item.inner as TypeInner),
+              };
+            }),
+          };
+        } else {
+          console.log(variantItem);
+          console.log(inner);
+          throw new Error("Unknown kind: " + (inner as any).variant_kind);
         }
       }
     }

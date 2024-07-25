@@ -9399,8 +9399,7 @@ impl<'a> SourceRanged for BindingIdent<'a> {
     SourcePos::unsafely_from_byte_pos(self.inner.span().lo)
   }
   fn end(&self) -> SourcePos {
-    self.type_ann.map(|t| t.end()).unwrap_or(self.id.end())
-    //SourcePos::unsafely_from_byte_pos(self.inner.span().hi)
+    SourcePos::unsafely_from_byte_pos(self.inner.span().hi)
   }
 }
 

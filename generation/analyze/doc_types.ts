@@ -8,7 +8,7 @@ export interface Item {
   crate_id: number;
   name: string;
   visibility: "default" | "public" | "crate";
-  docs: string | null;
+  docs: string | undefined;
   attrs: string[];
   inner: {
     "struct"?: StructInner;
@@ -37,20 +37,13 @@ export interface EnumInner {
   variants: string[];
 }
 
-export type EnumVariantInner = PlainEnumVariantInner | TupleEnumVariantInner | StructEnumVariantInner;
-
-export interface PlainEnumVariantInner {
-  variant_kind: "plain";
-}
-
-export interface TupleEnumVariantInner {
-  variant_kind: "tuple";
-  variant_inner: TypeInner[];
-}
-
-export interface StructEnumVariantInner {
-  variant_kind: "struct";
-  variant_inner: string[];
+export interface EnumVariantInner {
+  "kind": {
+    "tuple": string[];
+    "struct": {
+      fields: string[];
+    };
+  } | "plain";
 }
 
 export interface Generics {

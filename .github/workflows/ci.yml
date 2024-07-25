@@ -35,7 +35,6 @@ jobs:
     - name: Ensure code generation same
       if: matrix.config.kind == 'test_debug'
       run: |
-        # lock this so it works on Rust 1.65
         cargo install cargo-clone --version 1.1.0 --locked
         chmod +x ./scripts/generate.ts
         ./scripts/generate.ts

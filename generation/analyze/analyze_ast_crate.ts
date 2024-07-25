@@ -7,7 +7,7 @@ import type {
   PlainEnumVariantDefinition,
   TypeDefinition,
 } from "./analysis_types.ts";
-import type { Crate, EnumInner, EnumVariantInner, Item, StructInner, TupleEnumVariantInner, TypeInner } from "./doc_types.ts";
+import type { Crate, EnumInner, EnumVariantInner, Item, StructInner, TypeInner } from "./doc_types.ts";
 import { getEnumVariants, getTypeDefinition, sortNamedDefinitions } from "./helpers.ts";
 
 export function analyzeAstCrate() {
@@ -39,9 +39,7 @@ export function analyzeAstCrate() {
         continue;
       }
 
-      console.log("Raw", struct);
       const definition = analyzeStruct(struct);
-      console.log("Definition", definition);
       yield definition;
       // console.log(JSON.stringify(analyzeStruct(struct), null, 2));
     }
@@ -52,7 +50,7 @@ export function analyzeAstCrate() {
 
     return {
       name: item.name,
-      docs: item.docs ?? undefined,
+      docs: item.docs,
       fields: Array.from(getFields()),
       parents: [],
     };
@@ -73,7 +71,7 @@ export function analyzeAstCrate() {
         yield {
           name: getNewFieldName(item.name),
           innerName: item.name,
-          docs: item.docs ?? undefined,
+          docs: item.docs,
           type: getTypeDefinition(crate, item.inner.struct_field),
         };
       }
@@ -136,14 +134,18 @@ export function analyzeAstCrate() {
     if (firstVariant == null) {
       return false;
     }
-    const variantInner = crate.index[firstVariant].inner as EnumVariantInner;
-    return variantInner.variant_kind === "tuple";
+    const variantInner = crate.index[firstVariant].inner.variant;
+    const variantInnerKind = variantInner?.kind;
+    if (variantInnerKind == null || typeof variantInnerKind === "string") {
+      return false;
+    }
+    return variantInnerKind.tuple != null;
   }
 
   function analyzeAstEnum(item: Item): AstEnumDefinition {
     return {
       name: item.name,
-      docs: item.docs ?? undefined,
+      docs: item.docs,
       variants: Array.from(getVariants()),
     };
 
@@ -151,21 +153,23 @@ export function analyzeAstCrate() {
       for (const variantItem of getEnumVariants(crate, item)) {
         yield {
           name: variantItem.name,
-          docs: variantItem.docs ?? undefined,
+          docs: variantItem.docs,
           tupleArg: getTupleArg(variantItem),
         };
       }
 
       function getTupleArg(variantItem: Item) {
-        const inner = variantItem.inner as TupleEnumVariantInner;
-        if (inner.variant_kind !== "tuple") {
+        const inner = variantItem.inner;
+        const variantKind = inner.variant?.kind;
+        if (typeof variantKind === "string" || variantKind?.tuple == null) {
           throw new Error("Unexpected scenario where the enum inner was not a tuple.");
         }
-        if (inner.variant_inner?.length !== 1) {
+        if (variantKind.tuple.length !== 1) {
           throw new Error("Unhandled scenario where the tuple did not have one variant.");
         }
 
-        const definition = getTypeDefinition(crate, inner.variant_inner[0]);
+        const item = crate.index[variantKind.tuple[0]];
+        const definition = getTypeDefinition(crate, item.inner.struct_field ?? item.inner as TypeInner);
         if (definition.kind !== "Reference") {
           throw new Error("Expected a reference type.");
         }
@@ -177,7 +181,7 @@ export function analyzeAstCrate() {
   function analyzePlainEnum(item: Item): PlainEnumDefinition {
     return {
       name: item.name,
-      docs: item.docs ?? undefined,
+      docs: item.docs,
       variants: Array.from(getVariants()),
     };
 
@@ -186,7 +190,7 @@ export function analyzeAstCrate() {
         yield {
           kind: "Plain",
           name: variantItem.name,
-          docs: variantItem.docs ?? undefined,
+          docs: variantItem.docs,
         };
       }
     }

@@ -38,7 +38,10 @@ export function writeType(writer: Writer, analysisResult: AnalysisResult, type: 
 
   function writeReference(type: TypeReferenceDefinition) {
     const path = type.path.join("::").replace(/^swc_ecma_ast::/, "");
-    if (analysisResult.astEnums.some(e => e.name === type.name) || analysisResult.astStructs.some(s => s.name === type.name)) {
+    if (
+      type.path[0] === "swc_ecma_ast"
+      && (analysisResult.astEnums.some(e => e.name === type.name) || analysisResult.astStructs.some(s => s.name === type.name))
+    ) {
       if (type.genericArgs.length > 0) {
         throw new Error("Unhandled.");
       }

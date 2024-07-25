@@ -23,7 +23,7 @@ export function getTypeDefinition(crate: Crate, type: TypeInner): TypeDefinition
 
       return {
         kind: "Reference",
-        name: inner.name,
+        name: inner.name.split("::").pop()!,
         path,
         genericArgs: getGenericArgs(inner),
       };
@@ -33,10 +33,11 @@ export function getTypeDefinition(crate: Crate, type: TypeInner): TypeDefinition
       console.error(type);
       throw new Error(`Did not find path or item for ${inner.id}`);
     }
+
     return {
       kind: "Reference",
       name: item.name,
-      path: [item.name],
+      path: [...crate.paths[crate.root].path, item.name],
       genericArgs: getGenericArgs(inner),
     };
   } else if (type.primitive != null) {
@@ -45,7 +46,8 @@ export function getTypeDefinition(crate: Crate, type: TypeInner): TypeDefinition
       text: type.primitive,
     };
   } else {
-    throw new Error("Unknown type: " + JSON.stringify(type));
+    console.error("Unknown:", type);
+    throw new Error("Unknown type");
   }
 
   function getGenericArgs(type: ResolvedPathTypeInner) {
