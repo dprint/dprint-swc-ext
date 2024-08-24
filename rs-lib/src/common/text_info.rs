@@ -237,6 +237,24 @@ impl<'a> SourceTextInfoProvider<'a> for &'a SourceTextInfo {
   }
 }
 
+pub trait SourceTextProvider<'a> {
+  fn text(&self) -> &'a Arc<str>;
+  fn start_pos(&self) -> StartSourcePos;
+}
+
+impl<'a, T> SourceTextProvider<'a> for T
+where
+  T: SourceTextInfoProvider<'a>,
+{
+  fn text(&self) -> &'a Arc<str> {
+    &self.text_info().text
+  }
+
+  fn start_pos(&self) -> StartSourcePos {
+    self.text_info().start_pos
+  }
+}
+
 #[cfg(test)]
 mod test {
   use super::*;

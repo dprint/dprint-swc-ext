@@ -22,7 +22,7 @@ All (`SourceRanged` trait):
 
 - `.start(&self) -> SourcePos`
 - `.end(&self) -> SourcePos`
-- `.text_fast(&self, root_node: &dyn SourceTextInfoProvider) -> &'a str` -- Doesn't require going up the tree to the root node
+- `.text_fast(&self, root_node: &dyn SourceTextProvider) -> &'a str` -- Doesn't require going up the tree to the root node
 - `.start_line_fast(&self, root_node: &dyn SourceTextInfoProvider) -> usize`
 - `.end_line_fast(&self, root_node: &dyn SourceTextInfoProvider) -> usize`
 - `.start_column_fast(&self, root_node: &dyn SourceTextInfoProvider) -> usize`
