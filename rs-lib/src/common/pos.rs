@@ -288,14 +288,14 @@ macro_rules! source_ranged_trait {
       text_slice.chars().count()
     }
 
-    fn char_width_fast<'a, P: SourceTextInfoProvider<'a>>(&self, source: P) -> usize {
+    fn char_width_fast<'a, P: SourceTextProvider<'a>>(&self, source: P) -> usize {
       self.text_fast(source).chars().count()
     }
 
-    fn text_fast<'a, P: SourceTextInfoProvider<'a>>(&self, source: P) -> &'a str {
-      let text_info = source.text_info();
-      let byte_range = self.range().as_byte_range(text_info.range().start);
-      &text_info.text_str()[byte_range]
+    fn text_fast<'a, P: SourceTextProvider<'a>>(&self, source: P) -> &'a str {
+      let text = source.text();
+      let byte_range = self.range().as_byte_range(source.start_pos());
+      &text[byte_range]
     }
 
     fn tokens_fast<'a>(&self, program: impl RootNode<'a>) -> &'a [TokenAndSpan] {
