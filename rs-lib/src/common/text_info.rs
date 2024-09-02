@@ -187,7 +187,11 @@ impl SourceTextInfo {
   pub fn range_text(&self, range: &SourceRange) -> &str {
     let start = self.get_relative_index_from_pos(range.start);
     let end = self.get_relative_index_from_pos(range.end);
-    &self.text_str()[start..end]
+    let text = self.text_str();
+    let char_indices: Vec<_> = text.char_indices().collect();
+    let start_char_idx = char_indices.iter().position(|&(i, _)| i == start).unwrap_or(0);
+    let end_char_idx = char_indices.iter().position(|&(i, _)| i == end).unwrap_or(char_indices.len() - 1);
+    &text[char_indices[start_char_idx].0..char_indices[end_char_idx].0]
   }
 
   fn assert_pos(&self, pos: SourcePos) {
