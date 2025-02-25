@@ -201,6 +201,7 @@ pub enum Node<'a> {
   TsExternalModuleRef(&'a TsExternalModuleRef<'a>),
   TsFnType(&'a TsFnType<'a>),
   TsGetterSignature(&'a TsGetterSignature<'a>),
+  TsImportCallOptions(&'a TsImportCallOptions<'a>),
   TsImportEqualsDecl(&'a TsImportEqualsDecl<'a>),
   TsImportType(&'a TsImportType<'a>),
   TsIndexSignature(&'a TsIndexSignature<'a>),
@@ -395,6 +396,7 @@ impl<'a> SourceRanged for Node<'a> {
       Node::TsExternalModuleRef(node) => node.start(),
       Node::TsFnType(node) => node.start(),
       Node::TsGetterSignature(node) => node.start(),
+      Node::TsImportCallOptions(node) => node.start(),
       Node::TsImportEqualsDecl(node) => node.start(),
       Node::TsImportType(node) => node.start(),
       Node::TsIndexSignature(node) => node.start(),
@@ -570,6 +572,7 @@ impl<'a> SourceRanged for Node<'a> {
       Node::TsExternalModuleRef(node) => node.end(),
       Node::TsFnType(node) => node.end(),
       Node::TsGetterSignature(node) => node.end(),
+      Node::TsImportCallOptions(node) => node.end(),
       Node::TsImportEqualsDecl(node) => node.end(),
       Node::TsImportType(node) => node.end(),
       Node::TsIndexSignature(node) => node.end(),
@@ -748,6 +751,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsExternalModuleRef(node) => NodeTrait::parent(*node),
       Node::TsFnType(node) => NodeTrait::parent(*node),
       Node::TsGetterSignature(node) => NodeTrait::parent(*node),
+      Node::TsImportCallOptions(node) => NodeTrait::parent(*node),
       Node::TsImportEqualsDecl(node) => NodeTrait::parent(*node),
       Node::TsImportType(node) => NodeTrait::parent(*node),
       Node::TsIndexSignature(node) => NodeTrait::parent(*node),
@@ -924,6 +928,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsExternalModuleRef(node) => node.children(),
       Node::TsFnType(node) => node.children(),
       Node::TsGetterSignature(node) => node.children(),
+      Node::TsImportCallOptions(node) => node.children(),
       Node::TsImportEqualsDecl(node) => node.children(),
       Node::TsImportType(node) => node.children(),
       Node::TsIndexSignature(node) => node.children(),
@@ -1100,6 +1105,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsExternalModuleRef(node) => node.as_node(),
       Node::TsFnType(node) => node.as_node(),
       Node::TsGetterSignature(node) => node.as_node(),
+      Node::TsImportCallOptions(node) => node.as_node(),
       Node::TsImportEqualsDecl(node) => node.as_node(),
       Node::TsImportType(node) => node.as_node(),
       Node::TsIndexSignature(node) => node.as_node(),
@@ -1276,6 +1282,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsExternalModuleRef(_) => NodeKind::TsExternalModuleRef,
       Node::TsFnType(_) => NodeKind::TsFnType,
       Node::TsGetterSignature(_) => NodeKind::TsGetterSignature,
+      Node::TsImportCallOptions(_) => NodeKind::TsImportCallOptions,
       Node::TsImportEqualsDecl(_) => NodeKind::TsImportEqualsDecl,
       Node::TsImportType(_) => NodeKind::TsImportType,
       Node::TsIndexSignature(_) => NodeKind::TsIndexSignature,
@@ -1453,6 +1460,7 @@ pub enum NodeKind {
   TsExternalModuleRef,
   TsFnType,
   TsGetterSignature,
+  TsImportCallOptions,
   TsImportEqualsDecl,
   TsImportType,
   TsIndexSignature,
@@ -1629,6 +1637,7 @@ impl std::fmt::Display for NodeKind {
       NodeKind::TsExternalModuleRef => "TsExternalModuleRef",
       NodeKind::TsFnType => "TsFnType",
       NodeKind::TsGetterSignature => "TsGetterSignature",
+      NodeKind::TsImportCallOptions => "TsImportCallOptions",
       NodeKind::TsImportEqualsDecl => "TsImportEqualsDecl",
       NodeKind::TsImportType => "TsImportType",
       NodeKind::TsIndexSignature => "TsIndexSignature",
@@ -19212,6 +19221,84 @@ fn set_parent_for_ts_getter_signature<'a>(node: &TsGetterSignature<'a>, parent: 
 }
 
 #[derive(Clone)]
+pub struct TsImportCallOptions<'a> {
+  parent: ParentOnceCell<&'a TsImportType<'a>>,
+  pub inner: &'a swc_ast::TsImportCallOptions,
+  pub with: &'a ObjectLit<'a>,
+}
+
+impl<'a> TsImportCallOptions<'a> {
+  pub fn parent(&self) -> &'a TsImportType<'a> {
+    self.parent.get().unwrap()
+  }
+}
+
+impl<'a> SourceRanged for TsImportCallOptions<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::unsafely_from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::unsafely_from_byte_pos(self.inner.span().hi)
+  }
+}
+
+impl<'a> From<&TsImportCallOptions<'a>> for Node<'a> {
+  fn from(node: &TsImportCallOptions<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsImportCallOptions<'a>, &'a TsImportCallOptions<'a>>(node) };
+    Node::TsImportCallOptions(node)
+  }
+}
+
+impl<'a> NodeTrait<'a> for TsImportCallOptions<'a> {
+  fn parent(&self) -> Option<Node<'a>> {
+    Some(self.parent.get().unwrap().into())
+  }
+
+  fn children(&self) -> Vec<Node<'a>> {
+    let mut children = Vec::with_capacity(1);
+    children.push(self.with.into());
+    children
+  }
+
+  fn as_node(&self) -> Node<'a> {
+    self.into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsImportCallOptions
+  }
+}
+
+impl<'a> CastableNode<'a> for TsImportCallOptions<'a> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
+    if let Node::TsImportCallOptions(node) = node {
+      Some(node)
+    } else {
+      None
+    }
+  }
+
+  fn kind() -> NodeKind {
+    NodeKind::TsImportCallOptions
+  }
+}
+
+fn get_view_for_ts_import_call_options<'a>(inner: &'a swc_ast::TsImportCallOptions, bump: &'a Bump) -> &'a TsImportCallOptions<'a> {
+  let node = bump.alloc(TsImportCallOptions {
+    inner,
+    parent: Default::default(),
+    with: get_view_for_object_lit(&inner.with, bump),
+  });
+  let parent: Node<'a> = (&*node).into();
+  set_parent_for_object_lit(&node.with, parent);
+  node
+}
+
+fn set_parent_for_ts_import_call_options<'a>(node: &TsImportCallOptions<'a>, parent: Node<'a>) {
+  node.parent.set(parent.expect::<TsImportType>());
+}
+
+#[derive(Clone)]
 pub struct TsImportEqualsDecl<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::TsImportEqualsDecl,
@@ -19308,6 +19395,7 @@ pub struct TsImportType<'a> {
   pub arg: &'a Str<'a>,
   pub qualifier: Option<TsEntityName<'a>>,
   pub type_args: Option<&'a TsTypeParamInstantiation<'a>>,
+  pub attributes: Option<&'a TsImportCallOptions<'a>>,
 }
 
 impl<'a> TsImportType<'a> {
@@ -19338,12 +19426,15 @@ impl<'a> NodeTrait<'a> for TsImportType<'a> {
   }
 
   fn children(&self) -> Vec<Node<'a>> {
-    let mut children = Vec::with_capacity(1 + match &self.qualifier { Some(_value) => 1, None => 0, } + match &self.type_args { Some(_value) => 1, None => 0, });
+    let mut children = Vec::with_capacity(1 + match &self.qualifier { Some(_value) => 1, None => 0, } + match &self.type_args { Some(_value) => 1, None => 0, } + match &self.attributes { Some(_value) => 1, None => 0, });
     children.push(self.arg.into());
     if let Some(child) = self.qualifier.as_ref() {
       children.push(child.into());
     }
     if let Some(child) = self.type_args {
+      children.push(child.into());
+    }
+    if let Some(child) = self.attributes {
       children.push(child.into());
     }
     children
@@ -19385,6 +19476,10 @@ fn get_view_for_ts_import_type<'a>(inner: &'a swc_ast::TsImportType, bump: &'a B
       Some(value) => Some(get_view_for_ts_type_param_instantiation(value, bump)),
       None => None,
     },
+    attributes: match &inner.attributes {
+      Some(value) => Some(get_view_for_ts_import_call_options(value, bump)),
+      None => None,
+    },
   });
   let parent: Node<'a> = (&*node).into();
   set_parent_for_str(&node.arg, parent);
@@ -19393,6 +19488,9 @@ fn get_view_for_ts_import_type<'a>(inner: &'a swc_ast::TsImportType, bump: &'a B
   };
   if let Some(value) = &node.type_args {
     set_parent_for_ts_type_param_instantiation(value, parent)
+  };
+  if let Some(value) = &node.attributes {
+    set_parent_for_ts_import_call_options(value, parent)
   };
   node
 }
@@ -20497,6 +20595,10 @@ impl<'a> TsModuleDecl<'a> {
   /// In TypeScript, this is only available through`node.flags`.
   pub fn global(&self) -> bool {
     self.inner.global
+  }
+
+  pub fn namespace(&self) -> bool {
+    self.inner.namespace
   }
 }
 

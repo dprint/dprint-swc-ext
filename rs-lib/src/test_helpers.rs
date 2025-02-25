@@ -52,13 +52,12 @@ pub fn get_swc_module(file_path: &Path, file_text: &str) -> (Module, Vec<TokenAn
 
 #[cfg(feature = "view")]
 pub fn get_swc_script(file_path: &Path, file_text: &str) -> (crate::swc::ast::Script, Vec<TokenAndSpan>, SourceTextInfo, SingleThreadedComments) {
-  // lifted from dprint-plugin-typescript
   let handler = Handler::with_emitter(false, false, Box::new(EmptyEmitter {}));
   let source_text_info = SourceTextInfo::from_string(file_text.to_string());
 
   let comments: SingleThreadedComments = Default::default();
   return {
-    let ts_config = crate::swc::parser::TsConfig {
+    let ts_config = crate::swc::parser::TsSyntax {
       tsx: should_parse_as_jsx(file_path),
       decorators: true,
       ..Default::default()
