@@ -2,7 +2,7 @@
 name = "dprint-swc-ext"
 version = "0.21.0"
 authors = ["David Sherret <dsherret@gmail.com>"]
-edition = "2021"
+edition = "2024"
 license = "MIT"
 repository = "https://github.com/dprint/dprint-swc-ext"
 description = "Functionality to make swc easier to work with."
@@ -15,14 +15,14 @@ sourcemap = ["swc_common/sourcemap"]
 view = ["bumpalo", "allocator-api2"]
 
 [dependencies]
-allocator-api2 = { version = "0.2.18", optional = true }
-bumpalo = { version = "3.16.0", optional = true, features = ["collections", "allocator-api2"] }
+allocator-api2 = { version = "0.2.21", optional = true }
+bumpalo = { version = "3.17.0", optional = true, features = ["collections", "allocator-api2"] }
 num-bigint = "0.4"
-rustc-hash = "1.1.0"
-swc_atoms = "2.0.0"
-swc_common = "2.0.1"
-swc_ecma_ast = "2.0.0"
-swc_ecma_parser = "3.0.0"
+rustc-hash = "2.1.1"
+swc_atoms = "5.0.0"
+swc_common = "8.0.0"
+swc_ecma_ast = "8.0.0"
+swc_ecma_parser = "10.0.0"
 text_lines = "0.6.0"
 
 [dev-dependencies]
