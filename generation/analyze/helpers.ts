@@ -23,7 +23,7 @@ export function getTypeDefinition(crate: Crate, type: TypeInner): TypeDefinition
 
       return {
         kind: "Reference",
-        name: inner.name.split("::").pop()!,
+        name: inner.path.split("::").pop()!,
         path,
         genericArgs: getGenericArgs(inner),
       };

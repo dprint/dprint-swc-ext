@@ -31,11 +31,13 @@ export function analyzeAstCrate() {
     const structs = Object.keys(crate.index).map(key => crate.index[key])
       .filter(item => item.inner.struct != null);
     for (const struct of structs) {
-      if (struct.visibility !== "public" || struct.name === "ListFormat" || struct.name === "ReservedUnused") {
-        continue;
-      }
-
-      if (struct.name === "ImportWith" || struct.name === "ImportWithItem") {
+      if (
+        struct.visibility !== "public"
+        || struct.name === "ListFormat"
+        || struct.name === "ReservedUnused"
+        || struct.name === "ImportWith"
+        || struct.name === "ImportWithItem"
+      ) {
         continue;
       }
 

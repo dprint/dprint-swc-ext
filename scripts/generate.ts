@@ -3,7 +3,7 @@ import $ from "https://deno.land/x/dax@0.35.0/mod.ts";
 
 $.setPrintCommand(true);
 
-const rustVersion = "nightly-2024-07-24";
+const rustVersion = "nightly-2025-05-09";
 const root = $.path(import.meta).join("../../").resolve();
 
 if (!Deno.args.some(a => a === "--quick")) {
