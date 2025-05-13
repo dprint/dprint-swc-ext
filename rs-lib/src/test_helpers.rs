@@ -101,7 +101,7 @@ fn get_lowercase_extension(file_path: &Path) -> Option<String> {
 pub struct EmptyEmitter {}
 
 impl Emitter for EmptyEmitter {
-  fn emit(&mut self, _: &DiagnosticBuilder<'_>) {
+  fn emit(&mut self, _: &mut DiagnosticBuilder<'_>) {
     // for now, we don't care about diagnostics so do nothing
   }
 

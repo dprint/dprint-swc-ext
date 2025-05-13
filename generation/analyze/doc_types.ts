@@ -57,7 +57,7 @@ export interface TypeInner {
 }
 
 export interface ResolvedPathTypeInner {
-  name: string;
+  path: string;
   args: GenericArgs;
   id: string;
   param_names: GenericBound[];

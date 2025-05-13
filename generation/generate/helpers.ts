@@ -14,7 +14,7 @@ export function getIsForImpl(analysisResult: AnalysisResult, type: TypeDefinitio
     return getIsForImpl(analysisResult, type.genericArgs[0]);
   }
   if (type.path[0] === "swc_ecma_ast") {
-    return analysisResult.plainEnums.some(s => s.name === type.path[1]);
+    return analysisResult.plainEnums.some(s => s.name === type.path.at(-1));
   }
   return true;
 }
@@ -37,7 +37,7 @@ export function writeType(writer: Writer, analysisResult: AnalysisResult, type: 
   }
 
   function writeReference(type: TypeReferenceDefinition) {
-    const path = type.path.join("::").replace(/^swc_ecma_ast::/, "").replace("swc_common::syntax_pos::hygiene::SyntaxContext", "swc_common::SyntaxContext");
+    const path = getNormalizedPath(type);
     if (
       type.path[0] === "swc_ecma_ast"
       && (analysisResult.astEnums.some(e => e.name === type.name) || analysisResult.astStructs.some(s => s.name === type.name))
@@ -66,6 +66,13 @@ export function writeType(writer: Writer, analysisResult: AnalysisResult, type: 
     } else {
       writer.write(path);
     }
+  }
+
+  function getNormalizedPath(type: TypeReferenceDefinition) {
+    if (type.path[0] === "swc_ecma_ast") {
+      return type.path.at(-1)!;
+    }
+    return type.path.join("::").replace("swc_common::syntax_pos::hygiene::SyntaxContext", "swc_common::SyntaxContext");
   }
 }
 
