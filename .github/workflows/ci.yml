@@ -30,7 +30,7 @@ jobs:
       with:
         save-if: ${{ github.ref == 'refs/heads/main' }}
 
-    - uses: denoland/setup-deno@v1
+    - uses: denoland/setup-deno@v2
 
     - name: Ensure code generation same
       if: matrix.config.kind == 'test_debug'
