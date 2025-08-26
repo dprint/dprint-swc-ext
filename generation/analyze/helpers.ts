@@ -51,7 +51,7 @@ export function getTypeDefinition(crate: Crate, type: TypeInner): TypeDefinition
   }
 
   function getGenericArgs(type: ResolvedPathTypeInner) {
-    return type.args.angle_bracketed.args.map(a => getTypeDefinition(crate, a.type));
+    return type.args?.angle_bracketed.args.map(a => getTypeDefinition(crate, a.type)) ?? [];
   }
 
   function getPath(itemSummary: ItemSummary) {

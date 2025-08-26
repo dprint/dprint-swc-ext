@@ -16,13 +16,14 @@ view = ["bumpalo", "allocator-api2"]
 
 [dependencies]
 allocator-api2 = { version = "0.2.21", optional = true }
-bumpalo = { version = "3.17.0", optional = true, features = ["collections", "allocator-api2"] }
+bumpalo = { version = "3.19.0", optional = true, features = ["collections", "allocator-api2"] }
 num-bigint = "0.4"
 rustc-hash = "2.1.1"
-swc_atoms = "5.0.0"
-swc_common = "9.2.0"
-swc_ecma_ast = "9.0.0"
-swc_ecma_parser = "12.0.0"
+swc_atoms = "7.0.0"
+swc_common = "14.0.3"
+swc_ecma_ast = "15.0.0"
+swc_ecma_lexer = "23.0.0"
+swc_ecma_parser = "23.0.0"
 text_lines = "0.6.0"
 
 [dev-dependencies]

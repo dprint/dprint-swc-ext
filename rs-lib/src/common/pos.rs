@@ -65,7 +65,7 @@ impl std::ops::Add<usize> for SourcePos {
   type Output = SourcePos;
 
   fn add(self, rhs: usize) -> Self::Output {
-    SourcePos(BytePos(self.0 .0 + rhs as u32))
+    SourcePos(BytePos(self.0.0 + rhs as u32))
   }
 }
 
@@ -73,7 +73,7 @@ impl std::ops::Sub<usize> for SourcePos {
   type Output = SourcePos;
 
   fn sub(self, rhs: usize) -> Self::Output {
-    SourcePos(BytePos(self.0 .0 - rhs as u32))
+    SourcePos(BytePos(self.0.0 - rhs as u32))
   }
 }
 
@@ -143,7 +143,7 @@ impl std::ops::Add<usize> for StartSourcePos {
   type Output = SourcePos;
 
   fn add(self, rhs: usize) -> Self::Output {
-    SourcePos(BytePos(self.0 .0 .0 + rhs as u32))
+    SourcePos(BytePos(self.0.0.0 + rhs as u32))
   }
 }
 
@@ -151,7 +151,7 @@ impl std::ops::Sub<StartSourcePos> for SourcePos {
   type Output = usize;
 
   fn sub(self, rhs: StartSourcePos) -> Self::Output {
-    (self.0 - rhs.0 .0).0 as usize
+    (self.0 - rhs.0.0).0 as usize
   }
 }
 
