@@ -4,10 +4,11 @@ use crate::swc::common::comments::SingleThreadedComments;
 use crate::swc::common::errors::DiagnosticBuilder;
 use crate::swc::common::errors::Emitter;
 use crate::swc::common::errors::Handler;
-use crate::swc::parser::lexer::Lexer;
+use crate::swc::lexer::common::parser::Parser as _;
+use crate::swc::lexer::Capturing;
+use crate::swc::lexer::Lexer;
+use crate::swc::lexer::Parser;
 use crate::swc::parser::token::TokenAndSpan;
-use crate::swc::parser::Capturing;
-use crate::swc::parser::Parser;
 use crate::swc::parser::Syntax;
 use std::path::Path;
 
@@ -34,7 +35,8 @@ pub fn get_swc_module(file_path: &Path, file_text: &str) -> (Module, Vec<TokenAn
     let lexer = Capturing::new(lexer);
     let mut parser = Parser::new_from(lexer);
     let parse_module_result = parser.parse_module();
-    let tokens = parser.input().take();
+    let iter = &mut parser.input_mut().iter;
+    let tokens = Capturing::take(iter);
 
     match parse_module_result {
       Err(error) => {
@@ -71,7 +73,8 @@ pub fn get_swc_script(file_path: &Path, file_text: &str) -> (crate::swc::ast::Sc
     let lexer = Capturing::new(lexer);
     let mut parser = Parser::new_from(lexer);
     let parse_script_result = parser.parse_script();
-    let tokens = parser.input().take();
+    let iter = &mut parser.input_mut().iter;
+    let tokens = Capturing::take(iter);
 
     match parse_script_result {
       Err(error) => {

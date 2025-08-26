@@ -77,7 +77,7 @@ impl SourceTextInfo {
 
   /// Gets an swc `StringInput` for this text information that can be
   /// used with parsing.
-  pub fn as_string_input(&self) -> StringInput {
+  pub fn as_string_input(&self) -> StringInput<'_> {
     let range = self.range();
     StringInput::new(self.text_str(), range.start.as_byte_pos(), range.end.as_byte_pos())
   }

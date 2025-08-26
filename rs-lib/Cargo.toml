@@ -22,6 +22,7 @@ rustc-hash = "2.1.1"
 swc_atoms = "7.0.0"
 swc_common = "14.0.3"
 swc_ecma_ast = "15.0.0"
+swc_ecma_lexer = "23.0.0"
 swc_ecma_parser = "23.0.0"
 text_lines = "0.6.0"
 
