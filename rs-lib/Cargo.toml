@@ -16,7 +16,7 @@ view = ["bumpalo", "allocator-api2"]
 
 [dependencies]
 allocator-api2 = { version = "0.2.21", optional = true }
-bumpalo = { version = "3.17.0", optional = true, features = ["collections", "allocator-api2"] }
+bumpalo = { version = "3.19.0", optional = true, features = ["collections", "allocator-api2"] }
 num-bigint = "0.4"
 rustc-hash = "2.1.1"
 swc_atoms = "7.0.0"
