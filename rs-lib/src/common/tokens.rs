@@ -64,11 +64,7 @@ impl<'a> TokenContainer<'a> {
       Some(end_index)
     // fallback
     } else if let Some(&end_index) = self.start_to_index.get(&end) {
-      if end_index > 0 {
-        Some(end_index - 1)
-      } else {
-        None
-      }
+      if end_index > 0 { Some(end_index - 1) } else { None }
     } else {
       // todo: binary search rightmost
       for (i, token) in self.tokens.iter().enumerate().rev() {
@@ -84,11 +80,7 @@ impl<'a> TokenContainer<'a> {
   pub fn get_previous_token(&self, start: SourcePos) -> Option<&TokenAndSpan> {
     let index = self.start_to_index.get(&start);
     if let Some(&index) = index {
-      if index == 0 {
-        None
-      } else {
-        Some(&self.tokens[index - 1])
-      }
+      if index == 0 { None } else { Some(&self.tokens[index - 1]) }
     } else {
       // todo: binary search leftmost
       let mut last_token = None;

@@ -4,12 +4,12 @@ use crate::swc::common::comments::SingleThreadedComments;
 use crate::swc::common::errors::DiagnosticBuilder;
 use crate::swc::common::errors::Emitter;
 use crate::swc::common::errors::Handler;
-use crate::swc::lexer::common::parser::Parser as _;
 use crate::swc::lexer::Capturing;
 use crate::swc::lexer::Lexer;
 use crate::swc::lexer::Parser;
-use crate::swc::parser::token::TokenAndSpan;
+use crate::swc::lexer::common::parser::Parser as _;
 use crate::swc::parser::Syntax;
+use crate::swc::parser::token::TokenAndSpan;
 use std::path::Path;
 
 use crate::common::SourceTextInfo;

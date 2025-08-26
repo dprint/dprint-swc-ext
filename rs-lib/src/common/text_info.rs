@@ -4,10 +4,10 @@ use swc_common::input::StringInput;
 pub use text_lines::LineAndColumnIndex;
 pub use text_lines::TextLines;
 
-use super::pos::*;
-use super::text_encoding::strip_bom_mut;
-use super::text_encoding::BOM_CHAR;
 use super::LineAndColumnDisplay;
+use super::pos::*;
+use super::text_encoding::BOM_CHAR;
+use super::text_encoding::strip_bom_mut;
 
 /// Stores the source text along with other data such as where all the lines
 /// occur in the text.
