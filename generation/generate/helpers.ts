@@ -72,7 +72,9 @@ export function writeType(writer: Writer, analysisResult: AnalysisResult, type: 
     if (type.path[0] === "swc_ecma_ast") {
       return type.path.at(-1)!;
     }
-    return type.path.join("::").replace("swc_common::syntax_pos::hygiene::SyntaxContext", "swc_common::SyntaxContext");
+    return type.path.join("::")
+      .replace("swc_common::syntax_pos::hygiene::SyntaxContext", "swc_common::SyntaxContext")
+      .replace("swc_atoms::wtf8_atom::Wtf8Atom", "swc_atoms::Wtf8Atom");
   }
 }
 

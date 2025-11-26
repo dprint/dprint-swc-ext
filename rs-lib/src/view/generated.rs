@@ -3661,7 +3661,7 @@ fn set_parent_for_jsxattr_or_spread<'a>(node: &JSXAttrOrSpread<'a>, parent: Node
 
 #[derive(Copy, Clone)]
 pub enum JSXAttrValue<'a> {
-  Lit(Lit<'a>),
+  Str(&'a Str<'a>),
   JSXExprContainer(&'a JSXExprContainer<'a>),
   JSXElement(&'a JSXElement<'a>),
   JSXFragment(&'a JSXFragment<'a>),
@@ -3684,12 +3684,15 @@ impl<'a> JSXAttrValue<'a> {
   pub fn is<T: CastableNode<'a>>(&self) -> bool {
     self.kind() == T::kind()
   }
+  pub fn parent(&self) -> Node<'a> {
+    NodeTrait::parent(self).unwrap()
+  }
 }
 
 impl<'a> SourceRanged for JSXAttrValue<'a> {
   fn start(&self) -> SourcePos {
     match self {
-      JSXAttrValue::Lit(node) => node.start(),
+      JSXAttrValue::Str(node) => node.start(),
       JSXAttrValue::JSXExprContainer(node) => node.start(),
       JSXAttrValue::JSXElement(node) => node.start(),
       JSXAttrValue::JSXFragment(node) => node.start(),
@@ -3697,7 +3700,7 @@ impl<'a> SourceRanged for JSXAttrValue<'a> {
   }
   fn end(&self) -> SourcePos {
     match self {
-      JSXAttrValue::Lit(node) => node.end(),
+      JSXAttrValue::Str(node) => node.end(),
       JSXAttrValue::JSXExprContainer(node) => node.end(),
       JSXAttrValue::JSXElement(node) => node.end(),
       JSXAttrValue::JSXFragment(node) => node.end(),
@@ -3708,7 +3711,7 @@ impl<'a> SourceRanged for JSXAttrValue<'a> {
 impl<'a> NodeTrait<'a> for JSXAttrValue<'a> {
   fn parent(&self) -> Option<Node<'a>> {
     match self {
-      JSXAttrValue::Lit(node) => NodeTrait::parent(node),
+      JSXAttrValue::Str(node) => NodeTrait::parent(*node),
       JSXAttrValue::JSXExprContainer(node) => NodeTrait::parent(*node),
       JSXAttrValue::JSXElement(node) => NodeTrait::parent(*node),
       JSXAttrValue::JSXFragment(node) => NodeTrait::parent(*node),
@@ -3717,7 +3720,7 @@ impl<'a> NodeTrait<'a> for JSXAttrValue<'a> {
 
   fn children(&self) -> Vec<Node<'a>> {
     match self {
-      JSXAttrValue::Lit(node) => node.children(),
+      JSXAttrValue::Str(node) => node.children(),
       JSXAttrValue::JSXExprContainer(node) => node.children(),
       JSXAttrValue::JSXElement(node) => node.children(),
       JSXAttrValue::JSXFragment(node) => node.children(),
@@ -3726,7 +3729,7 @@ impl<'a> NodeTrait<'a> for JSXAttrValue<'a> {
 
   fn as_node(&self) -> Node<'a> {
     match self {
-      JSXAttrValue::Lit(node) => node.as_node(),
+      JSXAttrValue::Str(node) => node.as_node(),
       JSXAttrValue::JSXExprContainer(node) => node.as_node(),
       JSXAttrValue::JSXElement(node) => node.as_node(),
       JSXAttrValue::JSXFragment(node) => node.as_node(),
@@ -3735,7 +3738,7 @@ impl<'a> NodeTrait<'a> for JSXAttrValue<'a> {
 
   fn kind(&self) -> NodeKind {
     match self {
-      JSXAttrValue::Lit(node) => node.kind(),
+      JSXAttrValue::Str(_) => NodeKind::Str,
       JSXAttrValue::JSXExprContainer(_) => NodeKind::JSXExprContainer,
       JSXAttrValue::JSXElement(_) => NodeKind::JSXElement,
       JSXAttrValue::JSXFragment(_) => NodeKind::JSXFragment,
@@ -3746,7 +3749,7 @@ impl<'a> NodeTrait<'a> for JSXAttrValue<'a> {
 impl<'a> From<&JSXAttrValue<'a>> for Node<'a> {
   fn from(node: &JSXAttrValue<'a>) -> Node<'a> {
     match node {
-      JSXAttrValue::Lit(node) => node.into(),
+      JSXAttrValue::Str(node) => (*node).into(),
       JSXAttrValue::JSXExprContainer(node) => (*node).into(),
       JSXAttrValue::JSXElement(node) => (*node).into(),
       JSXAttrValue::JSXFragment(node) => (*node).into(),
@@ -3757,7 +3760,7 @@ impl<'a> From<&JSXAttrValue<'a>> for Node<'a> {
 impl<'a> From<JSXAttrValue<'a>> for Node<'a> {
   fn from(node: JSXAttrValue<'a>) -> Node<'a> {
     match node {
-      JSXAttrValue::Lit(node) => node.into(),
+      JSXAttrValue::Str(node) => node.into(),
       JSXAttrValue::JSXExprContainer(node) => node.into(),
       JSXAttrValue::JSXElement(node) => node.into(),
       JSXAttrValue::JSXFragment(node) => node.into(),
@@ -3767,7 +3770,7 @@ impl<'a> From<JSXAttrValue<'a>> for Node<'a> {
 
 fn get_view_for_jsxattr_value<'a>(inner: &'a swc_ast::JSXAttrValue, bump: &'a Bump) -> JSXAttrValue<'a> {
   match inner {
-    swc_ast::JSXAttrValue::Lit(value) => JSXAttrValue::Lit(get_view_for_lit(value, bump)),
+    swc_ast::JSXAttrValue::Str(value) => JSXAttrValue::Str(get_view_for_str(value, bump)),
     swc_ast::JSXAttrValue::JSXExprContainer(value) => JSXAttrValue::JSXExprContainer(get_view_for_jsxexpr_container(value, bump)),
     swc_ast::JSXAttrValue::JSXElement(value) => JSXAttrValue::JSXElement(get_view_for_jsxelement(value, bump)),
     swc_ast::JSXAttrValue::JSXFragment(value) => JSXAttrValue::JSXFragment(get_view_for_jsxfragment(value, bump)),
@@ -3776,7 +3779,7 @@ fn get_view_for_jsxattr_value<'a>(inner: &'a swc_ast::JSXAttrValue, bump: &'a Bu
 
 fn set_parent_for_jsxattr_value<'a>(node: &JSXAttrValue<'a>, parent: Node<'a>) {
   match node {
-    JSXAttrValue::Lit(value) => set_parent_for_lit(value, parent),
+    JSXAttrValue::Str(value) => set_parent_for_str(value, parent),
     JSXAttrValue::JSXExprContainer(value) => set_parent_for_jsxexpr_container(value, parent),
     JSXAttrValue::JSXElement(value) => set_parent_for_jsxelement(value, parent),
     JSXAttrValue::JSXFragment(value) => set_parent_for_jsxfragment(value, parent),
@@ -17028,7 +17031,7 @@ impl<'a> Str<'a> {
     self.parent.get().unwrap()
   }
 
-  pub fn value(&self) -> &swc_atoms::Atom {
+  pub fn value(&self) -> &swc_atoms::Wtf8Atom {
     &self.inner.value
   }
 
@@ -17791,7 +17794,7 @@ impl<'a> TplElement<'a> {
   ///
   /// If you are going to use codegen right after creating a [TplElement], you
   /// don't have to worry about this value.
-  pub fn cooked(&self) -> &Option<swc_atoms::Atom> {
+  pub fn cooked(&self) -> &Option<swc_atoms::Wtf8Atom> {
     &self.inner.cooked
   }
 
