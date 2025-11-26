@@ -17031,7 +17031,7 @@ impl<'a> Str<'a> {
     self.parent.get().unwrap()
   }
 
-  pub fn value(&self) -> &swc_atoms::wtf8_atom::Wtf8Atom {
+  pub fn value(&self) -> &swc_atoms::Wtf8Atom {
     &self.inner.value
   }
 
@@ -17794,7 +17794,7 @@ impl<'a> TplElement<'a> {
   ///
   /// If you are going to use codegen right after creating a [TplElement], you
   /// don't have to worry about this value.
-  pub fn cooked(&self) -> &Option<swc_atoms::wtf8_atom::Wtf8Atom> {
+  pub fn cooked(&self) -> &Option<swc_atoms::Wtf8Atom> {
     &self.inner.cooked
   }
 
