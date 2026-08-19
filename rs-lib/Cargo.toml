@@ -22,8 +22,7 @@ rustc-hash = "2.1.1"
 swc_atoms = "9.0.0"
 swc_common = "17.0.1"
 swc_ecma_ast = "18.0.0"
-swc_ecma_lexer = "26.0.0"
-swc_ecma_parser = "27.0.7"
+swc_ecma_parser = { version = "27.0.7", features = ["unstable"] }
 text_lines = "0.6.0"
 
 [dev-dependencies]

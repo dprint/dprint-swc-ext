@@ -1,6 +1,6 @@
 use crate::swc::common::BytePos;
 use crate::swc::common::Span;
-use crate::swc::parser::token::TokenAndSpan;
+use crate::swc::parser::unstable::TokenAndSpan;
 
 use super::comments::*;
 use super::text_info::*;
@@ -346,6 +346,19 @@ pub trait SourceRanged {
   fn end(&self) -> SourcePos;
 
   source_ranged_trait!();
+}
+
+// The maintained parser lexer intentionally keeps its token representation
+// minimal and does not implement `Spanned`. Keep dprint's positional helpers
+// available by adapting the public span field directly.
+impl SourceRanged for TokenAndSpan {
+  fn start(&self) -> SourcePos {
+    SourcePos::unsafely_from_byte_pos(self.span.lo)
+  }
+
+  fn end(&self) -> SourcePos {
+    SourcePos::unsafely_from_byte_pos(self.span.hi)
+  }
 }
 
 impl<'a, S> SourceRanged for &'a S
