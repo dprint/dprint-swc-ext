@@ -11,7 +11,6 @@ description = "Functionality to make swc easier to work with."
 all-features = true
 
 [features]
-parsing = []
 sourcemap = ["swc_common/sourcemap"]
 view = ["bumpalo", "allocator-api2"]
 

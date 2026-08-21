@@ -1,8 +1,5 @@
 pub mod common;
 
-#[cfg(feature = "parsing")]
-pub mod parsing;
-
 #[cfg(test)]
 pub(crate) mod test_helpers;
 

@@ -436,6 +436,27 @@ pub struct ProgramInfo<'a> {
   pub comments: Option<Comments<'a>>,
 }
 
+/// A source that has been parsed into a program which can be
+/// viewed as an "ast view".
+///
+/// Implement this on your own parsed source type in order to hand an
+/// already parsed program to another crate (ex. a formatter) without it
+/// having to reparse the text.
+///
+/// Note that consumers will generally require the text info, tokens, and
+/// comments to all be provided.
+pub trait ProgramInfoProvider {
+  /// Gets the program along with the text info, tokens, and comments
+  /// to build an ast view with.
+  fn program_info(&self) -> ProgramInfo<'_>;
+
+  /// Gets an "ast view" of the program, which has more helper methods
+  /// and allows for going up the ancestors of a node.
+  fn with_view<'a, T>(&self, with_view: impl FnOnce(Program<'a>) -> T) -> T {
+    with_ast_view(self.program_info(), with_view)
+  }
+}
+
 #[derive(Clone, Copy)]
 pub struct ModuleInfo<'a> {
   pub module: &'a swc_ast::Module,
