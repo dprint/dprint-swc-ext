@@ -1,4 +1,4 @@
-use crate::swc::parser::token::TokenAndSpan;
+use crate::swc::parser::unstable::TokenAndSpan;
 
 use super::comments::CommentContainer;
 use super::text_info::*;

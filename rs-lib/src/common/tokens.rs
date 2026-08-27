@@ -1,7 +1,7 @@
 use rustc_hash::FxHashMap;
 
 use super::pos::*;
-use crate::swc::parser::token::TokenAndSpan;
+use crate::swc::parser::unstable::TokenAndSpan;
 
 pub struct TokenContainer<'a> {
   pub tokens: &'a [TokenAndSpan],
@@ -118,7 +118,7 @@ mod test {
 
   use super::super::pos::SourcePos;
   use super::TokenContainer;
-  use crate::common::SourceRangedForSpanned;
+  use crate::common::SourceRanged;
   use crate::test_helpers::*;
 
   #[test]
@@ -134,6 +134,6 @@ mod test {
     // in whitespace before token
     assert_eq!(token_container.get_next_token(SourcePos::new(11)).unwrap().start(), SourcePos::new(12));
     // at hi of last token
-    assert_eq!(token_container.get_next_token(SourcePos::new(18)), None);
+    assert!(token_container.get_next_token(SourcePos::new(18)).is_none());
   }
 }

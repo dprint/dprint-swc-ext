@@ -2,7 +2,7 @@ use super::generated::*;
 use crate::common::*;
 use crate::swc::ast as swc_ast;
 use crate::swc::common::comments::SingleThreadedCommentsMapInner;
-use crate::swc::parser::token::TokenAndSpan;
+use crate::swc::parser::unstable::TokenAndSpan;
 
 pub enum NodeOrToken<'a> {
   Node(Node<'a>),

@@ -11,6 +11,10 @@ pub mod swc {
   pub use swc_atoms as atoms;
   pub use swc_common as common;
   pub use swc_ecma_ast as ast;
-  pub use swc_ecma_lexer as lexer;
+  /// Direct lexer access backed by `swc_ecma_parser`'s maintained lexer.
+  pub mod lexer {
+    pub use swc_ecma_parser::unstable::{Capturing, Token, TokenAndSpan, TokenValue};
+    pub use swc_ecma_parser::{Lexer, Parser};
+  }
   pub use swc_ecma_parser as parser;
 }

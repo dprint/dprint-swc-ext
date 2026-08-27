@@ -7,9 +7,8 @@ use crate::swc::common::errors::Handler;
 use crate::swc::lexer::Capturing;
 use crate::swc::lexer::Lexer;
 use crate::swc::lexer::Parser;
-use crate::swc::lexer::common::parser::Parser as _;
 use crate::swc::parser::Syntax;
-use crate::swc::parser::token::TokenAndSpan;
+use crate::swc::parser::unstable::TokenAndSpan;
 use std::path::Path;
 
 use crate::common::SourceTextInfo;
@@ -20,7 +19,7 @@ pub fn get_swc_module(file_path: &Path, file_text: &str) -> (Module, Vec<TokenAn
   let source_text_info = SourceTextInfo::from_string(file_text.to_string());
 
   let comments: SingleThreadedComments = Default::default();
-  return {
+  {
     let ts_config = crate::swc::parser::TsSyntax {
       tsx: should_parse_as_jsx(file_path),
       decorators: true,
@@ -49,7 +48,7 @@ pub fn get_swc_module(file_path: &Path, file_text: &str) -> (Module, Vec<TokenAn
       Ok(module) => Ok((module, tokens, source_text_info, comments)),
     }
   }
-  .unwrap();
+  .unwrap()
 }
 
 #[cfg(feature = "view")]
@@ -58,7 +57,7 @@ pub fn get_swc_script(file_path: &Path, file_text: &str) -> (crate::swc::ast::Sc
   let source_text_info = SourceTextInfo::from_string(file_text.to_string());
 
   let comments: SingleThreadedComments = Default::default();
-  return {
+  {
     let ts_config = crate::swc::parser::TsSyntax {
       tsx: should_parse_as_jsx(file_path),
       decorators: true,
@@ -87,7 +86,7 @@ pub fn get_swc_script(file_path: &Path, file_text: &str) -> (crate::swc::ast::Sc
       Ok(script) => Ok((script, tokens, source_text_info, comments)),
     }
   }
-  .unwrap();
+  .unwrap()
 }
 
 fn should_parse_as_jsx(file_path: &Path) -> bool {
