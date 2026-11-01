@@ -125,6 +125,7 @@ pub enum Node<'a> {
   ForOfStmt(&'a ForOfStmt<'a>),
   ForStmt(&'a ForStmt<'a>),
   Function(&'a Function<'a>),
+  FunctionBody(&'a FunctionBody<'a>),
   GetterProp(&'a GetterProp<'a>),
   Ident(&'a Ident<'a>),
   IdentName(&'a IdentName<'a>),
@@ -228,6 +229,7 @@ pub enum Node<'a> {
   TsRestType(&'a TsRestType<'a>),
   TsSatisfiesExpr(&'a TsSatisfiesExpr<'a>),
   TsSetterSignature(&'a TsSetterSignature<'a>),
+  TsThisParam(&'a TsThisParam<'a>),
   TsThisType(&'a TsThisType<'a>),
   TsTplLitType(&'a TsTplLitType<'a>),
   TsTupleElement(&'a TsTupleElement<'a>),
@@ -320,6 +322,7 @@ impl<'a> SourceRanged for Node<'a> {
       Node::ForOfStmt(node) => node.start(),
       Node::ForStmt(node) => node.start(),
       Node::Function(node) => node.start(),
+      Node::FunctionBody(node) => node.start(),
       Node::GetterProp(node) => node.start(),
       Node::Ident(node) => node.start(),
       Node::IdentName(node) => node.start(),
@@ -423,6 +426,7 @@ impl<'a> SourceRanged for Node<'a> {
       Node::TsRestType(node) => node.start(),
       Node::TsSatisfiesExpr(node) => node.start(),
       Node::TsSetterSignature(node) => node.start(),
+      Node::TsThisParam(node) => node.start(),
       Node::TsThisType(node) => node.start(),
       Node::TsTplLitType(node) => node.start(),
       Node::TsTupleElement(node) => node.start(),
@@ -496,6 +500,7 @@ impl<'a> SourceRanged for Node<'a> {
       Node::ForOfStmt(node) => node.end(),
       Node::ForStmt(node) => node.end(),
       Node::Function(node) => node.end(),
+      Node::FunctionBody(node) => node.end(),
       Node::GetterProp(node) => node.end(),
       Node::Ident(node) => node.end(),
       Node::IdentName(node) => node.end(),
@@ -599,6 +604,7 @@ impl<'a> SourceRanged for Node<'a> {
       Node::TsRestType(node) => node.end(),
       Node::TsSatisfiesExpr(node) => node.end(),
       Node::TsSetterSignature(node) => node.end(),
+      Node::TsThisParam(node) => node.end(),
       Node::TsThisType(node) => node.end(),
       Node::TsTplLitType(node) => node.end(),
       Node::TsTupleElement(node) => node.end(),
@@ -675,6 +681,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::ForOfStmt(node) => NodeTrait::parent(*node),
       Node::ForStmt(node) => NodeTrait::parent(*node),
       Node::Function(node) => NodeTrait::parent(*node),
+      Node::FunctionBody(node) => NodeTrait::parent(*node),
       Node::GetterProp(node) => NodeTrait::parent(*node),
       Node::Ident(node) => NodeTrait::parent(*node),
       Node::IdentName(node) => NodeTrait::parent(*node),
@@ -778,6 +785,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsRestType(node) => NodeTrait::parent(*node),
       Node::TsSatisfiesExpr(node) => NodeTrait::parent(*node),
       Node::TsSetterSignature(node) => NodeTrait::parent(*node),
+      Node::TsThisParam(node) => NodeTrait::parent(*node),
       Node::TsThisType(node) => NodeTrait::parent(*node),
       Node::TsTplLitType(node) => NodeTrait::parent(*node),
       Node::TsTupleElement(node) => NodeTrait::parent(*node),
@@ -852,6 +860,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::ForOfStmt(node) => node.children(),
       Node::ForStmt(node) => node.children(),
       Node::Function(node) => node.children(),
+      Node::FunctionBody(node) => node.children(),
       Node::GetterProp(node) => node.children(),
       Node::Ident(node) => node.children(),
       Node::IdentName(node) => node.children(),
@@ -955,6 +964,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsRestType(node) => node.children(),
       Node::TsSatisfiesExpr(node) => node.children(),
       Node::TsSetterSignature(node) => node.children(),
+      Node::TsThisParam(node) => node.children(),
       Node::TsThisType(node) => node.children(),
       Node::TsTplLitType(node) => node.children(),
       Node::TsTupleElement(node) => node.children(),
@@ -1029,6 +1039,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::ForOfStmt(node) => node.as_node(),
       Node::ForStmt(node) => node.as_node(),
       Node::Function(node) => node.as_node(),
+      Node::FunctionBody(node) => node.as_node(),
       Node::GetterProp(node) => node.as_node(),
       Node::Ident(node) => node.as_node(),
       Node::IdentName(node) => node.as_node(),
@@ -1132,6 +1143,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsRestType(node) => node.as_node(),
       Node::TsSatisfiesExpr(node) => node.as_node(),
       Node::TsSetterSignature(node) => node.as_node(),
+      Node::TsThisParam(node) => node.as_node(),
       Node::TsThisType(node) => node.as_node(),
       Node::TsTplLitType(node) => node.as_node(),
       Node::TsTupleElement(node) => node.as_node(),
@@ -1206,6 +1218,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::ForOfStmt(_) => NodeKind::ForOfStmt,
       Node::ForStmt(_) => NodeKind::ForStmt,
       Node::Function(_) => NodeKind::Function,
+      Node::FunctionBody(_) => NodeKind::FunctionBody,
       Node::GetterProp(_) => NodeKind::GetterProp,
       Node::Ident(_) => NodeKind::Ident,
       Node::IdentName(_) => NodeKind::IdentName,
@@ -1309,6 +1322,7 @@ impl<'a> NodeTrait<'a> for Node<'a> {
       Node::TsRestType(_) => NodeKind::TsRestType,
       Node::TsSatisfiesExpr(_) => NodeKind::TsSatisfiesExpr,
       Node::TsSetterSignature(_) => NodeKind::TsSetterSignature,
+      Node::TsThisParam(_) => NodeKind::TsThisParam,
       Node::TsThisType(_) => NodeKind::TsThisType,
       Node::TsTplLitType(_) => NodeKind::TsTplLitType,
       Node::TsTupleElement(_) => NodeKind::TsTupleElement,
@@ -1384,6 +1398,7 @@ pub enum NodeKind {
   ForOfStmt,
   ForStmt,
   Function,
+  FunctionBody,
   GetterProp,
   Ident,
   IdentName,
@@ -1487,6 +1502,7 @@ pub enum NodeKind {
   TsRestType,
   TsSatisfiesExpr,
   TsSetterSignature,
+  TsThisParam,
   TsThisType,
   TsTplLitType,
   TsTupleElement,
@@ -1561,6 +1577,7 @@ impl std::fmt::Display for NodeKind {
       NodeKind::ForOfStmt => "ForOfStmt",
       NodeKind::ForStmt => "ForStmt",
       NodeKind::Function => "Function",
+      NodeKind::FunctionBody => "FunctionBody",
       NodeKind::GetterProp => "GetterProp",
       NodeKind::Ident => "Ident",
       NodeKind::IdentName => "IdentName",
@@ -1664,6 +1681,7 @@ impl std::fmt::Display for NodeKind {
       NodeKind::TsRestType => "TsRestType",
       NodeKind::TsSatisfiesExpr => "TsSatisfiesExpr",
       NodeKind::TsSetterSignature => "TsSetterSignature",
+      NodeKind::TsThisParam => "TsThisParam",
       NodeKind::TsThisType => "TsThisType",
       NodeKind::TsTplLitType => "TsTplLitType",
       NodeKind::TsTupleElement => "TsTupleElement",
@@ -1689,6 +1707,108 @@ impl std::fmt::Display for NodeKind {
       NodeKind::WithStmt => "WithStmt",
       NodeKind::YieldExpr => "YieldExpr",
     })
+  }
+}
+
+#[derive(Copy, Clone)]
+pub enum ArrowFunctionBody<'a> {
+  FunctionBody(&'a FunctionBody<'a>),
+  Expr(Expr<'a>),
+}
+
+impl<'a> ArrowFunctionBody<'a> {
+  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
+    T::to(&self.into())
+  }
+
+  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
+    let node: Node<'a> = self.into();
+    if let Some(result) = T::to(&node) {
+      result
+    } else {
+      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
+    }
+  }
+
+  pub fn is<T: CastableNode<'a>>(&self) -> bool {
+    self.kind() == T::kind()
+  }
+}
+
+impl<'a> SourceRanged for ArrowFunctionBody<'a> {
+  fn start(&self) -> SourcePos {
+    match self {
+      ArrowFunctionBody::FunctionBody(node) => node.start(),
+      ArrowFunctionBody::Expr(node) => node.start(),
+    }
+  }
+  fn end(&self) -> SourcePos {
+    match self {
+      ArrowFunctionBody::FunctionBody(node) => node.end(),
+      ArrowFunctionBody::Expr(node) => node.end(),
+    }
+  }
+}
+
+impl<'a> NodeTrait<'a> for ArrowFunctionBody<'a> {
+  fn parent(&self) -> Option<Node<'a>> {
+    match self {
+      ArrowFunctionBody::FunctionBody(node) => NodeTrait::parent(*node),
+      ArrowFunctionBody::Expr(node) => NodeTrait::parent(node),
+    }
+  }
+
+  fn children(&self) -> Vec<Node<'a>> {
+    match self {
+      ArrowFunctionBody::FunctionBody(node) => node.children(),
+      ArrowFunctionBody::Expr(node) => node.children(),
+    }
+  }
+
+  fn as_node(&self) -> Node<'a> {
+    match self {
+      ArrowFunctionBody::FunctionBody(node) => node.as_node(),
+      ArrowFunctionBody::Expr(node) => node.as_node(),
+    }
+  }
+
+  fn kind(&self) -> NodeKind {
+    match self {
+      ArrowFunctionBody::FunctionBody(_) => NodeKind::FunctionBody,
+      ArrowFunctionBody::Expr(node) => node.kind(),
+    }
+  }
+}
+
+impl<'a> From<&ArrowFunctionBody<'a>> for Node<'a> {
+  fn from(node: &ArrowFunctionBody<'a>) -> Node<'a> {
+    match node {
+      ArrowFunctionBody::FunctionBody(node) => (*node).into(),
+      ArrowFunctionBody::Expr(node) => node.into(),
+    }
+  }
+}
+
+impl<'a> From<ArrowFunctionBody<'a>> for Node<'a> {
+  fn from(node: ArrowFunctionBody<'a>) -> Node<'a> {
+    match node {
+      ArrowFunctionBody::FunctionBody(node) => node.into(),
+      ArrowFunctionBody::Expr(node) => node.into(),
+    }
+  }
+}
+
+fn get_view_for_arrow_function_body<'a>(inner: &'a swc_ast::ArrowFunctionBody, bump: &'a Bump) -> ArrowFunctionBody<'a> {
+  match inner {
+    swc_ast::ArrowFunctionBody::FunctionBody(value) => ArrowFunctionBody::FunctionBody(get_view_for_function_body(value, bump)),
+    swc_ast::ArrowFunctionBody::Expr(value) => ArrowFunctionBody::Expr(get_view_for_expr(value, bump)),
+  }
+}
+
+fn set_parent_for_arrow_function_body<'a>(node: &ArrowFunctionBody<'a>, parent: Node<'a>) {
+  match node {
+    ArrowFunctionBody::FunctionBody(value) => set_parent_for_function_body(value, parent),
+    ArrowFunctionBody::Expr(value) => set_parent_for_expr(value, parent),
   }
 }
 
@@ -1907,108 +2027,6 @@ fn set_parent_for_assign_target_pat<'a>(node: &AssignTargetPat<'a>, parent: Node
     AssignTargetPat::Array(value) => set_parent_for_array_pat(value, parent),
     AssignTargetPat::Object(value) => set_parent_for_object_pat(value, parent),
     AssignTargetPat::Invalid(value) => set_parent_for_invalid(value, parent),
-  }
-}
-
-#[derive(Copy, Clone)]
-pub enum BlockStmtOrExpr<'a> {
-  BlockStmt(&'a BlockStmt<'a>),
-  Expr(Expr<'a>),
-}
-
-impl<'a> BlockStmtOrExpr<'a> {
-  pub fn to<T: CastableNode<'a>>(&self) -> Option<&'a T> {
-    T::to(&self.into())
-  }
-
-  pub fn expect<T: CastableNode<'a>>(&self) -> &'a T {
-    let node: Node<'a> = self.into();
-    if let Some(result) = T::to(&node) {
-      result
-    } else {
-      panic!("Tried to cast node of type {} to {}.", node.kind(), T::kind())
-    }
-  }
-
-  pub fn is<T: CastableNode<'a>>(&self) -> bool {
-    self.kind() == T::kind()
-  }
-}
-
-impl<'a> SourceRanged for BlockStmtOrExpr<'a> {
-  fn start(&self) -> SourcePos {
-    match self {
-      BlockStmtOrExpr::BlockStmt(node) => node.start(),
-      BlockStmtOrExpr::Expr(node) => node.start(),
-    }
-  }
-  fn end(&self) -> SourcePos {
-    match self {
-      BlockStmtOrExpr::BlockStmt(node) => node.end(),
-      BlockStmtOrExpr::Expr(node) => node.end(),
-    }
-  }
-}
-
-impl<'a> NodeTrait<'a> for BlockStmtOrExpr<'a> {
-  fn parent(&self) -> Option<Node<'a>> {
-    match self {
-      BlockStmtOrExpr::BlockStmt(node) => NodeTrait::parent(*node),
-      BlockStmtOrExpr::Expr(node) => NodeTrait::parent(node),
-    }
-  }
-
-  fn children(&self) -> Vec<Node<'a>> {
-    match self {
-      BlockStmtOrExpr::BlockStmt(node) => node.children(),
-      BlockStmtOrExpr::Expr(node) => node.children(),
-    }
-  }
-
-  fn as_node(&self) -> Node<'a> {
-    match self {
-      BlockStmtOrExpr::BlockStmt(node) => node.as_node(),
-      BlockStmtOrExpr::Expr(node) => node.as_node(),
-    }
-  }
-
-  fn kind(&self) -> NodeKind {
-    match self {
-      BlockStmtOrExpr::BlockStmt(_) => NodeKind::BlockStmt,
-      BlockStmtOrExpr::Expr(node) => node.kind(),
-    }
-  }
-}
-
-impl<'a> From<&BlockStmtOrExpr<'a>> for Node<'a> {
-  fn from(node: &BlockStmtOrExpr<'a>) -> Node<'a> {
-    match node {
-      BlockStmtOrExpr::BlockStmt(node) => (*node).into(),
-      BlockStmtOrExpr::Expr(node) => node.into(),
-    }
-  }
-}
-
-impl<'a> From<BlockStmtOrExpr<'a>> for Node<'a> {
-  fn from(node: BlockStmtOrExpr<'a>) -> Node<'a> {
-    match node {
-      BlockStmtOrExpr::BlockStmt(node) => node.into(),
-      BlockStmtOrExpr::Expr(node) => node.into(),
-    }
-  }
-}
-
-fn get_view_for_block_stmt_or_expr<'a>(inner: &'a swc_ast::BlockStmtOrExpr, bump: &'a Bump) -> BlockStmtOrExpr<'a> {
-  match inner {
-    swc_ast::BlockStmtOrExpr::BlockStmt(value) => BlockStmtOrExpr::BlockStmt(get_view_for_block_stmt(value, bump)),
-    swc_ast::BlockStmtOrExpr::Expr(value) => BlockStmtOrExpr::Expr(get_view_for_expr(value, bump)),
-  }
-}
-
-fn set_parent_for_block_stmt_or_expr<'a>(node: &BlockStmtOrExpr<'a>, parent: Node<'a>) {
-  match node {
-    BlockStmtOrExpr::BlockStmt(value) => set_parent_for_block_stmt(value, parent),
-    BlockStmtOrExpr::Expr(value) => set_parent_for_expr(value, parent),
   }
 }
 
@@ -8572,7 +8590,7 @@ pub struct ArrowExpr<'a> {
   pub inner: &'a swc_ast::ArrowExpr,
   pub params: &'a [Pat<'a>],
   /// This is boxed to reduce the type size of [Expr].
-  pub body: BlockStmtOrExpr<'a>,
+  pub body: ArrowFunctionBody<'a>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
   pub return_type: Option<&'a TsTypeAnn<'a>>,
 }
@@ -8659,7 +8677,7 @@ fn get_view_for_arrow_expr<'a>(inner: &'a swc_ast::ArrowExpr, bump: &'a Bump) ->
     inner,
     parent: Default::default(),
     params: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.params.len(), bump);vec.extend(inner.params.iter().map(|value| get_view_for_pat(value, bump))); vec }),
-    body: get_view_for_block_stmt_or_expr(&inner.body, bump),
+    body: get_view_for_arrow_function_body(&inner.body, bump),
     type_params: match &inner.type_params {
       Some(value) => Some(get_view_for_ts_type_param_decl(value, bump)),
       None => None,
@@ -8673,7 +8691,7 @@ fn get_view_for_arrow_expr<'a>(inner: &'a swc_ast::ArrowExpr, bump: &'a Bump) ->
   for value in node.params.iter() {
     set_parent_for_pat(value, parent)
   }
-  set_parent_for_block_stmt_or_expr(&node.body, parent);
+  set_parent_for_arrow_function_body(&node.body, parent);
   if let Some(value) = &node.type_params {
     set_parent_for_ts_type_param_decl(value, parent)
   };
@@ -10681,7 +10699,7 @@ pub struct Constructor<'a> {
   pub inner: &'a swc_ast::Constructor,
   pub key: PropName<'a>,
   pub params: &'a [ParamOrTsParamProp<'a>],
-  pub body: Option<&'a BlockStmt<'a>>,
+  pub body: Option<&'a FunctionBody<'a>>,
 }
 
 impl<'a> Constructor<'a> {
@@ -10765,7 +10783,7 @@ fn get_view_for_constructor<'a>(inner: &'a swc_ast::Constructor, bump: &'a Bump)
     key: get_view_for_prop_name(&inner.key, bump),
     params: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.params.len(), bump);vec.extend(inner.params.iter().map(|value| get_view_for_param_or_ts_param_prop(value, bump))); vec }),
     body: match &inner.body {
-      Some(value) => Some(get_view_for_block_stmt(value, bump)),
+      Some(value) => Some(get_view_for_function_body(value, bump)),
       None => None,
     },
   });
@@ -10775,7 +10793,7 @@ fn get_view_for_constructor<'a>(inner: &'a swc_ast::Constructor, bump: &'a Bump)
     set_parent_for_param_or_ts_param_prop(value, parent)
   }
   if let Some(value) = &node.body {
-    set_parent_for_block_stmt(value, parent)
+    set_parent_for_function_body(value, parent)
   };
   node
 }
@@ -12406,9 +12424,12 @@ fn set_parent_for_for_stmt<'a>(node: &ForStmt<'a>, parent: Node<'a>) {
 pub struct Function<'a> {
   parent: ParentOnceCell<Node<'a>>,
   pub inner: &'a swc_ast::Function,
+  /// TypeScript or Flow `this` parameter, which is not part of the runtime
+  /// parameter list.
+  pub this_param: Option<&'a TsThisParam<'a>>,
   pub params: &'a [&'a Param<'a>],
   pub decorators: &'a [&'a Decorator<'a>],
-  pub body: Option<&'a BlockStmt<'a>>,
+  pub body: Option<&'a FunctionBody<'a>>,
   pub type_params: Option<&'a TsTypeParamDecl<'a>>,
   pub return_type: Option<&'a TsTypeAnn<'a>>,
 }
@@ -12455,7 +12476,10 @@ impl<'a> NodeTrait<'a> for Function<'a> {
   }
 
   fn children(&self) -> Vec<Node<'a>> {
-    let mut children = Vec::with_capacity(self.params.len() + self.decorators.len() + match &self.body { Some(_value) => 1, None => 0, } + match &self.type_params { Some(_value) => 1, None => 0, } + match &self.return_type { Some(_value) => 1, None => 0, });
+    let mut children = Vec::with_capacity(match &self.this_param { Some(_value) => 1, None => 0, } + self.params.len() + self.decorators.len() + match &self.body { Some(_value) => 1, None => 0, } + match &self.type_params { Some(_value) => 1, None => 0, } + match &self.return_type { Some(_value) => 1, None => 0, });
+    if let Some(child) = self.this_param {
+      children.push(child.into());
+    }
     for child in self.params.iter() {
       children.push((*child).into());
     }
@@ -12501,10 +12525,14 @@ fn get_view_for_function<'a>(inner: &'a swc_ast::Function, bump: &'a Bump) -> &'
   let node = bump.alloc(Function {
     inner,
     parent: Default::default(),
+    this_param: match &inner.this_param {
+      Some(value) => Some(get_view_for_ts_this_param(value, bump)),
+      None => None,
+    },
     params: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.params.len(), bump);vec.extend(inner.params.iter().map(|value| get_view_for_param(value, bump))); vec }),
     decorators: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.decorators.len(), bump);vec.extend(inner.decorators.iter().map(|value| get_view_for_decorator(value, bump))); vec }),
     body: match &inner.body {
-      Some(value) => Some(get_view_for_block_stmt(value, bump)),
+      Some(value) => Some(get_view_for_function_body(value, bump)),
       None => None,
     },
     type_params: match &inner.type_params {
@@ -12517,6 +12545,9 @@ fn get_view_for_function<'a>(inner: &'a swc_ast::Function, bump: &'a Bump) -> &'
     },
   });
   let parent: Node<'a> = (&*node).into();
+  if let Some(value) = &node.this_param {
+    set_parent_for_ts_this_param(value, parent)
+  };
   for value in node.params.iter() {
     set_parent_for_param(value, parent)
   }
@@ -12524,7 +12555,7 @@ fn get_view_for_function<'a>(inner: &'a swc_ast::Function, bump: &'a Bump) -> &'
     set_parent_for_decorator(value, parent)
   }
   if let Some(value) = &node.body {
-    set_parent_for_block_stmt(value, parent)
+    set_parent_for_function_body(value, parent)
   };
   if let Some(value) = &node.type_params {
     set_parent_for_ts_type_param_decl(value, parent)
@@ -12539,13 +12570,101 @@ fn set_parent_for_function<'a>(node: &Function<'a>, parent: Node<'a>) {
   node.parent.set(parent);
 }
 
+/// The braced body of a function, method, constructor, or block-bodied arrow
+/// function.
+///
+/// Unlike [`crate::BlockStmt`], a function body does not introduce an
+/// additional block scope. Its statements are evaluated in the scope created
+/// by the owning function-like node.
+#[derive(Clone)]
+pub struct FunctionBody<'a> {
+  parent: ParentOnceCell<Node<'a>>,
+  pub inner: &'a swc_ast::FunctionBody,
+  pub stmts: &'a [Stmt<'a>],
+}
+
+impl<'a> FunctionBody<'a> {
+  pub fn parent(&self) -> Node<'a> {
+    self.parent.get().unwrap()
+  }
+}
+
+impl<'a> SourceRanged for FunctionBody<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::unsafely_from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::unsafely_from_byte_pos(self.inner.span().hi)
+  }
+}
+
+impl<'a> From<&FunctionBody<'a>> for Node<'a> {
+  fn from(node: &FunctionBody<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&FunctionBody<'a>, &'a FunctionBody<'a>>(node) };
+    Node::FunctionBody(node)
+  }
+}
+
+impl<'a> NodeTrait<'a> for FunctionBody<'a> {
+  fn parent(&self) -> Option<Node<'a>> {
+    Some(self.parent.get().unwrap().clone())
+  }
+
+  fn children(&self) -> Vec<Node<'a>> {
+    let mut children = Vec::with_capacity(self.stmts.len());
+    for child in self.stmts.iter() {
+      children.push(child.into());
+    }
+    children
+  }
+
+  fn as_node(&self) -> Node<'a> {
+    self.into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::FunctionBody
+  }
+}
+
+impl<'a> CastableNode<'a> for FunctionBody<'a> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
+    if let Node::FunctionBody(node) = node {
+      Some(node)
+    } else {
+      None
+    }
+  }
+
+  fn kind() -> NodeKind {
+    NodeKind::FunctionBody
+  }
+}
+
+fn get_view_for_function_body<'a>(inner: &'a swc_ast::FunctionBody, bump: &'a Bump) -> &'a FunctionBody<'a> {
+  let node = bump.alloc(FunctionBody {
+    inner,
+    parent: Default::default(),
+    stmts: bump.alloc({let mut vec = allocator_api2::vec::Vec::with_capacity_in(inner.stmts.len(), bump);vec.extend(inner.stmts.iter().map(|value| get_view_for_stmt(value, bump))); vec }),
+  });
+  let parent: Node<'a> = (&*node).into();
+  for value in node.stmts.iter() {
+    set_parent_for_stmt(value, parent)
+  }
+  node
+}
+
+fn set_parent_for_function_body<'a>(node: &FunctionBody<'a>, parent: Node<'a>) {
+  node.parent.set(parent);
+}
+
 #[derive(Clone)]
 pub struct GetterProp<'a> {
   parent: ParentOnceCell<&'a ObjectLit<'a>>,
   pub inner: &'a swc_ast::GetterProp,
   pub key: PropName<'a>,
-  pub type_ann: Option<&'a TsTypeAnn<'a>>,
-  pub body: Option<&'a BlockStmt<'a>>,
+  /// Function backing the getter.
+  pub function: &'a Function<'a>,
 }
 
 impl<'a> GetterProp<'a> {
@@ -12576,14 +12695,9 @@ impl<'a> NodeTrait<'a> for GetterProp<'a> {
   }
 
   fn children(&self) -> Vec<Node<'a>> {
-    let mut children = Vec::with_capacity(1 + match &self.type_ann { Some(_value) => 1, None => 0, } + match &self.body { Some(_value) => 1, None => 0, });
+    let mut children = Vec::with_capacity(2);
     children.push((&self.key).into());
-    if let Some(child) = self.type_ann {
-      children.push(child.into());
-    }
-    if let Some(child) = self.body {
-      children.push(child.into());
-    }
+    children.push(self.function.into());
     children
   }
 
@@ -12615,23 +12729,11 @@ fn get_view_for_getter_prop<'a>(inner: &'a swc_ast::GetterProp, bump: &'a Bump) 
     inner,
     parent: Default::default(),
     key: get_view_for_prop_name(&inner.key, bump),
-    type_ann: match &inner.type_ann {
-      Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
-      None => None,
-    },
-    body: match &inner.body {
-      Some(value) => Some(get_view_for_block_stmt(value, bump)),
-      None => None,
-    },
+    function: get_view_for_function(&inner.function, bump),
   });
   let parent: Node<'a> = (&*node).into();
   set_parent_for_prop_name(&node.key, parent);
-  if let Some(value) = &node.type_ann {
-    set_parent_for_ts_type_ann(value, parent)
-  };
-  if let Some(value) = &node.body {
-    set_parent_for_block_stmt(value, parent)
-  };
+  set_parent_for_function(&node.function, parent);
   node
 }
 
@@ -14457,7 +14559,7 @@ impl<'a> JSXText<'a> {
     self.parent.get().unwrap()
   }
 
-  pub fn value(&self) -> &swc_atoms::Atom {
+  pub fn value(&self) -> &swc_atoms::Wtf8Atom {
     &self.inner.value
   }
 
@@ -15407,9 +15509,10 @@ impl<'a> Number<'a> {
     self.parent.get().unwrap()
   }
 
-  /// **Note**: This should not be `NaN`. Use [crate::Ident] to represent NaN.
+  /// The numeric value, including `NaN` and positive or negative infinity.
   ///
-  /// If you store `NaN` in this field, a hash map will behave strangely.
+  /// Equality treats all `NaN` representations as equal and distinguishes
+  /// positive and negative zero.
   pub fn value(&self) -> f64 {
     self.inner.value
   }
@@ -16760,9 +16863,8 @@ pub struct SetterProp<'a> {
   parent: ParentOnceCell<&'a ObjectLit<'a>>,
   pub inner: &'a swc_ast::SetterProp,
   pub key: PropName<'a>,
-  pub this_param: Option<Pat<'a>>,
-  pub param: Pat<'a>,
-  pub body: Option<&'a BlockStmt<'a>>,
+  /// Function backing the setter.
+  pub function: &'a Function<'a>,
 }
 
 impl<'a> SetterProp<'a> {
@@ -16793,15 +16895,9 @@ impl<'a> NodeTrait<'a> for SetterProp<'a> {
   }
 
   fn children(&self) -> Vec<Node<'a>> {
-    let mut children = Vec::with_capacity(2 + match &self.this_param { Some(_value) => 1, None => 0, } + match &self.body { Some(_value) => 1, None => 0, });
+    let mut children = Vec::with_capacity(2);
     children.push((&self.key).into());
-    if let Some(child) = self.this_param.as_ref() {
-      children.push(child.into());
-    }
-    children.push((&self.param).into());
-    if let Some(child) = self.body {
-      children.push(child.into());
-    }
+    children.push(self.function.into());
     children
   }
 
@@ -16833,25 +16929,11 @@ fn get_view_for_setter_prop<'a>(inner: &'a swc_ast::SetterProp, bump: &'a Bump) 
     inner,
     parent: Default::default(),
     key: get_view_for_prop_name(&inner.key, bump),
-    this_param: match &inner.this_param {
-      Some(value) => Some(get_view_for_pat(value, bump)),
-      None => None,
-    },
-    param: get_view_for_pat(&inner.param, bump),
-    body: match &inner.body {
-      Some(value) => Some(get_view_for_block_stmt(value, bump)),
-      None => None,
-    },
+    function: get_view_for_function(&inner.function, bump),
   });
   let parent: Node<'a> = (&*node).into();
   set_parent_for_prop_name(&node.key, parent);
-  if let Some(value) = &node.this_param {
-    set_parent_for_pat(value, parent)
-  };
-  set_parent_for_pat(&node.param, parent);
-  if let Some(value) = &node.body {
-    set_parent_for_block_stmt(value, parent)
-  };
+  set_parent_for_function(&node.function, parent);
   node
 }
 
@@ -17361,6 +17443,10 @@ pub struct SwitchStmt<'a> {
 impl<'a> SwitchStmt<'a> {
   pub fn parent(&self) -> Node<'a> {
     self.parent.get().unwrap()
+  }
+
+  pub fn body_ctxt(&self) -> swc_common::SyntaxContext {
+    self.inner.body_ctxt
   }
 }
 
@@ -21609,6 +21695,99 @@ fn get_view_for_ts_setter_signature<'a>(inner: &'a swc_ast::TsSetterSignature, b
 
 fn set_parent_for_ts_setter_signature<'a>(node: &TsSetterSignature<'a>, parent: Node<'a>) {
   node.parent.set(parent);
+}
+
+/// TypeScript or Flow `this` parameter of a function.
+///
+/// This parameter describes the type of `this` inside the function and is not
+/// emitted as a JavaScript runtime parameter.
+#[derive(Clone)]
+pub struct TsThisParam<'a> {
+  parent: ParentOnceCell<&'a Function<'a>>,
+  pub inner: &'a swc_ast::TsThisParam,
+  pub type_ann: Option<&'a TsTypeAnn<'a>>,
+}
+
+impl<'a> TsThisParam<'a> {
+  pub fn parent(&self) -> &'a Function<'a> {
+    self.parent.get().unwrap()
+  }
+
+  pub fn this_span(&self) -> &swc_common::Span {
+    &self.inner.this_span
+  }
+}
+
+impl<'a> SourceRanged for TsThisParam<'a> {
+  fn start(&self) -> SourcePos {
+    SourcePos::unsafely_from_byte_pos(self.inner.span().lo)
+  }
+  fn end(&self) -> SourcePos {
+    SourcePos::unsafely_from_byte_pos(self.inner.span().hi)
+  }
+}
+
+impl<'a> From<&TsThisParam<'a>> for Node<'a> {
+  fn from(node: &TsThisParam<'a>) -> Node<'a> {
+    let node = unsafe { mem::transmute::<&TsThisParam<'a>, &'a TsThisParam<'a>>(node) };
+    Node::TsThisParam(node)
+  }
+}
+
+impl<'a> NodeTrait<'a> for TsThisParam<'a> {
+  fn parent(&self) -> Option<Node<'a>> {
+    Some(self.parent.get().unwrap().into())
+  }
+
+  fn children(&self) -> Vec<Node<'a>> {
+    let mut children = Vec::with_capacity(match &self.type_ann { Some(_value) => 1, None => 0, });
+    if let Some(child) = self.type_ann {
+      children.push(child.into());
+    }
+    children
+  }
+
+  fn as_node(&self) -> Node<'a> {
+    self.into()
+  }
+
+  fn kind(&self) -> NodeKind {
+    NodeKind::TsThisParam
+  }
+}
+
+impl<'a> CastableNode<'a> for TsThisParam<'a> {
+  fn to(node: &Node<'a>) -> Option<&'a Self> {
+    if let Node::TsThisParam(node) = node {
+      Some(node)
+    } else {
+      None
+    }
+  }
+
+  fn kind() -> NodeKind {
+    NodeKind::TsThisParam
+  }
+}
+
+fn get_view_for_ts_this_param<'a>(inner: &'a swc_ast::TsThisParam, bump: &'a Bump) -> &'a TsThisParam<'a> {
+  let node = bump.alloc(TsThisParam {
+    inner,
+    parent: Default::default(),
+    type_ann: match &inner.type_ann {
+      Some(value) => Some(get_view_for_ts_type_ann(value, bump)),
+      None => None,
+    },
+  });
+  let parent: Node<'a> = (&*node).into();
+  if let Some(value) = &node.type_ann {
+    set_parent_for_ts_type_ann(value, parent)
+  };
+  node
+}
+
+fn set_parent_for_ts_this_param<'a>(node: &TsThisParam<'a>, parent: Node<'a>) {
+  node.parent.set(parent.expect::<Function>());
 }
 
 #[derive(Clone)]
