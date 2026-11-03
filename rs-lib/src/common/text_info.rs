@@ -1,13 +1,15 @@
+use std::sync::atomic::AtomicUsize;
+use std::sync::atomic::Ordering;
 use std::sync::Arc;
 
 use swc_common::input::StringInput;
 pub use text_lines::LineAndColumnIndex;
 pub use text_lines::TextLines;
 
-use super::LineAndColumnDisplay;
 use super::pos::*;
-use super::text_encoding::BOM_CHAR;
 use super::text_encoding::strip_bom_mut;
+use super::text_encoding::BOM_CHAR;
+use super::LineAndColumnDisplay;
 
 /// Stores the source text along with other data such as where all the lines
 /// occur in the text.
@@ -19,6 +21,18 @@ pub struct SourceTextInfo {
   start_pos: StartSourcePos,
   text: Arc<str>,
   text_lines: Arc<TextLines>,
+  last_line_index: LastLineIndex,
+}
+
+/// The line index found by the last lookup, which is checked first since the
+/// positions looked up one after another are usually on the same line.
+#[derive(Default)]
+struct LastLineIndex(AtomicUsize);
+
+impl Clone for LastLineIndex {
+  fn clone(&self) -> Self {
+    Self(AtomicUsize::new(self.0.load(Ordering::Relaxed)))
+  }
 }
 
 impl SourceTextInfo {
@@ -64,6 +78,7 @@ impl SourceTextInfo {
       start_pos: StartSourcePos(start_pos),
       text_lines: Arc::new(TextLines::with_indent_width(&text, indent_width)),
       text,
+      last_line_index: Default::default(),
     }
   }
 
@@ -108,7 +123,25 @@ impl SourceTextInfo {
   /// the range of the source text.
   pub fn line_index(&self, pos: SourcePos) -> usize {
     self.assert_pos(pos);
-    self.text_lines.line_index(self.get_relative_index_from_pos(pos))
+    let byte_index = self.get_relative_index_from_pos(pos);
+    // check the last line and the one after it before searching all of them
+    let last_line_index = self.last_line_index.0.load(Ordering::Relaxed);
+    for line_index in [last_line_index, last_line_index + 1] {
+      if self.is_byte_index_on_line(byte_index, line_index) {
+        self.last_line_index.0.store(line_index, Ordering::Relaxed);
+        return line_index;
+      }
+    }
+    let line_index = self.text_lines.line_index(byte_index);
+    self.last_line_index.0.store(line_index, Ordering::Relaxed);
+    line_index
+  }
+
+  fn is_byte_index_on_line(&self, byte_index: usize, line_index: usize) -> bool {
+    let lines_count = self.text_lines.lines_count();
+    line_index < lines_count
+      && self.text_lines.line_start(line_index) <= byte_index
+      && (line_index + 1 == lines_count || byte_index < self.text_lines.line_start(line_index + 1))
   }
 
   /// Gets the line start byte position of the provided 0-indexed line index.
@@ -278,6 +311,24 @@ mod test {
       assert_pos_line_and_col(&text_info, 8 + i, 2, 1); // \n
       assert_pos_line_and_col(&text_info, 9 + i, 3, 0); // 5
       assert_pos_line_and_col(&text_info, 10 + i, 3, 1); // <EOF>
+    }
+  }
+
+  #[test]
+  fn line_index_in_any_order() {
+    // the last line found is checked first, which needs to be correct in any order
+    let text = "12\n3\r\n\nβ\n\n5\n";
+    let text_lines = TextLines::new(text);
+    let text_info = SourceTextInfo::new_with_pos(SourcePos::new(1), text.to_string().into());
+    let mut byte_indexes = (0..=text.len()).collect::<Vec<_>>();
+    byte_indexes.extend((0..=text.len()).rev());
+    byte_indexes.extend([0, text.len(), 3, 9, 1, 11, 6]);
+    for byte_index in byte_indexes {
+      assert_eq!(
+        text_info.line_index(SourcePos::new(1 + byte_index)),
+        text_lines.line_index(byte_index),
+        "byte index {byte_index}"
+      );
     }
   }
 

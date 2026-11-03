@@ -3,12 +3,24 @@ use super::text_info::*;
 use super::tokens::*;
 use crate::swc::common::comments::Comment;
 use crate::swc::common::comments::SingleThreadedCommentsMapInner;
+use rustc_hash::FxHashMap;
 
 pub struct CommentContainer<'a> {
   pub leading: &'a SingleThreadedCommentsMapInner,
   pub trailing: &'a SingleThreadedCommentsMapInner,
-  tokens: &'a TokenContainer<'a>,
-  text_info: &'a SourceTextInfo,
+  /// What `leading_comments` returns at each position with comments, since most
+  /// positions don't have any and this only needs to be looked up once.
+  leading_by_start: FxHashMap<SourcePos, CommentsPair<'a>>,
+  /// What `trailing_comments` returns at each position with comments.
+  trailing_by_end: FxHashMap<SourcePos, CommentsPair<'a>>,
+}
+
+/// The comments at two positions in the order they're in the text (ex. the trailing comments
+/// of a token followed by the leading comments of the next token).
+#[derive(Default, Clone, Copy)]
+struct CommentsPair<'a> {
+  first: &'a [Comment],
+  second: &'a [Comment],
 }
 
 impl<'a> CommentContainer<'a> {
@@ -18,11 +30,50 @@ impl<'a> CommentContainer<'a> {
     tokens: &'a TokenContainer<'a>,
     text_info: &'a SourceTextInfo,
   ) -> Self {
+    let text_range = text_info.range();
+    let mut leading_by_start = FxHashMap::<SourcePos, CommentsPair<'a>>::default();
+    let mut trailing_by_end = FxHashMap::<SourcePos, CommentsPair<'a>>::default();
+
+    for (byte_pos, comments) in leading.iter() {
+      let pos = SourcePos::unsafely_from_byte_pos(*byte_pos);
+      // the leading comments at a position come after the trailing comments of the token before it
+      leading_by_start.entry(pos).or_default().second = comments;
+      // and after the trailing comments at the end of the token before it
+      let end_before = if pos == text_range.end {
+        tokens.tokens.last().map(|token| token.end())
+      } else {
+        match tokens.get_token_index_at_start(pos) {
+          Some(index) if index > 0 => Some(tokens.get_token_at_index(index - 1).unwrap().end()),
+          _ => None,
+        }
+      };
+      if let Some(end_before) = end_before {
+        trailing_by_end.entry(end_before).or_default().second = comments;
+      }
+    }
+
+    for (byte_pos, comments) in trailing.iter() {
+      let pos = SourcePos::unsafely_from_byte_pos(*byte_pos);
+      trailing_by_end.entry(pos).or_default().first = comments;
+      // the trailing comments of a token come before the leading comments of the next token
+      let next_start = if pos == text_range.start.as_source_pos() {
+        tokens.tokens.first().map(|token| token.start())
+      } else {
+        tokens
+          .get_token_index_at_end(pos)
+          .and_then(|index| tokens.get_token_at_index(index + 1))
+          .map(|token| token.start())
+      };
+      if let Some(next_start) = next_start {
+        leading_by_start.entry(next_start).or_default().first = comments;
+      }
+    }
+
     CommentContainer {
       leading,
       trailing,
-      tokens,
-      text_info,
+      leading_by_start,
+      trailing_by_end,
     }
   }
 
@@ -34,56 +85,24 @@ impl<'a> CommentContainer<'a> {
     iterator
   }
 
+  /// Gets the trailing comments of the previous token followed by the leading comments
+  /// at the position.
   pub fn leading_comments(&'a self, start: SourcePos) -> CommentsIterator<'a> {
-    let previous_token_hi = self.tokens.get_token_index_at_start(start).map(|index| {
-      if index == 0 {
-        self.text_info.range().start.as_source_pos()
-      } else {
-        self.tokens.get_token_at_index(index - 1).unwrap().end()
-      }
-    });
-    let leading = self.get_leading(start);
-    if let Some(previous_token_hi) = previous_token_hi {
-      let trailing = self.get_trailing(previous_token_hi);
-      combine_comment_vecs(trailing, leading)
-    } else {
-      combine_comment_vecs(leading, None)
-    }
+    comments_pair_iterator(self.leading_by_start.get(&start))
   }
 
+  /// Gets the trailing comments at the position followed by the leading comments of the
+  /// next token.
   pub fn trailing_comments(&'a self, end: SourcePos) -> CommentsIterator<'a> {
-    let next_token_lo = self.tokens.get_token_index_at_end(end).map(|index| {
-      self
-        .tokens
-        .get_token_at_index(index + 1)
-        .map(|t| t.start())
-        .unwrap_or_else(|| self.text_info.range().end)
-    });
-    let trailing = self.get_trailing(end);
-    if let Some(next_token_lo) = next_token_lo {
-      let leading = self.get_leading(next_token_lo);
-      combine_comment_vecs(trailing, leading)
-    } else {
-      combine_comment_vecs(trailing, None)
-    }
-  }
-
-  fn get_leading(&'a self, start: SourcePos) -> Option<&'a Vec<Comment>> {
-    self.leading.get(&start.as_byte_pos())
-  }
-
-  fn get_trailing(&'a self, end: SourcePos) -> Option<&'a Vec<Comment>> {
-    self.trailing.get(&end.as_byte_pos())
+    comments_pair_iterator(self.trailing_by_end.get(&end))
   }
 }
 
-fn combine_comment_vecs<'a>(a: Option<&'a Vec<Comment>>, b: Option<&'a Vec<Comment>>) -> CommentsIterator<'a> {
+fn comments_pair_iterator<'a>(pair: Option<&CommentsPair<'a>>) -> CommentsIterator<'a> {
   let mut iterator = CommentsIterator::empty();
-  if let Some(a) = a {
-    iterator.push_slice(a);
-  }
-  if let Some(b) = b {
-    iterator.push_slice(b);
+  if let Some(pair) = pair {
+    iterator.push_slice(pair.first);
+    iterator.push_slice(pair.second);
   }
   iterator
 }
@@ -254,8 +273,8 @@ impl<'a> DoubleEndedIterator for CommentsIterator<'a> {
 #[cfg(test)]
 mod test {
   use super::*;
-  use crate::swc::common::DUMMY_SP;
   use crate::swc::common::comments::CommentKind;
+  use crate::swc::common::DUMMY_SP;
 
   fn comments(texts: &[&str]) -> Vec<Comment> {
     texts
