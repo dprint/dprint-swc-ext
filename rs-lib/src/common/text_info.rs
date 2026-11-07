@@ -171,6 +171,17 @@ impl SourceTextInfo {
     self.text_lines.line_and_column_index(self.get_relative_index_from_pos(pos))
   }
 
+  /// Gets the 0-indexed line and column index of the provided byte position
+  /// where the column index is the number of UTF-16 code units from the start
+  /// of the line.
+  ///
+  /// Note that this will panic when providing a byte position outside
+  /// the range of the source text.
+  pub fn line_and_column_index_utf16(&self, pos: SourcePos) -> LineAndColumnIndex {
+    self.assert_pos(pos);
+    self.text_lines.line_and_column_index_utf16(self.get_relative_index_from_pos(pos))
+  }
+
   /// Gets the 1-indexed line and column index of the provided byte position
   /// taking into account the default indentation width.
   ///
@@ -337,6 +348,25 @@ mod test {
       text_info.line_and_column_index(SourcePos::new(pos)),
       LineAndColumnIndex { line_index, column_index }
     );
+  }
+
+  #[test]
+  fn line_and_column_index_utf16() {
+    // 😀 is 4 bytes in utf-8 and 2 code units in utf-16
+    let text = "a😀b\nβ";
+    let text_info = SourceTextInfo::new_with_pos(SourcePos::new(1), text.to_string().into());
+    let assert_utf16 = |pos: usize, line_index: usize, column_index: usize| {
+      assert_eq!(
+        text_info.line_and_column_index_utf16(SourcePos::new(1 + pos)),
+        LineAndColumnIndex { line_index, column_index }
+      );
+    };
+    assert_utf16(0, 0, 0); // a
+    assert_utf16(1, 0, 1); // first 😀 index
+    assert_utf16(5, 0, 3); // b
+    assert_utf16(6, 0, 4); // \n
+    assert_utf16(7, 1, 0); // first β index
+    assert_utf16(9, 1, 1); // <EOF>
   }
 
   #[test]
